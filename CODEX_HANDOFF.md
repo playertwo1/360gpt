@@ -10,6 +10,12 @@
 **Pastas de Backup no Google Drive:** `C:\Users\fael\Google Drive\360` e `C:\Users\fael\Meu Drive\360`
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`
 
+**Ciclo atual:** Evolução Pós-Homologação, acompanhada em `ROADMAP_POS_HOMOLOGACAO.md`.
+
+**Fase atual:** `P1 — Operação diária sintética medida`.
+
+**Próxima ação:** Jornada `P1-01` pelo Telegram, usando exclusivamente dados sintéticos.
+
 ---
 
 ## 📌 1. Princípio Fundamental & Regra Áurea de Governança
@@ -116,7 +122,7 @@ powershell -File scripts/run-all-hybrid-tests.ps1
    ```
 4. **Sincronizar Workspace Secundário:**
    - Executar `git pull origin main --tags` na pasta `c:\Users\fael\Downloads\A`.
-5. **Atualizar `status.md`, `ROADMAP_HIBRIDO.md` e emitir relatório de e-mail.**
+5. **Atualizar `status.md`, `ROADMAP_POS_HOMOLOGACAO.md` e, quando aplicável, o `ROADMAP_HIBRIDO.md`.**
 
 ---
-*Guia Mestre de Transição atualizado e 100% auditável.*
+*Guia Mestre de Transição atualizado para o ciclo pós-homologação. Dados reais continuam bloqueados até o Gate institucional P6.*

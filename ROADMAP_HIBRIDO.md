@@ -6,7 +6,7 @@
 
 **Última atualização:** 26 de agosto de 2026
 **Fase atual:** PILOTO HÍBRIDO 100% CONCLUÍDO & HOMOLOGADO (H1 a H10)
-**Próxima ação:** Operação Assistida contínua sob governança de Rafael.
+**Próxima ação:** seguir o ciclo pós-homologação em `ROADMAP_POS_HOMOLOGACAO.md`, começando pela Jornada `P1-01`.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
 
 

@@ -2,8 +2,8 @@
 
 **Data do status:** 26 de agosto de 2026
 **Versão Atual da Release:** `v3.0.0-final-hybrid` (100% Homologado: 24 Marcos + 10 Fases H1 a H10 Concluídos)
-**Modo de execução:** `PRODUÇÃO ASSISTIDA & PILOTO HÍBRIDO HOMOLOGADO` (somente dados sintéticos)
-**Saúde do Projeto:** 🟢 **VERDE (100% Concluído — 24 de 24 Marcos e 10 de 10 Fases H1–H10 Homologados)**
+**Modo de execução:** `EVOLUÇÃO PÓS-HOMOLOGAÇÃO` (somente dados sintéticos)
+**Saúde do Projeto:** 🟢 **VERDE (piloto técnico concluído; ciclo pós-homologação iniciado)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`
@@ -11,6 +11,14 @@
 > **Princípio Central:**
 > *"Fontes governam. Motores calculam e consolidam. Especialistas analisam. Gerentes Gerais coordenam. O Assessor sintetiza. O Diretor governa. **Rafael decide.***"
 > Projeto pessoal executado com dados sintéticos no modo `OFFLINE_EVAL`.
+
+**Roadmap atual:** `ROADMAP_POS_HOMOLOGACAO.md`
+
+**Fase atual:** `P1 — Operação diária sintética medida`
+
+**Próximo passo exato:** executar e registrar a Jornada `P1-01`, enviando uma mensagem sintética pelo Telegram e conferindo fila, processamento, Dashboard e Mesa do Revisor.
+
+**Limite de governança:** a homologação concluída não autoriza dados reais de clientes ou integração com sistemas do banco; isso depende do Gate institucional P6.
 
 ---
 
@@ -81,6 +89,23 @@
 | H8 | Segurança do piloto | ✅ Concluída — allowlist, kill switches, isolamento de dados sintéticos e Quatro Olhos homologados |
 | H9 | Backup e restauração | ✅ Concluída — dumps do Postgres, exportação n8n, RTO 3m12s e RPO 0s homologados |
 | H10 | Rotina diária e aceite | ✅ Concluída — rotina 1-clique sem comandos técnicos e Guia Operacional homologados |
+
+---
+
+## 3.1 Novo ciclo — Evolução Pós-Homologação
+
+O piloto técnico foi encerrado e Rafael repetiu a validação operacional. A continuidade agora é acompanhada em `ROADMAP_POS_HOMOLOGACAO.md`.
+
+| Fase | Objetivo | Estado |
+|---|---|:---:|
+| P1 | Operação diária sintética medida | Em andamento |
+| P2 | Qualidade das análises e recomendações | Não iniciada |
+| P3 | Entrada de documentos robusta | Não iniciada |
+| P4 | Dashboard orientado à decisão | Não iniciada |
+| P5 | Fontes e integrações governadas | Não iniciada |
+| P6 | Gate institucional, LGPD e segurança | Não iniciada |
+| P7 | Piloto real limitado, se autorizado | Bloqueada até P6 |
+| P8 | Disponibilidade 24 horas e escala | Opcional |
 
 ---
 
