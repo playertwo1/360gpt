@@ -5,8 +5,8 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H1 — Acesso ao site hospedado
-**Próxima ação:** abrir o site hospedado, autenticar uma conta autorizada e registrar a evidência do resultado.
+**Fase atual:** H3 — Homologar a ponte site ↔ computador
+**Próxima ação:** conferir os segredos e kill switches da ponte, ativar somente o piloto sintético e executar um novo caso ponta a ponta.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
 
 ---
@@ -39,8 +39,8 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 | Fase | Resultado esperado | Estado | Dependência principal |
 |---|---|:---:|---|
-| H1 | Acesso privado ao site confirmado | [~] | Login autorizado |
-| H2 | Dados hospedados persistem com o computador desligado | [ ] | H1 |
+| H1 | Acesso privado ao site confirmado | [x] | Login autorizado |
+| H2 | Dados hospedados persistem com o computador desligado | [x] | H1 |
 | H3 | Ponte site ↔ n8n processa e publica um caso | [ ] | H2 |
 | H4 | Diretor 360 inicia com um clique | [ ] | H3 |
 | H5 | Telegram recebe e enfileira texto | [ ] | H3 |
@@ -58,14 +58,14 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 - [x] Abrir `https://visao-360-diretor.fael360092.chatgpt.site`.
 - [x] Entrar com `fael@live.de`.
-- [ ] Entrar com `rafa.pedrosa1@gmail.com`.
+- [x] Entrar com `rafa.pedrosa1@gmail.com`.
 - [x] Confirmar o Dashboard principal.
 - [x] Confirmar a Mesa do Revisor em `/reviews`.
 - [x] Repetir por outro navegador ou modo anônimo e confirmar exigência de login.
 - [x] Confirmar que uma conta não autorizada recebe acesso negado.
 - [x] Registrar data, conta usada e resultado, sem capturar dados sensíveis.
 
-**Critério de aceite:** pelo menos uma conta autorizada acessa Dashboard e Mesa do Revisor em outro dispositivo, e uma sessão não autorizada é bloqueada.
+**Critério de aceite:** pelo menos uma conta autorizada acessa Dashboard e Mesa do Revisor em outro dispositivo, e uma sessão não autorizada é bloqueada. **ATENDIDO em 2026-08-26.**
 
 **Evidências:**
 
@@ -73,6 +73,7 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 - Resultado: `Dashboard e /reviews abriram em sessão autenticada; requisições sem autenticação receberam HTTP 403 nas duas rotas; site ainda sem snapshot hospedado.`
 - Conta da sessão: `fael@live.de`, confirmada por Rafael.
 - Navegador alternativo/anônimo: `solicitou login antes de permitir acesso`, confirmado por Rafael.
+- Segunda conta: `rafa.pedrosa1@gmail.com` autenticou com senha e código recebido por e-mail e acessou Dashboard e `/reviews`, confirmado por Rafael.
 - Referência ou captura: `validação visual no navegador e teste HTTP externo sem credenciais.`
 
 ---
@@ -81,21 +82,23 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** comprovar que o site mantém o último Estado 360 sem depender do computador ligado.
 
-- [ ] Confirmar os bindings hospedados de banco e arquivos.
-- [ ] Aplicar e conferir as migrações hospedadas.
-- [ ] Criar um cliente totalmente sintético e identificável como teste.
-- [ ] Conferir o cliente no Dashboard hospedado.
-- [ ] Desligar os serviços locais sem apagar volumes.
-- [ ] Reabrir o site pelo celular.
-- [ ] Confirmar que o último estado continua disponível.
-- [ ] Religá-los e confirmar ausência de perda ou duplicidade.
+- [x] Confirmar os bindings hospedados de banco e arquivos.
+- [x] Aplicar e conferir as migrações hospedadas.
+- [x] Identificar um cliente e snapshot totalmente sintéticos para o teste.
+- [x] Conferir o cliente no Dashboard hospedado.
+- [x] Desligar os serviços locais sem apagar volumes.
+- [x] Reabrir o site hospedado em sessão autenticada.
+- [x] Confirmar que o último estado continua disponível.
+- [x] Religá-los e confirmar ausência de perda ou duplicidade.
 
-**Critério de aceite:** o mesmo snapshot sintético permanece disponível com Docker desligado e após a retomada.
+**Critério de aceite:** o mesmo snapshot sintético permanece disponível com Docker desligado e após a retomada. **ATENDIDO em 2026-08-26.**
 
 **Evidências:**
 
-- Snapshot/teste: `pendente`
-- Resultado com Docker desligado: `pendente`
+- Snapshot/teste: `tenant-demo / cust-demo-001 / versão 37 / sha256:e94d61125cde7bb8fd88cdcec9f016119a75bd1d2d15b1eb663dba34ad71264b`.
+- Persistência: `D1 ativo com 11 tabelas; R2 declarado como FILES e documento PDF sintético com storage_key hospedada`.
+- Resultado com Docker desligado: `Dashboard recarregado e exibindo a mesma versão 37 e o mesmo hash`.
+- Retomada: `PostgreSQL 17.6 e n8n 2.36.7 religados e saudáveis; volumes preservados`.
 
 ---
 
@@ -298,6 +301,8 @@ Ao encerrar uma sessão:
 | 2026-08-26 | Codex | Planejamento | Roadmap híbrido criado; VPS adiada | Documentação revisada | Executar H1: validar acesso hospedado | consultar `git log` |
 | 2026-08-26 17:50 | Codex | H1 | Dashboard e Mesa do Revisor validados em sessão autenticada; bloqueio anônimo confirmado | HTTP 403 em `/` e `/reviews` sem credenciais; navegador autenticado abriu as duas páginas | Rafael confirmar a conta conectada e testar pelo celular | consultar `git log` |
 | 2026-08-26 | Rafael/Codex | H1 | Conta principal identificada e barreira de login confirmada em outro navegador/modo anônimo | `fael@live.de` acessou diretamente pela sessão existente; sessão alternativa pediu login | Testar `rafa.pedrosa1@gmail.com` e concluir H1 | consultar `git log` |
+| 2026-08-26 | Rafael/Codex | H1 concluída | Segunda conta autorizada validada | `rafa.pedrosa1@gmail.com` completou senha + código e abriu Dashboard e `/reviews` | Iniciar H2: persistência hospedada | consultar `git log` |
+| 2026-08-26 | Codex | H2 concluída | Persistência hospedada comprovada com serviços locais desligados | Snapshot `cust-demo-001` v37 e hash `e94d…1264b` permaneceram no site; D1 com 11 tabelas; serviços religados saudáveis | Iniciar H3: novo caso sintético pela ponte | consultar `git log` |
 
 ## Modelo para nova entrada
 

@@ -83,11 +83,11 @@
 
 **Testes executados:** lint sem erros; build de produção aprovado; Readiness Gate aprovado; carga e concorrência aprovadas; ingestão de texto, PDF, XLSX e JSON aprovada; adaptador Telegram/idempotência aprovado; testes dos Marcos 19, 20 e 24 aprovados; `docker compose config` aprovado.
 
-**Erros conhecidos:** três avisos preexistentes de variáveis não utilizadas em `app/page.tsx`; Bash/WSL não está instalado nesta estação, portanto `bash -n` não foi executado; teste remoto `-Live`, TLS público e cadastro real do webhook dependem de domínio, VPS e credenciais de produção e ainda não foram executados.
+**Erros conhecidos:** três avisos preexistentes de variáveis não utilizadas em `app/page.tsx`; o navegador registrou um erro não bloqueante de prefetch RSC do Vinext, embora Dashboard e rotas funcionem; Bash/WSL não está instalado nesta estação, portanto `bash -n` não foi executado; teste VPS `-Live` permanece adiado.
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** concluir a fase H1 do `ROADMAP_HIBRIDO.md`: autenticar `rafa.pedrosa1@gmail.com` em outro navegador ou modo anônimo e confirmar acesso ao Dashboard e à Mesa do Revisor. Não iniciar H2 antes dessa evidência.
+**Próximo passo exato:** executar H3 do `ROADMAP_HIBRIDO.md`: conferir a presença dos segredos local e hospedado sem expô-los, revisar kill switches, ativar somente a ponte sintética e processar um novo caso ponta a ponta com idempotência e retomada.
 
 ---
 
@@ -97,9 +97,9 @@
 
 | Fase | Escopo | Estado |
 |---|---|:---:|
-| H1 | Acesso privado ao site | 🟡 Em andamento — `fael@live.de`, Dashboard, `/reviews` e exigência de login comprovados; segunda conta pendente |
-| H2 | Persistência hospedada | ⬜ Pendente |
-| H3 | Ponte site ↔ computador | ⬜ Pendente |
+| H1 | Acesso privado ao site | ✅ Concluída — as duas contas autorizadas e o bloqueio sem login foram comprovados |
+| H2 | Persistência hospedada | ✅ Concluída — snapshot v37 permaneceu no site com Docker desligado |
+| H3 | Ponte site ↔ computador | ⏳ Próxima |
 | H4 | Inicialização com um clique | ⬜ Pendente |
 | H5 | Telegram com texto | ⬜ Pendente |
 | H6 | Telegram com PDF e Excel | ⬜ Pendente |

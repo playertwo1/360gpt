@@ -43,7 +43,7 @@ Concluímos a implementação dos **24 marcos originais**. A fase atual é a hom
   3. `scripts/test-cloud-deployment.ps1`: Script que roda testes remotos contra o endpoint de produção.
   4. Release de código `v2.4.0-final-phase3` preparada. A homologação externa final exige domínio, VPS e credenciais reais.
 
-Rafael decidiu adiar a VPS. O site, a fila e o último Estado 360 permanecem hospedados; Docker, PostgreSQL, n8n e agentes processam localmente. A fase H1 está em andamento: `fael@live.de` acessou Dashboard e `/reviews`, enquanto outro navegador/modo anônimo exigiu login e requisições sem credenciais receberam HTTP 403. Falta somente validar `rafa.pedrosa1@gmail.com` no Dashboard e na Mesa do Revisor. Os scripts de VPS permanecem preservados para uma migração futura opcional.
+Rafael decidiu adiar a VPS. O site, a fila e o último Estado 360 permanecem hospedados; Docker, PostgreSQL, n8n e agentes processam localmente. H1 e H2 foram concluídas: as duas contas acessaram o site privado e o snapshot sintético `cust-demo-001` versão 37 permaneceu disponível com n8n/PostgreSQL locais desligados, conservando o mesmo hash. Os serviços foram religados saudáveis. A fase atual é H3 — homologar um novo caso sintético pela ponte site ↔ computador. Os scripts de VPS permanecem preservados para uma migração futura opcional.
 
 ### Ordem obrigatória para Codex e Antigravity
 
