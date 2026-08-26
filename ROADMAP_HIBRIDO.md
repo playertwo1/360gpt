@@ -4,9 +4,9 @@
 
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
-**Última atualização:** 26 de agosto de 2026  
-**Fase atual:** H1 — Acesso ao site hospedado  
-**Próxima ação:** abrir o site hospedado, autenticar uma conta autorizada e registrar a evidência do resultado.  
+**Última atualização:** 26 de agosto de 2026
+**Fase atual:** H1 — Acesso ao site hospedado
+**Próxima ação:** abrir o site hospedado, autenticar uma conta autorizada e registrar a evidência do resultado.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
 
 ---
