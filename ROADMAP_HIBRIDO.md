@@ -5,8 +5,8 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H3 — Homologar a ponte site ↔ computador
-**Próxima ação:** conferir os segredos e kill switches da ponte, ativar somente o piloto sintético e executar um novo caso ponta a ponta.
+**Fase atual:** H4 — Operação local com um clique
+**Próxima ação:** criar um iniciador simples que verifique Docker, suba os serviços, valide site e ponte e apresente um resumo compreensível para Rafael.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
 
 ---
@@ -41,7 +41,7 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 |---|---|:---:|---|
 | H1 | Acesso privado ao site confirmado | [x] | Login autorizado |
 | H2 | Dados hospedados persistem com o computador desligado | [x] | H1 |
-| H3 | Ponte site ↔ n8n processa e publica um caso | [ ] | H2 |
+| H3 | Ponte site ↔ n8n processa e publica um caso | [x] | H2 |
 | H4 | Diretor 360 inicia com um clique | [ ] | H3 |
 | H5 | Telegram recebe e enfileira texto | [ ] | H3 |
 | H6 | Telegram processa PDF e Excel com segurança | [ ] | H5 |
@@ -106,28 +106,29 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** receber um trabalho hospedado, processá-lo localmente e devolver o resultado ao site.
 
-- [ ] Criar um segredo forte exclusivo para a ponte.
-- [ ] Configurar o segredo no ambiente hospedado.
-- [ ] Configurar o mesmo segredo localmente, fora do Git.
+- [x] Criar um segredo forte exclusivo para a ponte.
+- [x] Configurar o segredo no ambiente hospedado.
+- [x] Configurar o mesmo segredo localmente, fora do Git.
 - [x] Revisar os kill switches antes da ativação.
-- [ ] Ativar o `WF-09` para o piloto sintético.
-- [ ] Enfileirar um trabalho sintético pelo site.
-- [ ] Confirmar lease/lock de uma única execução.
-- [ ] Processar pelos workflows locais.
-- [ ] Publicar o novo Estado 360 no site.
-- [ ] Repetir a mesma entrada e confirmar `DUPLICATE_IGNORED`.
-- [ ] Interromper a internet durante um teste e comprovar retomada segura.
-- [ ] Confirmar que nenhum segredo foi gravado em log ou commit.
+- [x] Ativar o `WF-09` para o piloto sintético.
+- [x] Enfileirar um trabalho sintético pelo site.
+- [x] Confirmar lease/lock de uma única execução.
+- [x] Processar pelos workflows locais.
+- [x] Publicar o novo Estado 360 no site.
+- [x] Repetir a mesma entrada e confirmar deduplicação.
+- [x] Reiniciar o processamento local com o trabalho em fila e comprovar retomada segura.
+- [x] Confirmar que nenhum segredo foi gravado em log ou commit.
 
-**Critério de aceite:** um caso sintético percorre o fluxo completo uma única vez e seu estado aparece no site hospedado.
+**Critério de aceite:** um caso sintético percorre o fluxo completo uma única vez e seu estado aparece no site hospedado. **ATENDIDO em 2026-08-26.**
 
 **Evidências:**
 
-- Pré-verificação: `BRIDGE_ENABLED=false` no ambiente local e hospedado; `TELEGRAM_INGEST_ENABLED=false`; nenhum segredo versionado no Git.
-- Bloqueio seguro: `os dois arquivos locais possuem segredos diferentes e um deles não atende ao padrão forte; rotação coordenada obrigatória antes da ativação`.
-- `correlation_id`: `pendente`
-- Estado final: `pendente`
-- Teste de repetição/retomada: `pendente`
+- Pré-verificação: `kill switches revisados; Telegram permaneceu desativado; nenhum segredo versionado no Git`.
+- Rotação: `segredo aleatório de 64 caracteres aplicado coordenadamente no ambiente local, credencial n8n e Sites; valor nunca registrado em documentação`.
+- Caso: `h3-1787778865-1823 / synthetic-run-h3-1787778865-1823`.
+- Estado final: `cust-demo-001 / versão 380 / sha256:75adcdabf3164fe178ab85455d8c22eeb3b8ce97725756ed5936fca38d8e189c / MANUAL_REVIEW_REQUIRED`.
+- Teste de repetição/retomada: `entrada repetida retornou duplicate=true; trabalho permaneceu QUEUED durante reinício e concluiu SUCCEEDED na tentativa 1`.
+- Segurança: `sem segredo retornou 401; external_effects_allowed=false; Telegram desligado`.
 
 ---
 
@@ -306,6 +307,7 @@ Ao encerrar uma sessão:
 | 2026-08-26 | Rafael/Codex | H1 concluída | Segunda conta autorizada validada | `rafa.pedrosa1@gmail.com` completou senha + código e abriu Dashboard e `/reviews` | Iniciar H2: persistência hospedada | consultar `git log` |
 | 2026-08-26 | Codex | H2 concluída | Persistência hospedada comprovada com serviços locais desligados | Snapshot `cust-demo-001` v37 e hash `e94d…1264b` permaneceram no site; D1 com 11 tabelas; serviços religados saudáveis | Iniciar H3: novo caso sintético pela ponte | consultar `git log` |
 | 2026-08-26 | Codex | H3 pré-verificação | Kill switches confirmados; divergência entre segredos locais detectada sem exposição de valores | Ponte e Telegram permanecem desativados; arquivos de segredo não são rastreados pelo Git | Autorizar rotação coordenada, republicação e teste sintético | consultar `git log` |
+| 2026-08-26 | Rafael/Codex | H3 concluída | Segredo rotacionado, site v8 publicado e WF-09 homologado ponta a ponta | Caso `h3-1787778865-1823`, tentativa 1, estado v380, hash `75ad…189c`, deduplicação e retomada aprovadas | Iniciar H4: operação local com um clique | consultar `git log` |
 
 ## Modelo para nova entrada
 

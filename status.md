@@ -87,7 +87,7 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** após autorização de Rafael, gerar um novo segredo forte da ponte, substituir coordenadamente `.dev.vars`, `.env.n8n` e o segredo hospedado, manter Telegram desativado, definir `BRIDGE_ENABLED=true`, republicar a versão atual do site e executar um único caso sintético ponta a ponta.
+**Próximo passo exato:** executar H4 do `ROADMAP_HIBRIDO.md`: construir um iniciador de um clique que verifique Docker Desktop, inicie PostgreSQL/n8n, aguarde saúde, valide site/ponte, mostre fila e último backup e abra o Dashboard.
 
 ---
 
@@ -99,8 +99,8 @@
 |---|---|:---:|
 | H1 | Acesso privado ao site | ✅ Concluída — as duas contas autorizadas e o bloqueio sem login foram comprovados |
 | H2 | Persistência hospedada | ✅ Concluída — snapshot v37 permaneceu no site com Docker desligado |
-| H3 | Ponte site ↔ computador | 🟡 Em andamento — kill switches seguros; rotação dos segredos necessária |
-| H4 | Inicialização com um clique | ⬜ Pendente |
+| H3 | Ponte site ↔ computador | ✅ Concluída — caso H3 processado uma vez, deduplicado e publicado como estado v380 |
+| H4 | Inicialização com um clique | ⏳ Próxima |
 | H5 | Telegram com texto | ⬜ Pendente |
 | H6 | Telegram com PDF e Excel | ⬜ Pendente |
 | H7 | Visão executiva completa | ⬜ Pendente |
