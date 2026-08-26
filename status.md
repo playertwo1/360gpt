@@ -22,10 +22,10 @@
 | **Fase 0** | **Baseline & Definition of Done** | **100%** | 🟢 HOMOLOGADA | Schemas Draft 2020-12, `AGENTS.md` v1.11, Manifesto de Release |
 | **Fase 1** | **Reliability Foundation (H1–H10)** | **100%** | 🟢 HOMOLOGADA | Webhook Telegram, Intake Gateway, Fila DLQ, 1-Clique, Backup RTO/RPO |
 | **Fase 2** | **Observability & Evals (L1–L4)** | **100%** | 🟢 HOMOLOGADA | 20 Casos Sintéticos, L1 Math 100%, L2 F1 1.00, L3 Cov 100%, L4 Agree 100% |
-| **Fase 3** | **Radar Comercial & Entity Resolution** | **0%** | 🟡 PRONTA P/ INÍCIO | Conector ReceitaWS/CNPJ, QSA, CNAE e deduplicação de leads |
-| **Fase 4** | **Decision Intelligence & Laudos PDF** | **0%** | ⚪ PLANEJADA | Decision Record contratual e gerador de laudos em PDF de 3 páginas |
+| **Fase 3** | **Radar Comercial & Entity Resolution** | **—** | ⏸️ ADIADA | Postergada para o futuro por decisão de Rafael |
+| **Fase 4** | **Decision Intelligence & Laudos PDF** | **100%** | 🟢 HOMOLOGADA | Decision Record Draft 2020-12, Laudo PDF 3 págs (`core/pdf_report_generator.py`) |
+| **Fase 5** | **LLMOps & FinOps (Model Router)** | **0%** | 🟡 PRONTA P/ INÍCIO | Router: Determinístico → Flash Lite → Flash → Pro → Humano |
 
-| **Fase 5** | **LLMOps & FinOps (Model Router)** | **0%** | ⚪ PLANEJADA | Router: Determinístico → Flash Lite → Flash → Pro → Humano |
 | **Fase 6** | **Security, LGPD & Readiness** | **50%** | 🟢 CONTROLE ATIVO | Zero-Trust, Kill switches, Quatro Olhos ativos; suite adversária planejada |
 | **Fase 7** | **Operação Real & Canary Rollout** | **0%** | ⚪ PLANEJADA | Progressão 1–3 → 5 → 10 casos reais no escopo autorizado |
 | **Fase 8** | **Escala & Alta Disponibilidade** | **50%** | 🟢 PRONTO P/ ATIVAR | Script VPS pronto (`provision-vps-server.sh`); ativação sob demanda |

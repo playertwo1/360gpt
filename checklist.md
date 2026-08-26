@@ -91,26 +91,30 @@
 ---
 
 ## 📡 FASE 3: Radar Comercial & Entity Resolution
+> *Status:* ⏸️ **ADIADA / POSTERGADA PARA O FUTURO POR DECISÃO DE RAFAEL**
 
 - [ ] **M3.1 — Conector Público de CNPJ / ReceitaWS / Serpro**  
   *Escopo:* Consulta automatizada com cache local, TTL e rate-limiting (QSA, capital, CNAE, situação).  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+  *Responsável:* Codex / Antigravity | *Status:* `POSTPONED`
 
 - [ ] **M3.2 — Grafo de Entity Resolution & Deduplicação de Leads**  
   *Escopo:* Resolução de Matriz/Filiais, sócios comuns e prevenção de leads repetidos.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+  *Responsável:* Codex / Antigravity | *Status:* `POSTPONED`
 
 ---
 
 ## 💡 FASE 4: Decision Intelligence & Laudo Executivo
 
-- [ ] **M4.1 — Contrato e Persistência do Decision Record**  
-  *Escopo:* Implementar `contracts/decision-record.schema.json` e tabela no PostgreSQL/D1.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M4.1 — Contrato e Persistência do Decision Record**  
+  *Evidência:* `contracts/decision-record.schema.json` validado em JSON Schema Draft 2020-12.  
+  *Teste:* `powershell -File scripts/test-phase4-decision-pdf.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
-- [ ] **M4.2 — Gerador de Laudos Executivos 360 em PDF Diagramado**  
-  *Escopo:* Exportador com 1 clique no Dashboard, 3 páginas, hash SHA-256 e linhagem W3C PROV.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M4.2 — Gerador de Laudos Executivos 360 em PDF Diagramado**  
+  *Evidência:* `core/pdf_report_generator.py` e rota `app/api/reports/laudo-pdf/route.ts` (Laudo 3 págs com 4 GGs e Evidence Graph).  
+  *Teste:* `powershell -File scripts/test-phase4-decision-pdf.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
+
 
 ---
 

@@ -2,17 +2,22 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
   "version": "3.1.0-confianca",
-  "last_updated": "2026-08-26T20:10:00-03:00",
+  "last_updated": "2026-08-26T20:20:00-03:00",
   "last_active_assistant": "Antigravity (Google)",
   "next_recommended_assistant": "ChatGPT Codex (OpenAI) ou Antigravity",
   "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - Fases 0 a 8)",
-  "current_phase": "Fase 3 — Radar Comercial & Entity Resolution",
-  "current_milestone": "M3.1 — Conector Publico de CNPJ / ReceitaWS / Serpro",
+  "current_phase": "Fase 5 — LLMOps & FinOps (Model Router)",
+  "current_milestone": "M5.1 — Roteador de Modelos por Menor Custo Suficiente",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
-    "Fase 2 (Observability & Evals)"
+    "Fase 2 (Observability & Evals)",
+    "Fase 4 (Decision Intelligence & Laudo PDF)"
   ],
+  "postponed_phases": [
+    "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)"
+  ],
+
   "health_status": "GREEN",
   "mode": "OFFLINE_EVAL",
   "canonical_files": {

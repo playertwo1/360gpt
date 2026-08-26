@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.diretor360.com.br/contracts/decision-record.schema.json",
+  "title": "DecisionRecord360",
+  "description": "Contrato formal imutável de registro de decisão executiva e laudo 360",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "run_id",
+    "company",
+    "synthesized_at",
+    "director_verdict",
+    "domain_findings",
+    "evidence_lineage",
+    "human_decision"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "synthesized_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "company": {
+      "type": "object",
+      "required": [
+        "cnpj",
+        "legal_name",
+        "segment"
+      ],
+      "properties": {
+        "cnpj": {
+          "type": "string"
+        },
+        "legal_name": {
+          "type": "string"
+        },
+        "cnae": {
+          "type": "string"
+        },
+        "segment": {
+          "type": "string"
+        },
+        "annual_revenue": {
+          "type": "number"
+        },
+        "credit_score": {
+          "type": "integer"
+        }
+      }
+    },
+    "director_verdict": {
+      "type": "object",
+      "required": [
+        "state_status",
+        "recommended_action",
+        "confidence_score"
+      ],
+      "properties": {
+        "state_status": {
+          "type": "string",
+          "enum": [
+            "READY",
+            "MANUAL_REVIEW_REQUIRED",
+            "BLOCKED"
+          ]
+        },
+        "recommended_action": {
+          "type": "string"
+        },
+        "suggested_limit": {
+          "type": "number"
+        },
+        "confidence_score": {
+          "type": "number"
+        },
+        "reason_code": {
+          "type": "string"
+        }
+      }
+    },
+    "domain_findings": {
+      "type": "object",
+      "required": [
+        "conta",
+        "performance",
+        "financeiro",
+        "relacionamento"
+      ],
+      "properties": {
+        "conta": {
+          "type": "object"
+        },
+        "performance": {
+          "type": "object"
+        },
+        "financeiro": {
+          "type": "object"
+        },
+        "relacionamento": {
+          "type": "object"
+        }
+      }
+    },
+    "evidence_lineage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact_id",
+          "artifact_name",
+          "sha256",
+          "source_type"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string"
+          },
+          "artifact_name": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "source_type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "human_decision": {
+      "type": "object",
+      "required": [
+        "decider_name",
+        "decision_status"
+      ],
+      "properties": {
+        "decider_name": {
+          "type": "string"
+        },
+        "decider_role": {
+          "type": "string"
+        },
+        "decision_status": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "APPROVED_WITH_TWEAKS",
+            "REJECTED"
+          ]
+        },
+        "decided_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
