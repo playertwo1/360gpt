@@ -61,10 +61,11 @@
 
 | Marco | Título & Foco | Entregáveis Principais | Estado |
 |:---:|---|---|:---:|
-| **21** | **Guia Quickstart & Demonstração Interativa** | `QUICKSTART.md` executivo + script `demo-live-showcase.ps1` que dispara uma simulação e abre o navegador no Dashboard e Mesa do Revisor em 1 clique. | ⏳ **Próximo** |
-| **22** | **Polimento Visual & UI/UX do Dashboard** | Redesenho moderno dos cards dos 4 Gerentes Gerais, gráficos de *Unit Economics* (R$ e tokens) e navegador em árvore do Evidence Graph. | 📋 Planejado |
+| **21** | **Guia Quickstart & Demonstração Interativa** | `QUICKSTART.md` executivo + script `demo-live-showcase.ps1` que dispara uma simulação e abre o navegador no Dashboard e Mesa do Revisor em 1 clique. | ✅ **Concluído** |
+| **22** | **Polimento Visual & UI/UX do Dashboard** | Redesenho moderno dos cards dos 4 Gerentes Gerais, gráficos de *Unit Economics* (R$ e tokens) e navegador em árvore do Evidence Graph. | ⏳ **Próximo** |
 | **23** | **Banco de Casos PJ (5 Personas Reais)** | 5 cenários completos com scripts de 1-clique: *Indústria Metalúrgica*, *Rede de Varejo*, *Tech/SaaS*, *Agronegócio (CPR)* e *Distribuidora de Logística*. | 📋 Planejado |
 | **24** | **Automação de Deploy Cloud & Bot Live** | Scripts de 1-comando para provisionamento da VPS (n8n + Postgres + Caddy HTTPS/TLS), Cloudflare Pages (Frontend + D1) e Webhook oficial Telegram. | 📋 Planejado |
+
 
 ---
 
