@@ -2,7 +2,7 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.4.1-h4` (Marcos 1 ao 24 + Fases H1 a H4 do Piloto Híbrido Homologadas)
+**Versão Atual da Release:** `v2.5.0-h5` (Marcos 1 ao 24 + Fases H1 a H5 do Piloto Híbrido Homologadas)
 **Modo de execução:** `PILOTO HÍBRIDO LOCAL + SITE HOSPEDADO` (somente dados sintéticos)
 **Saúde do Projeto:** 🟡 **AMARELO (24 marcos implementados; operação híbrida ponta a ponta ainda não homologada)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
@@ -87,7 +87,7 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** executar H5 do `ROADMAP_HIBRIDO.md`: configurar e testar o webhook seguro do Telegram com secret_token para receber mensagens enquanto o computador estiver desligado.
+**Próximo passo exato:** executar H6 do `ROADMAP_HIBRIDO.md`: homologar processamento seguro de documentos PDF e planilhas Excel sintéticos com sanitização, limites e proteção contra prompt injection.
 
 ---
 
@@ -101,12 +101,13 @@
 | H2 | Persistência hospedada | ✅ Concluída — snapshot v37 permaneceu no site com Docker desligado |
 | H3 | Ponte site ↔ computador | ✅ Concluída — caso H3 processado uma vez, deduplicado e publicado como estado v380 |
 | H4 | Inicialização com um clique | ✅ Concluída — scripts `iniciar-diretor-360` e `parar-diretor-360` (.bat e .ps1) homologados |
-| H5 | Telegram com texto | ⏳ Próxima |
-| H6 | Telegram com PDF e Excel | ⬜ Pendente |
+| H5 | Telegram com texto | ✅ Concluída — webhook seguro, allowlist de chat_id, fila assíncrona e deduplicação homologados |
+| H6 | Telegram com PDF e Excel | ⏳ Próxima |
 | H7 | Visão executiva completa | ⬜ Pendente |
 | H8 | Segurança do piloto | ⬜ Pendente |
 | H9 | Backup e restauração | ⬜ Pendente |
 | H10 | Operação diária e aceite | ⬜ Pendente |
+
 
 **Decisão arquitetural atual:** o site, a fila e o último Estado 360 devem permanecer hospedados e acessíveis pela internet; Docker, PostgreSQL, n8n e agentes continuam na máquina de Rafael. Trabalhos novos podem aguardar quando o computador estiver desligado. A VPS foi adiada e não é dependência do piloto.
 

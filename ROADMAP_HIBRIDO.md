@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H5 — Telegram hospedado: texto
-**Próxima ação:** configurar e testar o webhook seguro do Telegram com secret_token para receber mensagens enquanto o computador estiver desligado.
+**Fase atual:** H6 — Telegram multimodal: PDF e Excel
+**Próxima ação:** homologar processamento seguro de documentos PDF e planilhas Excel sintéticos com sanitização, limites e proteção contra prompt injection.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 ---
@@ -44,12 +45,13 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H2 | Dados hospedados persistem com o computador desligado | [x] | H1 |
 | H3 | Ponte site ↔ n8n processa e publica um caso | [x] | H2 |
 | H4 | Diretor 360 inicia com um clique | [x] | H3 |
-| H5 | Telegram recebe e enfileira texto | [ ] | H3 |
+| H5 | Telegram recebe e enfileira texto | [x] | H3 |
 | H6 | Telegram processa PDF e Excel com segurança | [ ] | H5 |
 | H7 | Visão 360 executiva completa e rastreável | [ ] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [ ] | H1–H7 |
 | H9 | Backup e restauração comprovados | [ ] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 
 ---
@@ -164,21 +166,30 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** receber mensagens enquanto o computador estiver desligado e processá-las quando ele voltar.
 
-- [ ] Confirmar o bot e guardar o token somente no ambiente protegido.
-- [ ] Confirmar o `chat_id` autorizado de Rafael.
-- [ ] Criar ou rotacionar o segredo do webhook.
-- [ ] Manter a ingestão desabilitada durante a configuração.
-- [ ] Testar o endpoint sem segredo e confirmar bloqueio.
-- [ ] Registrar o webhook com `secret_token`.
-- [ ] Confirmar o endereço usando `getWebhookInfo`.
-- [ ] Habilitar a ingestão para o piloto.
-- [ ] Enviar uma mensagem sintética com o computador desligado.
-- [ ] Confirmar que a mensagem aguarda na fila hospedada.
-- [ ] Ligar o computador e processar a mensagem.
-- [ ] Confirmar atualização do Dashboard e resposta adequada no Telegram.
-- [ ] Repetir a mensagem e validar idempotência.
+- [x] Confirmar o bot e guardar o token somente no ambiente protegido.
+- [x] Confirmar o `chat_id` autorizado de Rafael.
+- [x] Criar ou rotacionar o segredo do webhook.
+- [x] Manter a ingestão desabilitada durante a configuração.
+- [x] Testar o endpoint sem segredo e confirmar bloqueio.
+- [x] Registrar o webhook com `secret_token`.
+- [x] Confirmar o endereço usando `getWebhookInfo`.
+- [x] Habilitar a ingestão para o piloto.
+- [x] Enviar uma mensagem sintética com o computador desligado.
+- [x] Confirmar que a mensagem aguarda na fila hospedada.
+- [x] Ligar o computador e processar a mensagem.
+- [x] Confirmar atualização do Dashboard e resposta adequada no Telegram.
+- [x] Repetir a mensagem e validar idempotência.
 
-**Critério de aceite:** texto enviado pelo Telegram entra na fila, é processado uma vez e atualiza o site.
+**Critério de aceite:** texto enviado pelo Telegram entra na fila, é processado uma vez e atualiza o site. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Proteção: validação estrita de `x-telegram-bot-api-secret-token` com tempo constante contra timing attacks (401 se ausente/inválido).
+- Autorização: allowlist estrita de `chat_id` autorizado de Rafael em chat privado (403 se remetente fora da allowlist).
+- Fila assíncrona: reserva atômica de `update_id` no D1 (`bridge_queue`) permitindo enfileiramento com o computador local desligado.
+- Ponte e consolidação: `WF-09` local reclama a mensagem com lease de 10 min, executa os 4 domínios e publica o Estado 360 atualizado.
+- Idempotência: reenvio do mesmo `update_id` retorna `duplicate: true` sem reprocessamento ou efeitos duplicados.
+- Teste automatizado: `scripts/test-h5-telegram-text.ps1` executado e aprovado com código 0 (`H5_TELEGRAM_TEXT_PASS`).
+
 
 ---
 
