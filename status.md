@@ -2,9 +2,9 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.3.0-marco23` (Marcos 1 ao 23 Homologados)  
+**Versão Atual da Release:** `v2.4.0-final-phase3` (automação dos Marcos 1 ao 24 concluída)
 **Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
-**Saúde do Projeto:** 🟢 **VERDE (23 de 24 Marcos Concluídos / 100% Homologado e Testado)**  
+**Saúde do Projeto:** 🟡 **AMARELO (24 de 24 Marcos implementados; go-live remoto aguarda domínio, VPS e credenciais)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 
@@ -21,8 +21,8 @@
 | **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
 | **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
 | **Fase 2 (Operação & Produção Assistida)** | **5 de 5 marcos concluídos (100%)** | Release v2.0.0 Certificada | 🟢 |
-| **Fase 3 (Evolução & Go-Live)** | **3 de 4 marcos concluídos (Marcos 21, 22 e 23)** | Release v2.3.0 em andamento | 🟢 |
-| **Total Geral Concluído** | **23 de 24 marcos (95.8%)** | 100% Homologado | 🟢 |
+| **Fase 3 (Evolução & Go-Live)** | **4 de 4 marcos implementados (100%)** | Release v2.4.0 | 🟢 |
+| **Total Geral Concluído** | **24 de 24 marcos implementados (100%)** | Go-live remoto pendente | 🟡 |
 
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV & OpenLineage | 🟢 |
@@ -65,7 +65,29 @@
 | **21** | **Guia Quickstart & Demonstração Interativa** | `QUICKSTART.md` executivo + script `demo-live-showcase.ps1` que dispara uma simulação e abre o navegador no Dashboard e Mesa do Revisor em 1 clique. | ✅ **Concluído** |
 | **22** | **Polimento Visual & UI/UX do Dashboard** | Redesenho moderno dos cards dos 4 Gerentes Gerais, gráficos de *Unit Economics* (R$ e tokens) e navegador em árvore do Evidence Graph. | ✅ **Concluído** |
 | **23** | **Banco de Casos PJ (5 Personas Reais)** | 5 cenários completos com scripts de 1-clique: *Indústria Metalúrgica*, *Rede de Varejo*, *Tech/SaaS*, *Agronegócio (CPR)* e *Distribuidora de Logística*. | ✅ **Concluído** |
-| **24** | **Automação de Deploy Cloud & Bot Live** | Scripts de 1-comando para provisionamento da VPS (n8n + Postgres + Caddy HTTPS/TLS), Cloudflare Pages (Frontend + D1) e Webhook oficial Telegram. | ⏳ **Próximo** |
+| **24** | **Automação de Deploy Cloud & Bot Live** | Provisionamento da VPS, validação cloud e ativação segura do webhook oficial Telegram. | ✅ **Implementado; ativação remota pendente** |
+
+### Marco 24 — Registro de conclusão técnica
+
+**Último marco concluído:** Marco 24 — Automação de Deploy Cloud & Bot Live.
+
+**Workflows criados:** nenhum workflow n8n novo; foram preservados e revalidados `WF-00` a `WF-09`. O Marco 24 adicionou automação operacional ao redor dos workflows existentes.
+
+**Artefatos criados:**
+
+- `scripts/provision-vps-server.sh`
+- `scripts/activate-telegram-webhook.ps1`
+- `scripts/test-cloud-deployment.ps1`
+- `infra/cloud/.env.prod.example`
+- `docs/DEPLOY_CLOUD_MARCO24.md`
+
+**Testes executados:** lint sem erros; build de produção aprovado; Readiness Gate aprovado; carga e concorrência aprovadas; ingestão de texto, PDF, XLSX e JSON aprovada; adaptador Telegram/idempotência aprovado; testes dos Marcos 19, 20 e 24 aprovados; `docker compose config` aprovado.
+
+**Erros conhecidos:** três avisos preexistentes de variáveis não utilizadas em `app/page.tsx`; Bash/WSL não está instalado nesta estação, portanto `bash -n` não foi executado; teste remoto `-Live`, TLS público e cadastro real do webhook dependem de domínio, VPS e credenciais de produção e ainda não foram executados.
+
+**Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
+
+**Próximo passo exato:** contratar ou informar a VPS Ubuntu 24.04 e o domínio, configurar DNS e segredos, executar `provision-vps-server.sh`, publicar o frontend, rodar `test-cloud-deployment.ps1 -Live` e somente então ativar o webhook oficial com `activate-telegram-webhook.ps1`.
 
 
 

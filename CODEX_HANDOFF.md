@@ -2,7 +2,7 @@
 ## Diretor 360: Plataforma Multiagente de Inteligência e Governança PJ
 
 **Data do Handoff:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.3.0-marco23` (23 de 24 Marcos Concluídos — 95.8% Homologado)  
+**Versão Atual da Release:** `v2.4.0-final-phase3` (24 de 24 Marcos implementados; go-live remoto pendente)
 **Autoridade Decisória do Projeto:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório GitHub:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 **Workspace Local Primário:** `C:\Users\fael\Documents\Codex\2026-08-24\vamos-criar-um-progama-360-de`  
@@ -33,15 +33,17 @@ Concluímos **23 de 24 marcos (95.8%)** com 100% de testes automatizados e build
 
 ---
 
-## 🎯 3. Próxima Tarefa Imediata para o Codex: MARCO 24
+## 🎯 3. Marco 24 implementado — próxima ação: go-live remoto
 
 ### 🌐 **Marco 24 — Automação de Deploy em Nuvem Real (Cloudflare Pages + VPS + Bot Telegram Live)**
-* **Objetivo:** Criar os scripts finais de automação de 1-comando para colocar o sistema no ar na internet com domínio próprio, HTTPS automático e Webhook do Telegram oficial ativo.
+* **Objetivo alcançado:** scripts finais de automação, validação e ativação segura foram implementados.
 * **Entregáveis a serem implementados no Marco 24:**
   1. `scripts/provision-vps-server.sh`: Script bash para VPS Linux (Ubuntu 24.04) que configura UFW (portas 22, 80, 443), Docker e sobe o `infra/cloud/docker-compose.prod.yaml` com Caddy Server (HTTPS automático via Let's Encrypt).
   2. `scripts/activate-telegram-webhook.ps1`: Script PowerShell que cadastra o webhook oficial do Telegram com `secret_token` (`X-Telegram-Bot-Api-Secret-Token`).
   3. `scripts/test-cloud-deployment.ps1`: Script que roda testes remotos contra o endpoint de produção.
-  4. Homologação final dos 24 marcos (100%) e release oficial `v2.4.0-final-phase3`!
+  4. Release de código `v2.4.0-final-phase3` preparada. A homologação externa final exige domínio, VPS e credenciais reais.
+
+O próximo passo é seguir `docs/DEPLOY_CLOUD_MARCO24.md`, executar o teste com `-Live` e ativar o webhook somente após HTTPS e healthchecks aprovados.
 
 ---
 

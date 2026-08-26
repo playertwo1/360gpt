@@ -1,8 +1,8 @@
 {
-    email fael@live.de
+    email {$ACME_EMAIL}
 }
 
-api.visao360.local, {$DOMAIN_NAME} {
+{$DOMAIN_NAME} {
     encode gzip zstd
 
     header {
@@ -13,19 +13,8 @@ api.visao360.local, {$DOMAIN_NAME} {
         Permissions-Policy "camera=(), microphone=(), geolocation=()"
     }
 
-    # Redirecionamento e Proxy para n8n
-    handle /webhook/* {
-        reverse_proxy n8n:5678 {
-            header_up X-Forwarded-Proto https
-            header_up X-Real-IP {remote_host}
-        }
-    }
-
-    handle /api/* {
-        reverse_proxy frontend:3000
-    }
-
-    handle {
-        reverse_proxy frontend:3000
+    reverse_proxy n8n:5678 {
+        header_up X-Forwarded-Proto https
+        header_up X-Real-IP {remote_host}
     }
 }

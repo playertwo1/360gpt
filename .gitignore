@@ -30,6 +30,7 @@ yarn-error.log*
 .env*
 !.env.example
 !.env.n8n.example
+!infra/cloud/.env.prod.example
 /.dev.vars*
 
 # deployment and generated files
