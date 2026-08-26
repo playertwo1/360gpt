@@ -57,11 +57,11 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 **Objetivo:** acessar o Dashboard pela internet usando somente contas autorizadas.
 
 - [x] Abrir `https://visao-360-diretor.fael360092.chatgpt.site`.
-- [ ] Entrar com `fael@live.de`.
+- [x] Entrar com `fael@live.de`.
 - [ ] Entrar com `rafa.pedrosa1@gmail.com`.
 - [x] Confirmar o Dashboard principal.
 - [x] Confirmar a Mesa do Revisor em `/reviews`.
-- [ ] Repetir pelo celular ou por outro computador.
+- [x] Repetir por outro navegador ou modo anônimo e confirmar exigência de login.
 - [x] Confirmar que uma conta não autorizada recebe acesso negado.
 - [x] Registrar data, conta usada e resultado, sem capturar dados sensíveis.
 
@@ -71,7 +71,8 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 - Data: `2026-08-26 17:50 America/Sao_Paulo`
 - Resultado: `Dashboard e /reviews abriram em sessão autenticada; requisições sem autenticação receberam HTTP 403 nas duas rotas; site ainda sem snapshot hospedado.`
-- Conta da sessão: `autorizada, mas a interface não expõe qual e-mail está conectado; confirmação de Rafael pendente.`
+- Conta da sessão: `fael@live.de`, confirmada por Rafael.
+- Navegador alternativo/anônimo: `solicitou login antes de permitir acesso`, confirmado por Rafael.
 - Referência ou captura: `validação visual no navegador e teste HTTP externo sem credenciais.`
 
 ---
@@ -296,6 +297,7 @@ Ao encerrar uma sessão:
 |---|---|---|---|---|---|---|
 | 2026-08-26 | Codex | Planejamento | Roadmap híbrido criado; VPS adiada | Documentação revisada | Executar H1: validar acesso hospedado | consultar `git log` |
 | 2026-08-26 17:50 | Codex | H1 | Dashboard e Mesa do Revisor validados em sessão autenticada; bloqueio anônimo confirmado | HTTP 403 em `/` e `/reviews` sem credenciais; navegador autenticado abriu as duas páginas | Rafael confirmar a conta conectada e testar pelo celular | consultar `git log` |
+| 2026-08-26 | Rafael/Codex | H1 | Conta principal identificada e barreira de login confirmada em outro navegador/modo anônimo | `fael@live.de` acessou diretamente pela sessão existente; sessão alternativa pediu login | Testar `rafa.pedrosa1@gmail.com` e concluir H1 | consultar `git log` |
 
 ## Modelo para nova entrada
 
