@@ -43,7 +43,7 @@ Concluímos a implementação dos **24 marcos originais**. A fase atual é a hom
   3. `scripts/test-cloud-deployment.ps1`: Script que roda testes remotos contra o endpoint de produção.
   4. Release de código `v2.4.0-final-phase3` preparada. A homologação externa final exige domínio, VPS e credenciais reais.
 
-Rafael decidiu adiar a VPS. O site, a fila e o último Estado 360 permanecem hospedados; Docker, PostgreSQL, n8n e agentes processam localmente. O próximo passo obrigatório é a fase H1 de `ROADMAP_HIBRIDO.md`: validar o acesso privado ao site hospedado. Os scripts de VPS permanecem preservados para uma migração futura opcional.
+Rafael decidiu adiar a VPS. O site, a fila e o último Estado 360 permanecem hospedados; Docker, PostgreSQL, n8n e agentes processam localmente. A fase H1 está em andamento: Dashboard e `/reviews` abriram em sessão autenticada, enquanto acessos sem credenciais receberam HTTP 403. Falta Rafael confirmar qual conta está conectada, testar outro dispositivo e validar a segunda conta autorizada. Os scripts de VPS permanecem preservados para uma migração futura opcional.
 
 ### Ordem obrigatória para Codex e Antigravity
 

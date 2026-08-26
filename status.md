@@ -87,7 +87,7 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** executar a fase H1 do `ROADMAP_HIBRIDO.md`: abrir o site hospedado, entrar com uma conta autorizada, validar Dashboard e Mesa do Revisor e registrar a evidência. Não contratar VPS nesta fase.
+**Próximo passo exato:** concluir a fase H1 do `ROADMAP_HIBRIDO.md`: Rafael deve confirmar qual conta está conectada no navegador aberto e repetir o acesso pelo celular ou outro computador. Depois, testar a segunda conta autorizada. Não iniciar H2 antes dessa evidência.
 
 ---
 
@@ -97,7 +97,7 @@
 
 | Fase | Escopo | Estado |
 |---|---|:---:|
-| H1 | Acesso privado ao site | ⏳ Próxima |
+| H1 | Acesso privado ao site | 🟡 Em andamento — Dashboard, `/reviews` e bloqueio anônimo comprovados |
 | H2 | Persistência hospedada | ⬜ Pendente |
 | H3 | Ponte site ↔ computador | ⬜ Pendente |
 | H4 | Inicialização com um clique | ⬜ Pendente |

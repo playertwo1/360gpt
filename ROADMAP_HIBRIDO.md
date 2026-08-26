@@ -39,7 +39,7 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 | Fase | Resultado esperado | Estado | Dependência principal |
 |---|---|:---:|---|
-| H1 | Acesso privado ao site confirmado | [ ] | Login autorizado |
+| H1 | Acesso privado ao site confirmado | [~] | Login autorizado |
 | H2 | Dados hospedados persistem com o computador desligado | [ ] | H1 |
 | H3 | Ponte site ↔ n8n processa e publica um caso | [ ] | H2 |
 | H4 | Diretor 360 inicia com um clique | [ ] | H3 |
@@ -56,22 +56,23 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** acessar o Dashboard pela internet usando somente contas autorizadas.
 
-- [ ] Abrir `https://visao-360-diretor.fael360092.chatgpt.site`.
+- [x] Abrir `https://visao-360-diretor.fael360092.chatgpt.site`.
 - [ ] Entrar com `fael@live.de`.
 - [ ] Entrar com `rafa.pedrosa1@gmail.com`.
-- [ ] Confirmar o Dashboard principal.
-- [ ] Confirmar a Mesa do Revisor em `/reviews`.
+- [x] Confirmar o Dashboard principal.
+- [x] Confirmar a Mesa do Revisor em `/reviews`.
 - [ ] Repetir pelo celular ou por outro computador.
-- [ ] Confirmar que uma conta não autorizada recebe acesso negado.
-- [ ] Registrar data, conta usada e resultado, sem capturar dados sensíveis.
+- [x] Confirmar que uma conta não autorizada recebe acesso negado.
+- [x] Registrar data, conta usada e resultado, sem capturar dados sensíveis.
 
 **Critério de aceite:** pelo menos uma conta autorizada acessa Dashboard e Mesa do Revisor em outro dispositivo, e uma sessão não autorizada é bloqueada.
 
 **Evidências:**
 
-- Data: `pendente`
-- Resultado: `pendente`
-- Referência ou captura: `pendente`
+- Data: `2026-08-26 17:50 America/Sao_Paulo`
+- Resultado: `Dashboard e /reviews abriram em sessão autenticada; requisições sem autenticação receberam HTTP 403 nas duas rotas; site ainda sem snapshot hospedado.`
+- Conta da sessão: `autorizada, mas a interface não expõe qual e-mail está conectado; confirmação de Rafael pendente.`
+- Referência ou captura: `validação visual no navegador e teste HTTP externo sem credenciais.`
 
 ---
 
@@ -294,6 +295,7 @@ Ao encerrar uma sessão:
 | Data/hora | Ferramenta | Fase | O que mudou | Testes/evidências | Próximo passo | Commit |
 |---|---|---|---|---|---|---|
 | 2026-08-26 | Codex | Planejamento | Roadmap híbrido criado; VPS adiada | Documentação revisada | Executar H1: validar acesso hospedado | consultar `git log` |
+| 2026-08-26 17:50 | Codex | H1 | Dashboard e Mesa do Revisor validados em sessão autenticada; bloqueio anônimo confirmado | HTTP 403 em `/` e `/reviews` sem credenciais; navegador autenticado abriu as duas páginas | Rafael confirmar a conta conectada e testar pelo celular | consultar `git log` |
 
 ## Modelo para nova entrada
 
