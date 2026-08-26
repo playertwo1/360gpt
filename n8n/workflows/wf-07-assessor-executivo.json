@@ -1,0 +1,32 @@
+{
+  "id": "cd588c3c-d11d-4888-9db2-120172075158",
+  "name": "WF-07 — Assessor Executivo determinístico (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "id": "19910cb8-bff1-44c3-b049-74e8c1456779",
+      "name": "Receber Estado persistido",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-220, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nconst persisted = envelope.persisted_state;\nif (!persisted?.state_id || !persisted?.snapshot) throw new Error('Assessor aceita somente Estado 360 persistido');\nconst state = persisted.snapshot;\nconst findings = state.findings ?? [];\nconst gaps = state.data_gaps ?? [];\nconst actions = state.recommended_actions ?? [];\nconst summary = state.overall_status === 'READY' ? `Estado 360 pronto com ${findings.length} achado(s), ${gaps.length} lacuna(s) declarada(s) e ${actions.length} ação(ões) proposta(s).` : `Estado 360 requer revisão manual. Há ${findings.length} achado(s) e ${gaps.length} lacuna(s) registradas.`;\nconst assessment = { schema_version: '1.0.0', state_id: persisted.state_id, state_version: persisted.state_version, state_hash: persisted.state_hash, generated_at: new Date().toISOString(), overall_status: state.overall_status, summary, key_findings: findings.map(({ finding_id, topic, statement, evidence_quality, risk_level }) => ({ finding_id, topic, statement, evidence_quality, risk_level })), blind_spots: gaps.map(({ field, reason_code, impact, remediation }) => ({ field, reason_code, impact, remediation })), next_actions: actions.map(({ action_id, action, priority, requires_human_approval, execution_authorization }) => ({ action_id, action, priority, requires_human_approval, execution_authorization })), manual_review: state.manual_review, source_constraint: 'PERSISTED_STATE_ONLY', external_effects_allowed: false };\nreturn [{ json: { ...envelope, executive_assessment: assessment } }];"
+      },
+      "id": "9176301a-420d-49de-b6e9-329539436aaf",
+      "name": "Sintetizar sem alterar o Estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [40, 80]
+    }
+  ],
+  "connections": { "Receber Estado persistido": { "main": [[{ "node": "Sintetizar sem alterar o Estado", "type": "main", "index": 0 }]] } },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

@@ -1,0 +1,33 @@
+schema_version: "1.0.0"
+status: ACTIVE
+codes:
+  NOT_REQUIRED_FOR_INTENT:
+    category: ROUTING
+    review_required: false
+  ROUTING_AMBIGUOUS:
+    category: ROUTING
+    review_required: true
+  CAPABILITY_GAP:
+    category: CAPABILITY
+    review_required: true
+  SOURCE_UNAVAILABLE:
+    category: DATA_QUALITY
+    review_required: true
+  ORPHAN_EVIDENCE:
+    category: EVIDENCE
+    review_required: true
+  UNVERIFIABLE_EVIDENCE:
+    category: EVIDENCE
+    review_required: true
+  DIVERGENCIA_INTERNA:
+    category: CONFLICT
+    review_required: true
+  DIVERGENCIA_NORMATIVA:
+    category: CONFLICT
+    review_required: true
+  DIVERGENCIA_DE_DADOS:
+    category: CONFLICT
+    review_required: true
+  SYNTHETIC_DATA_ONLY:
+    category: ENVIRONMENT
+    review_required: false

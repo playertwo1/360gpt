@@ -1,0 +1,70 @@
+{
+  "id": "de5f7ddc-0744-44b7-bb2d-4d10c99a44d7",
+  "name": "WF-08 — Consulta somente leitura do Estado 360 (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "visao-360/offline-latest-state",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "4e91fecb-2fc8-4387-9a8a-0404b3eaa854",
+      "name": "Receber consulta local",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-420, 80],
+      "webhookId": "44093924-569c-49e4-bcd8-f531f16f33dc"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const request = $input.first().json ?? {};\nconst headers = request.headers ?? {};\nif (String(headers['x-visao360-test-mode'] ?? '').toUpperCase() !== 'OFFLINE_EVAL') throw new Error('Consulta permitida somente em OFFLINE_EVAL');\nconst query = request.query ?? {};\nconst tenantId = String(query.tenant_id ?? 'tenant-demo').trim();\nconst subjectRef = String(query.subject_ref ?? 'cust-demo-001').trim();\nif (!tenantId || !subjectRef || tenantId.length > 120 || subjectRef.length > 160) throw new Error('Parâmetros de consulta inválidos');\nreturn [{ json: { tenant_id: tenantId, subject_ref: subjectRef, execution_mode: 'OFFLINE_EVAL' } }];"
+      },
+      "id": "61ead35b-ef25-4c02-9b55-ab91c4627bc4",
+      "name": "Validar escopo da consulta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-180, 80]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  $1::text AS requested_tenant_id,\n  $2::text AS requested_subject_ref,\n  s.state_id, s.state_version, s.event_id, s.correlation_id,\n  s.state_hash, s.overall_status, s.snapshot, s.generated_at\nFROM (SELECT 1) AS request_scope\nLEFT JOIN LATERAL (\n  SELECT state_id, state_version, event_id, correlation_id, state_hash, overall_status, snapshot, generated_at\n  FROM state_snapshots\n  WHERE tenant_id = $1 AND subject_ref = $2\n  ORDER BY state_version DESC\n  LIMIT 1\n) s ON true;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{ [ $json.tenant_id, $json.subject_ref ] }}"
+        }
+      },
+      "id": "dd929328-681c-442c-b5b7-022fcce10338",
+      "name": "Ler último snapshot",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [60, 80],
+      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json;\nif (!row.state_id) return [{ json: { available: false, execution_mode: 'OFFLINE_EVAL', tenant_id: row.requested_tenant_id, subject_ref: row.requested_subject_ref, read_only: true } }];\nconst snapshot = typeof row.snapshot === 'string' ? JSON.parse(row.snapshot) : row.snapshot;\nreturn [{ json: { available: true, execution_mode: 'OFFLINE_EVAL', read_only: true, state_id: row.state_id, state_version: Number(row.state_version), event_id: row.event_id, correlation_id: row.correlation_id, state_hash: row.state_hash, overall_status: row.overall_status, generated_at: row.generated_at, snapshot } }];"
+      },
+      "id": "b20bdd0c-38fd-4a2a-b7e6-004ba86ff7c9",
+      "name": "Projetar resposta somente leitura",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 80]
+    }
+  ],
+  "connections": {
+    "Receber consulta local": { "main": [[{ "node": "Validar escopo da consulta", "type": "main", "index": 0 }]] },
+    "Validar escopo da consulta": { "main": [[{ "node": "Ler último snapshot", "type": "main", "index": 0 }]] },
+    "Ler último snapshot": { "main": [[{ "node": "Projetar resposta somente leitura", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

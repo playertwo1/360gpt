@@ -1,0 +1,120 @@
+{
+  "id": "c194ab2e-427f-47ba-a963-acde2661d816",
+  "name": "WF-02 — Registro idempotente de entrada (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "2cacfb32-99c9-49bb-904b-cb1968b710c5",
+      "name": "Receber envelope do WF-01",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { createHash } = require('crypto');\nconst envelope = $input.first().json;\nif (envelope.execution_mode !== 'OFFLINE_EVAL' || envelope.external_effects_allowed !== false) throw new Error('WF-02 aceita somente OFFLINE_EVAL sem efeitos externos');\nconst required = [envelope.event?.event_id, envelope.event?.tenant_id, envelope.correlation_id, envelope.run_id, envelope.idempotency_key, envelope.input_hash, envelope.release_id, envelope.event?.received_at];\nif (required.some((value) => !value)) throw new Error('Envelope incompleto para persistência idempotente');\nconst material = [envelope.input_hash, envelope.correlation_id, 'REGISTRATION_ATTEMPT'].join('|');\nreturn [{ json: { ...envelope, registration_audit_hash: `sha256:${createHash('sha256').update(material, 'utf8').digest('hex')}` } }];"
+      },
+      "id": "c390261c-e77b-46cc-ab2d-07fc669165e2",
+      "name": "Validar contrato de persistência",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH attempted AS (\n  INSERT INTO events (\n    event_id, tenant_id, correlation_id, run_id, idempotency_key, source, purpose,\n    data_classification, status, payload_ref, input_hash, release_id, received_at\n  )\n  VALUES (\n    $1::uuid, $2, $3::uuid, $4::uuid, $5, $6, $7,\n    $8, 'PROCESSING', $9, $10, $11, $12::timestamptz\n  )\n  ON CONFLICT (idempotency_key) DO NOTHING\n  RETURNING event_id, status, created_at\n),\nresolved AS (\n  SELECT event_id, status, created_at, true AS is_new FROM attempted\n  UNION ALL\n  SELECT e.event_id, e.status, e.created_at, false AS is_new\n  FROM events e\n  WHERE e.idempotency_key = $5\n    AND NOT EXISTS (SELECT 1 FROM attempted)\n  LIMIT 1\n),\nartifacts AS (\n  INSERT INTO event_artifacts (\n    artifact_id, event_id, tenant_id, file_name, mime_type, size_bytes,\n    content_hash, content_trust, source_ref, received_at\n  )\n  SELECT\n    md5(r.event_id::text || '|' || (f.value->>'sha256'))::uuid,\n    r.event_id, $2,\n    COALESCE(NULLIF(f.value->>'file_name', ''), 'unnamed'),\n    COALESCE(NULLIF(f.value->>'mime_type', ''), 'application/octet-stream'),\n    COALESCE((f.value->>'size_bytes')::bigint, 0),\n    'sha256:' || (f.value->>'sha256'),\n    COALESCE(NULLIF(f.value->>'content_trust', ''), 'UNTRUSTED'),\n    $9, $12::timestamptz\n  FROM resolved r\n  CROSS JOIN LATERAL jsonb_array_elements($13::jsonb) AS f(value)\n  WHERE r.is_new AND NULLIF(f.value->>'sha256', '') IS NOT NULL\n  ON CONFLICT (event_id, content_hash) DO NOTHING\n  RETURNING artifact_id\n),\naudit_entry AS (\n  INSERT INTO audit_log (\n    tenant_id, correlation_id, actor, actor_role, action, object_type,\n    object_id, outcome, release_id, event_hash, previous_event_hash\n  )\n  SELECT\n    $2, $3::uuid, 'n8n:wf-02', 'PERSISTENCE',\n    CASE WHEN r.is_new THEN 'EVENT_REGISTERED' ELSE 'DUPLICATE_IGNORED' END,\n    'EVENT', r.event_id::text,\n    CASE WHEN r.is_new THEN 'PROCESSING' ELSE 'DUPLICATE_IGNORED' END,\n    $11, $15, NULL\n  FROM resolved r\n  RETURNING audit_id\n)\nSELECT\n  r.event_id,\n  r.status AS technical_status,\n  r.created_at AS registered_at,\n  r.is_new,\n  CASE WHEN r.is_new THEN 'PROCESSING' ELSE 'DUPLICATE_IGNORED' END AS registration_status,\n  (SELECT count(*)::int FROM artifacts) AS artifacts_registered,\n  (SELECT audit_id FROM audit_entry LIMIT 1) AS audit_id,\n  $14::jsonb AS envelope\nFROM resolved r;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{ [ $json.event.event_id, $json.event.tenant_id, $json.correlation_id, $json.run_id, $json.idempotency_key, $json.event.source, $json.event.purpose, $json.event.data_classification, 'n8n://execution/' + $execution.id, $json.input_hash, $json.release_id, $json.event.received_at, JSON.stringify($json.payload.files ?? []), JSON.stringify($json), $json.registration_audit_hash ] }}"
+        }
+      },
+      "id": "7093754f-c9a9-48b8-9f46-6635e9e8f93d",
+      "name": "Registrar atomicamente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        60,
+        80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json;\nconst envelope = typeof row.envelope === 'string' ? JSON.parse(row.envelope) : row.envelope;\nif (!envelope || !row.registration_status) throw new Error('Banco não retornou o resultado do registro');\ndelete envelope.registration_audit_hash;\nreturn [{ json: { ...envelope, registration: { event_id: row.event_id, registration_status: row.registration_status, technical_status: row.technical_status, is_new: row.is_new === true, artifacts_registered: Number(row.artifacts_registered ?? 0), audit_id: Number(row.audit_id), registered_at: row.registered_at } } }];"
+      },
+      "id": "771c7ca3-1206-4dbc-994d-070ebdf3bf3c",
+      "name": "Construir resultado do registro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        80
+      ]
+    }
+  ],
+  "connections": {
+    "Receber envelope do WF-01": {
+      "main": [
+        [
+          {
+            "node": "Validar contrato de persistência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar contrato de persistência": {
+      "main": [
+        [
+          {
+            "node": "Registrar atomicamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar atomicamente": {
+      "main": [
+        [
+          {
+            "node": "Construir resultado do registro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

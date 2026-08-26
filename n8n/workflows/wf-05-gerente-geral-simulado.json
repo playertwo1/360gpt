@@ -1,0 +1,57 @@
+{
+  "id": "5f136a17-a768-4a90-952c-66d2ca53134a",
+  "name": "WF-05 — Gerente Geral determinístico simulado (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "2a91685b-76f5-4e86-91f2-721a75f7f2d1",
+      "name": "Receber solicitação de domínio",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID } = require('crypto');\nconst request = $input.first().json;\nif (request.skip === true) return [{ json: { skip: true } }];\nconst definitions = {\n  conta: { manager: 'GERENTE_GERAL_CONTA', capabilities: ['resolver_identidade', 'avaliar_elegibilidade'], topic: 'identidade_e_elegibilidade', statement: 'Identificador sintético preservado para correlação; elegibilidade bancária real não foi avaliada.' },\n  performance: { manager: 'GERENTE_GERAL_PERFORMANCE', capabilities: ['avaliar_performance', 'identificar_gap_execucao'], topic: 'performance_sintetica', statement: 'Solicitação sintética recebida para análise de performance; nenhum indicador bancário real foi consultado.' },\n  financeiro: { manager: 'GERENTE_GERAL_FINANCEIRO', capabilities: ['calcular_rentabilidade', 'avaliar_viabilidade'], topic: 'financeiro_sintetico', statement: 'Solicitação sintética recebida para análise financeira; nenhum cálculo bancário real foi executado.' },\n  relacionamento: { manager: 'GERENTE_GERAL_RELACIONAMENTO', capabilities: ['recuperar_contexto', 'preparar_abordagem'], topic: 'relacionamento_sintetico', statement: 'Contexto sintético recebido para preparação de relacionamento; nenhum contato externo foi realizado.' }\n};\nconst context = request.context ?? {};\nif (context.execution_mode !== 'OFFLINE_EVAL' || context.external_effects_allowed !== false) throw new Error('Gerente simulado aceita somente OFFLINE_EVAL');\nconst definition = definitions[request.domain];\nif (!definition) throw new Error('Domínio não autorizado para o Gerente Geral simulado');\nconst capabilities = [...new Set(request.capabilities ?? [])];\nif (!capabilities.length || capabilities.length > 3 || capabilities.some((capability) => !definition.capabilities.includes(capability))) throw new Error('Capacidade ausente ou não autorizada no domínio');\nconst receivedAt = context.received_at;\nconst handoff = {\n  schema_version: '3.0.0', message_id: randomUUID(), trace_id: context.trace_id, causation_id: context.routing_id,\n  agent_id: definition.manager, agent_role: 'GENERAL_MANAGER', producer_version: '1.0.0', parent_agent_id: 'DIRETOR_360',\n  handoff_level: 'MANAGER_TO_CONSOLIDATION', handoff_target: 'MOTOR_CONSOLIDACAO_360', domain: request.domain,\n  run_id: context.run_id, correlation_id: context.correlation_id, generated_at: new Date().toISOString(), input_snapshot_at: receivedAt, input_hash: context.input_hash,\n  policy_snapshot: { routing: '1.0.0', freshness: '1.0.0', reason_codes: '1.0.0', capability_registry: '1.0.0' },\n  execution_status: 'SUCCESS',\n  overall_assessment: { evidence_quality: 'PARTIAL', data_completeness: 'PARTIAL', eligibility: request.domain === 'conta' ? 'UNDETERMINED' : 'NOT_APPLICABLE', risk_level: 'LOW', decision_status: 'READY' },\n  findings: [{\n    finding_id: `${request.domain}-${randomUUID()}`, topic: definition.topic, statement: definition.statement, inference_type: 'DETERMINISTIC', model_confidence: null, calibration_profile_id: null, evidence_quality: 'PARTIAL', risk_level: 'LOW',\n    evidence_sources: [{ source_id: 'offline_eval_webhook', source_type: 'SYNTHETIC_INPUT', source_version: '1.0.0', source_status: 'ACTIVE', artifact_hash: context.input_hash, lineage_node_id: `input-${context.event_id}`, captured_at: receivedAt, observed_at: receivedAt, recorded_at: receivedAt, valid_from: receivedAt, valid_to: null, period_start: null, period_end: null, freshness_status: 'CURRENT', precedence_rule_id: 'offline.synthetic.v1', locator: `event://${context.event_id}` }]\n  }],\n  data_gaps: [{ field: 'real_domain_data', reason_code: 'SYNTHETIC_DATA_ONLY', impact: 'O resultado valida o fluxo, mas não sustenta decisão bancária real.', requires_manual_review: false, remediation: 'Conectar somente fontes homologadas após aprovação de segurança e conformidade.' }],\n  gates: [], recommended_actions: [], warnings: ['OFFLINE_EVAL: resultado exclusivamente sintético e sem autorização externa.']\n};\nconst required = ['schema_version','message_id','trace_id','agent_id','agent_role','handoff_level','handoff_target','domain','run_id','correlation_id','input_hash','overall_assessment','findings','data_gaps','gates','recommended_actions','warnings'];\nif (required.some((field) => handoff[field] === undefined || handoff[field] === null)) throw new Error(`Handoff inválido na fronteira do domínio ${request.domain}`);\nreturn [{ json: { domain: request.domain, capabilities_executed: capabilities, manager_implementation: `${definition.manager}@1.0.0`, domain_handoff: handoff } }];"
+      },
+      "id": "58a28067-5453-4d22-8ea6-f25c6741ee26",
+      "name": "Executar Gerente Geral simulado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        80
+      ]
+    }
+  ],
+  "connections": {
+    "Receber solicitação de domínio": {
+      "main": [
+        [
+          {
+            "node": "Executar Gerente Geral simulado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

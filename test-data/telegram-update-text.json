@@ -1,0 +1,10 @@
+{
+  "update_id": 3601001,
+  "message": {
+    "message_id": 501,
+    "date": 1787716800,
+    "chat": { "id": 360001, "type": "private" },
+    "from": { "id": 360001, "is_bot": false, "first_name": "Rafael", "username": "rafael_demo" },
+    "text": "Preparar visão 360 completa do cliente sintético recebido pelo Telegram simulado."
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/handoff.schema.json",
+  "title": "Handoff hierárquico Visão 360",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "message_id",
+    "trace_id",
+    "causation_id",
+    "agent_id",
+    "agent_role",
+    "producer_version",
+    "parent_agent_id",
+    "handoff_level",
+    "handoff_target",
+    "domain",
+    "run_id",
+    "correlation_id",
+    "generated_at",
+    "input_snapshot_at",
+    "input_hash",
+    "policy_snapshot",
+    "execution_status",
+    "overall_assessment",
+    "findings",
+    "data_gaps",
+    "gates",
+    "recommended_actions",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": { "const": "3.0.0" },
+    "message_id": { "$ref": "#/$defs/uuid" },
+    "trace_id": { "$ref": "#/$defs/uuid" },
+    "causation_id": { "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+    "agent_id": { "type": "string", "minLength": 3 },
+    "agent_role": { "enum": ["SPECIALIST", "GENERAL_MANAGER"] },
+    "producer_version": { "$ref": "#/$defs/semver" },
+    "parent_agent_id": { "type": ["string", "null"] },
+    "handoff_level": { "enum": ["SPECIALIST_TO_MANAGER", "MANAGER_TO_CONSOLIDATION"] },
+    "handoff_target": { "type": "string", "minLength": 3 },
+    "domain": { "enum": ["conta", "performance", "financeiro", "relacionamento"] },
+    "run_id": { "$ref": "#/$defs/uuid" },
+    "correlation_id": { "$ref": "#/$defs/uuid" },
+    "generated_at": { "$ref": "#/$defs/dateTime" },
+    "input_snapshot_at": { "$ref": "#/$defs/dateTime" },
+    "input_hash": { "$ref": "#/$defs/sha256" },
+    "policy_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routing", "freshness", "reason_codes", "capability_registry"],
+      "properties": {
+        "routing": { "$ref": "#/$defs/semver" },
+        "freshness": { "$ref": "#/$defs/semver" },
+        "reason_codes": { "$ref": "#/$defs/semver" },
+        "capability_registry": { "$ref": "#/$defs/semver" }
+      }
+    },
+    "execution_status": { "enum": ["SUCCESS", "PARTIAL", "FAILED", "TIMEOUT"] },
+    "overall_assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_quality", "data_completeness", "eligibility", "risk_level", "decision_status"],
+      "properties": {
+        "evidence_quality": { "$ref": "#/$defs/evidenceQuality" },
+        "data_completeness": { "enum": ["COMPLETE", "PARTIAL", "INSUFFICIENT"] },
+        "eligibility": { "enum": ["ELIGIBLE", "INELIGIBLE", "UNDETERMINED", "NOT_APPLICABLE"] },
+        "risk_level": { "$ref": "#/$defs/riskLevel" },
+        "decision_status": { "enum": ["READY", "MANUAL_REVIEW_REQUIRED"] }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "data_gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/dataGap" }
+    },
+    "gates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gate" }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "agent_role": { "const": "SPECIALIST" } } },
+      "then": { "properties": { "handoff_level": { "const": "SPECIALIST_TO_MANAGER" } } }
+    },
+    {
+      "if": { "properties": { "agent_role": { "const": "GENERAL_MANAGER" } } },
+      "then": {
+        "properties": {
+          "handoff_level": { "const": "MANAGER_TO_CONSOLIDATION" },
+          "handoff_target": { "const": "MOTOR_CONSOLIDACAO_360" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "dateTime": { "type": "string", "format": "date-time" },
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "riskLevel": { "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
+    "evidenceQuality": { "enum": ["SUFFICIENT", "PARTIAL", "INSUFFICIENT", "NOT_APPLICABLE"] },
+    "evidenceSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "source_type",
+        "source_version",
+        "source_status",
+        "artifact_hash",
+        "lineage_node_id",
+        "captured_at",
+        "observed_at",
+        "recorded_at",
+        "valid_from",
+        "valid_to",
+        "freshness_status",
+        "precedence_rule_id",
+        "locator"
+      ],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_type": { "type": "string", "minLength": 1 },
+        "source_version": { "type": "string", "minLength": 1 },
+        "source_status": { "enum": ["ACTIVE", "DEGRADED", "REVOKED", "RETIRED"] },
+        "artifact_hash": { "$ref": "#/$defs/sha256" },
+        "lineage_node_id": { "type": "string", "minLength": 1 },
+        "captured_at": { "$ref": "#/$defs/dateTime" },
+        "observed_at": { "$ref": "#/$defs/dateTime" },
+        "recorded_at": { "$ref": "#/$defs/dateTime" },
+        "valid_from": { "$ref": "#/$defs/dateTime" },
+        "valid_to": { "oneOf": [{ "$ref": "#/$defs/dateTime" }, { "type": "null" }] },
+        "period_start": { "type": ["string", "null"], "format": "date" },
+        "period_end": { "type": ["string", "null"], "format": "date" },
+        "freshness_status": { "enum": ["CURRENT", "STALE", "UNKNOWN"] },
+        "precedence_rule_id": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "topic", "statement", "inference_type", "model_confidence", "calibration_profile_id", "evidence_quality", "risk_level", "evidence_sources"],
+      "properties": {
+        "finding_id": { "type": "string", "minLength": 1 },
+        "topic": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "inference_type": { "enum": ["DETERMINISTIC", "MODEL_ASSISTED", "HUMAN_CONFIRMED"] },
+        "model_confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "calibration_profile_id": { "type": ["string", "null"] },
+        "evidence_quality": { "$ref": "#/$defs/evidenceQuality" },
+        "risk_level": { "$ref": "#/$defs/riskLevel" },
+        "evidence_sources": { "type": "array", "items": { "$ref": "#/$defs/evidenceSource" } }
+      }
+    },
+    "dataGap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field", "reason_code", "impact", "requires_manual_review", "remediation"],
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "impact": { "type": "string", "minLength": 1 },
+        "requires_manual_review": { "type": "boolean" },
+        "remediation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "scope_type", "scope_id", "state", "reason_code", "rule_ref", "evidence_source_ids", "review_request_id", "remediation"],
+      "properties": {
+        "gate_id": { "type": "string", "minLength": 1 },
+        "scope_type": { "enum": ["CLIENT", "PRODUCT", "OPERATION", "ACTION"] },
+        "scope_id": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["PASS", "MANUAL_REVIEW_REQUIRED"] },
+        "reason_code": { "type": "string", "minLength": 1 },
+        "rule_ref": { "type": "string", "minLength": 1 },
+        "evidence_source_ids": { "type": "array", "items": { "type": "string" } },
+        "review_request_id": { "type": ["string", "null"] },
+        "remediation": { "type": ["string", "null"] }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "action", "target_system", "priority", "prerequisites", "requires_human_approval", "execution_authorization", "related_finding_ids"],
+      "properties": {
+        "action_id": { "type": "string", "minLength": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "target_system": { "type": "string", "minLength": 1 },
+        "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "requires_human_approval": { "type": "boolean" },
+        "execution_authorization": { "enum": ["NOT_APPLICABLE", "PENDING_HUMAN", "PENDING_MANUAL_REVIEW", "APPROVED", "DENIED"] },
+        "related_finding_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

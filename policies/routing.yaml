@@ -1,0 +1,24 @@
+schema_version: "1.0.0"
+status: ACTIVE
+fallback: MANUAL_REVIEW_REQUIRED
+rules:
+  routing.full_view.v1:
+    intent: visao_executiva_completa
+    domains:
+      conta: [resolver_identidade, avaliar_elegibilidade]
+      performance: [avaliar_performance, identificar_gap_execucao]
+      financeiro: [calcular_rentabilidade, avaliar_viabilidade]
+      relacionamento: [recuperar_contexto, preparar_abordagem]
+  routing.keyword.v1:
+    intent: triagem_por_capacidade
+    deterministic_terms: true
+    ambiguous_result: MANUAL_REVIEW_REQUIRED
+dependencies:
+  - before: identity_resolution
+    after: domain_consolidation
+  - before: eligibility
+    after: conditional_recommendation
+  - before: approved_calculation
+    after: financial_or_performance_explanation
+  - before: conversation_context
+    after: personalized_approach

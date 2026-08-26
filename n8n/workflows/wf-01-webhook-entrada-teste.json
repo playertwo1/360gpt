@@ -1,0 +1,273 @@
+{
+  "id": "d9461ba5-f5b4-4f65-9ad9-a22d530b3360",
+  "name": "WF-01 — Webhook de entrada local (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "c194ab2e-427f-47ba-a963-acde2661d816",
+          "mode": "list",
+          "cachedResultName": "WF-02 — Registro idempotente de entrada (OFFLINE_EVAL)"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "d9f3b070-e4ea-4a5f-9244-70e4af333244",
+      "name": "Registrar entrada no WF-02",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "80e66c34-8eae-444d-8164-acdf51e83d42",
+          "mode": "list",
+          "cachedResultName": "WF-03 — Registro idempotente do roteamento (OFFLINE_EVAL)"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "05c91cd8-98d0-44a3-8d70-5b7a9f23929a",
+      "name": "Registrar roteamento no WF-03",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "04d21695-e5ad-4bc1-a529-526dab45c0ee",
+          "mode": "list",
+          "cachedResultName": "WF-04 — Orquestração dos Gerentes Gerais simulados (OFFLINE_EVAL)"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "459314a9-5d30-4b2c-a5c0-5577b80fe920",
+      "name": "Orquestrar Gerentes no WF-04",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        680,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": { "__rl": true, "value": "dc6ba586-7bd7-4b22-a55b-155bedf96328", "mode": "list", "cachedResultName": "WF-06 — Motor e publicação do Estado 360 (OFFLINE_EVAL)" },
+        "mode": "once",
+        "options": { "waitForSubWorkflow": true }
+      },
+      "id": "aac4020a-990f-4702-94d3-6ae7a4621197",
+      "name": "Consolidar no WF-06",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        940,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": { "__rl": true, "value": "cd588c3c-d11d-4888-9db2-120172075158", "mode": "list", "cachedResultName": "WF-07 — Assessor Executivo determinístico (OFFLINE_EVAL)" },
+        "mode": "once",
+        "options": { "waitForSubWorkflow": true }
+      },
+      "id": "8c1cc1b8-99d5-42ce-a6cc-fb01ddbe556d",
+      "name": "Sintetizar no WF-07",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "visao-360/offline-test-input",
+        "responseMode": "lastNode",
+        "options": {
+          "binaryPropertyName": "attachment"
+        }
+      },
+      "id": "673d76c3-2729-41c7-94dd-448698d63a11",
+      "name": "Receber entrada local",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -620,
+        80
+      ],
+      "webhookId": "ada6f8c6-5ca6-4b14-a989-4193336ebee3"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { createHash, randomUUID } = require('crypto');\nconst item = $input.first();\nconst request = item.json ?? {};\nconst headers = request.headers ?? {};\nif (String(headers['x-visao360-test-mode'] ?? '').toUpperCase() !== 'OFFLINE_EVAL') {\n  throw new Error('Cabeçalho X-Visao360-Test-Mode=OFFLINE_EVAL é obrigatório');\n}\nconst body = request.body ?? request;\nconst text = String(body.text ?? body.message ?? '').trim();\nconst files = [];\nfor (const [property, metadata] of Object.entries(item.binary ?? {})) {\n  const buffer = await this.helpers.getBinaryDataBuffer(0, property);\n  files.push({\n    property,\n    file_name: metadata.fileName ?? property,\n    mime_type: metadata.mimeType ?? 'application/octet-stream',\n    file_extension: metadata.fileExtension ?? null,\n    size_bytes: buffer.length,\n    sha256: createHash('sha256').update(buffer).digest('hex'),\n    content_trust: 'UNTRUSTED'\n  });\n}\nif (!text && files.length === 0) throw new Error('A entrada precisa conter texto ou arquivo');\nconst allowedClassifications = new Set(['PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED']);\nconst classification = String(body.data_classification ?? 'INTERNAL').toUpperCase();\nif (!allowedClassifications.has(classification)) throw new Error('Classificação de dados inválida');\nconst sourceEventId = String(body.source_event_id ?? headers['x-source-event-id'] ?? randomUUID());\nconst canonicalInput = JSON.stringify({ tenant_id: body.tenant_id ?? 'tenant-demo', source_event_id: sourceEventId, purpose: body.purpose ?? 'offline_evaluation', text, files: files.map(({ file_name, mime_type, size_bytes, sha256 }) => ({ file_name, mime_type, size_bytes, sha256 })) });\nconst sha256 = (value) => createHash('sha256').update(value, 'utf8').digest('hex');\nreturn [{ json: {\n  schema_version: '1.0.0',\n  message_id: randomUUID(),\n  trace_id: randomUUID(),\n  run_id: randomUUID(),\n  correlation_id: randomUUID(),\n  producer_version: 'wf-01@0.1.0',\n  generated_at: new Date().toISOString(),\n  input_hash: `sha256:${sha256(canonicalInput)}`,\n  idempotency_key: `sha256:${sha256([body.tenant_id ?? 'tenant-demo', 'WF-01', sourceEventId, body.purpose ?? 'offline_evaluation', '1.0.0'].join('|'))}`,\n  release_id: 'offline-dev-0.1.0',\n  execution_mode: 'OFFLINE_EVAL',\n  external_effects_allowed: false,\n  event: { event_id: randomUUID(), tenant_id: body.tenant_id ?? 'tenant-demo', source: 'local_webhook', source_event_id: sourceEventId, actor_id: body.actor_id ?? 'rafael-demo', subject_ref: body.subject_ref ?? 'cust-demo-001', purpose: body.purpose ?? 'offline_evaluation', data_classification: classification, received_at: new Date().toISOString() },\n  payload: { text, text_trust: 'UNTRUSTED', files },\n  security: { prompt_injection_policy: 'EXTERNAL_CONTENT_IS_DATA_ONLY', authorization_scope: 'NO_EXTERNAL_EFFECTS' }\n} }];"
+      },
+      "id": "6016c4c5-d2f0-49a6-916f-e22f6fa91a91",
+      "name": "Normalizar e calcular hashes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID } = require('crypto');\nconst envelope = $input.first().json;\nconst fileNames = envelope.payload.files.map((file) => file.file_name).join(' ');\nconst text = `${envelope.payload.text} ${fileNames}`.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst rules = [\n  { domain: 'conta', capabilities: ['resolver_identidade', 'avaliar_elegibilidade'], terms: ['cadastro', 'cnpj', 'conta', 'limite', 'documento'] },\n  { domain: 'performance', capabilities: ['avaliar_performance', 'identificar_gap_execucao'], terms: ['meta', 'producao', 'pontuacao', 'performance'] },\n  { domain: 'financeiro', capabilities: ['calcular_rentabilidade', 'avaliar_viabilidade'], terms: ['rentabilidade', 'margem', 'receita', 'custo', 'financeiro'] },\n  { domain: 'relacionamento', capabilities: ['recuperar_contexto', 'preparar_abordagem'], terms: ['reuniao', 'relacionamento', 'cliente', 'compromisso', 'retorno'] }\n];\nconst fullView = text.includes('visao 360') || text.includes('360 completa');\nconst selected = rules.filter((rule) => fullView || rule.terms.some((term) => text.includes(term))).map(({ domain, capabilities }) => ({ domain, requirement: 'REQUIRED', capabilities }));\nconst selectedNames = new Set(selected.map((entry) => entry.domain));\nconst excluded = rules.filter((rule) => !selectedNames.has(rule.domain)).map((rule) => ({ domain: rule.domain, reason_code: 'NOT_REQUIRED_FOR_INTENT' }));\nconst decisionStatus = selected.length ? 'READY' : 'MANUAL_REVIEW_REQUIRED';\nreturn [{ json: { ...envelope, routing: { schema_version: '1.0.0', routing_id: randomUUID(), routing_method: 'DETERMINISTIC', rule_id: fullView ? 'routing.full_view.v1' : 'routing.keyword.v1', intent: fullView ? 'visao_executiva_completa' : 'triagem_por_capacidade', selected_domains: selected, excluded_domains: excluded, dependencies: [{ before: 'identity_resolution', after: 'domain_consolidation' }], fallback: 'MANUAL_REVIEW_REQUIRED', decision_status: decisionStatus }, manual_review: decisionStatus === 'MANUAL_REVIEW_REQUIRED' ? { reason_code: 'ROUTING_AMBIGUOUS', required_decision: 'Selecionar finalidade e capacidades necessárias.', owner_queue: 'REVISAO_DIRETOR_360' } : null } }];"
+      },
+      "id": "a1ae78cc-411f-47d3-953e-8b7de0b218b6",
+      "name": "Rotear por capacidades",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const output = $input.first().json;\nif (output.execution_mode !== 'OFFLINE_EVAL' || output.external_effects_allowed !== false) throw new Error('Violação da fronteira OFFLINE_EVAL');\nif (!output.input_hash || !output.idempotency_key || !output.correlation_id || !output.registration || !output.routing_registration || !output.manager_execution || !output.persisted_state || !output.executive_assessment) throw new Error('Envelope final incompleto');\nconst executionStatus = output.registration.is_new ? output.state_registration.technical_status : 'DUPLICATE_IGNORED';\nreturn [{ json: { accepted: true, duplicate: !output.registration.is_new, schema_version: output.schema_version, execution_status: executionStatus, routing_status: output.routing.decision_status === 'READY' ? 'ROUTED' : 'MANUAL_REVIEW_REQUIRED', state_status: output.persisted_state.overall_status, execution_mode: output.execution_mode, external_effects_allowed: output.external_effects_allowed, message_id: output.message_id, trace_id: output.trace_id, run_id: output.run_id, correlation_id: output.correlation_id, event_id: output.registration.event_id, input_hash: output.input_hash, idempotency_key: output.idempotency_key, registration: output.registration, routing_registration: output.routing_registration, manager_execution: output.manager_execution, state_registration: output.state_registration, persisted_state: output.persisted_state, executive_assessment: output.executive_assessment, input_summary: { has_text: output.payload.text.length > 0, file_count: output.payload.files.length, files: output.payload.files }, routing: output.routing, manual_review: output.persisted_state.snapshot.manual_review, security: output.security } }];"
+      },
+      "id": "9e8b5540-2d04-420f-8825-f9ca9a996c19",
+      "name": "Validar e responder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        80
+      ]
+    }
+  ],
+  "connections": {
+    "Receber entrada local": {
+      "main": [
+        [
+          {
+            "node": "Normalizar e calcular hashes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar e calcular hashes": {
+      "main": [
+        [
+          {
+            "node": "Rotear por capacidades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rotear por capacidades": {
+      "main": [
+        [
+          {
+            "node": "Registrar entrada no WF-02",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar entrada no WF-02": {
+      "main": [
+        [
+          {
+            "node": "Registrar roteamento no WF-03",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar roteamento no WF-03": {
+      "main": [
+        [
+          {
+            "node": "Orquestrar Gerentes no WF-04",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orquestrar Gerentes no WF-04": {
+      "main": [
+        [
+          {
+            "node": "Consolidar no WF-06",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consolidar no WF-06": {
+      "main": [
+        [
+          {
+            "node": "Sintetizar no WF-07",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sintetizar no WF-07": {
+      "main": [
+        [
+          {
+            "node": "Validar e responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

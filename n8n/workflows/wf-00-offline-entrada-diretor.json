@@ -1,0 +1,77 @@
+{
+  "id": "0d1a2f30-7e35-4b2c-8dd5-b6efc8b4c360",
+  "name": "WF-00 — Entrada e triagem do Diretor 360 (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f8fd47fe-f13c-46ed-8ced-d2724dcc4411",
+      "name": "Executar teste manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-760, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { tenant_id: 'tenant-demo', source: 'manual', source_event_id: `offline-${Date.now()}`, actor_id: 'rafael-demo', purpose: 'offline_evaluation', data_classification: 'INTERNAL', subject_ref: 'cust-demo-001', text: 'Preparar uma visão 360 completa da empresa demonstrativa, incluindo rentabilidade, metas e contexto do relacionamento.', received_at: new Date().toISOString() } }];"
+      },
+      "id": "32cde4d0-e1bb-41c5-b798-eabedb2b90ce",
+      "name": "Criar entrada sintética",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-520, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { createHash, randomUUID } = require('crypto');\nconst input = $input.first().json;\nconst sha256 = (value) => createHash('sha256').update(value, 'utf8').digest('hex');\nconst generatedAt = new Date().toISOString();\nconst correlationId = randomUUID();\nconst runId = randomUUID();\nconst inputHash = `sha256:${sha256(JSON.stringify(input))}`;\nconst idempotencySource = [input.tenant_id, 'WF-00', input.source_event_id, input.purpose, '1.0.0'].join('|');\nreturn [{ json: { schema_version: '1.0.0', message_id: randomUUID(), trace_id: randomUUID(), causation_id: null, run_id: runId, correlation_id: correlationId, producer_version: 'wf-00@0.1.0', generated_at: generatedAt, input_hash: inputHash, idempotency_key: `sha256:${sha256(idempotencySource)}`, policy_snapshot: { routing: 'draft-0.1.0', data_access: 'draft-0.1.0', autonomy_budget: 'draft-0.1.0' }, release_id: 'offline-dev-0.1.0', execution_mode: 'OFFLINE_EVAL', external_effects_allowed: false, event: { event_id: randomUUID(), tenant_id: input.tenant_id, received_at: input.received_at, source: input.source, source_event_id: input.source_event_id, actor_id: input.actor_id, subject_ref: input.subject_ref, purpose: input.purpose, data_classification: input.data_classification }, payload: { text: input.text } } }];"
+      },
+      "id": "9bd951dc-5f8c-4f78-b12c-a2f207f1d97e",
+      "name": "Construir envelope rastreável",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-260, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { randomUUID } = require('crypto');\nconst envelope = $input.first().json;\nconst text = String(envelope.payload?.text ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst domainRules = [\n  { domain: 'conta', capabilities: ['resolver_identidade', 'avaliar_elegibilidade'], terms: ['cadastro', 'cnpj', 'conta', 'limite', 'elegibilidade', 'documento'] },\n  { domain: 'performance', capabilities: ['avaliar_performance', 'identificar_gap_execucao'], terms: ['meta', 'pobj', 'producao', 'pontuacao', 'prazo', 'performance'] },\n  { domain: 'financeiro', capabilities: ['calcular_rentabilidade', 'avaliar_viabilidade'], terms: ['rentabilidade', 'margem', 'receita', 'custo', 'financeiro', 'retorno'] },\n  { domain: 'relacionamento', capabilities: ['recuperar_contexto', 'preparar_abordagem'], terms: ['conversa', 'reuniao', 'relacionamento', 'cliente', 'compromisso', 'abordagem'] }\n];\nconst fullView = text.includes('visao 360') || text.includes('360 completa');\nconst selected = domainRules.filter((rule) => fullView || rule.terms.some((term) => text.includes(term))).map(({ domain, capabilities }) => ({ domain, requirement: 'REQUIRED', capabilities }));\nconst selectedNames = new Set(selected.map((item) => item.domain));\nconst excluded = domainRules.filter((rule) => !selectedNames.has(rule.domain)).map((rule) => ({ domain: rule.domain, reason_code: 'NOT_REQUIRED_FOR_INTENT' }));\nconst needsReview = selected.length === 0;\nreturn [{ json: { ...envelope, routing: { schema_version: '1.0.0', routing_id: randomUUID(), routing_method: 'DETERMINISTIC', rule_id: fullView ? 'routing.full_view.v1' : 'routing.keyword.v1', routing_confidence: null, intent: fullView ? 'visao_executiva_completa' : 'triagem_por_capacidade', selected_domains: selected, excluded_domains: excluded, dependencies: [{ before: 'identity_resolution', after: 'domain_consolidation' }], execution_mode: 'PARALLEL_WHEN_INDEPENDENT', fallback: 'MANUAL_REVIEW_REQUIRED', decision_status: needsReview ? 'MANUAL_REVIEW_REQUIRED' : 'READY' }, manual_review: needsReview ? { reason_code: 'ROUTING_AMBIGUOUS', problem_statement: 'A regra determinística não identificou um domínio necessário.', impact: 'O fluxo não pode delegar com segurança.', required_decision: 'Classificar a finalidade e selecionar as capacidades necessárias.', owner_queue: 'REVISAO_DIRETOR_360' } : null } }];"
+      },
+      "id": "351f9a15-6db4-440a-9399-b971733f9cc6",
+      "name": "Aplicar roteamento determinístico",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [20, 80]
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json;\nconst required = ['schema_version', 'message_id', 'trace_id', 'run_id', 'correlation_id', 'producer_version', 'generated_at', 'input_hash', 'idempotency_key', 'policy_snapshot', 'release_id', 'event', 'routing'];\nconst missing = required.filter((field) => output[field] === undefined || output[field] === null);\nif (missing.length) throw new Error(`Contrato inválido; campos ausentes: ${missing.join(', ')}`);\nif (output.execution_mode !== 'OFFLINE_EVAL' || output.external_effects_allowed !== false) throw new Error('Este workflow só pode operar em OFFLINE_EVAL sem efeitos externos');\nif (output.routing.decision_status === 'READY' && output.routing.selected_domains.length === 0) throw new Error('READY exige pelo menos um domínio selecionado');\nreturn [{ json: { ...output, validation: { structural: 'VALID', semantic: 'VALID', validated_at: new Date().toISOString(), next_component: output.routing.decision_status === 'READY' ? 'GENERAL_MANAGERS' : 'CENTRAL_REVISAO_360' }, execution_status: output.routing.decision_status === 'READY' ? 'ROUTED' : 'MANUAL_REVIEW_REQUIRED' } }];"
+      },
+      "id": "c80f0b7e-bf39-4c6a-8326-70caaae93f8f",
+      "name": "Validar fronteira",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 80]
+    }
+  ],
+  "connections": {
+    "Executar teste manual": { "main": [[{ "node": "Criar entrada sintética", "type": "main", "index": 0 }]] },
+    "Criar entrada sintética": { "main": [[{ "node": "Construir envelope rastreável", "type": "main", "index": 0 }]] },
+    "Construir envelope rastreável": { "main": [[{ "node": "Aplicar roteamento determinístico", "type": "main", "index": 0 }]] },
+    "Aplicar roteamento determinístico": { "main": [[{ "node": "Validar fronteira", "type": "main", "index": 0 }]] }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
+  "versionId": "243c1b59-4316-4372-80bd-9251af415e8f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "contractVersion": "Diretor 360 v1.11",
+    "releaseStage": "OFFLINE_EVAL"
+  },
+  "tags": []
+}

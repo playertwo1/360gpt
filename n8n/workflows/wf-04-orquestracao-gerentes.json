@@ -1,0 +1,61 @@
+{
+  "id": "04d21695-e5ad-4bc1-a529-526dab45c0ee",
+  "name": "WF-04 — Orquestração dos Gerentes Gerais simulados (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "id": "c7cbd981-1f7b-4502-b29f-aa9dd428d3aa",
+      "name": "Receber decisão roteada",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-460, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nif (envelope.execution_mode !== 'OFFLINE_EVAL' || envelope.external_effects_allowed !== false) throw new Error('WF-04 aceita somente OFFLINE_EVAL');\nif (!envelope.routing_registration?.routing_id) throw new Error('Roteamento não persistido');\nconst selected = envelope.routing?.selected_domains ?? [];\nif (selected.length > 4) throw new Error('Orçamento excedido: mais de quatro Gerentes Gerais');\nif (!selected.length) return [{ json: { skip: true } }];\nreturn selected.map((entry) => ({ json: {\n  domain: entry.domain, capabilities: entry.capabilities,\n  context: { execution_mode: envelope.execution_mode, external_effects_allowed: false, event_id: envelope.registration.event_id, routing_id: envelope.routing_registration.routing_id, trace_id: envelope.trace_id, run_id: envelope.run_id, correlation_id: envelope.correlation_id, input_hash: envelope.input_hash, received_at: envelope.event.received_at, subject_ref: envelope.event.subject_ref, data_classification: envelope.event.data_classification, untrusted_text_excerpt: String(envelope.payload.text ?? '').slice(0, 1000), files: (envelope.payload.files ?? []).map(({ file_name, mime_type, size_bytes, sha256, content_trust }) => ({ file_name, mime_type, size_bytes, sha256, content_trust })) }\n} }));"
+      },
+      "id": "f88d9302-20ce-4867-9cae-e3439cdaf8bd",
+      "name": "Minimizar contexto por domínio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-220, 80]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": { "__rl": true, "value": "5f136a17-a768-4a90-952c-66d2ca53134a", "mode": "list", "cachedResultName": "WF-05 — Gerente Geral determinístico simulado (OFFLINE_EVAL)" },
+        "mode": "each",
+        "options": { "waitForSubWorkflow": true }
+      },
+      "id": "f38b5e8d-cfd7-4e40-9e68-440d822ae0a6",
+      "name": "Acionar Gerente por domínio",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [20, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $('Receber decisão roteada').first().json;\nconst outputs = $input.all().map((item) => item.json).filter((item) => item.skip !== true);\nconst handoffs = outputs.map((item) => item.domain_handoff);\nconst expected = envelope.routing?.selected_domains?.length ?? 0;\nif (handoffs.length !== expected) throw new Error(`Quantidade de handoffs divergente: esperados ${expected}, recebidos ${handoffs.length}`);\nif (new Set(handoffs.map((handoff) => handoff.domain)).size !== handoffs.length) throw new Error('Gerente Geral duplicado para o mesmo domínio');\nreturn [{ json: { ...envelope, domain_handoffs: handoffs, manager_execution: { status: expected ? 'COMPLETED' : 'NOT_REQUIRED', managers_requested: expected, managers_completed: handoffs.length, implementations: outputs.map(({ domain, manager_implementation, capabilities_executed }) => ({ domain, manager_implementation, capabilities_executed })) } } }];"
+      },
+      "id": "5b737af4-2aa1-45d0-9bbb-750f29e14b3e",
+      "name": "Reunir pareceres de domínio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 80]
+    }
+  ],
+  "connections": {
+    "Receber decisão roteada": { "main": [[{ "node": "Minimizar contexto por domínio", "type": "main", "index": 0 }]] },
+    "Minimizar contexto por domínio": { "main": [[{ "node": "Acionar Gerente por domínio", "type": "main", "index": 0 }]] },
+    "Acionar Gerente por domínio": { "main": [[{ "node": "Reunir pareceres de domínio", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

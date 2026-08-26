@@ -28,6 +28,7 @@ yarn-error.log*
 
 # local environment
 .env*
+!.env.n8n.example
 
 # deployment and generated files
 .vercel
@@ -35,4 +36,8 @@ next-env.d.ts
 /dist/
 /.wrangler/
 /outputs/
+/output/
+/tmp/
+/.local/
 /work/
+/Visao-360-projeto.zip

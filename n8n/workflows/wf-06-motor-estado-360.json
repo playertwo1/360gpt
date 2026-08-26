@@ -1,0 +1,64 @@
+{
+  "id": "dc6ba586-7bd7-4b22-a55b-155bedf96328",
+  "name": "WF-06 — Motor e publicação do Estado 360 (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "id": "25ebdb76-8ee7-4678-821d-22fa0b3ef957",
+      "name": "Receber pareceres validados",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-420, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { createHash } = require('crypto');\nconst envelope = $input.first().json;\nif (envelope.execution_mode !== 'OFFLINE_EVAL' || envelope.external_effects_allowed !== false) throw new Error('Motor aceita somente OFFLINE_EVAL');\nconst handoffs = envelope.domain_handoffs ?? [];\nconst expected = envelope.routing?.selected_domains?.length ?? 0;\nif (handoffs.length !== expected) throw new Error('Motor recebeu quantidade incorreta de pareceres');\nconst allowedDomains = new Set(['conta','performance','financeiro','relacionamento']);\nfor (const handoff of handoffs) {\n  if (handoff.schema_version !== '3.0.0' || handoff.agent_role !== 'GENERAL_MANAGER' || handoff.handoff_level !== 'MANAGER_TO_CONSOLIDATION' || handoff.handoff_target !== 'MOTOR_CONSOLIDACAO_360' || !allowedDomains.has(handoff.domain)) throw new Error('Handoff inválido na fronteira do Motor');\n  if (handoff.correlation_id !== envelope.correlation_id || handoff.input_hash !== envelope.input_hash) throw new Error('Handoff não pertence ao snapshot de entrada');\n}\nconst uniqueBy = (items, key) => [...new Map(items.map((item) => [item[key], item])).values()];\nconst findings = uniqueBy(handoffs.flatMap((handoff) => handoff.findings ?? []), 'finding_id');\nconst dataGaps = uniqueBy(handoffs.flatMap((handoff) => handoff.data_gaps ?? []).map((gap, index) => ({ ...gap, gap_key: `${gap.field}|${gap.reason_code}|${index}` })), 'gap_key').map(({ gap_key, ...gap }) => gap);\nconst gates = uniqueBy(handoffs.flatMap((handoff) => handoff.gates ?? []), 'gate_id');\nconst actions = uniqueBy(handoffs.flatMap((handoff) => handoff.recommended_actions ?? []), 'action_id');\nconst reviewRequired = envelope.routing.decision_status === 'MANUAL_REVIEW_REQUIRED' || handoffs.some((handoff) => handoff.overall_assessment.decision_status === 'MANUAL_REVIEW_REQUIRED') || dataGaps.some((gap) => gap.requires_manual_review === true) || gates.some((gate) => gate.state === 'MANUAL_REVIEW_REQUIRED');\nconst state = { schema_version: '1.0.0', tenant_id: envelope.event.tenant_id, subject_ref: envelope.event.subject_ref, event_id: envelope.registration.event_id, correlation_id: envelope.correlation_id, input_hash: envelope.input_hash, generated_at: new Date().toISOString(), overall_status: reviewRequired ? 'MANUAL_REVIEW_REQUIRED' : 'READY', domain_status: handoffs.map((handoff) => ({ domain: handoff.domain, execution_status: handoff.execution_status, evidence_quality: handoff.overall_assessment.evidence_quality, data_completeness: handoff.overall_assessment.data_completeness, decision_status: handoff.overall_assessment.decision_status })), findings, data_gaps: dataGaps, gates, recommended_actions: actions, manual_review: reviewRequired ? (envelope.manual_review ?? { reason_code: 'DOMAIN_REVIEW_REQUIRED', required_decision: 'Revisar os itens indicados pelo Estado 360.', owner_queue: 'REVISAO_DIRETOR_360' }) : null };\nconst stateHash = `sha256:${createHash('sha256').update(JSON.stringify(state), 'utf8').digest('hex')}`;\nreturn [{ json: { ...envelope, state_candidate: state, state_hash: stateHash } }];"
+      },
+      "id": "757141bc-cad7-480d-9e43-c2a522f08f05",
+      "name": "Consolidar deterministicamente",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-180, 80]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH attempted AS (\n  INSERT INTO state_snapshots (\n    state_id, tenant_id, subject_ref, state_hash, overall_status, snapshot,\n    release_id, generated_at, event_id, correlation_id\n  )\n  VALUES (\n    md5($2 || '|' || $3)::uuid, $2, $3, $4, $5, $6::jsonb,\n    $7, $8::timestamptz, $1::uuid, $9::uuid\n  )\n  ON CONFLICT (event_id) WHERE event_id IS NOT NULL DO NOTHING\n  RETURNING state_id, state_version, event_id, correlation_id, state_hash, overall_status, snapshot, generated_at\n),\nresolved AS (\n  SELECT state_id, state_version, event_id, correlation_id, state_hash, overall_status, snapshot, generated_at, true AS is_new FROM attempted\n  UNION ALL\n  SELECT s.state_id, s.state_version, s.event_id, s.correlation_id, s.state_hash, s.overall_status, s.snapshot, s.generated_at, false AS is_new\n  FROM state_snapshots s\n  WHERE s.event_id = $1::uuid AND NOT EXISTS (SELECT 1 FROM attempted)\n  LIMIT 1\n),\nevent_update AS (\n  UPDATE events e SET status = 'SUCCEEDED'\n  FROM resolved r WHERE e.event_id = r.event_id\n  RETURNING e.event_id, e.status\n),\naudit_entry AS (\n  INSERT INTO audit_log (tenant_id, correlation_id, actor, actor_role, action, object_type, object_id, outcome, release_id, event_hash, previous_event_hash)\n  SELECT $2, $9::uuid, 'n8n:wf-06', 'MOTOR', CASE WHEN r.is_new THEN 'STATE_PUBLISHED' ELSE 'STATE_DUPLICATE_IGNORED' END, 'STATE_SNAPSHOT', r.state_id::text || ':' || r.state_version::text, CASE WHEN r.is_new THEN r.overall_status ELSE 'DUPLICATE_IGNORED' END, $7, r.state_hash, NULL\n  FROM resolved r RETURNING audit_id\n)\nSELECT r.*, (SELECT status FROM event_update LIMIT 1) AS technical_status, (SELECT audit_id FROM audit_entry LIMIT 1) AS audit_id, $10::jsonb AS envelope\nFROM resolved r;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{ [ $json.registration.event_id, $json.event.tenant_id, $json.event.subject_ref, $json.state_hash, $json.state_candidate.overall_status, JSON.stringify($json.state_candidate), $json.release_id, $json.state_candidate.generated_at, $json.correlation_id, JSON.stringify($json) ] }}"
+        }
+      },
+      "id": "f10579cf-a02c-43db-9001-20f2dde332a6",
+      "name": "Publicar snapshot atomicamente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [60, 80],
+      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json;\nconst envelope = typeof row.envelope === 'string' ? JSON.parse(row.envelope) : row.envelope;\nconst snapshot = typeof row.snapshot === 'string' ? JSON.parse(row.snapshot) : row.snapshot;\nif (!envelope || !snapshot || !row.state_id) throw new Error('Persistência do Estado 360 não retornou snapshot válido');\ndelete envelope.state_candidate; delete envelope.state_hash;\nreturn [{ json: { ...envelope, persisted_state: { state_id: row.state_id, state_version: Number(row.state_version), event_id: row.event_id, correlation_id: row.correlation_id, state_hash: row.state_hash, overall_status: row.overall_status, generated_at: row.generated_at, snapshot }, state_registration: { registration_status: row.is_new === true ? 'STATE_PUBLISHED' : 'DUPLICATE_IGNORED', technical_status: row.technical_status, is_new: row.is_new === true, audit_id: Number(row.audit_id) } } }];"
+      },
+      "id": "362918b8-e95a-4fe8-91d3-cc2545021100",
+      "name": "Entregar Estado persistido",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 80]
+    }
+  ],
+  "connections": {
+    "Receber pareceres validados": { "main": [[{ "node": "Consolidar deterministicamente", "type": "main", "index": 0 }]] },
+    "Consolidar deterministicamente": { "main": [[{ "node": "Publicar snapshot atomicamente", "type": "main", "index": 0 }]] },
+    "Publicar snapshot atomicamente": { "main": [[{ "node": "Entregar Estado persistido", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

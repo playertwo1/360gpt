@@ -1,0 +1,120 @@
+{
+  "id": "80e66c34-8eae-444d-8164-acdf51e83d42",
+  "name": "WF-03 — Registro idempotente do roteamento (OFFLINE_EVAL)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "cb94fed1-3eae-4b06-b145-3f3bfdac9981",
+      "name": "Receber roteamento do WF-02",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { createHash } = require('crypto');\nconst envelope = $input.first().json;\nif (envelope.execution_mode !== 'OFFLINE_EVAL' || envelope.external_effects_allowed !== false) throw new Error('WF-03 aceita somente OFFLINE_EVAL sem efeitos externos');\nif (!envelope.registration?.event_id || !envelope.routing?.routing_id) throw new Error('Evento persistido ou roteamento ausente');\nif (!['DETERMINISTIC', 'MODEL_ASSISTED'].includes(envelope.routing.routing_method)) throw new Error('Método de roteamento inválido');\nif (!['READY', 'MANUAL_REVIEW_REQUIRED'].includes(envelope.routing.decision_status)) throw new Error('Estado decisório do roteamento inválido');\nconst canonical = JSON.stringify({ event_id: envelope.registration.event_id, routing: envelope.routing });\nreturn [{ json: { ...envelope, routing_audit_hash: `sha256:${createHash('sha256').update(canonical, 'utf8').digest('hex')}` } }];"
+      },
+      "id": "d2ec73db-2042-45a4-9008-74723f63074c",
+      "name": "Validar contrato de roteamento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH attempted AS (\n  INSERT INTO routing_decisions (\n    routing_id, event_id, routing_method, intent, selected_domains,\n    excluded_domains, dependencies, policy_version, decision_status\n  )\n  VALUES (\n    $1::uuid, $2::uuid, $3, $4, $5::jsonb,\n    $6::jsonb, $7::jsonb, $8, $9\n  )\n  ON CONFLICT (event_id) DO NOTHING\n  RETURNING routing_id, event_id, decision_status, created_at\n),\nresolved AS (\n  SELECT routing_id, event_id, decision_status, created_at, true AS is_new\n  FROM attempted\n  UNION ALL\n  SELECT r.routing_id, r.event_id, r.decision_status, r.created_at, false AS is_new\n  FROM routing_decisions r\n  WHERE r.event_id = $2::uuid\n    AND NOT EXISTS (SELECT 1 FROM attempted)\n  LIMIT 1\n),\naudit_entry AS (\n  INSERT INTO audit_log (\n    tenant_id, correlation_id, actor, actor_role, action, object_type,\n    object_id, outcome, release_id, event_hash, previous_event_hash\n  )\n  SELECT\n    $10, $11::uuid, 'n8n:wf-03', 'ROUTING',\n    CASE WHEN x.is_new THEN 'ROUTING_REGISTERED' ELSE 'ROUTING_DUPLICATE_IGNORED' END,\n    'ROUTING_DECISION', x.routing_id::text,\n    CASE WHEN x.is_new THEN x.decision_status ELSE 'DUPLICATE_IGNORED' END,\n    $12, $13, NULL\n  FROM resolved x\n  RETURNING audit_id\n)\nSELECT\n  x.routing_id, x.event_id, x.decision_status, x.created_at, x.is_new,\n  CASE WHEN x.is_new THEN 'ROUTING_REGISTERED' ELSE 'DUPLICATE_IGNORED' END AS registration_status,\n  (SELECT audit_id FROM audit_entry LIMIT 1) AS audit_id,\n  $14::jsonb AS envelope\nFROM resolved x;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{ [ $json.routing.routing_id, $json.registration.event_id, $json.routing.routing_method, $json.routing.intent, JSON.stringify($json.routing.selected_domains ?? []), JSON.stringify($json.routing.excluded_domains ?? []), JSON.stringify($json.routing.dependencies ?? []), 'routing@1.0.0', $json.routing.decision_status, $json.event.tenant_id, $json.correlation_id, $json.release_id, $json.routing_audit_hash, JSON.stringify($json) ] }}"
+        }
+      },
+      "id": "e2da2b58-1bce-40f4-afce-ee0daebf70c0",
+      "name": "Persistir roteamento atomicamente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        60,
+        80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json;\nconst envelope = typeof row.envelope === 'string' ? JSON.parse(row.envelope) : row.envelope;\nif (!envelope || !row.registration_status) throw new Error('Banco não retornou o registro do roteamento');\ndelete envelope.routing_audit_hash;\nreturn [{ json: { ...envelope, routing_registration: { routing_id: row.routing_id, event_id: row.event_id, registration_status: row.registration_status, decision_status: row.decision_status, is_new: row.is_new === true, audit_id: Number(row.audit_id), registered_at: row.created_at } } }];"
+      },
+      "id": "ba8a0ec3-533e-432b-8291-ce4752906af8",
+      "name": "Construir resultado do roteamento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        300,
+        80
+      ]
+    }
+  ],
+  "connections": {
+    "Receber roteamento do WF-02": {
+      "main": [
+        [
+          {
+            "node": "Validar contrato de roteamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar contrato de roteamento": {
+      "main": [
+        [
+          {
+            "node": "Persistir roteamento atomicamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persistir roteamento atomicamente": {
+      "main": [
+        [
+          {
+            "node": "Construir resultado do roteamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

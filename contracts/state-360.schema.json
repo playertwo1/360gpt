@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/state-360.schema.json",
+  "title": "Estado 360 mínimo",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tenant_id", "subject_ref", "event_id", "correlation_id", "input_hash", "generated_at", "overall_status", "domain_status", "findings", "data_gaps", "gates", "recommended_actions", "manual_review"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "tenant_id": { "type": "string", "minLength": 1 },
+    "subject_ref": { "type": "string", "minLength": 1 },
+    "event_id": { "type": "string", "format": "uuid" },
+    "correlation_id": { "type": "string", "format": "uuid" },
+    "input_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "overall_status": { "enum": ["READY", "MANUAL_REVIEW_REQUIRED"] },
+    "domain_status": { "type": "array", "maxItems": 4, "items": { "type": "object" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "data_gaps": { "type": "array", "items": { "type": "object" } },
+    "gates": { "type": "array", "items": { "type": "object" } },
+    "recommended_actions": { "type": "array", "items": { "type": "object" } },
+    "manual_review": { "type": ["object", "null"] }
+  }
+}

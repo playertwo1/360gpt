@@ -1,0 +1,19 @@
+schema_version: "1.0.0"
+sources:
+  - source_id: offline_eval_webhook
+    name: Entrada sintética local OFFLINE_EVAL
+    type: SYNTHETIC_INPUT
+    owner: DIRETOR_360_DEV
+    data_steward: RAFAEL
+    tenant: tenant-demo
+    environment: LOCAL
+    classification: INTERNAL
+    allowed_purposes: [offline_evaluation]
+    authority: COMPLEMENTARY
+    canonical_location: n8n://wf-01
+    access_method: LOCAL_WEBHOOK
+    freshness_sla_hours: 24
+    valid_from: "2026-08-26T00:00:00Z"
+    valid_to: null
+    retention: DEVELOPMENT_ONLY
+    status: ACTIVE
