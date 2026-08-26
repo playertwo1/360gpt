@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "Diretor 360",
+  "version": "3.1.0-confianca",
+  "last_updated": "2026-08-26T20:00:00-03:00",
+  "last_active_assistant": "Antigravity (Google)",
+  "next_recommended_assistant": "ChatGPT Codex (OpenAI) ou Antigravity",
+  "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - Fases 0 a 8)",
+  "current_phase": "Fase 2 \u2014 Observability & Evals",
+  "current_milestone": "M2.1 \u2014 Suite Canonica de 20 Casos Sinteticos (test-data/evals/)",
+  "completed_phases": [
+    "Fase 0 (Baseline)",
+    "Fase 1 (Reliability Foundation)"
+  ],
+  "health_status": "GREEN",
+  "mode": "OFFLINE_EVAL",
+  "canonical_files": {
+    "roadmap": "ROADMAP.md",
+    "checklist": "checklist.md",
+    "status": "status.md",
+    "handoff_guide": "CODEX_HANDOFF.md",
+    "dual_ai_guide": "docs/GUIA_ALTERNANCIA_AI.md",
+    "agents_contract": "AGENTS.md"
+  },
+  "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
+  "launcher_command": ".\\iniciar-diretor-360.bat",
+  "last_commit": "af92909",
+  "last_backup": "backup-2026-08-26-v3.1.0-roadmap-confianca.zip"
+}
