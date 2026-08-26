@@ -1,0 +1,14 @@
+project_name: visao-360-frontend
+framework: nextjs
+build:
+  command: npm run build
+  output_directory: dist
+environment_variables:
+  NODE_VERSION: '20'
+  NEXT_PUBLIC_APP_ENV: production
+  ALLOWED_DASHBOARD_EMAILS: 'fael@live.de,rafa.pedrosa1@gmail.com'
+  ALLOWED_REVIEWER_EMAILS: 'fael@live.de,rafa.pedrosa1@gmail.com'
+d1_databases:
+  - binding: DB
+    database_name: visao360-prod-db
+    database_id: d1-prod-visao360-primary
