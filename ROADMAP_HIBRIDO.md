@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H8 — Segurança e privacidade do piloto
-**Próxima ação:** homologar segurança em profundidade, kill switches, isolamento de dados sintéticos e integridade append-only do Evidence Graph.
+**Fase atual:** H9 — Backup e recuperação
+**Próxima ação:** homologar procedimentos de backup e restauração automatizados com verificação de hashes SHA-256 e teste de recuperação limpa.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 
@@ -50,9 +51,10 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H5 | Telegram recebe e enfileira texto | [x] | H3 |
 | H6 | Telegram processa PDF e Excel com segurança | [x] | H5 |
 | H7 | Visão 360 executiva completa e rastreável | [x] | H6 |
-| H8 | Segurança e privacidade homologadas para o piloto | [ ] | H1–H7 |
+| H8 | Segurança e privacidade homologadas para o piloto | [x] | H1–H7 |
 | H9 | Backup e restauração comprovados | [ ] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 
 
@@ -259,20 +261,30 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** operar um piloto sintético privado, sem exposição indevida ou autonomia transacional.
 
-- [ ] Allowlist das duas contas comprovada.
-- [ ] Allowlist do Telegram comprovada.
-- [ ] Segredos ausentes do Git e dos logs.
-- [ ] Kill switches testados.
-- [ ] Limites de arquivo e requisição testados.
-- [ ] Acesso não autorizado testado.
-- [ ] Evidence Graph append-only testado.
-- [ ] Quatro olhos e assinatura de revisão testados.
-- [ ] Retenção e descarte documentados.
-- [ ] Procedimento de rotação de segredos testado.
-- [ ] Regra “somente dados sintéticos” visível na operação.
-- [ ] Plano para homologação institucional separado do piloto pessoal.
+- [x] Allowlist das duas contas comprovada.
+- [x] Allowlist do Telegram comprovada.
+- [x] Segredos ausentes do Git e dos logs.
+- [x] Kill switches testados.
+- [x] Limites de arquivo e requisição testados.
+- [x] Acesso não autorizado testado.
+- [x] Evidence Graph append-only testado.
+- [x] Quatro olhos e assinatura de revisão testados.
+- [x] Retenção e descarte documentados.
+- [x] Procedimento de rotação de segredos testado.
+- [x] Regra “somente dados sintéticos” visível na operação.
+- [x] Plano para homologação institucional separado do piloto pessoal.
 
-**Critério de aceite:** testes demonstram bloqueio de acessos e efeitos externos não autorizados, sem credenciais versionadas.
+**Critério de aceite:** testes demonstram bloqueio de acessos e efeitos externos não autorizados, sem credenciais versionadas. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Allowlist: acesso restrito a `fael@live.de` e `rafa.pedrosa1@gmail.com` com bloqueio 403 para anônimos.
+- Perímetro Telegram: canal privado bloqueando remetentes fora do `chat_id` de Rafael.
+- Segredos limpos: checagem de pre-commit e diff garantindo ausência de chaves/tokens privados no repositório.
+- Kill switches: `TELEGRAM_INGEST_ENABLED` e `AUTONOMY_EXTERNAL_EFFECTS_ALLOWED` ativos e responsivos.
+- Quatro Olhos: Mesa do Revisor protegida por assinatura criptográfica SHA-256 e lock de 10 min.
+- Isolamento: dados sintéticos em modo `OFFLINE_EVAL` sem contato com redes bancárias de produção.
+- Teste automatizado: `scripts/test-h8-security-privacy.ps1` executado e aprovado com código 0 (`H8_SECURITY_PRIVACY_PASS`).
+
 
 ---
 
