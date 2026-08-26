@@ -1,9 +1,11 @@
 # Status do Projeto Diretor 360
 
 **Data do status:** 26 de agosto de 2026  
-**Versão da Release:** `v1.0.0-assisted-prod` (Homologação Completa)  
-**Modo de execução:** `PRODUÇÃO ASSISTIDA` (com Human-in-the-Loop na Mesa do Revisor)  
-**Saúde do Projeto:** 🟢 **VERDE (100% Homologado / Pronto para Produção Assistida)**  
+**Versão da Release:** 1.0.0-assisted-prod (Fase 1 Homologada — 100%)  
+**Modo de execução:** PRODUÇÃO ASSISTIDA (Human-in-the-Loop na Mesa do Revisor 360)  
+**Saúde do Projeto:** 🟢 **VERDE (100% Homologado / Pronto para Operação Assistida)**  
+
+> Projeto pessoal, executado inteiramente fora do ambiente Bradesco, com dados sintéticos (OFFLINE_EVAL).
 
 ---
 
@@ -12,17 +14,22 @@
 | Indicador | Valor / Estado | Meta / Referência | Status |
 |---|---|---|:---:|
 | **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
-| **Marcos Concluídos** | **15 de 15 marcos concluídos (100%)** | Roadmap de Produção | 🟢 |
+| **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
+| **Fase 2 (Operação & Produção Assistida)** | **5 marcos planejados (Marcos 16 a 20)** | Boas práticas de mercado (inspiração, não certificação) | ⏳ |
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
-| **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV / OpenLineage | 🟢 |
+| **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | Inspirado em W3C PROV / OpenLineage | 🟢 |
 | **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
 | **Testes de Carga & Concorrência** | 100% de sucesso em rajadas simultâneas | Backpressure e Idempotência | 🟢 |
-| **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
+| **Build & Linter** | 0 erros (
+pm run lint / 
+pm run build) | Código limpo | 🟢 |
 | **Readiness Gate** | **PASS (Certificado)** | Critérios de release | 🟢 |
 
 ---
 
-## 2. Visão do Roadmap de Marcos (100% Concluído)
+## 2. Visão do Roadmap Integrado de Marcos
+
+### Fase 1: Fundação, Arquitetura e Homologação (100% Concluída)
 
 | Marco | Descrição | Estado |
 |:---:|---|:---:|
@@ -36,21 +43,48 @@
 | **13A** | Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria | ✅ Concluído |
 | **13B** | Painel visual de auditoria e navegação da linhagem PROV/OpenLineage | ✅ Concluído |
 | **14** | Testes de carga, concorrência distribuída e backpressure de modelos | ✅ Concluído |
-| **15** | **Homologação final para release de produção assistida (Readiness Gate)** | ✅ **Concluído** |
+| **15** | Homologação final para release de produção assistida (Readiness Gate PASS) | ✅ Concluído |
+
+---
+
+### Fase 2: Produção Assistida, Operação, Nuvem e Expansão
+
+> A ordem abaixo prioriza rodar casos reais **antes** de formalizar o manual — o playbook deve nascer de evidência coletada em operação, não de suposição a priori.
+
+| Marco | Descrição | Inspiração de Mercado | Estado |
+|:---:|---|---|:---:|
+| **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ⏳ **Próximo** |
+| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | 📋 Planejado |
+| **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | 📋 Planejado |
+| **19** | **Infraestrutura Cloud & Deploy em Produção Hospedada** — Deploy do Frontend Next.js/Vite no Cloudflare Pages/Workers + D1 e subida do n8n/PostgreSQL em VPS com HTTPS/TLS, incluindo plano de rollback documentado (reversão de DNS, restore de banco, rollback de contêiner) antes da virada | Inspirado em 12-Factor App & CIS Benchmarks | 📋 Planejado |
+| **20** | **Ativação dos Canais Oficiais de Produção** — Conexão do Bot Telegram oficial com webhooks autenticados, processamento de áudio/PDF/planilhas em tempo real e entrega contínua | Inspirado em Enterprise API Gateway & Zero-Trust | 📋 Planejado |
 
 ---
 
 ## 3. Último Marco Concluído: Marco 15
 
 **Homologação final para release de produção assistida concluída com sucesso:**
-- Manifesto imutável de release `release/RELEASE_MANIFEST_v1.0.0.json` gerado com hashes SHA-256 de 31 artefatos, contratos, políticas e workflows.
-- Pacote de evidências de conformidade `compliance/COMPLIANCE_EVIDENCE_PACKAGE.md` publicado (RACI, Quatro Olhos, Zero-Trust e Linhagem PROV).
-- Script integrado de Readiness Gate `scripts/test-release-readiness.ps1` executado e aprovado com status `READINESS_GATE_PASS`.
-- Todos os 15 marcos do roadmap 360 entregues, testados e sincronizados com 100% de conformidade arquitetural.
+- Manifesto imutável de release 
+elease/RELEASE_MANIFEST_v1.0.0.json gerado com hashes SHA-256 de 31 artefatos, contratos, políticas e workflows.
+- Pacote de evidências de conformidade compliance/COMPLIANCE_EVIDENCE_PACKAGE.md publicado (RACI, Quatro Olhos, Zero-Trust e Linhagem PROV).
+- Script integrado de Readiness Gate scripts/test-release-readiness.ps1 executado e aprovado com status READINESS_GATE_PASS.
+- Todos os 15 marcos da Fase 1 entregues, testados e sincronizados com 100% de conformidade arquitetural.
 
 ---
 
-## 4. Matriz de Workflows n8n
+## 4. Próximo Passo Exato
+
+**Marco 16 — Sessão Prática de Operação Assistida com Casos Complexos:**
+Rodar cenários sintéticos de divergência ERP vs. extratos, restrições cadastrais parciais e garantias mistas pela esteira completa (Mesa do Revisor + Evidence Graph), registrando:
+1. Casos onde a IA acertou vs. errou a recomendação.
+2. Pontos de atrito ou ambiguidade na decisão humana.
+3. Reason codes usados na prática, para consolidar a matriz definitiva no Marco 17.
+
+Só depois de coletar essa evidência real de operação, parte-se para o **Marco 17 (Manual e Playbook)**, que passa a documentar critérios já testados em vez de regras hipotéticas.
+
+---
+
+## 5. Matriz de Workflows n8n
 
 | Workflow | Finalidade | Estado |
 |---|---|---|
@@ -65,49 +99,29 @@
 | WF-08 | Consulta somente leitura do último Estado 360 | Concluído |
 | WF-09 | Ponte autenticada: reservar, processar no n8n e publicar Estado 360 hospedado | Criado e homologado; mantido despublicado fora das janelas controladas |
 
-As APIs e a Mesa da Central são componentes determinísticos da aplicação hospedada e não adicionam autonomia ao n8n. O Dashboard permanece somente leitura.
+---
+
+## 6. Postura de Segurança & Conformidade (Zero-Trust)
+
+- **Zero-Trust:** Nenhuma credencial ou token privado exposto no Git ou na documentação.
+- **Controle de Acesso:** Dashboard protegido por login do ChatGPT + Allowlist restrita (ael@live.de, 
+afa.pedrosa1@gmail.com).
+- **Defesa contra Injeção de Prompt:** Vetores maliciosos em documentos PDF e XLSX tratados estritamente como dados brutos não confiáveis.
+- **Idempotência Garantida:** Reexecuções e updates repetidos retornam DUPLICATE_IGNORED sem duplicar eventos.
+- **Segregação de Funções:** Separação estrita entre propor, validar, decidir, executar e auditar.
+- **Isolamento de Dados:** Modo OFFLINE_EVAL com dados estritamente sintéticos, sem conexões externas ativas e sem qualquer dado real do Bradesco.
+- **Kill switches reconciliados:** TELEGRAM_INGEST_ENABLED=false, BRIDGE_ENABLED=false, confirmação externa desligada e WF-09 despublicado.
+- **Quatro olhos:** escrita na Central exige allowlist separada de revisores; usuários do Dashboard recebem apenas leitura.
+- **Evidence Graph Append-Only:** Triggers no PostgreSQL e D1 rejeitam qualquer tentativa de UPDATE ou DELETE em nós e arestas de auditoria.
 
 ---
 
-## 5. Postura de Segurança & Conformidade
-
-- [x] **Zero-Trust**: Nenhuma credencial ou token privado exposto no Git ou na documentação.
-- [x] **Controle de Acesso**: Dashboard protegido por login do ChatGPT + Allowlist restrita (`fael@live.de`, `rafa.pedrosa1@gmail.com`).
-- [x] **Defesa contra Injeção de Prompt**: Vetores maliciosos em documentos PDF e XLSX tratados estritamente como dados brutos não confiáveis.
-- [x] **Idempotência Garantida**: Reexecuções e updates repetidos retornam `DUPLICATE_IGNORED` sem duplicar eventos.
-- [x] **Segregação de Funções**: Separação estrita entre propor, validar, decidir, executar e auditar.
-- [x] **Isolamento de Dados**: Modo `OFFLINE_EVAL` com dados estritamente sintéticos, sem conexões externas ativas.
-- [x] **Kill switches reconciliados**: `TELEGRAM_INGEST_ENABLED=false`, `BRIDGE_ENABLED=false`, confirmação externa desligada e WF-09 despublicado.
-- [x] **Quatro olhos**: escrita na Central exige allowlist separada de revisores; usuários do Dashboard recebem apenas leitura.
-
-### Testes do Marco 12B
-
-- Pedido sintético `ROUTING_AMBIGUOUS` persistido como `PENDING_TRIAGE`, prioridade `P2`, fila autorizada e SLA definido.
-- Deduplicação SHA-256 e UUID determinístico validados.
-- Consulta e resolução sem identidade rejeitadas com `401`.
-- Migração PostgreSQL reaplicada de forma idempotente e índices de fila/resolução confirmados.
-- Regressão de texto, PDF, XLSX e JSON aprovada; idempotência e adaptador Telegram permaneceram íntegros.
-- `npm run lint` e `npm run build` aprovados com as rotas `/api/reviews`, `/api/reviews/:id` e `/api/reviews/:id/resolve`.
-- Publicação hospedada aprovada com a migração D1 e a rota `/reviews` autenticada.
-- Entrada hospedada sem segredo rejeitada com `401`; entrada sintética autorizada aceita com `202`.
-- Conclusão da ponte respondeu `200`, repetição foi idempotente e a consulta sem identidade permaneceu em `401`.
-- Transições humanas registradas na ordem autorizada e resolução final recebeu hash `sha256` de 64 caracteres hexadecimais.
-- Telegram, ponte e confirmação externa foram restaurados para `false` após a janela controlada de homologação.
-
----
-
-## 6. Registro de Riscos & Mitigações (Risk Register)
+## 7. Registro de Riscos & Mitigações (Risk Register)
 
 | Risco Identificado | Impacto | Probabilidade | Plano de Mitigação |
-|---|:---:|:---:|---|
-| **Conexão acidental com fontes reais** | Alto | Baixa | Bloqueio em código (`OFFLINE_EVAL` obrigatório) e ausência intencional de credenciais bancárias. |
-| **Operação contínua indevida da ponte** | Médio | Baixa | Kill switches ativos por padrão (`BRIDGE_ENABLED=false` e `TELEGRAM_INGEST_ENABLED=false`). |
-| **Aviso de task runner Python no n8n** | Baixo | Baixa | Todos os workflows utilizam runtime nativo JavaScript (Node.js), eliminando dependência do runner Python. |
-| **URL hospedada no modo público** | Médio | Controlada | Login ChatGPT, allowlists independentes e autorização server-side protegem leitura e escrita; nenhuma rota de dados aceita usuário anônimo. |
-
----
-
-## 7. Próximo Passo Exato
-
-**Marco 13A — Fundação do Evidence Graph 360:**
-Criar o contrato Draft 2020-12, persistência append-only equivalente em D1 e PostgreSQL, relações de linhagem entre snapshot, pedido de revisão, resolução e ator, além de uma consulta autenticada somente leitura. Homologar com dados sintéticos, sem habilitar Telegram, ponte ou qualquer automação externa.
+|---|---|---|---|
+| **Conexão acidental com fontes reais** | Alto | Baixa | Bloqueio em código (OFFLINE_EVAL obrigatório) e ausência intencional de credenciais bancárias. |
+| **Operação contínua indevida da ponte** | Médio | Baixa | Kill switches ativos por padrão (BRIDGE_ENABLED=false e TELEGRAM_INGEST_ENABLED=false). |
+| **Decisão humana sem evidência suficiente** | Alto | Baixa | Coleta de evidência real no Marco 16 antes de consolidar o Playbook (Marco 17); inspeção obrigatória do Evidence Graph antes de emitir resolução. |
+| **Estouro de SLA em revisões críticas** | Médio | Baixa | Alertas proativos aos 80% do tempo limite (Marco 18) e escalonamento automático de prioridade. |
+| **Deploy em nuvem sem via de reversão** | Médio | Média | Plano de rollback (DNS, banco, contêiner) documentado e testado antes da virada de produção no Marco 19. |
