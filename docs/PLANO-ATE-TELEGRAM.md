@@ -17,8 +17,8 @@
 ### Progresso em 26 de agosto de 2026
 
 - Marcos 1 a 8: concluídos e homologados localmente.
-- Marco 9: aplicação HTTPS privada pronta para publicação controlada.
-- Marco 10: depende do bot de teste, chat autorizado e autorização para ligar o kill switch.
+- Marco 9: concluído com aplicação HTTPS publicada em acesso privado, migração D1 aplicada e Telegram desativado.
+- Marco 10: depende do bot de teste, chat autorizado e autorização explícita para ligar o kill switch.
 
 ## Programação
 
@@ -74,4 +74,4 @@ O bot só poderá ser conectado quando todos estes controles estiverem aprovados
 
 ## Próxima execução
 
-Construir o **WF-03 — Registro do roteamento**, conectá-lo após o WF-02 e validar que uma repetição não cria decisões duplicadas.
+Criar um bot exclusivo de teste no BotFather e configurar `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` e o chat privado autorizado como segredos fora do Git. Em seguida, registrar o webhook com o kill switch desligado e executar uma única mensagem sintética ponta a ponta antes de habilitar novas entradas.
