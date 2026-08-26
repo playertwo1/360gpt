@@ -8,6 +8,7 @@ $allowedChatIds = @('360001')
 $fixtureFiles = @(
   'test-data/telegram-update-text.json'
   'test-data/telegram-update-document.json'
+  'test-data/telegram-update-spreadsheet.json'
 )
 $results = @()
 
@@ -21,7 +22,7 @@ foreach ($fixtureRelativePath in $fixtureFiles) {
   }
 
   $sourceEventId = "telegram-update-$($update.update_id)"
-  $text = [string]($message.text ?? $message.caption)
+  $text = if ($message.text) { [string]$message.text } else { [string]$message.caption }
   $responses = @()
 
   foreach ($attempt in 1..2) {

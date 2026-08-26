@@ -6,6 +6,7 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $endpoint = 'http://localhost:5678/webhook/visao-360/offline-test-input'
 $headers = @{ 'X-Visao360-Test-Mode' = 'OFFLINE_EVAL' }
 $pdfPath = Join-Path $projectRoot 'output\pdf\empresa-demo-relatorio.pdf'
+$xlsxPath = Join-Path $projectRoot 'output\xlsx\empresa-demo-metricas.xlsx'
 $jsonPath = Join-Path $projectRoot 'test-data\entrada-empresa-demo.json'
 
 function Send-TestFile {
@@ -32,7 +33,7 @@ function Send-TestFile {
   return $rawResponse | ConvertFrom-Json
 }
 
-foreach ($path in @($pdfPath, $jsonPath)) {
+foreach ($path in @($pdfPath, $xlsxPath, $jsonPath)) {
   if (-not (Test-Path -LiteralPath $path)) { throw "Arquivo de teste ausente: $path" }
 }
 
@@ -50,14 +51,21 @@ $textResponse = Invoke-RestMethod -Method Post -Uri $endpoint -Headers $headers 
 $pdfResponse = Send-TestFile -Path $pdfPath -SourceEventId 'pdf-demo-002' `
   -Text 'Analisar documento da empresa demonstrativa para visao 360 completa.' `
   -MimeType 'application/pdf'
+$xlsxResponse = Send-TestFile -Path $xlsxPath -SourceEventId 'xlsx-demo-002' `
+  -Text 'Analisar planilha de metricas demonstrativas para visao 360.' `
+  -MimeType 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 $jsonResponse = Send-TestFile -Path $jsonPath -SourceEventId 'file-json-demo-002' `
   -Text 'Analisar arquivo estruturado de meta, rentabilidade e relacionamento.' `
   -MimeType 'application/json'
 
 $expectedPdfHash = (Get-FileHash -LiteralPath $pdfPath -Algorithm SHA256).Hash.ToLowerInvariant()
+$expectedXlsxHash = (Get-FileHash -LiteralPath $xlsxPath -Algorithm SHA256).Hash.ToLowerInvariant()
 $expectedJsonHash = (Get-FileHash -LiteralPath $jsonPath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($pdfResponse.input_summary.file_count -ne 1 -or $pdfResponse.input_summary.files[0].sha256 -ne $expectedPdfHash) {
   throw 'A validação de quantidade ou hash do PDF falhou.'
+}
+if ($xlsxResponse.input_summary.file_count -ne 1 -or $xlsxResponse.input_summary.files[0].sha256 -ne $expectedXlsxHash) {
+  throw 'A validação de quantidade ou hash do XLSX falhou.'
 }
 if ($jsonResponse.input_summary.file_count -ne 1 -or $jsonResponse.input_summary.files[0].sha256 -ne $expectedJsonHash) {
   throw 'A validação de quantidade ou hash do JSON falhou.'
@@ -79,6 +87,15 @@ if ($jsonResponse.input_summary.file_count -ne 1 -or $jsonResponse.input_summary
   Files = $pdfResponse.input_summary.file_count
   FileHash = $pdfResponse.input_summary.files[0].sha256
   CorrelationId = $pdfResponse.correlation_id
+} | Format-List
+
+[pscustomobject]@{
+  Test = 'xlsx'
+  Accepted = $xlsxResponse.accepted
+  Status = $xlsxResponse.execution_status
+  Files = $xlsxResponse.input_summary.file_count
+  FileHash = $xlsxResponse.input_summary.files[0].sha256
+  CorrelationId = $xlsxResponse.correlation_id
 } | Format-List
 
 [pscustomobject]@{
