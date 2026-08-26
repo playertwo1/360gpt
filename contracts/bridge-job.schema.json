@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/bridge-job.schema.json",
+  "title": "Contrato de Trabalho da Ponte Hibrida 360",
+  "type": "object",
+  "required": [
+    "job_id",
+    "status",
+    "security"
+  ],
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_id": {
+      "type": "string"
+    },
+    "worker_id": {
+      "type": "string"
+    },
+    "lease_token": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "QUEUED",
+        "CLAIMED",
+        "SUCCEEDED",
+        "FAILED",
+        "DUPLICATE_IGNORED"
+      ]
+    },
+    "attempt_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "security": {
+      "type": "object",
+      "required": [
+        "external_effects_allowed"
+      ],
+      "properties": {
+        "external_effects_allowed": {
+          "type": "boolean"
+        },
+        "isolation_mode": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
