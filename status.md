@@ -6,20 +6,16 @@
 
 ## Último marco concluído
 
-**Marco 10C — Piloto privado no Telegram concluído e homologado (Texto, PDF e Planilha XLSX).**
+**Marco 11 — Evolução dos Gerentes Gerais e Especialistas analíticos de domínio concluída.**
 
-- Aplicação publicada em HTTPS com uma rota externa alcançável pelo Telegram.
-- Dashboard 360 e API do Estado 360 protegidos no servidor por login do ChatGPT e lista fechada de e-mails autorizados.
-- Acesso autorizado para `fael@live.de` e `rafa.pedrosa1@gmail.com`.
-- Versão hospedada implantada com D1 para dados estruturados e R2 para arquivos.
-- Migração aplicada com a tabela `telegram_updates` disponível no banco hospedado.
-- Fila com lease de dez minutos, três tentativas e conclusão idempotente implementada.
-- Estado 360 hospedado em snapshots imutáveis, com hash canônico estável entre n8n, PostgreSQL e D1.
-- Dashboard alterado para ler o read model hospedado, sem tentar acessar o computador local pela nuvem.
-- Bot exclusivo de teste conectado ao webhook HTTPS com token renovado, segredo de webhook e allowlist de um único chat privado.
-- Mensagem sintética, PDF sintético e Planilha XLSX sintética percorreram com sucesso o fluxo Telegram → hospedagem → WF-09 → WF-01 a WF-07 → Estado 360.
-- Validação de integridade e segurança concluída: hashes SHA-256 exatos, arquivos classificados como `UNTRUSTED`, defesa contra prompt injection validada e status de execução `SUCCEEDED`.
-- Reversão de segurança aplicada ao término da homologação: `TELEGRAM_INGEST_ENABLED=false`, `BRIDGE_ENABLED=false`, WF-09 despublicado e nenhuma credencial exposta no repositório.
+- Regras de negócio especializadas e determinísticas implementadas nos quatro domínios de negócio: **Conta**, **Performance**, **Financeiro** e **Relacionamento**.
+- **Domínio Conta (`GERENTE_GERAL_CONTA`)**: Identidade sintética validada (`cust-demo-001`), conformidade regulatória preliminar aprovada e aplicação do Gate de Elegibilidade com `IDENTIDADE_CONFIRMADA_SINTETICA` (state `PASS`).
+- **Domínio Performance (`GERENTE_GERAL_PERFORMANCE`)**: Produção realizada de R$ 28.000,00 vs. Meta de R$ 35.000,00 (80,0% atingido), cálculo determinístico de gap de R$ 7.000,00 (20,0%) e ação prioritária P1 para aceleração comercial na esteira.
+- **Domínio Financeiro (`GERENTE_GERAL_FINANCEIRO`)**: Faturamento médio mensal apurado de R$ 1.250.000,00 superando referência (R$ 1.200.000,00), margem bancária estimada e viabilidade econômica para pacote de serviços e otimização de tarifas.
+- **Domínio Relacionamento (`GERENTE_GERAL_RELACIONAMENTO`)**: 4 reuniões executivas registradas, compromisso de retorno alinhado para 05/09/2026 e proposta consultiva customizada estruturada com aprovação humana obrigatória (`PENDING_HUMAN`).
+- Workflows do n8n atualizados e publicados: `WF-05` (versão 2.0.0 analítica), `WF-04`, `WF-06` e `WF-07`.
+- Políticas de governança atualizadas: `policies/reason-codes.yaml` (reason codes de domínio registrados) e `policies/capability-registry.yaml` (versões 2.0.0 ativas).
+- Estado 360 consolidado com 8 achados materiais (`findings`), 1 gate de elegibilidade (`gates`) e 4 ações recomendadas (`recommended_actions`), com linhagem e proveniência íntegras.
 
 ## Workflows criados
 
@@ -29,8 +25,8 @@
 | WF-01 | Entrada local de texto e arquivos | Concluído |
 | WF-02 | Registro persistente e idempotência do evento | Concluído |
 | WF-03 | Registro idempotente da decisão de roteamento | Concluído |
-| WF-04 | Orquestração dos Gerentes Gerais necessários | Concluído |
-| WF-05 | Gerente Geral determinístico em modo simulado | Concluído |
+| WF-04 | Orquestração dos Gerentes Gerais analíticos | Concluído |
+| WF-05 | Gerente Geral determinístico analítico (v2.0.0) | Concluído |
 | WF-06 | Motor de Consolidação e publicação do Estado 360 | Concluído |
 | WF-07 | Assessor Executivo ancorado no Estado 360 persistido | Concluído |
 | WF-08 | Consulta somente leitura do último Estado 360 | Concluído |
@@ -41,8 +37,8 @@
 - Entrada sintética de texto, PDF, JSON e planilha XLSX com cálculo e validação de SHA-256.
 - Idempotência sequencial e concorrente: primeira execução `SUCCEEDED` e repetições `DUPLICATE_IGNORED` sem novo evento lógico.
 - Roteamento determinístico: visão completa para quatro domínios, performance para um domínio e entrada ambígua para revisão manual.
-- Consolidação: cenários `READY` e `MANUAL_REVIEW_REQUIRED` preservados sem resolução automática de conflitos.
-- Assessor: respostas geradas exclusivamente do snapshot persistido.
+- Consolidação analítica do Marco 11: 8 achados materiais, 1 gate de elegibilidade e 4 ações recomendadas persistidos no snapshot.
+- Assessor Executivo: síntese gerada exclusivamente do snapshot persistido com resumo dos achados analíticos dos 4 domínios.
 - Dashboard: consulta somente leitura do Estado 360.
 - Adaptador Telegram simulado: mensagem, documento PDF e planilha XLSX processados com sucesso; repetições ignoradas.
 - Build de produção: `npm run build` aprovado.
@@ -65,7 +61,7 @@
 
 ## Erros conhecidos
 
-- Não há erro bloqueante conhecido no Marco 10C.
+- Não há erro bloqueante conhecido no Marco 11.
 - O WF-09, o webhook e os interruptores são usados somente em janelas controladas de homologação; não existe autorização para operação contínua nesta fase.
 - Integrações com fontes bancárias e uso de dados reais permanecem desabilitados por decisão de segurança e homologação.
 - O n8n pode registrar aviso sobre o task runner Python ausente; os workflows atuais usam JavaScript e não são afetados.
@@ -92,4 +88,4 @@
 
 ## Próximo passo exato
 
-Marco 11 — Evolução dos Gerentes Gerais e Especialistas analíticos de domínio com regras de negócio completas para Conta, Performance, Financeiro e Relacionamento. Implementar a catalogação e execução de especialistas de domínio sob a orquestração do WF-04/WF-05, mantendo rastreabilidade e segregação de funções.
+Marco 12 — Implementação da Central de Revisão Manual 360 com fila determinística de reason codes, atribuição de SLA e workflow estruturado de confirmação / saneamento humano para itens com status MANUAL_REVIEW_REQUIRED.

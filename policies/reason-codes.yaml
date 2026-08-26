@@ -31,3 +31,27 @@ codes:
   SYNTHETIC_DATA_ONLY:
     category: ENVIRONMENT
     review_required: false
+  CADASTRO_DEMO_PENDENTE:
+    category: CONTA
+    review_required: true
+  IDENTIDADE_CONFIRMADA_SINTETICA:
+    category: CONTA
+    review_required: false
+  PERFORMANCE_GAP_DETECTADO:
+    category: PERFORMANCE
+    review_required: false
+  META_ATINGIMENTO_PARCIAL:
+    category: PERFORMANCE
+    review_required: false
+  RENTABILIDADE_ANALISADA:
+    category: FINANCEIRO
+    review_required: false
+  VIABILIDADE_POSITIVA:
+    category: FINANCEIRO
+    review_required: false
+  COMPROMISSO_AGENDADO:
+    category: RELACIONAMENTO
+    review_required: false
+  HISTORICO_INTERACOES_CONSOLIDADO:
+    category: RELACIONAMENTO
+    review_required: false
