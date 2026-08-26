@@ -116,6 +116,42 @@ export const manualReviewResolutions = sqliteTable('manual_review_resolutions', 
   index('idx_resolutions_tenant_date').on(table.tenantId, table.resolvedAt)
 ]);
 
+export const evidenceNodes = sqliteTable('evidence_nodes', {
+  nodeId: text('node_id').primaryKey(),
+  tenantId: text('tenant_id').notNull(),
+  nodeType: text('node_type').notNull(),
+  entityId: text('entity_id').notNull(),
+  entityVersion: integer('entity_version').notNull().default(1),
+  contentHash: text('content_hash').notNull(),
+  payloadJson: text('payload_json').notNull().default('{}'),
+  validFrom: integer('valid_from', { mode: 'timestamp_ms' }),
+  validTo: integer('valid_to', { mode: 'timestamp_ms' }),
+  observedAt: integer('observed_at', { mode: 'timestamp_ms' }),
+  recordedAt: integer('recorded_at', { mode: 'timestamp_ms' }).notNull(),
+  supersededAt: integer('superseded_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_evidence_node_entity_version').on(table.tenantId, table.nodeType, table.entityId, table.entityVersion),
+  index('idx_evidence_nodes_tenant_type').on(table.tenantId, table.nodeType),
+  index('idx_evidence_nodes_entity').on(table.tenantId, table.entityId),
+  index('idx_evidence_nodes_recorded').on(table.tenantId, table.recordedAt),
+]);
+
+export const evidenceEdges = sqliteTable('evidence_edges', {
+  edgeId: text('edge_id').primaryKey(),
+  tenantId: text('tenant_id').notNull(),
+  relationshipType: text('relationship_type').notNull(),
+  fromNodeId: text('from_node_id').notNull().references(() => evidenceNodes.nodeId),
+  toNodeId: text('to_node_id').notNull().references(() => evidenceNodes.nodeId),
+  contentHash: text('content_hash').notNull(),
+  payloadJson: text('payload_json').notNull().default('{}'),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_evidence_edge_relation').on(table.tenantId, table.relationshipType, table.fromNodeId, table.toNodeId),
+  index('idx_evidence_edges_from').on(table.tenantId, table.fromNodeId),
+  index('idx_evidence_edges_to').on(table.tenantId, table.toNodeId),
+]);
+
 export const auditLog = sqliteTable('audit_log', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), actor: text('actor').notNull(), action: text('action').notNull(),
   entityType: text('entity_type').notNull(), entityId: text('entity_id').notNull(), detailsJson: text('details_json').notNull().default('{}'),

@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { boundedString, readBoundedJson, requestErrorResponse, requireBridge, sha256 } from '../shared';
 import { hashCanonical } from '../../reviews/shared';
+import { createEvidenceEdge, createEvidenceNode, prepareEvidenceEdgeInsert, prepareEvidenceNodeInsert, uuidFromSha256 } from '../../evidence/shared';
 
 export const runtime = 'edge';
 
@@ -57,7 +58,26 @@ export async function POST(request: Request) {
     const review = snapshot.overall_status === 'MANUAL_REVIEW_REQUIRED'
       ? await buildReviewRequest(snapshot, stateId, stateVersion, now)
       : null;
+    const stateNode = await createEvidenceNode({ tenantId: snapshot.tenant_id, nodeType: 'STATE_SNAPSHOT', entityId: stateId,
+      entityVersion: stateVersion, contentHash: suppliedHash, payload: { overall_status: snapshot.overall_status, event_id: snapshot.event_id },
+      observedAt: generatedAt, recordedAt: now, createdAt: now });
+    const bridgeActor = await createEvidenceNode({ tenantId: snapshot.tenant_id, nodeType: 'ACTOR', entityId: 'bridge:n8n-local',
+      payload: { actor_kind: 'SERVICE', external_effects_allowed: false }, recordedAt: now, createdAt: now });
+    const stateGeneratedBy = await createEvidenceEdge({ tenantId: snapshot.tenant_id, relationshipType: 'GENERATED_BY',
+      fromNodeId: stateNode.nodeId, toNodeId: bridgeActor.nodeId, payload: { workflow: 'WF-09' }, createdAt: now });
+    statements.push(prepareEvidenceNodeInsert(env.DB, stateNode), prepareEvidenceNodeInsert(env.DB, bridgeActor), prepareEvidenceEdgeInsert(env.DB, stateGeneratedBy));
     if (review) {
+      const reviewNode = await createEvidenceNode({ tenantId: snapshot.tenant_id, nodeType: 'MANUAL_REVIEW_REQUEST', entityId: review.reviewRequestId,
+        nodeId: review.reviewRequestId, contentHash: await hashCanonical({ reason_code: review.reasonCode, priority: review.priority, owner_queue: review.ownerQueue,
+          problem_statement: review.problemStatement, impact: review.impact, required_decision: review.requiredDecision }),
+        payload: { reason_code: review.reasonCode, priority: review.priority, owner_queue: review.ownerQueue, status: 'PENDING_TRIAGE' },
+        recordedAt: now, createdAt: now });
+      const reviewActor = await createEvidenceNode({ tenantId: snapshot.tenant_id, nodeType: 'ACTOR', entityId: 'central-review:deterministic',
+        payload: { actor_kind: 'SERVICE', autonomous_decision: false }, recordedAt: now, createdAt: now });
+      const reviewDerivedFrom = await createEvidenceEdge({ tenantId: snapshot.tenant_id, relationshipType: 'DERIVED_FROM',
+        fromNodeId: reviewNode.nodeId, toNodeId: stateNode.nodeId, payload: { reason_code: review.reasonCode }, createdAt: now });
+      const reviewGeneratedBy = await createEvidenceEdge({ tenantId: snapshot.tenant_id, relationshipType: 'GENERATED_BY',
+        fromNodeId: reviewNode.nodeId, toNodeId: reviewActor.nodeId, payload: { method: 'DETERMINISTIC_RULE' }, createdAt: now });
       statements.push(
         env.DB.prepare(`INSERT OR IGNORE INTO manual_review_requests (review_request_id, event_id, tenant_id, correlation_id, state_id, state_version,
           reason_code, category, severity, review_priority, status, owner_queue, assigned_to, sla_policy_id, escalation_level, dedupe_key, duplicate_of,
@@ -71,6 +91,10 @@ export async function POST(request: Request) {
           SELECT ?, d.owner_id, 'central-review:deterministic', 'review_enqueued', 'manual_review', ?, ?, ?
           FROM agent_runs ar JOIN documents d ON d.id = ar.document_id WHERE ar.id = ?`)
           .bind(`review-enqueued-${jobId}`, review.reviewRequestId, JSON.stringify({ reasonCode: review.reasonCode, priority: review.priority, dueAt: review.dueAt }), now, jobId),
+        prepareEvidenceNodeInsert(env.DB, reviewNode),
+        prepareEvidenceNodeInsert(env.DB, reviewActor),
+        prepareEvidenceEdgeInsert(env.DB, reviewDerivedFrom),
+        prepareEvidenceEdgeInsert(env.DB, reviewGeneratedBy),
       );
     }
     await env.DB.batch(statements);
@@ -109,12 +133,6 @@ function reviewCategory(reasonCode: string) {
   if (reasonCode.includes('GATE')) return 'GATE_FAILED';
   if (reasonCode.includes('BUDGET')) return 'BUDGET_EXCEEDED';
   return 'AMBIGUOUS_INPUT';
-}
-
-function uuidFromSha256(hash: string) {
-  const hex = hash.replace(/^sha256:/, '').slice(0, 32).split('');
-  hex[12] = '5'; hex[16] = ((Number.parseInt(hex[16], 16) & 0x3) | 0x8).toString(16);
-  const value = hex.join(''); return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`;
 }
 
 function validSnapshot(value: StateSnapshot | undefined): value is StateSnapshot {

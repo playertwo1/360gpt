@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { readBoundedJson } from '../../../bridge/shared';
 import { bounded, hashCanonical, isDenied, NEXT_ACTIONS, parseJsonArray, parseJsonObject, requireReviewer, REVIEW_DECISIONS, type ReviewRequestRow } from '../../shared';
+import { createEvidenceEdge, createEvidenceNode, prepareEvidenceEdgeInsert, prepareEvidenceNodeInsert } from '../../../evidence/shared';
 
 export const runtime = 'edge';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -33,6 +34,15 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     new_evidence_sources: validEvidence, affected_scope: parseJsonObject(row.affected_scope_json), next_action: nextAction };
   const resolutionHash = await hashCanonical(resolution);
   const finalStatus = decision === 'MORE_DATA_REQUIRED' ? 'MORE_DATA_REQUIRED' : decision.startsWith('CONFIRM_SOURCE_') ? 'RESOLVED_CONFIRMED' : decision;
+  const reviewerActor = await createEvidenceNode({ tenantId: row.tenant_id, nodeType: 'ACTOR', entityId: user.userId,
+    payload: { actor_kind: 'HUMAN_REVIEWER' }, recordedAt: now, createdAt: now });
+  const resolutionNode = await createEvidenceNode({ tenantId: row.tenant_id, nodeType: 'REVIEW_RESOLUTION', entityId: resolutionId,
+    nodeId: resolutionId, contentHash: resolutionHash, payload: { review_request_id: reviewId, decision, next_action: nextAction },
+    observedAt: now, recordedAt: now, createdAt: now });
+  const resolutionDerivedFrom = await createEvidenceEdge({ tenantId: row.tenant_id, relationshipType: 'DERIVED_FROM',
+    fromNodeId: resolutionNode.nodeId, toNodeId: reviewId, payload: { review_request_id: reviewId }, createdAt: now });
+  const resolutionAttributedTo = await createEvidenceEdge({ tenantId: row.tenant_id, relationshipType: 'ATTRIBUTED_TO',
+    fromNodeId: resolutionNode.nodeId, toNodeId: reviewerActor.nodeId, payload: { reviewer_role: row.reviewer_role }, createdAt: now });
   let applied = false;
   try {
     const results = await env.DB.batch([
@@ -48,6 +58,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         FROM manual_review_resolutions WHERE resolution_id = ?`)
         .bind(crypto.randomUUID(), user.email.toLowerCase(), `reviewer:${user.userId}`, reviewId,
           JSON.stringify({ decision, status: finalStatus, next_action: nextAction, resolution_hash: resolutionHash }), now, resolutionId),
+      prepareEvidenceNodeInsert(env.DB, reviewerActor),
+      prepareEvidenceNodeInsert(env.DB, resolutionNode),
+      prepareEvidenceEdgeInsert(env.DB, resolutionDerivedFrom),
+      prepareEvidenceEdgeInsert(env.DB, resolutionAttributedTo),
     ]);
     applied = (results[0].meta?.changes ?? 0) === 1 && (results[1].meta?.changes ?? 0) === 1;
   } catch { return NextResponse.json({ ok: false, error: 'resolution_conflict' }, { status: 409 }); }

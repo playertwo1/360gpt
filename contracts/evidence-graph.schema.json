@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.diretor360.local/contracts/evidence-graph.schema.json",
+  "title": "EvidenceGraph360",
+  "type": "object",
+  "required": ["schema_version", "tenant_id", "generated_at", "nodes", "edges"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "tenant_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "nullableDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "node": {
+      "type": "object",
+      "required": ["node_id", "node_type", "entity_id", "entity_version", "content_hash", "payload", "recorded_at", "created_at"],
+      "properties": {
+        "node_id": { "type": "string", "format": "uuid" },
+        "node_type": {
+          "type": "string",
+          "enum": ["SOURCE_ARTIFACT", "OBSERVATION", "TRANSFORMATION", "FINDING", "RECOMMENDATION", "MANUAL_REVIEW_REQUEST", "REVIEW_RESOLUTION", "STATE_SNAPSHOT", "ACTOR"]
+        },
+        "entity_id": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "entity_version": { "type": "integer", "minimum": 1 },
+        "content_hash": { "$ref": "#/$defs/hash" },
+        "payload": { "type": "object" },
+        "valid_from": { "$ref": "#/$defs/nullableDateTime" },
+        "valid_to": { "$ref": "#/$defs/nullableDateTime" },
+        "observed_at": { "$ref": "#/$defs/nullableDateTime" },
+        "recorded_at": { "type": "string", "format": "date-time" },
+        "superseded_at": { "$ref": "#/$defs/nullableDateTime" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": ["edge_id", "relationship_type", "from_node_id", "to_node_id", "content_hash", "payload", "created_at"],
+      "properties": {
+        "edge_id": { "type": "string", "format": "uuid" },
+        "relationship_type": {
+          "type": "string",
+          "enum": ["DERIVED_FROM", "GENERATED_BY", "USED", "ATTRIBUTED_TO", "SUPPORTED_BY", "CONTRADICTS", "SUPERSEDES", "INVALIDATES", "INCLUDED_IN_STATE"]
+        },
+        "from_node_id": { "type": "string", "format": "uuid" },
+        "to_node_id": { "type": "string", "format": "uuid" },
+        "content_hash": { "$ref": "#/$defs/hash" },
+        "payload": { "type": "object" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

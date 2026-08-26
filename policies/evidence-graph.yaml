@@ -1,0 +1,39 @@
+version: "1.0.0"
+last_updated: "2026-08-26"
+mode: "APPEND_ONLY"
+
+node_types:
+  - SOURCE_ARTIFACT
+  - OBSERVATION
+  - TRANSFORMATION
+  - FINDING
+  - RECOMMENDATION
+  - MANUAL_REVIEW_REQUEST
+  - REVIEW_RESOLUTION
+  - STATE_SNAPSHOT
+  - ACTOR
+
+relationship_types:
+  - DERIVED_FROM
+  - GENERATED_BY
+  - USED
+  - ATTRIBUTED_TO
+  - SUPPORTED_BY
+  - CONTRADICTS
+  - SUPERSEDES
+  - INVALIDATES
+  - INCLUDED_IN_STATE
+
+privacy:
+  payload_forbids:
+    - secrets
+    - access_tokens
+    - raw_documents
+    - unnecessary_pii
+  actor_identity: "site_scoped_user_id"
+  external_locator_required_for_protected_artifacts: true
+
+query:
+  max_depth: 4
+  max_nodes: 200
+  authenticated_read_only: true
