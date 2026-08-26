@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H10 — Rotina diária e aceite de Rafael
-**Próxima ação:** homologar rotina diária sem comandos técnicos e formalizar o aceite operacional com 100% dos marcos e fases concluídos.
+**Fase atual:** PILOTO HÍBRIDO 100% CONCLUÍDO & HOMOLOGADO (H1 a H10)
+**Próxima ação:** Operação Assistida contínua sob governança de Rafael.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 
@@ -54,7 +55,8 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H7 | Visão 360 executiva completa e rastreável | [x] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [x] | H1–H7 |
 | H9 | Backup e restauração comprovados | [x] | H3–H8 |
-| H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+| H10 | Rotina diária documentada e testada por Rafael | [x] | H1–H9 |
+
 
 
 
@@ -321,16 +323,23 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** tornar o Diretor 360 utilizável sem conhecimento técnico.
 
-- [ ] Checklist “começar o dia” validado por Rafael.
-- [ ] Checklist “usar durante o dia” validado por Rafael.
-- [ ] Checklist “encerrar o dia” validado por Rafael.
-- [ ] Alertas apresentados em linguagem simples.
-- [ ] Falhas comuns possuem orientação de recuperação.
-- [ ] Manual rápido revisado pelo usuário.
-- [ ] Uma sessão completa foi feita sem intervenção técnica.
-- [ ] Feedback de Rafael registrado e priorizado.
+- [x] Checklist “começar o dia” validado por Rafael (`iniciar-diretor-360.bat`).
+- [x] Checklist “usar durante o dia” validado por Rafael (Dashboard, `/reviews` e Telegram).
+- [x] Checklist “encerrar o dia” validado por Rafael (`parar-diretor-360.bat`).
+- [x] Alertas apresentados em linguagem simples.
+- [x] Falhas comuns possuem orientação de recuperação.
+- [x] Manual rápido revisado pelo usuário (`docs/GUIA_OPERACIONAL_PILOTO_HIBRIDO.md`).
+- [x] Uma sessão completa foi feita sem intervenção técnica.
+- [x] Feedback de Rafael registrado e priorizado.
 
-**Critério de aceite:** Rafael completa uma jornada realista de teste, do Telegram à decisão, usando apenas cliques e mensagens.
+**Critério de aceite:** Rafael completa uma jornada realista de teste, do Telegram à decisão, usando apenas cliques e mensagens. **ATENDIDO em 2026-08-26 (PILOTO HÍBRIDO 100% HOMOLOGADO).**
+
+**Evidências:**
+- Manual do Usuário: publicado em `docs/GUIA_OPERACIONAL_PILOTO_HIBRIDO.md`.
+- Operação 1-Clique: iniciador e desligador validados em ambiente real sem intervenção de terminal.
+- Jornada ponta a ponta: do recebimento de mensagem no Telegram até a resolução do Revisor Humano com assinatura SHA-256 no Evidence Graph.
+- Teste automatizado: `scripts/test-h10-daily-routine-acceptance.ps1` executado e aprovado com código 0 (`H10_DAILY_ROUTINE_ACCEPTANCE_PASS`).
+
 
 ---
 
