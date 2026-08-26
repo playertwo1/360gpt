@@ -1,0 +1,104 @@
+{
+  "": "https://visao360.local/contracts/finops-metrics.schema.json",
+  "title": "FinOpsMetricsContract",
+  "type": "object",
+  "required": [
+    "version",
+    "tenant_id",
+    "calculated_at",
+    "sla_metrics",
+    "unit_economics",
+    "capacity_and_traffic"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "calculated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sla_metrics": {
+      "type": "object",
+      "required": [
+        "active_tickets",
+        "at_risk_tickets_80pct",
+        "breached_tickets",
+        "avg_resolution_time_minutes"
+      ],
+      "properties": {
+        "active_tickets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "at_risk_tickets_80pct": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "breached_tickets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avg_resolution_time_minutes": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "unit_economics": {
+      "type": "object",
+      "required": [
+        "total_tokens_consumed",
+        "estimated_cost_brl",
+        "avg_cost_per_analysis_brl",
+        "idempotency_savings_brl"
+      ],
+      "properties": {
+        "total_tokens_consumed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimated_cost_brl": {
+          "type": "number",
+          "minimum": 0
+        },
+        "avg_cost_per_analysis_brl": {
+          "type": "number",
+          "minimum": 0
+        },
+        "idempotency_savings_brl": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "capacity_and_traffic": {
+      "type": "object",
+      "required": [
+        "total_requests_processed",
+        "duplicate_ignored_count",
+        "cache_hit_ratio_pct"
+      ],
+      "properties": {
+        "total_requests_processed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicate_ignored_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cache_hit_ratio_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

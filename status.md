@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360
 
 **Data do status:** 26 de agosto de 2026  
-**Versão da Release:** `v1.0.0-assisted-prod` (Fase 1 Homologada — 100%)  
+**Versão da Release:** `v1.2.0-marco18` (Alertas de SLA e FinOps Homologados)  
 **Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
 **Saúde do Projeto:** 🟢 **VERDE (100% Homologado / Pronto para Operação Assistida)**  
 
@@ -15,14 +15,14 @@
 |---|---|---|:---:|
 | **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
 | **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
-| **Fase 2 (Operação & Produção Assistida)** | **5 marcos planejados (Marcos 16 a 20)** | Boas práticas de mercado (inspiração, não certificação) | ⏳ |
+| **Fase 2 (Operação & Produção Assistida)** | **3 de 5 marcos concluídos (60%)** | Boas práticas de mercado (inspiração, não certificação) | 🟢 |
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | Inspirado em W3C PROV / OpenLineage | 🟢 |
 | **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
+| **Guardião de SLA & FinOps** | Alertas aos 80% do SLA / Unit Economics < R$ 0,15 | Google SRE & FinOps Foundation | 🟢 |
 | **Testes de Carga & Concorrência** | 100% de sucesso em rajadas simultâneas | Backpressure e Idempotência | 🟢 |
 | **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
 | **Readiness Gate** | **PASS (Certificado)** | Critérios de release | 🟢 |
-
 
 ---
 
@@ -53,31 +53,32 @@
 | Marco | Descrição | Inspiração de Mercado | Estado |
 |:---:|---|---|:---:|
 | **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ✅ Concluído |
-| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | ✅ **Concluído** |
-| **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | ⏳ **Próximo** |
-| **19** | **Infraestrutura Cloud & Deploy em Produção Hospedada** — Deploy do Frontend Next.js/Vite no Cloudflare Pages/Workers + D1 e subida do n8n/PostgreSQL em VPS com HTTPS/TLS, incluindo plano de rollback documentado (reversão de DNS, restore de banco, rollback de contêiner) antes da virada | Inspirado em 12-Factor App & CIS Benchmarks | 📋 Planejado |
+| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | ✅ Concluído |
+| **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | ✅ **Concluído** |
+| **19** | **Infraestrutura Cloud & Deploy em Produção Hospedada** — Deploy do Frontend Next.js/Vite no Cloudflare Pages/Workers + D1 e subida do n8n/PostgreSQL em VPS com HTTPS/TLS, incluindo plano de rollback documentado (reversão de DNS, restore de banco, rollback de contêiner) antes da virada | Inspirado em 12-Factor App & CIS Benchmarks | ⏳ **Próximo** |
 | **20** | **Ativação dos Canais Oficiais de Produção** — Conexão do Bot Telegram oficial com webhooks autenticados, processamento de áudio/PDF/planilhas em tempo real e entrega contínua | Inspirado em Enterprise API Gateway & Zero-Trust | 📋 Planejado |
 
 ---
 
-## 3. Último Marco Concluído: Marco 17
+## 3. Último Marco Concluído: Marco 18
 
-**Manual e Playbook Operacional do Revisor 360 concluído e homologado:**
-- Documento executivo formal `docs/PLAYBOOK_REVISOR_360.md` elaborado, detalhando os procedimentos padrão operacionais (SOP) para a Mesa do Revisor.
-- Codificação do rito de triagem determinística (`PENDING_TRIAGE → ASSIGNED → IN_REVIEW → RESOLVED`), leases de lock de 10 minutos e regras de desempate por autoridade de fontes.
-- Matriz definitiva de reason codes alinhada com `policies/reason-codes.yaml` (incluindo `ELEGIBILIDADE_CONDICIONAL` e `RECIPROCIDADE_PENDENTE`).
-- Roteiro de inspeção de linhagem PROV no Evidence Graph e protocolo de assinatura digital SHA-256 para despachos humanos imutáveis.
-- Script automatizado de validação de governança `scripts/test-playbook-governance.ps1` executado e aprovado com código 0 (`PLAYBOOK_GOVERNANCE_PASS`).
+**Alertas Proativos de SLA e Telemetria FinOps concluídos e homologados:**
+- Criada a política de telemetria e SLA `policies/finops-telemetry.yaml` e o schema `contracts/finops-metrics.schema.json`.
+- Implementado o endpoint seguro `/api/metrics/finops` protegido por autenticação falha-fechada com verificação da allowlist de revisores.
+- Validado o mecanismo de disparo proativo aos **80% do SLA** (`P0_CRITICAL` em 48m, `P1_HIGH` em 192m e `P2_NORMAL` em 1152m).
+- Instituído o controle de *Unit Economics* com meta de custo unitário abaixo de R$ 0,15/análise e mensuração de economia gerada pela idempotência (descarte de requisições repetidas).
+- Script automatizado de validação `scripts/test-sla-alerts-finops.ps1` executado e aprovado com código 0 (`FINOPS_AND_SLA_ALERTS_PASS`).
 
 ---
 
 ## 4. Próximo Passo Exato
 
-**Marco 18 — Alertas Proativos de SLA e Telemetria FinOps:**
-Implementar o módulo de disparo automático de alertas e monitoramento de capacidade da Central de Revisão:
-1. Notificação proativa no Telegram/E-mail quando um ticket na fila atingir **80% do tempo de SLA** (`policies/review-sla.yaml`).
-2. Telemetria de consumo de tokens de IA, latência por domínio analítico e estimativa de custo por execução (*Unit Economics*).
-3. Script automatizado de validação de alertas e métricas de capacidade.
+**Marco 19 — Infraestrutura Cloud & Deploy em Produção Hospedada (com Plano de Rollback):**
+Preparar os manifestos, scripts de provisionamento e o plano formal de reversão operacional:
+1. Manifestos de deploy do Frontend no Cloudflare Pages/Workers + D1.
+2. Manifestos Docker Compose para VPS remota (n8n + PostgreSQL) com HTTPS/TLS (Caddy/Traefik).
+3. Plano documentado e testado de Rollback (reversão de DNS, restore transacional do banco de dados e rollback de imagens de contêiner).
+
 
 
 

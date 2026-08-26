@@ -1,0 +1,42 @@
+schema_version: '1.0.0'
+status: ACTIVE
+effective_date: '2026-08-26T00:00:00Z'
+owner: 'Diretor 360 / FinOps & SRE'
+
+sla_monitoring:
+  alert_threshold_percentage: 80
+  escalation_action: 'ESCALATE_TO_SENIOR_AND_NOTIFY'
+  thresholds:
+    P0_CRITICAL:
+      total_sla_minutes: 60
+      alert_trigger_minutes: 48
+      channel: 'TELEGRAM_CRITICAL_AND_EMAIL'
+    P1_HIGH:
+      total_sla_minutes: 240
+      alert_trigger_minutes: 192
+      channel: 'TELEGRAM_AND_EMAIL'
+    P2_NORMAL:
+      total_sla_minutes: 1440
+      alert_trigger_minutes: 1152
+      channel: 'DAILY_DIGEST_EMAIL'
+
+token_pricing_model:
+  currency: 'BRL'
+  rates_per_million_tokens:
+    director_orchestrator:
+      prompt: 15.00
+      completion: 60.00
+    domain_general_managers:
+      prompt: 7.50
+      completion: 30.00
+    specialists:
+      prompt: 3.50
+      completion: 14.00
+    executive_assessor:
+      prompt: 5.00
+      completion: 20.00
+
+unit_economics_targets:
+  target_max_cost_per_analysis_brl: 0.15
+  alert_cost_ceiling_per_analysis_brl: 0.30
+  idempotency_savings_tracking: true
