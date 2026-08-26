@@ -10,12 +10,41 @@ type Review = {
 };
 type ReviewResponse = { ok: boolean; reviews?: Review[]; error?: string };
 
+type AuditReviewResponse = {
+  ok: boolean;
+  review?: { status: string; reason_code: string; state_id: string; state_version: number; owner_queue: string };
+  resolution?: { resolution_id: string; decision: string; reviewer_id: string; rationale: string; resolution_hash: string };
+  audit_events?: { id: string; actor: string; action: string; entity_type: string; entity_id: string; created_at: string }[];
+  evidence_graph?: { schema_version: string; lineage_status: string; nodes: { node_id: string; node_type: string; entity_id: string; entity_version: number; content_hash: string; recorded_at: string }[]; edges: { edge_id: string; relationship_type: string; from_node_id: string; to_node_id: string; content_hash: string }[] };
+};
+
 export default function ReviewConsole() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [rationales, setRationales] = useState<Record<string, string>>({});
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
+  const [auditData, setAuditData] = useState<AuditReviewResponse | null>(null);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+
+  const openReviewAudit = useCallback(async (reviewId: string) => {
+    setSelectedReviewId(reviewId);
+    setAuditModalOpen(true);
+    setAuditLoading(true);
+    try {
+      const res = await fetch(`/api/audit/reviews/${reviewId}?tenant_id=tenant-demo`, { cache: 'no-store' });
+      if (res.ok) {
+        const body = (await res.json()) as AuditReviewResponse;
+        setAuditData(body);
+      }
+    } catch {
+      // Fallback
+    } finally {
+      setAuditLoading(false);
+    }
+  }, []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -75,16 +104,67 @@ export default function ReviewConsole() {
           {reviews.map((review) => <article key={review.review_request_id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3"><div><div className="flex flex-wrap gap-2"><span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-800">{review.review_priority}</span><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">{review.status}</span><span className="px-1 py-1 text-xs text-slate-400">{review.owner_queue}</span></div><h3 className="mt-3 text-lg font-black">{review.reason_code}</h3></div><div className="text-right text-xs text-slate-400"><p>SLA: {review.sla_state}</p><p className="mt-1">Escalonamento: {review.escalation_level}/3</p></div></div>
             <p className="mt-3 text-sm font-semibold leading-6 text-slate-700">{review.problem_statement}</p><p className="mt-2 text-sm leading-6 text-slate-500"><strong>Decisão necessária:</strong> {review.required_decision}</p><p className="mt-2 text-xs leading-5 text-slate-400"><strong>Impacto:</strong> {review.impact}</p>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-2">
               {['PENDING_TRIAGE', 'ESCALATED', 'MORE_DATA_REQUIRED'].includes(review.status) ? <button disabled={working === review.review_request_id} onClick={() => void transition(review, 'ASSIGN_TO_ME')} className="rounded-xl bg-[#0d1c2b] px-4 py-2.5 text-sm font-black text-white disabled:opacity-50">Assumir revisão</button> : null}
               {review.status === 'ASSIGNED' ? <button disabled={working === review.review_request_id} onClick={() => void transition(review, 'START_REVIEW')} className="rounded-xl bg-[#0d1c2b] px-4 py-2.5 text-sm font-black text-white disabled:opacity-50">Iniciar análise</button> : null}
               {review.status !== 'IN_REVIEW' ? <button disabled={working === review.review_request_id || review.escalation_level >= 3} onClick={() => void transition(review, 'ESCALATE')} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 disabled:opacity-50">Escalonar</button> : null}
+              <button onClick={() => void openReviewAudit(review.review_request_id)} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-100"><span>🔒</span> Ver Linhagem / Evidence Graph</button>
             </div>
             {review.status === 'IN_REVIEW' ? <div className="mt-5 rounded-2xl bg-slate-50 p-4"><label className="text-sm font-black" htmlFor={`rationale-${review.review_request_id}`}>Justificativa humana</label><textarea id={`rationale-${review.review_request_id}`} value={rationales[review.review_request_id] ?? ''} onChange={(event) => setRationales((current) => ({ ...current, [review.review_request_id]: event.target.value }))} placeholder="Explique por que a finalidade sintética foi confirmada." className="mt-2 min-h-28 w-full rounded-xl border border-slate-200 bg-white p-3 text-sm outline-none focus:border-[#28d1a5]" /><button disabled={working === review.review_request_id} onClick={() => void resolve(review)} className="mt-3 rounded-xl bg-[#16856b] px-4 py-2.5 text-sm font-black text-white disabled:opacity-50">Registrar confirmação sintética</button><p className="mt-2 text-xs text-slate-400">A ação somente registra a decisão e o hash. Não reprocessa nem executa transações.</p></div> : null}
           </article>)}
           {!loading && reviews.length === 0 ? <p className="rounded-2xl bg-emerald-50 p-5 text-sm font-bold text-emerald-800">Nenhuma revisão aberta.</p> : null}
         </div>
       </section>
+
+      {/* Modal de Linhagem & Auditoria do Revisor */}
+      {auditModalOpen ? (
+        <div role="dialog" aria-modal="true" aria-label="Auditoria da Revisão" className="fixed inset-0 z-50 grid place-items-center bg-[#07121e]/75 p-4 backdrop-blur-sm">
+          <section className="flex max-h-[90vh] w-full max-w-3xl flex-col rounded-3xl bg-white shadow-2xl overflow-hidden">
+            <header className="flex items-center justify-between border-b border-slate-200 bg-[#0d1c2b] px-6 py-5 text-white">
+              <div>
+                <span className="rounded-full bg-[#39d6ac] px-2.5 py-0.5 text-[10px] font-black uppercase text-[#0b2730]">Linhagem & Auditoria</span>
+                <h2 className="mt-2 text-xl font-bold">Revisão: {selectedReviewId?.slice(0, 8)}...</h2>
+                <p className="mt-1 text-xs text-slate-400">Status: {auditData?.review?.status ?? 'ABERTA'} · Motivo: {auditData?.review?.reason_code ?? '—'}</p>
+              </div>
+              <button onClick={() => setAuditModalOpen(false)} aria-label="Fechar" className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-xl font-bold text-white hover:bg-white/20">×</button>
+            </header>
+            <div className="flex-1 overflow-y-auto p-6 space-y-5">
+              {auditLoading ? <p className="text-center py-6 text-slate-500">Consultando Evidence Graph...</p> : null}
+              {!auditLoading && auditData ? (
+                <>
+                  <div>
+                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Nós Conectados ({auditData.evidence_graph?.nodes?.length ?? 0})</h3>
+                    <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                      {(auditData.evidence_graph?.nodes ?? []).map((node) => (
+                        <div key={node.node_id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs">
+                          <p className="font-bold text-slate-800">{node.node_type} (v{node.entity_version})</p>
+                          <p className="mt-1 font-mono text-[10px] text-slate-500 truncate">{node.content_hash}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Trilha de Auditoria ({auditData.audit_events?.length ?? 0})</h3>
+                    <div className="mt-2 space-y-2">
+                      {(auditData.audit_events ?? []).map((event) => (
+                        <div key={event.id} className="rounded-xl border border-slate-200 bg-white p-3 text-xs flex justify-between items-center">
+                          <div><span className="font-bold text-slate-800">{event.action}</span> <span className="text-slate-400">por {event.actor}</span></div>
+                          <span className="text-[10px] text-slate-400">{new Date(event.created_at).toLocaleTimeString('pt-BR')}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+            <footer className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4 text-xs">
+              <p className="text-slate-500">🔒 Registrado com hash SHA-256 imutável.</p>
+              <button onClick={() => setAuditModalOpen(false)} className="rounded-xl bg-[#0d1c2b] px-4 py-2 font-bold text-white">Fechar</button>
+            </footer>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
+

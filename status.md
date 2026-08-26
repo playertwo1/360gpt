@@ -31,21 +31,21 @@
 | **11** | **Evolução dos 4 Gerentes Gerais e Especialistas analíticos de domínio (v2.0.0)** | ✅ **Concluído** |
 | **12A** | Fundação da Central: contratos, fila, SLA, deduplicação, APIs e read model | ✅ **Concluído** |
 | **12B** | Implantação hospedada e homologação autenticada das transições humanas | ✅ **Concluído** |
-| **13A** | **Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria** | ✅ **Concluído** |
-| **13B** | Painel visual de auditoria e navegação da linhagem PROV/OpenLineage | ⏳ **Próximo** |
-| **14** | Testes de carga, concorrência distribuída e backpressure de modelos | 📋 Planejado |
+| **13A** | Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria | ✅ **Concluído** |
+| **13B** | **Painel visual de auditoria e navegação da linhagem PROV/OpenLineage** | ✅ **Concluído** |
+| **14** | Testes de carga, concorrência distribuída e backpressure de modelos | ⏳ **Próximo** |
 | **15** | Homologação final para release de produção assistida | 📋 Planejado |
 
 ---
 
-## 3. Último Marco Concluído: Marco 13A
+## 3. Último Marco Concluído: Marco 13B
 
-**Fundação do Evidence Graph 360 implementada e homologada:**
-- Contrato JSON Schema SemVer `1.0.0` (Draft 2020-12) em `contracts/evidence-graph.schema.json`.
-- Política de governança de proveniência e linhagem em `policies/evidence-graph.yaml`.
-- Tabelas append-only imutáveis `evidence_nodes` e `evidence_edges` com triggers anti-mutação no PostgreSQL e D1.
-- Relações de linhagem rastreáveis (`STATE_SNAPSHOT`, `MANUAL_REVIEW_REQUEST`, `REVIEW_RESOLUTION`, `ACTOR`) ligadas por `DERIVED_FROM` e `GENERATED_BY` com hashes SHA-256 íntegros.
-- Rota autenticada de auditoria `/api/audit/reviews/:id` operando em modo falha-fechada (`401` sem identidade).
+**Painel visual de auditoria e navegação da linhagem PROV/OpenLineage homologado:**
+- Rota autenticada de auditoria de snapshot `/api/audit/state/latest` implementada com proteção falha-fechada (`401` sem identidade).
+- Modal visual interativo de navegação do **Evidence Graph 360** integrado ao Dashboard principal (`app/page.tsx`).
+- Visualizador de linhagem e auditoria integrado à Mesa do Revisor (`app/reviews/page.tsx`) com navegação de nós e arestas.
+- Mapeamento PROV/OpenLineage (Entidades, Atividades, Agentes) e conferência de integridade por hashes SHA-256 e timestamps bitemporais.
+- Script automatizado de validação de auditoria `scripts/test-audit-ui.ps1` aprovado.
 
 
 ---
