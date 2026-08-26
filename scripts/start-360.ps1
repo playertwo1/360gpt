@@ -26,9 +26,18 @@ if (-not (Test-Path -LiteralPath $envFile)) {
     "N8N_DB_PASSWORD=$(New-HexSecret 24)"
     "APP_DB_PASSWORD=$(New-HexSecret 24)"
     "N8N_ENCRYPTION_KEY=$(New-HexSecret 48)"
+    "BRIDGE_SHARED_SECRET=$(New-HexSecret 32)"
   )
   [IO.File]::WriteAllLines($envFile, $values, [Text.UTF8Encoding]::new($false))
   Write-Host 'Credenciais locais criadas em .env.n8n (arquivo ignorado pelo Git).'
+}
+
+$existingSettings = Get-Content -LiteralPath $envFile -Raw | ConvertFrom-StringData
+if ([string]::IsNullOrWhiteSpace($existingSettings['BRIDGE_SHARED_SECRET'])) {
+  $currentEnv = Get-Content -LiteralPath $envFile -Raw
+  $separator = if ($currentEnv.EndsWith("`n")) { '' } else { [Environment]::NewLine }
+  [IO.File]::AppendAllText($envFile, "${separator}BRIDGE_SHARED_SECRET=$(New-HexSecret 32)$([Environment]::NewLine)", [Text.UTF8Encoding]::new($false))
+  Write-Host 'Segredo local da ponte criado no arquivo ignorado pelo Git.'
 }
 
 New-Item -ItemType Directory -Force -Path $localDir | Out-Null

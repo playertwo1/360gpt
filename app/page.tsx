@@ -29,7 +29,7 @@ export default function Home() {
       const response = await fetch('/api/state/latest?tenant_id=tenant-demo&subject_ref=cust-demo-001', { cache: 'no-store' });
       setModel((await response.json()) as ReadModel);
     } catch {
-      setModel({ available: false, error: 'local_read_model_unavailable' });
+      setModel({ available: false, error: 'hosted_read_model_unavailable' });
     } finally { setLoading(false); }
   }, []);
   useEffect(() => {
@@ -66,13 +66,13 @@ export default function Home() {
           <section id="resumo" className="relative overflow-hidden rounded-[28px] bg-[#0d1c2b] p-6 text-white shadow-[0_24px_60px_-36px_#0d1c2b] md:p-8">
             <div className="absolute -right-20 -top-28 h-80 w-80 rounded-full border-[52px] border-[#39d6ac]/10" />
             <div className="relative grid gap-8 xl:grid-cols-[1.4fr_.8fr] xl:items-end"><div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-1.5 text-xs font-bold text-[#65e5c3]"><span className={`h-2 w-2 rounded-full ${ready ? 'bg-[#39d6ac]' : 'bg-amber-400'}`} /> {model?.available ? (ready ? 'Snapshot pronto' : 'Revisão manual necessária') : 'Aguardando snapshot local'}</div>
-              <h2 className="mt-5 max-w-3xl text-2xl font-semibold leading-tight tracking-[-.035em] md:text-[36px]">{model?.available ? `${findings.length} achado(s) rastreáveis em ${domains.length} domínio(s), com ${gaps.length} lacuna(s) declarada(s).` : 'Execute um teste no n8n para publicar o primeiro Estado 360.'}</h2>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-1.5 text-xs font-bold text-[#65e5c3]"><span className={`h-2 w-2 rounded-full ${ready ? 'bg-[#39d6ac]' : 'bg-amber-400'}`} /> {model?.available ? (ready ? 'Snapshot pronto' : 'Revisão manual necessária') : 'Aguardando snapshot hospedado'}</div>
+              <h2 className="mt-5 max-w-3xl text-2xl font-semibold leading-tight tracking-[-.035em] md:text-[36px]">{model?.available ? `${findings.length} achado(s) rastreáveis em ${domains.length} domínio(s), com ${gaps.length} lacuna(s) declarada(s).` : 'A ponte segura publicará aqui o próximo Estado 360 processado pelo n8n.'}</h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">Esta tela não calcula nem altera resultados. Ela lê exclusivamente o último snapshot persistido pelo Motor de Consolidação 360.</p>
             </div><div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm"><p className="text-xs uppercase tracking-wider text-slate-500">Cliente</p><p className="mt-1 font-bold">{snapshot?.subject_ref ?? 'cust-demo-001'}</p><div className="mt-4 grid grid-cols-2 gap-3 text-xs"><div><p className="text-slate-500">Versão</p><p className="mt-1 font-semibold">{model?.state_version ?? '—'}</p></div><div><p className="text-slate-500">Publicado</p><p className="mt-1 font-semibold">{formatDate(model?.generated_at)}</p></div></div></div></div>
           </section>
 
-          {model?.error ? <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">O read model local não respondeu. Confirme que o n8n está ligado e publique o WF-08.</div> : null}
+          {model?.error ? <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">O Estado 360 hospedado não respondeu. A entrada permanece preservada para nova tentativa segura.</div> : null}
 
           <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[
             ['Domínios concluídos', String(domains.length), 'máximo autorizado: 4'], ['Achados', String(findings.length), 'todos com evidência declarada'],

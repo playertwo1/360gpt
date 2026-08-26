@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 export const companies = sqliteTable('companies', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), name: text('name').notNull(),
@@ -21,6 +21,8 @@ export const telegramUpdates = sqliteTable('telegram_updates', {
   documentId: text('document_id').notNull(),
   status: text('status').notNull(),
   errorCode: text('error_code'),
+  attemptCount: integer('attempt_count').notNull().default(0),
+  processingStartedAt: integer('processing_started_at', { mode: 'timestamp_ms' }),
   receivedAt: integer('received_at', { mode: 'timestamp_ms' }).notNull(),
   completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
 }, (table) => [index('idx_telegram_updates_chat_status').on(table.chatId, table.status)]);
@@ -29,7 +31,23 @@ export const agentRuns = sqliteTable('agent_runs', {
   id: text('id').primaryKey(), documentId: text('document_id').references(() => documents.id), parentRunId: text('parent_run_id'),
   agentRole: text('agent_role').notNull(), status: text('status').notNull().default('queued'), inputSummary: text('input_summary'),
   outputJson: text('output_json'), startedAt: integer('started_at', { mode: 'timestamp_ms' }), completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
-}, (table) => [index('idx_agent_runs_status_role').on(table.status, table.agentRole)]);
+  attemptCount: integer('attempt_count').notNull().default(0), leaseToken: text('lease_token'),
+  leaseExpiresAt: integer('lease_expires_at', { mode: 'timestamp_ms' }), availableAt: integer('available_at', { mode: 'timestamp_ms' }),
+  lastErrorCode: text('last_error_code'),
+}, (table) => [index('idx_agent_runs_status_role').on(table.status, table.agentRole), index('idx_agent_runs_queue').on(table.status, table.availableAt, table.leaseExpiresAt)]);
+
+export const stateSnapshots = sqliteTable('state_snapshots', {
+  stateId: text('state_id').notNull(), tenantId: text('tenant_id').notNull(), subjectRef: text('subject_ref').notNull(),
+  stateVersion: integer('state_version').notNull(), eventId: text('event_id').notNull(), correlationId: text('correlation_id').notNull(),
+  stateHash: text('state_hash').notNull(), overallStatus: text('overall_status').notNull(), snapshotJson: text('snapshot_json').notNull(),
+  executiveAssessmentJson: text('executive_assessment_json'), generatedAt: integer('generated_at', { mode: 'timestamp_ms' }).notNull(),
+  publishedAt: integer('published_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [primaryKey({ columns: [table.stateId, table.stateVersion] }), uniqueIndex('uq_state_snapshots_event').on(table.eventId), uniqueIndex('uq_state_snapshots_scope_version').on(table.tenantId, table.subjectRef, table.stateVersion), index('idx_state_snapshots_latest').on(table.tenantId, table.subjectRef, table.stateVersion)]);
+
+export const telegramRateLimits = sqliteTable('telegram_rate_limits', {
+  bucketKey: text('bucket_key').primaryKey(), chatId: text('chat_id').notNull(), windowStartedAt: integer('window_started_at', { mode: 'timestamp_ms' }).notNull(),
+  requestCount: integer('request_count').notNull().default(1),
+}, (table) => [index('idx_telegram_rate_limits_window').on(table.windowStartedAt)]);
 
 export const insights = sqliteTable('insights', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), companyId: text('company_id').references(() => companies.id),

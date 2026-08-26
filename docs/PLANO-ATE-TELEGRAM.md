@@ -19,7 +19,8 @@
 - Marcos 1 a 8: concluídos e homologados localmente.
 - Marco 9: concluído com aplicação HTTPS publicada, migração D1 aplicada e controles administrativos protegidos.
 - Marco 10A: concluído com entrada HTTPS pública, Dashboard e Estado 360 protegidos por login do ChatGPT e lista de e-mails, e webhook validado com o kill switch desligado.
-- Marco 10B: depende do bot exclusivo de teste, chat autorizado, segredos configurados fora do Git e autorização explícita para ligar o kill switch durante um teste sintético.
+- Marco 10B: concluído com ponte autenticada, WF-09, leases, retries, hash canônico e publicação do Estado 360 hospedado validados de ponta a ponta com dados sintéticos.
+- Marco 10C: depende do bot exclusivo de teste, chat autorizado, segredos configurados fora do Git e autorização explícita para ligar o kill switch durante o piloto real.
 
 ## Programação
 
@@ -75,4 +76,4 @@ O bot só poderá ser conectado quando todos estes controles estiverem aprovados
 
 ## Próxima execução
 
-Criar um bot exclusivo de teste no BotFather e enviar `/start` para ele. Depois, configurar `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` e o chat privado autorizado como segredos da hospedagem, sem registrar esses valores no Git ou nesta conversa. Em seguida, validar e registrar o webhook com o kill switch desligado e habilitar somente uma mensagem sintética controlada para concluir o Marco 10.
+Criar um bot exclusivo de teste no BotFather e enviar `/start` para ele. Depois, configurar `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` e o chat privado autorizado como segredos da hospedagem, sem registrar esses valores no Git ou nesta conversa. Em seguida, ativar ponte e Telegram somente durante uma mensagem sintética controlada para concluir o Marco 10C.

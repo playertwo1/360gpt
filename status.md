@@ -6,15 +6,18 @@
 
 ## Último marco concluído
 
-**Marco 10A — Entrada HTTPS pública e segura preparada para o Telegram.**
+**Marco 10B — Ponte autenticada entre hospedagem, n8n e Dashboard.**
 
 - Aplicação publicada em HTTPS com uma rota externa alcançável pelo Telegram.
 - Dashboard 360 e API do Estado 360 protegidos no servidor por login do ChatGPT e lista fechada de e-mails autorizados.
 - Acesso autorizado para `fael@live.de` e `rafa.pedrosa1@gmail.com`.
 - Versão hospedada implantada com D1 para dados estruturados e R2 para arquivos.
 - Migração aplicada com a tabela `telegram_updates` disponível no banco hospedado.
+- Fila com lease de dez minutos, três tentativas e conclusão idempotente implementada.
+- Estado 360 hospedado em snapshots imutáveis, com hash canônico estável entre n8n, PostgreSQL e D1.
+- Dashboard alterado para ler o read model hospedado, sem tentar acessar o computador local pela nuvem.
 - Entrada e confirmações do Telegram permanecem desativadas por padrão; nenhuma credencial real foi configurada.
-- O Marco 10 só será concluído depois da conexão e homologação de um bot exclusivo de teste.
+- O Marco 10C só será concluído depois da conexão e homologação de um bot exclusivo de teste.
 
 ## Workflows criados
 
@@ -29,6 +32,7 @@
 | WF-06 | Motor de Consolidação e publicação do Estado 360 | Concluído |
 | WF-07 | Assessor Executivo ancorado no Estado 360 persistido | Concluído |
 | WF-08 | Consulta somente leitura do último Estado 360 | Concluído |
+| WF-09 | Ponte autenticada: reservar, processar no n8n e publicar Estado 360 hospedado | Criado, testado e despublicado por segurança |
 
 ## Testes executados
 
@@ -45,13 +49,17 @@
 - Controle local de acesso: usuário autorizado recebeu o Dashboard; usuário ausente ou não autorizado foi bloqueado.
 - Produção sem autenticação: Dashboard redirecionou para o login do ChatGPT com `307` e a API do Estado respondeu `401 authentication_required`.
 - Webhook de produção: requisição externa chegou ao endpoint e recebeu `503 ingest_disabled`, confirmando que a rota está disponível e o processamento permanece desligado.
-- Versão hospedada 4 implantada com sucesso em `https://visao-360-diretor.fael360092.chatgpt.site`.
+- Segurança do webhook local: segredo inválido `401`, chat inválido `403`, repetição ignorada e limite excedido `429`.
+- Ponte local: autenticação `401`, reserva exclusiva concorrente, fila vazia, conclusão idempotente e corpo acima do limite `413` aprovados.
+- Fluxo integrado sintético: hospedagem local → WF-09 → WF-01 a WF-07 → snapshot hospedado, concluído com `bridge_status=SUCCEEDED`.
+- Hash canônico validado após serialização pelo PostgreSQL.
+- Versão hospedada atual implantada em `https://visao-360-diretor.fael360092.chatgpt.site` com Telegram e ponte desligados.
 
 ## Erros conhecidos
 
-- Não há erro bloqueante conhecido no Marco 10A.
+- Não há erro bloqueante conhecido no Marco 10B.
 - O bot real ainda não está conectado; token, segredo do webhook e allowlist de chat não foram configurados.
-- O Dashboard hospedado ainda não recebe automaticamente os snapshots produzidos pelo n8n local; a ponte HTTPS privada permanece fora desta fase.
+- O WF-09 e `BRIDGE_ENABLED` permanecem desligados até o piloto controlado; portanto não há sincronização contínua neste momento.
 - Integrações com fontes bancárias e uso de dados reais permanecem desabilitados por decisão de segurança e homologação.
 - O n8n pode registrar aviso sobre o task runner Python ausente; os workflows atuais usam JavaScript e não são afetados.
 
@@ -65,9 +73,13 @@
 - Manter Dashboard e Assessor somente leitura sobre snapshots persistidos.
 - Guardar metadados estruturados no D1 e arquivos no R2, classificados inicialmente como `UNTRUSTED`.
 - Tratar `update_id` do Telegram de forma idempotente antes de qualquer processamento.
+- Fazer o n8n buscar trabalhos na hospedagem; a hospedagem nunca inicia conexão com o computador local.
+- Usar segredo exclusivo para a ponte, lease de dez minutos, no máximo três tentativas e hash JSON canônico.
+- Aplicar limite inicial de dez mensagens por minuto por chat, configurável entre 1 e 60.
 - Manter `TELEGRAM_INGEST_ENABLED=false` e confirmações externas desativadas por padrão.
+- Manter `BRIDGE_ENABLED=false` e WF-09 despublicado fora da janela de teste.
 - Nunca armazenar tokens ou segredos no Git, em documentos ou em arquivos versionados.
 
 ## Próximo passo exato
 
-Criar um bot exclusivo de teste no BotFather e enviar `/start` para ele. Depois, configurar `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` e o identificador do chat privado autorizado como segredos da hospedagem, sem colocá-los no Git ou nesta conversa. Manter o kill switch desligado durante a validação, registrar o webhook e habilitar somente uma mensagem sintética controlada para concluir o Marco 10.
+Criar um bot exclusivo de teste no BotFather e enviar `/start` para ele. Depois, configurar `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` e o identificador do chat privado autorizado como segredos da hospedagem, sem colocá-los no Git ou nesta conversa. Ativar `BRIDGE_ENABLED`, publicar o WF-09 e habilitar `TELEGRAM_INGEST_ENABLED` somente durante uma mensagem sintética controlada; ao terminar, desligar os dois interruptores e despublicar o WF-09.

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
 type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string } } };
-type Reservation = { claimed: boolean; status: string };
+type Reservation = { claimed: boolean; status: string; attemptCount?: number };
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
 const MAX_WEBHOOK_BYTES = 1024 * 1024;
@@ -31,12 +31,21 @@ export async function POST(request: Request) {
   }
   const contentType = request.headers.get('content-type')?.toLowerCase() ?? '';
   const contentLength = Number(request.headers.get('content-length') ?? 0);
-  if (!contentType.includes('application/json') || contentLength > MAX_WEBHOOK_BYTES) {
+  if (!contentType.includes('application/json')) {
     return NextResponse.json({ ok: false, error: 'invalid_request' }, { status: 415 });
+  }
+  if (Number.isFinite(contentLength) && contentLength > MAX_WEBHOOK_BYTES) {
+    return NextResponse.json({ ok: false, error: 'request_too_large' }, { status: 413 });
   }
 
   let update: TelegramUpdate;
-  try { update = (await request.json()) as TelegramUpdate; }
+  try {
+    const bytes = await request.arrayBuffer();
+    if (!bytes.byteLength || bytes.byteLength > MAX_WEBHOOK_BYTES) {
+      return NextResponse.json({ ok: false, error: 'invalid_request_size' }, { status: bytes.byteLength > MAX_WEBHOOK_BYTES ? 413 : 400 });
+    }
+    update = JSON.parse(new TextDecoder().decode(bytes)) as TelegramUpdate;
+  }
   catch { return NextResponse.json({ ok: false, error: 'invalid_json' }, { status: 400 }); }
 
   if (!Number.isSafeInteger(update.update_id) || update.update_id < 0) {
@@ -50,16 +59,25 @@ export async function POST(request: Request) {
   if (message.chat.type !== 'private') {
     return NextResponse.json({ ok: false, error: 'private_chat_required' }, { status: 403 });
   }
+  if (!Number.isSafeInteger(message.from?.id) || message.from?.id !== message.chat.id) {
+    return NextResponse.json({ ok: false, error: 'sender_mismatch' }, { status: 403 });
+  }
 
   const allowedChats = (env.TELEGRAM_ALLOWED_CHAT_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean);
   if (!allowedChats.includes(String(message.chat.id))) {
     return NextResponse.json({ ok: false, error: 'chat_not_allowed' }, { status: 403 });
+  }
+  if (!(await consumeRateLimit(String(message.chat.id)))) {
+    return NextResponse.json({ ok: false, error: 'rate_limited' }, { status: 429, headers: { 'Retry-After': '60' } });
   }
 
   const text = String(message.text ?? message.caption ?? '').trim();
   const document = message.document;
   if (!text && !document) return NextResponse.json({ ok: true, ignored: true, reason: 'unsupported_message' });
   if (document) {
+    if (!boundedTelegramId(document.file_id) || !boundedTelegramId(document.file_unique_id)) {
+      return NextResponse.json({ ok: true, rejected: 'invalid_file_identity' });
+    }
     const size = document.file_size;
     const mime = document.mime_type?.toLowerCase() ?? '';
     if (!Number.isSafeInteger(size) || !size || size < 1 || size > MAX_FILE_BYTES) {
@@ -85,6 +103,7 @@ export async function POST(request: Request) {
     if (document) {
       if (!env.TELEGRAM_BOT_TOKEN) throw new IngestError('bot_not_configured');
       const file = await downloadTelegramFile(document);
+      validateFileContent(file.bytes, document.mime_type?.toLowerCase() ?? '');
       contentHash = `sha256:${await sha256Hex(file.bytes)}`;
       storageKey = `telegram/${chatId}/${updateId}/${safeFileName(document.file_name ?? 'documento')}`;
       await env.FILES.put(storageKey, file.bytes, {
@@ -98,8 +117,8 @@ export async function POST(request: Request) {
     await env.DB.batch([
       env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?)`)
         .bind(documentId, chatId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
-      env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary) VALUES (?, ?, 'diretor', 'queued', ?)`)
-        .bind(runId, documentId, text || document?.file_name || 'Nova entrada'),
+      env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary, available_at) VALUES (?, ?, 'diretor', 'QUEUED', ?, ?)`)
+        .bind(runId, documentId, text || document?.file_name || 'Nova entrada', receivedAt),
       env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'ingested', 'document', ?, ?, ?)`)
         .bind(auditId, chatId, `telegram:${message.from?.id ?? 'unknown'}`, documentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, contentTrust: 'UNTRUSTED', externalEffectsAllowed: false }), receivedAt),
       env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`)
@@ -111,22 +130,37 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, documentId, updateId, status: 'queued', ackSent }, { status: 202 });
   } catch (error) {
     const errorCode = error instanceof IngestError ? error.code : 'ingest_failed';
-    await env.DB.prepare(`UPDATE telegram_updates SET status = 'FAILED_RETRYABLE', error_code = ? WHERE update_id = ?`).bind(errorCode, updateId).run();
-    return NextResponse.json({ ok: false, error: errorCode, retryable: true }, { status: errorCode === 'bot_not_configured' ? 503 : 502 });
+    const retryable = !(error instanceof IngestError) || error.retryable;
+    await env.DB.prepare(`UPDATE telegram_updates SET status = ?, error_code = ?, completed_at = ? WHERE update_id = ?`)
+      .bind(retryable ? 'FAILED_RETRYABLE' : 'FAILED_FINAL', errorCode, retryable ? null : Date.now(), updateId).run();
+    return NextResponse.json({ ok: false, error: errorCode, retryable }, { status: errorCode === 'bot_not_configured' ? 503 : retryable ? 502 : 422 });
   }
 }
 
 async function reserveUpdate(updateId: string, chatId: string, messageId: string, documentId: string, receivedAt: number): Promise<Reservation> {
-  const inserted = await env.DB.prepare(`INSERT INTO telegram_updates (update_id, chat_id, message_id, document_id, status, received_at) VALUES (?, ?, ?, ?, 'PROCESSING', ?) ON CONFLICT(update_id) DO NOTHING RETURNING update_id`)
-    .bind(updateId, chatId, messageId, documentId, receivedAt).first<{ update_id: string }>();
-  if (inserted) return { claimed: true, status: 'PROCESSING' };
+  const inserted = await env.DB.prepare(`INSERT INTO telegram_updates (update_id, chat_id, message_id, document_id, status, attempt_count, processing_started_at, received_at) VALUES (?, ?, ?, ?, 'PROCESSING', 1, ?, ?) ON CONFLICT(update_id) DO NOTHING RETURNING update_id`)
+    .bind(updateId, chatId, messageId, documentId, receivedAt, receivedAt).first<{ update_id: string }>();
+  if (inserted) return { claimed: true, status: 'PROCESSING', attemptCount: 1 };
 
-  const reclaimed = await env.DB.prepare(`UPDATE telegram_updates SET status = 'PROCESSING', error_code = NULL WHERE update_id = ? AND status = 'FAILED_RETRYABLE' RETURNING update_id`)
-    .bind(updateId).first<{ update_id: string }>();
-  if (reclaimed) return { claimed: true, status: 'PROCESSING' };
+  const staleBefore = Date.now() - 2 * 60 * 1000;
+  const reclaimed = await env.DB.prepare(`UPDATE telegram_updates SET status = 'PROCESSING', error_code = NULL, attempt_count = attempt_count + 1, processing_started_at = ?
+    WHERE update_id = ? AND attempt_count < 3 AND (status = 'FAILED_RETRYABLE' OR (status = 'PROCESSING' AND processing_started_at < ?)) RETURNING attempt_count`)
+    .bind(Date.now(), updateId, staleBefore).first<{ attempt_count: number }>();
+  if (reclaimed) return { claimed: true, status: 'PROCESSING', attemptCount: reclaimed.attempt_count };
 
   const current = await env.DB.prepare(`SELECT status FROM telegram_updates WHERE update_id = ?`).bind(updateId).first<{ status: string }>();
   return { claimed: false, status: current?.status ?? 'DUPLICATE_IGNORED' };
+}
+
+async function consumeRateLimit(chatId: string) {
+  const configured = Number(env.TELEGRAM_RATE_LIMIT_PER_MINUTE ?? 10);
+  const limit = Number.isSafeInteger(configured) && configured >= 1 && configured <= 60 ? configured : 10;
+  const windowStartedAt = Math.floor(Date.now() / 60_000) * 60_000;
+  const bucketKey = `${chatId}:${windowStartedAt}`;
+  const row = await env.DB.prepare(`INSERT INTO telegram_rate_limits (bucket_key, chat_id, window_started_at, request_count) VALUES (?, ?, ?, 1)
+    ON CONFLICT(bucket_key) DO UPDATE SET request_count = request_count + 1 RETURNING request_count`)
+    .bind(bucketKey, chatId, windowStartedAt).first<{ request_count: number }>();
+  return Boolean(row && row.request_count <= limit);
 }
 
 async function downloadTelegramFile(document: TelegramDocument) {
@@ -160,6 +194,21 @@ function allowedFileName(name: string, mime: string) {
   return Boolean(name) && (expected[mime] ?? []).includes(extension);
 }
 
+function boundedTelegramId(value: unknown) { return typeof value === 'string' && value.length >= 1 && value.length <= 256 && /^[A-Za-z0-9_-]+$/.test(value); }
+
+function validateFileContent(value: ArrayBuffer, mime: string) {
+  const bytes = new Uint8Array(value);
+  const startsWith = (signature: number[]) => signature.every((byte, index) => bytes[index] === byte);
+  let valid = true;
+  if (mime === 'application/pdf') valid = startsWith([0x25, 0x50, 0x44, 0x46, 0x2d]);
+  else if (mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') valid = startsWith([0x50, 0x4b, 0x03, 0x04]);
+  else if (mime === 'application/vnd.ms-excel') valid = startsWith([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]);
+  else if (mime === 'application/json') {
+    try { JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); } catch { valid = false; }
+  } else if (mime === 'text/csv') valid = !bytes.slice(0, Math.min(bytes.length, 8192)).includes(0);
+  if (!valid) throw new IngestError('file_content_mismatch', false);
+}
+
 function safeFileName(value: string) { return value.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120); }
 
 async function sha256Hex(value: ArrayBuffer) {
@@ -174,4 +223,4 @@ async function constantTimeEqual(left: string, right: string) {
   return difference === 0;
 }
 
-class IngestError extends Error { constructor(public readonly code: string) { super(code); } }
+class IngestError extends Error { constructor(public readonly code: string, public readonly retryable = true) { super(code); } }

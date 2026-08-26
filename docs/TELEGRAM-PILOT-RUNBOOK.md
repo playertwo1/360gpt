@@ -23,6 +23,9 @@ Os valores secretos nunca devem ser enviados para o Git, arquivos de documentaç
 | `TELEGRAM_ALLOWED_CHAT_IDS` | ID fechado do chat privado |
 | `TELEGRAM_INGEST_ENABLED` | `false` durante configuração; `true` apenas no início do teste |
 | `TELEGRAM_SEND_ACK_ENABLED` | `false` por padrão |
+| `TELEGRAM_RATE_LIMIT_PER_MINUTE` | `10` durante o piloto |
+| `BRIDGE_SHARED_SECRET` | segredo exclusivo compartilhado com a credencial local do WF-09 |
+| `BRIDGE_ENABLED` | `false` durante configuração; ativação separada do Telegram |
 | `DASHBOARD_ALLOWED_EMAILS` | lista privada das contas autorizadas no Dashboard |
 
 ## Fronteira pública e superfície privada
@@ -34,6 +37,8 @@ O projeto usa uma única aplicação HTTPS com separação de autorização por 
 - `/api/state/latest` exige o mesmo login e a mesma allowlist do Dashboard;
 - nenhuma outra rota recebe autorização por ser chamada pelo Telegram.
 
+A ponte usa `/api/bridge/claim`, `/api/bridge/file`, `/api/bridge/complete` e `/api/bridge/fail`. Todas exigem `BRIDGE_ENABLED=true` e autenticação Bearer com segredo exclusivo. O WF-09 reserva um trabalho por dez minutos, processa no n8n local e publica o snapshot imutável no D1. O Dashboard lê somente esse read model hospedado.
+
 Manter a aplicação em acesso público no provedor não torna o Dashboard público: a autorização do Dashboard é aplicada novamente no servidor. Ausência da allowlist deve falhar fechada.
 
 ## Ordem de ativação
@@ -43,11 +48,12 @@ Manter a aplicação em acesso público no provedor não torna o Dashboard públ
 3. Cadastrar as variáveis hospedadas mantendo o kill switch desligado.
 4. Confirmar que `/api/state/latest` rejeita visitante sem login e que `/api/ingest/telegram` retorna `ingest_disabled`.
 5. Validar o script sem efeitos: `./scripts/configure-telegram-webhook.ps1 -WebhookUrl "https://DOMINIO/api/ingest/telegram"`.
-6. Habilitar `TELEGRAM_INGEST_ENABLED=true`.
-7. Cadastrar o webhook executando o mesmo script com `-Apply`.
-8. Enviar primeiro uma mensagem sintética; depois um PDF e uma planilha sintéticos.
-9. Conferir idempotência, hash, auditoria e Dashboard.
-10. Ao terminar, voltar `TELEGRAM_INGEST_ENABLED=false`.
+6. Habilitar `BRIDGE_ENABLED=true`, publicar o WF-09 e confirmar uma consulta de fila vazia.
+7. Habilitar `TELEGRAM_INGEST_ENABLED=true`.
+8. Cadastrar o webhook executando o mesmo script com `-Apply`.
+9. Enviar primeiro uma mensagem sintética; depois um PDF e uma planilha sintéticos.
+10. Conferir idempotência, hash canônico, auditoria e Dashboard.
+11. Ao terminar, voltar `TELEGRAM_INGEST_ENABLED=false`, despublicar o WF-09 e voltar `BRIDGE_ENABLED=false`.
 
 ## Critérios de aprovação
 
@@ -65,7 +71,8 @@ Manter a aplicação em acesso público no provedor não torna o Dashboard públ
 ## Reversão
 
 1. Definir `TELEGRAM_INGEST_ENABLED=false`.
-2. Remover o webhook usando `setWebhook` com URL vazia.
-3. Revogar o token no BotFather se houver suspeita de exposição.
-4. Preservar auditoria e evidências do incidente.
-5. Só reativar após nova validação de segredo, allowlist e integridade.
+2. Despublicar o WF-09 e definir `BRIDGE_ENABLED=false`.
+3. Remover o webhook usando `setWebhook` com URL vazia.
+4. Revogar o token no BotFather se houver suspeita de exposição.
+5. Preservar auditoria e evidências do incidente.
+6. Só reativar após nova validação de segredo, allowlist e integridade.

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { env } from 'cloudflare:workers';
 import { getChatGPTUser, isDashboardUserAllowed } from '../../../chatgpt-auth';
 
 export const runtime = 'edge';
@@ -20,25 +21,27 @@ export async function GET(request: Request) {
     return NextResponse.json({ available: false, error: 'invalid_scope' }, { status: 400 });
   }
 
-  const configuredBase = process.env.VISAO360_N8N_URL?.trim();
-  const baseUrl = configuredBase || 'http://127.0.0.1:5678';
-  const endpoint = new URL('/webhook/visao-360/offline-latest-state', baseUrl);
-  endpoint.searchParams.set('tenant_id', tenantId);
-  endpoint.searchParams.set('subject_ref', subjectRef);
-
   try {
-    const response = await fetch(endpoint, {
-      headers: { 'X-Visao360-Test-Mode': 'OFFLINE_EVAL' },
-      cache: 'no-store',
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!response.ok) throw new Error(`read_model_${response.status}`);
-    return NextResponse.json(await response.json(), {
+    if (!env.DB) throw new Error('storage_unavailable');
+    const row = await env.DB.prepare(`SELECT state_id, state_version, event_id, correlation_id, state_hash, overall_status,
+      snapshot_json, executive_assessment_json, generated_at FROM state_snapshots
+      WHERE tenant_id = ? AND subject_ref = ? ORDER BY state_version DESC LIMIT 1`)
+      .bind(tenantId, subjectRef).first<{
+        state_id: string; state_version: number; event_id: string; correlation_id: string; state_hash: string;
+        overall_status: string; snapshot_json: string; executive_assessment_json: string | null; generated_at: number;
+      }>();
+    if (!row) return NextResponse.json({ available: false, execution_mode: 'OFFLINE_EVAL', read_only: true, tenant_id: tenantId, subject_ref: subjectRef }, {
       headers: { 'Cache-Control': 'private, no-store' },
     });
+    return NextResponse.json({
+      available: true, execution_mode: 'OFFLINE_EVAL', read_only: true,
+      state_id: row.state_id, state_version: row.state_version, event_id: row.event_id, correlation_id: row.correlation_id,
+      state_hash: row.state_hash, overall_status: row.overall_status, generated_at: new Date(row.generated_at).toISOString(),
+      snapshot: JSON.parse(row.snapshot_json), executive_assessment: row.executive_assessment_json ? JSON.parse(row.executive_assessment_json) : null,
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {
     return NextResponse.json(
-      { available: false, execution_mode: 'OFFLINE_EVAL', read_only: true, tenant_id: tenantId, subject_ref: subjectRef, error: 'local_read_model_unavailable' },
+      { available: false, execution_mode: 'OFFLINE_EVAL', read_only: true, tenant_id: tenantId, subject_ref: subjectRef, error: 'hosted_read_model_unavailable' },
       { status: 503, headers: { 'Cache-Control': 'private, no-store' } },
     );
   }

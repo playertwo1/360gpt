@@ -1,13 +1,14 @@
 [CmdletBinding()]
-param()
+param([string]$BridgeSecretOverride)
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $envFile = Join-Path $projectRoot '.env.n8n'
 $composeFile = Join-Path $projectRoot 'compose.n8n.yaml'
 $localDir = Join-Path $projectRoot '.local'
-$credentialFile = Join-Path $localDir 'visao360-postgres-credential.json'
+$credentialFile = Join-Path $localDir 'visao360-local-credentials.json'
 $credentialId = '3db02591-5cd1-47ef-ac68-3cdb4b213602'
+$bridgeCredentialId = '865fb0bd-dbd8-4352-9718-4eac7f89a382'
 
 if (-not (Test-Path -LiteralPath $envFile)) {
   throw 'Execute scripts/start-360.ps1 primeiro.'
@@ -16,6 +17,9 @@ if (-not (Test-Path -LiteralPath $envFile)) {
 $settings = Get-Content -LiteralPath $envFile -Raw | ConvertFrom-StringData
 $password = $settings['APP_DB_PASSWORD']
 if ([string]::IsNullOrWhiteSpace($password)) { throw 'APP_DB_PASSWORD não encontrado.' }
+$bridgeSecret = $settings['BRIDGE_SHARED_SECRET']
+if (-not [string]::IsNullOrWhiteSpace($BridgeSecretOverride)) { $bridgeSecret = $BridgeSecretOverride }
+if ([string]::IsNullOrWhiteSpace($bridgeSecret)) { throw 'BRIDGE_SHARED_SECRET não encontrado. Execute scripts/start-360.ps1 novamente.' }
 
 New-Item -ItemType Directory -Force -Path $localDir | Out-Null
 $credential = @(
@@ -34,6 +38,15 @@ $credential = @(
       port = 5432
     }
   }
+  @{
+    id = $bridgeCredentialId
+    name = 'Visao 360 Bridge'
+    type = 'httpHeaderAuth'
+    data = @{
+      name = 'Authorization'
+      value = "Bearer $bridgeSecret"
+    }
+  }
 )
 [IO.File]::WriteAllText(
   $credentialFile,
@@ -50,8 +63,8 @@ try {
   $projectId = ($projectId | Select-Object -Last 1).Trim()
 
   docker compose --env-file $envFile -f $composeFile exec -T n8n `
-    n8n import:credentials --input=/files/local/visao360-postgres-credential.json --projectId=$projectId
-  if ($LASTEXITCODE -ne 0) { throw 'Falha ao importar a credencial PostgreSQL.' }
+    n8n import:credentials --input=/files/local/visao360-local-credentials.json --projectId=$projectId
+  if ($LASTEXITCODE -ne 0) { throw 'Falha ao importar as credenciais locais.' }
 } finally {
   $resolvedLocal = [IO.Path]::GetFullPath($localDir)
   $resolvedCredential = [IO.Path]::GetFullPath($credentialFile)
@@ -63,4 +76,4 @@ try {
   }
 }
 
-Write-Host 'Credencial Visao 360 App DB importada e arquivo temporário removido.'
+Write-Host 'Credenciais do banco e da ponte importadas; arquivo temporário removido.'
