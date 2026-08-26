@@ -2,9 +2,9 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.0.0-final-phase2` (Fases 1 e 2 Homologadas — 100%)  
+**Versão Atual da Release:** `v2.1.0-marco21` (Marcos 1 ao 21 Homologados)  
 **Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
-**Saúde do Projeto:** 🟢 **VERDE (20 de 20 Marcos Concluídos / 100% Homologado e Testado)**  
+**Saúde do Projeto:** 🟢 **VERDE (21 de 24 Marcos Concluídos / 100% Homologado e Testado)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 
@@ -21,8 +21,9 @@
 | **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
 | **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
 | **Fase 2 (Operação & Produção Assistida)** | **5 de 5 marcos concluídos (100%)** | Release v2.0.0 Certificada | 🟢 |
-| **Total Concluído** | **20 de 20 marcos (100%)** | 100% Homologado | 🟢 |
-| **Próxima Fase (Evolução & Go-Live)** | **4 marcos planejados (Marcos 21 a 24)** | Quickstart, UI/UX, Casos PJ e Cloud Deploy | ⏳ |
+| **Fase 3 (Evolução & Go-Live)** | **1 de 4 marcos concluídos (Marco 21)** | Release v2.1.0 em andamento | 🟢 |
+| **Total Geral Concluído** | **21 de 24 marcos (87.5%)** | 100% Homologado | 🟢 |
+
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV & OpenLineage | 🟢 |
 | **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
