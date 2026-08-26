@@ -2,9 +2,9 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.2.0-marco22` (Marcos 1 ao 22 Homologados)  
+**Versão Atual da Release:** `v2.3.0-marco23` (Marcos 1 ao 23 Homologados)  
 **Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
-**Saúde do Projeto:** 🟢 **VERDE (22 de 24 Marcos Concluídos / 100% Homologado e Testado)**  
+**Saúde do Projeto:** 🟢 **VERDE (23 de 24 Marcos Concluídos / 100% Homologado e Testado)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 
@@ -21,8 +21,8 @@
 | **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
 | **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
 | **Fase 2 (Operação & Produção Assistida)** | **5 de 5 marcos concluídos (100%)** | Release v2.0.0 Certificada | 🟢 |
-| **Fase 3 (Evolução & Go-Live)** | **2 de 4 marcos concluídos (Marcos 21 e 22)** | Release v2.2.0 em andamento | 🟢 |
-| **Total Geral Concluído** | **22 de 24 marcos (91.7%)** | 100% Homologado | 🟢 |
+| **Fase 3 (Evolução & Go-Live)** | **3 de 4 marcos concluídos (Marcos 21, 22 e 23)** | Release v2.3.0 em andamento | 🟢 |
+| **Total Geral Concluído** | **23 de 24 marcos (95.8%)** | 100% Homologado | 🟢 |
 
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV & OpenLineage | 🟢 |
@@ -64,8 +64,9 @@
 |:---:|---|---|:---:|
 | **21** | **Guia Quickstart & Demonstração Interativa** | `QUICKSTART.md` executivo + script `demo-live-showcase.ps1` que dispara uma simulação e abre o navegador no Dashboard e Mesa do Revisor em 1 clique. | ✅ **Concluído** |
 | **22** | **Polimento Visual & UI/UX do Dashboard** | Redesenho moderno dos cards dos 4 Gerentes Gerais, gráficos de *Unit Economics* (R$ e tokens) e navegador em árvore do Evidence Graph. | ✅ **Concluído** |
-| **23** | **Banco de Casos PJ (5 Personas Reais)** | 5 cenários completos com scripts de 1-clique: *Indústria Metalúrgica*, *Rede de Varejo*, *Tech/SaaS*, *Agronegócio (CPR)* e *Distribuidora de Logística*. | ⏳ **Próximo** |
-| **24** | **Automação de Deploy Cloud & Bot Live** | Scripts de 1-comando para provisionamento da VPS (n8n + Postgres + Caddy HTTPS/TLS), Cloudflare Pages (Frontend + D1) e Webhook oficial Telegram. | 📋 Planejado |
+| **23** | **Banco de Casos PJ (5 Personas Reais)** | 5 cenários completos com scripts de 1-clique: *Indústria Metalúrgica*, *Rede de Varejo*, *Tech/SaaS*, *Agronegócio (CPR)* e *Distribuidora de Logística*. | ✅ **Concluído** |
+| **24** | **Automação de Deploy Cloud & Bot Live** | Scripts de 1-comando para provisionamento da VPS (n8n + Postgres + Caddy HTTPS/TLS), Cloudflare Pages (Frontend + D1) e Webhook oficial Telegram. | ⏳ **Próximo** |
+
 
 
 

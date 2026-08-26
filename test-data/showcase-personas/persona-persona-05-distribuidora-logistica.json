@@ -1,0 +1,27 @@
+{
+  "persona_id": "PERSONA-05",
+  "segmento": "DISTRIBUIDORA_LOGISTICA",
+  "razao_social": "TransLog Express Transportes & Cargas Ltda",
+  "cnpj": "56.789.012/0001-34",
+  "faturamento_anual_declarado": 34000000.0,
+  "faturamento_apurado_extrato": 33500000.0,
+  "saldo_medio_cc": 950000.0,
+  "folha_pagamento_estimada": 890000.0,
+  "frota_caminhoes_propria": 45,
+  "limite_solicitado": 3500000.0,
+  "finalidade_credito": "RENOVACAO_FROTA_15_CAMINHOES_PESADOS",
+  "garantias_ofertadas": [
+    {
+      "tipo": "ALIENACAO_FIDUCIARIA_VEICULOS_NOVOS",
+      "valor_nf": 5200000.0,
+      "status": "PEDIDO_FABRICA"
+    }
+  ],
+  "apontamentos_cadastrais": [],
+  "parecer_esperado": {
+    "conta": "READY (Sem Restrições / Alienação Própria do Bem Financiado)",
+    "performance": "OPORTUNIDADE_CORPORATE (Finame/BNDES + Seguro Frota)",
+    "financeiro": "FLUXO_CAIXA_PREVISIVEL (Contratos de Longo Prazo com Multinacionais)",
+    "relacionamento": "HISTORICO_IMPECAVEL (8 Anos / 0 Inadimplência)"
+  }
+}

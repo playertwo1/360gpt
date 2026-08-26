@@ -1,0 +1,34 @@
+{
+  "persona_id": "PERSONA-03",
+  "segmento": "TECH_SAAS",
+  "razao_social": "CloudPlatform Software & Inovação S.A.",
+  "cnpj": "34.567.890/0001-12",
+  "faturamento_anual_declarado": 8900000.0,
+  "faturamento_apurado_extrato": 8750000.0,
+  "saldo_medio_cc": 1200000.0,
+  "folha_pagamento_estimada": 310000.0,
+  "arr_anual_recorrente": 8400000.0,
+  "crescimento_anual_pct": 65.0,
+  "limite_solicitado": 1000000.0,
+  "finalidade_credito": "INVESTIMENTO_EXPANSAO_SERVIDORES",
+  "garantias_ofertadas": [
+    {
+      "tipo": "CESSAO_FIDUCIARIA_CONTRATOS_REVOLVENTES",
+      "valor_mensal_recorrente": 700000.0,
+      "status": "CONTRATO_REGISTRADO"
+    }
+  ],
+  "apontamentos_cadastrais": [
+    {
+      "tipo": "ACAO_TRABALHISTA_SOCIO_MINORITARIO",
+      "valor": 35000.0,
+      "status": "SUB_JUDICE_DEPOSITADO"
+    }
+  ],
+  "parecer_esperado": {
+    "conta": "ELEGIBILIDADE_CONDICIONAL (Depósito Judicial Comprovado)",
+    "performance": "OPORTUNIDADE_ALTA (Crescimento Acelerado 65% a.a.)",
+    "financeiro": "MARGEM_EXCEPCIONAL (Margem 42.5% / Baixo Endividamento)",
+    "relacionamento": "CONTRATOS_RECORRENTES (98% Renovação Anual de Contratos)"
+  }
+}

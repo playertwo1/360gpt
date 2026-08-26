@@ -1,0 +1,28 @@
+{
+  "persona_id": "PERSONA-04",
+  "segmento": "AGRONEGOCIO_CPR",
+  "razao_social": "Agropecuária Terra Fértil Grãos S.A.",
+  "cnpj": "45.678.901/0001-23",
+  "faturamento_anual_declarado": 45000000.0,
+  "faturamento_apurado_extrato": 44200000.0,
+  "saldo_medio_cc": 1850000.0,
+  "folha_pagamento_estimada": 480000.0,
+  "area_plantada_hectares": 3500,
+  "cultura": "SOJA_E_MILHO_SAFRINHA",
+  "limite_solicitado": 5000000.0,
+  "finalidade_credito": "EMISSAO_CPR_FINANCEIRA_SAFRA",
+  "garantias_ofertadas": [
+    {
+      "tipo": "PENHOR_AGRICOLA_GRAOS_ARMAZEM",
+      "valor_mercado": 8200000.0,
+      "status": "WARRANT_EMITIDO"
+    }
+  ],
+  "apontamentos_cadastrais": [],
+  "parecer_esperado": {
+    "conta": "READY (Balanço Auditado Big4 / Cadastro Agrícola Impecável)",
+    "performance": "OPORTUNIDADE_ESTRATEGICA (Emissão de CPR + Seguro Safra)",
+    "financeiro": "LIQUIDEZ_ROBUSTA (Caixa R$ 1.85M / Cobertura de Garantia 164%)",
+    "relacionamento": "PRODUTOR_TRADICIONAL (10 Anos na Região / Selo ESG)"
+  }
+}

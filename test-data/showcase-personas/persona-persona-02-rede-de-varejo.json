@@ -1,0 +1,27 @@
+{
+  "persona_id": "PERSONA-02",
+  "segmento": "REDE_DE_VAREJO",
+  "razao_social": "Supermercados Estrela do Vale Ltda",
+  "cnpj": "23.456.789/0001-01",
+  "faturamento_anual_declarado": 28400000.0,
+  "faturamento_apurado_extrato": 27900000.0,
+  "saldo_medio_cc": 820000.0,
+  "folha_pagamento_estimada": 650000.0,
+  "volume_maquininhas_mes": 1850000.0,
+  "limite_solicitado": 1500000.0,
+  "finalidade_credito": "ANTECIPACAO_RECEBIVEIS_E_TRAVA",
+  "garantias_ofertadas": [
+    {
+      "tipo": "TRAVA_DOMICILIO_BANCARIO_CARTAO",
+      "valor_mensal": 1850000.0,
+      "status": "ATIVO"
+    }
+  ],
+  "apontamentos_cadastrais": [],
+  "parecer_esperado": {
+    "conta": "READY (Sem Restrições Cadastrais / Cadastro 100% Regular)",
+    "performance": "OPORTUNIDADE_MAXIMA (Antecipação Automática + Maquininhas)",
+    "financeiro": "RECIPROCIDADE_CONFIRMADA (100% Domicílio Bancário no Banco)",
+    "relacionamento": "RELACIONAMENTO_ESTRATEGICO (12 Lojas / Alto Fluxo)"
+  }
+}
