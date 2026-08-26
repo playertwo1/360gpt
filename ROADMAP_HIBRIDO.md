@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H7 — Visão executiva 360 completa
-**Próxima ação:** consolidar a visão executiva completa e rastreável ancorada em evidências do Evidence Graph com explicação estruturada.
+**Fase atual:** H8 — Segurança e privacidade do piloto
+**Próxima ação:** homologar segurança em profundidade, kill switches, isolamento de dados sintéticos e integridade append-only do Evidence Graph.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 
@@ -48,10 +49,11 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H4 | Diretor 360 inicia com um clique | [x] | H3 |
 | H5 | Telegram recebe e enfileira texto | [x] | H3 |
 | H6 | Telegram processa PDF e Excel com segurança | [x] | H5 |
-| H7 | Visão 360 executiva completa e rastreável | [ ] | H6 |
+| H7 | Visão 360 executiva completa e rastreável | [x] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [ ] | H1–H7 |
 | H9 | Backup e restauração comprovados | [ ] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 
 
@@ -227,21 +229,29 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** apresentar informação útil para decisão, sempre ancorada em evidências.
 
-- [ ] Resumo executivo.
-- [ ] Conta e elegibilidade.
-- [ ] Performance, metas e produção.
-- [ ] Financeiro e rentabilidade.
-- [ ] Relacionamento e compromissos.
-- [ ] Oportunidades elegíveis.
-- [ ] Prazos e próximas ações.
-- [ ] Conflitos e lacunas de dados.
-- [ ] Estado decisório de cada item.
-- [ ] Evidência navegável até a origem.
-- [ ] Atualidade do snapshot visível.
-- [ ] Pergunta objetiva quando houver revisão humana.
-- [ ] Consistência entre Dashboard e Assessor Executivo.
+- [x] Resumo executivo.
+- [x] Conta e elegibilidade.
+- [x] Performance, metas e produção.
+- [x] Financeiro e rentabilidade.
+- [x] Relacionamento e compromissos.
+- [x] Oportunidades elegíveis.
+- [x] Prazos e próximas ações.
+- [x] Conflitos e lacunas de dados.
+- [x] Estado decisório de cada item.
+- [x] Evidência navegável até a origem.
+- [x] Atualidade do snapshot visível.
+- [x] Pergunta objetiva quando houver revisão humana.
+- [x] Consistência entre Dashboard e Assessor Executivo.
 
-**Critério de aceite:** Rafael consegue entender o que ocorreu, o que exige atenção e qual decisão precisa tomar sem consultar dados ocultos.
+**Critério de aceite:** Rafael consegue entender o que ocorreu, o que exige atenção e qual decisão precisa tomar sem consultar dados ocultos. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Consolidação integral: os 4 Gerentes Gerais (Conta, Performance, Financeiro, Relacionamento) reportam em formato padronizado e determinístico no Estado 360.
+- Evidence Graph: linhagem PROV ponta a ponta navegável, com visualizador em modal interativo e hashes SHA-256 copiáveis.
+- Decidibilidade: separação clara entre o que está `READY` e o que exige decisão humana em `MANUAL_REVIEW_REQUIRED`, com `reason_code` fechado e pergunta objetiva.
+- Assessor Executivo: síntese em linguagem natural ancorada 100% no snapshot persistido, sem alucinações ou efeitos transacionais diretos.
+- Teste automatizado: `scripts/test-h7-executive-view.ps1` executado e aprovado com código 0 (`H7_EXECUTIVE_VIEW_PASS`).
+
 
 ---
 

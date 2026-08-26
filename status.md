@@ -2,7 +2,7 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.6.0-h6` (Marcos 1 ao 24 + Fases H1 a H6 do Piloto Híbrido Homologadas)
+**Versão Atual da Release:** `v2.7.0-h7` (Marcos 1 ao 24 + Fases H1 a H7 do Piloto Híbrido Homologadas)
 **Modo de execução:** `PILOTO HÍBRIDO LOCAL + SITE HOSPEDADO` (somente dados sintéticos)
 **Saúde do Projeto:** 🟡 **AMARELO (24 marcos implementados; operação híbrida ponta a ponta ainda não homologada)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
@@ -87,7 +87,7 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** executar H7 do `ROADMAP_HIBRIDO.md`: consolidar a visão executiva completa e rastreável ancorada em evidências do Evidence Graph com explicação estruturada.
+**Próximo passo exato:** executar H8 do `ROADMAP_HIBRIDO.md`: homologar segurança em profundidade, kill switches, isolamento de dados sintéticos e integridade append-only do Evidence Graph.
 
 ---
 
@@ -103,10 +103,11 @@
 | H4 | Inicialização com um clique | ✅ Concluída — scripts `iniciar-diretor-360` e `parar-diretor-360` (.bat e .ps1) homologados |
 | H5 | Telegram com texto | ✅ Concluída — webhook seguro, allowlist de chat_id, fila assíncrona e deduplicação homologados |
 | H6 | Telegram com PDF e Excel | ✅ Concluída — ingestão segura de PDF/Excel, limites de 20 MB e defesa contra prompt injection homologados |
-| H7 | Visão executiva completa | ⏳ Próxima |
-| H8 | Segurança do piloto | ⬜ Pendente |
+| H7 | Visão executiva completa | ✅ Concluída — consolidação dos 4 GMs, linhagem PROV navegável e explicação estruturada homologadas |
+| H8 | Segurança do piloto | ⏳ Próxima |
 | H9 | Backup e restauração | ⬜ Pendente |
 | H10 | Operação diária e aceite | ⬜ Pendente |
+
 
 
 
