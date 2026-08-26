@@ -1,0 +1,52 @@
+{
+  "id": "case-06-distribuidora-cnd-trabalhista-vencida",
+  "name": "Distribuidora Nacional de Bebidas S/A",
+  "cnpj": "67.890.123/0001-45",
+  "cnae": "46.35-4-02",
+  "segmento": "Distribuição",
+  "months_revenue": [
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000,
+    4000000
+  ],
+  "expected_total_revenue": 48000000.0,
+  "cnd_trabalhista_valid": false,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "CERTIDAO_VENCIDA_REQUER_SANEAMENTO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "PRODUCAO_DESTAQUE"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "BALANCO_ROBUSTO"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "EXCELENTE_HISTORICO"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "Distribuidora Nacional de Bebidas S/A",
+    "67.890.123/0001-45",
+    "Fernando Dias"
+  ],
+  "evidence_nodes": [
+    "certidao_cndt_tst",
+    "balanco_patrimonial_auditoria"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "case-04-agro-cpr-garantia-safra",
+  "name": "Cooperativa Agrícola Grãos do Planalto",
+  "cnpj": "45.678.901/0001-23",
+  "cnae": "01.11-6-01",
+  "segmento": "Agronegócio",
+  "months_revenue": [
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000,
+    3000000
+  ],
+  "expected_total_revenue": 36000000.0,
+  "gross_margin": 0.22,
+  "cpr_value": 8000000.0,
+  "insurance_active": true,
+  "expected_status": "READY",
+  "recommended_line": "CPR_FINANCEIRA_SAFRA",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_RURAL_OK"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "META_AGRO_ATINGIDA"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "GARANTIA_SAFRA_COM_SEGURO"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "PARCERIA_RURAL_LONGA"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Cooperativa Agrícola Grãos do Planalto",
+    "45.678.901/0001-23",
+    "Arnaldo Silveira"
+  ],
+  "evidence_nodes": [
+    "doc_cpr_safra",
+    "apolice_seguro_rural",
+    "laudo_vistoria_lavoura"
+  ]
+}

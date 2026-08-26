@@ -1,0 +1,56 @@
+{
+  "id": "case-02-varejo-divergencia-erp-extrato",
+  "name": "Supermercados Estrela do Vale Ltda",
+  "cnpj": "23.456.789/0001-01",
+  "cnae": "47.11-3-02",
+  "segmento": "Varejo Alimentício",
+  "months_revenue": [
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000,
+    1250000
+  ],
+  "expected_total_revenue": 15000000.0,
+  "bank_revenue_observed": 11000000.0,
+  "gross_margin": 0.18,
+  "protests": 0,
+  "tax_regularity": true,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "conflict_type": "DIVERGENCIA_DE_DADOS",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_REGULAR"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "VOLUME_ADERENTE"
+    },
+    "financeiro": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "DIVERGENCIA_ERP_VS_EXTRATO"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CLIENTE_COM_HISTORICO"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "Supermercados Estrela do Vale Ltda",
+    "23.456.789/0001-01",
+    "Joao da Silva"
+  ],
+  "evidence_nodes": [
+    "doc_dre_erp_2025",
+    "doc_extratos_bancarios_12m"
+  ]
+}

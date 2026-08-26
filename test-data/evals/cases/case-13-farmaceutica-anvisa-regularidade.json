@@ -1,0 +1,52 @@
+{
+  "id": "case-13-farmaceutica-anvisa-regularidade",
+  "name": "Laboratórios FarmaVida Produtos Químicos S/A",
+  "cnpj": "33.444.555/0001-66",
+  "cnae": "21.21-1-01",
+  "segmento": "Indústria Farmacêutica",
+  "months_revenue": [
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000,
+    6000000
+  ],
+  "expected_total_revenue": 72000000.0,
+  "anvisa_license_valid": true,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "AFE_ANVISA_VIGENTE"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "PRODUCAO_TOP_TIER"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "ALTA_RENTABILIDADE_LIQUIDEZ"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CLIENTE_ESTRATEGICO_SAUDE"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Laboratórios FarmaVida Produtos Químicos S/A",
+    "33.444.555/0001-66",
+    "Dra. Claudia Raia"
+  ],
+  "evidence_nodes": [
+    "licenca_sanitaria_anvisa",
+    "auditoria_kpmg_2025"
+  ]
+}

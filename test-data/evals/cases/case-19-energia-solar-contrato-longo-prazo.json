@@ -1,0 +1,54 @@
+{
+  "id": "case-19-energia-solar-contrato-longo-prazo",
+  "name": "Solaris Parque Gerador de Energia Renovável S/A",
+  "cnpj": "99.000.111/0001-22",
+  "cnae": "35.11-5-01",
+  "segmento": "Energia Renovável",
+  "months_revenue": [
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000
+  ],
+  "expected_total_revenue": 18000000.0,
+  "ppa_contract_years": 15,
+  "expected_status": "READY",
+  "recommended_line": "FINANCIAMENTO_PROJECT_FINANCE_ESG",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "OUTORGA_ANEEL_VIGENTE"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "METAS_ESG_SUSTENTAVEIS"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "RECEITA_PREVISIVEL_PPA_15_ANOS"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "SETOR_ENERGIA_EXPANSAO"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Solaris Parque Gerador de Energia Renovável S/A",
+    "99.000.111/0001-22",
+    "Eng. Daniel Sombra"
+  ],
+  "evidence_nodes": [
+    "outorga_aneel",
+    "contrato_ppa_concessionaria",
+    "licenca_ambiental_ibama"
+  ]
+}

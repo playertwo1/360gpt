@@ -73,17 +73,20 @@
 
 ## 📊 FASE 2: Observability & Evals (Avaliação Contínua)
 
-- [ ] **M2.1 — Suíte Canônica de 20 Casos Sintéticos (`test-data/evals/`)**  
-  *Escopo:* Criar 20 fixtures cobrindo Conta, Performance, Financeiro, Relacionamento, conflitos e lacunas.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M2.1 — Suíte Canônica de 20 Casos Sintéticos (`test-data/evals/cases/`)**  
+  *Evidência:* 20 fixtures sintéticas cobrindo os 4 domínios analíticos, conflitos, gaps e injeções adversárias.  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
-- [ ] **M2.2 — Pipeline de Evals L1 (Determinístico) & L2 (Extração)**  
-  *Escopo:* Script de validação automática calculando Precision, Recall, F1 e asserções matemáticas 100%.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M2.2 — Pipeline de Evals L1 (Determinístico) & L2 (Extração)**  
+  *Evidência:* `evals/eval_engine.py` com 100% de exatidão matemática L1 e F1-Score L2 = 1.0000 (Meta > 0.95).  
+  *Teste:* `powershell -File scripts/test-phase2-evals.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
-- [ ] **M2.3 — Pipeline de Evals L3 (Raciocínio) & L4 (Decisão)**  
-  *Escopo:* Verificação de ancoragem no Evidence Graph e cálculo do Decision Agreement Rate.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M2.3 — Pipeline de Evals L3 (Raciocínio) & L4 (Decisão)**  
+  *Evidência:* 100% de Evidence Coverage L3 e 100% de Decision Agreement Rate L4 (Meta >= 90%).  
+  *Teste:* `powershell -File scripts/test-phase2-evals.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
+
 
 ---
 

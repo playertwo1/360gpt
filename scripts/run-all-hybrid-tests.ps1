@@ -15,8 +15,10 @@ $tests = @(
     @{ Name = 'H7 - Visao Executiva 360 Completa'; Script = 'scripts/test-h7-executive-view.ps1' },
     @{ Name = 'H8 - Seguranca e Privacidade'; Script = 'scripts/test-h8-security-privacy.ps1' },
     @{ Name = 'H9 - Backup e Recuperacao'; Script = 'scripts/test-h9-backup-recovery.ps1' },
-    @{ Name = 'H10 - Rotina Diaria e Aceite'; Script = 'scripts/test-h10-daily-routine-acceptance.ps1' }
+    @{ Name = 'H10 - Rotina Diaria e Aceite'; Script = 'scripts/test-h10-daily-routine-acceptance.ps1' },
+    @{ Name = 'Fase 2 - Observability & Evals (L1-L4)'; Script = 'scripts/test-phase2-evals.ps1' }
 )
+
 
 $passed = 0
 $total = $tests.Count

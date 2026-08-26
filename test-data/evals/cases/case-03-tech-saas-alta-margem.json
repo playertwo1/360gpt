@@ -1,0 +1,58 @@
+{
+  "id": "case-03-tech-saas-alta-margem",
+  "name": "CloudMetrics Software S/A",
+  "cnpj": "34.567.890/0001-12",
+  "cnae": "62.01-5-01",
+  "segmento": "Tecnologia / SaaS B2B",
+  "months_revenue": [
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000,
+    1000000
+  ],
+  "expected_total_revenue": 12000000.0,
+  "gross_margin": 0.84,
+  "credit_score": 920,
+  "protests": 0,
+  "tax_regularity": true,
+  "expected_status": "READY",
+  "recommended_line": "CAPITAL_GIRO_FGI_INOVACAO",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_DIGITAL_VERIFICADO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ARR_EXPANSAO_ACIMA_META"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "EBITDA_SAUDAVEL_ALTA_MARGEM"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "RELACIONAMENTO_ESTRATEGICO"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "CloudMetrics Software S/A",
+    "34.567.890/0001-12",
+    "Marcio Castro",
+    "Beatriz Fontes"
+  ],
+  "evidence_nodes": [
+    "doc_balanco_digital",
+    "metricas_arr_mrr",
+    "contratos_clientes_saas"
+  ]
+}

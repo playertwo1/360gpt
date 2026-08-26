@@ -1,0 +1,57 @@
+{
+  "id": "case-01-ind-metalurgica-regular",
+  "name": "Metalúrgica Forja Sul Ltda",
+  "cnpj": "12.345.678/0001-90",
+  "cnae": "25.39-0-01",
+  "segmento": "Indústria Metalmecânica",
+  "months_revenue": [
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000,
+    2000000
+  ],
+  "expected_total_revenue": 24000000.0,
+  "gross_margin": 0.28,
+  "credit_score": 850,
+  "protests": 0,
+  "tax_regularity": true,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_COMPLETO_SEM_APONTAMENTO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "PRODUCAO_DENTRO_DA_META"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "MARGEM_POSITIVA_LIQUIDEZ_OK"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "HISTORICO_SEM_PENDENCIAS"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Metalúrgica Forja Sul Ltda",
+    "12.345.678/0001-90",
+    "Carlos Mendes",
+    "Renata Lima"
+  ],
+  "evidence_nodes": [
+    "doc_balanco_2025",
+    "doc_extrato_12m",
+    "consulta_receita_federal"
+  ]
+}

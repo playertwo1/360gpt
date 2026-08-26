@@ -1,0 +1,52 @@
+{
+  "id": "case-11-educacao-sazonalidade-matriculas",
+  "name": "Colégio & Faculdade Horizonte Educacional Ltda",
+  "cnpj": "11.222.333/0001-44",
+  "cnae": "85.31-7-00",
+  "segmento": "Educação Privada",
+  "months_revenue": [
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000,
+    1200000
+  ],
+  "expected_total_revenue": 14400000.0,
+  "seasonality_q1": 0.4,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "MEC_AUTORIZACAO_VIGENTE"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ANTECIPACAO_MENSALIDADES"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "RESERVA_DE_LIQUIDEZ_ADEQUADA"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CONVENIO_EDUCACIONAL"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Colégio & Faculdade Horizonte Educacional Ltda",
+    "11.222.333/0001-44",
+    "Prof. Paulo Freire"
+  ],
+  "evidence_nodes": [
+    "portaria_mec",
+    "fluxo_caixa_mensalidades"
+  ]
+}

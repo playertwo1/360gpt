@@ -1,0 +1,53 @@
+{
+  "id": "case-16-concessionaria-finame-estoque",
+  "name": "Tratores & Máquinas Agrícolas do Oeste S/A",
+  "cnpj": "66.777.888/0001-99",
+  "cnae": "45.11-1-04",
+  "segmento": "Concessionária de Máquinas",
+  "months_revenue": [
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000,
+    4500000
+  ],
+  "expected_total_revenue": 54000000.0,
+  "stock_collateral_value": 25000000.0,
+  "expected_status": "READY",
+  "recommended_line": "BNDES_FINAME_DIRETO",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CREDENCIAMENTO_BNDES_OK"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ESTEIRA_BNDES_PRIORITARIA"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "ESTOQUE_COMO_GARANTIA_FIDUCIARIA"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "PARCEIRO_COMERCIAL_DISTRIBUICAO"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Tratores & Máquinas Agrícolas do Oeste S/A",
+    "66.777.888/0001-99",
+    "Valter Guimarães"
+  ],
+  "evidence_nodes": [
+    "laudo_avaliacao_estoque",
+    "credenciamento_finame_bndes"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id": "case-18-textil-divergencia-normativa-garantia",
+  "name": "Fiação & Tecelagem Imperial S/A",
+  "cnpj": "88.999.000/0001-11",
+  "cnae": "13.11-1-00",
+  "segmento": "Indústria Têxtil",
+  "months_revenue": [
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000,
+    2100000
+  ],
+  "expected_total_revenue": 25200000.0,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "conflict_type": "DIVERGENCIA_NORMATIVA",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_INDUSTRIAL_OK"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "PRODUTO_COMPATIVEL"
+    },
+    "financeiro": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "COLISAO_PENHOR_INDUSTRIAL_VS_ALIENACAO"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CLIENTE_TRADICIONAL"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "Fiação & Tecelagem Imperial S/A",
+    "88.999.000/0001-11",
+    "Sergio Mattos"
+  ],
+  "evidence_nodes": [
+    "matricula_imovel_industrial",
+    "parecer_juridico_garantias"
+  ]
+}

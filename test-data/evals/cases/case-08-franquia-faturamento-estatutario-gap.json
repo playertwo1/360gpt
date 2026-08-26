@@ -1,0 +1,52 @@
+{
+  "id": "case-08-franquia-faturamento-estatutario-gap",
+  "name": "Franquias Café Gourmet Brasil S/A",
+  "cnpj": "89.012.345/0001-67",
+  "cnae": "56.11-2-03",
+  "segmento": "Alimentação / Franquias",
+  "months_revenue": [
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000,
+    800000
+  ],
+  "expected_total_revenue": 9600000.0,
+  "data_gap": "QSA_ATUALIZADO_AUSENTE",
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "LACUNA_SOCIETARIA_CONTRATO_SOCIAL"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "PLANO_EXPANSAO_APROVADO"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "RECEITA_RECORRENTE_ROYALTIES"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "REUNIAO_AGENDADA"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "Franquias Café Gourmet Brasil S/A",
+    "89.012.345/0001-67",
+    "Mariana Barbosa"
+  ],
+  "evidence_nodes": [
+    "contrato_franqueadora",
+    "extrato_recebimento_royalties"
+  ]
+}

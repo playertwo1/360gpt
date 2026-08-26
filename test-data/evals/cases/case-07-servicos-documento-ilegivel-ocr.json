@@ -1,0 +1,50 @@
+{
+  "id": "case-07-servicos-documento-ilegivel-ocr",
+  "name": "InfoConsulting Assessoria em TI Ltda",
+  "cnpj": "78.901.234/0001-56",
+  "cnae": "62.02-0-00",
+  "segmento": "Serviços de Tecnologia",
+  "months_revenue": [
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000,
+    500000
+  ],
+  "expected_total_revenue": 6000000.0,
+  "ocr_confidence": 0.32,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "DOCUMENTO_ILEGIVEL_REQUER_REENVIO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "OPORTUNIDADE_MAPEDA"
+    },
+    "financeiro": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "DADOS_FINANCEIROS_INCOMPLETOS"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CONTATO_ESTABELECIDO"
+    }
+  },
+  "ground_truth_decision": "REJEITADA",
+  "entities": [
+    "InfoConsulting Assessoria em TI Ltda",
+    "78.901.234/0001-56"
+  ],
+  "evidence_nodes": [
+    "doc_escaneado_baixa_resolucao"
+  ]
+}

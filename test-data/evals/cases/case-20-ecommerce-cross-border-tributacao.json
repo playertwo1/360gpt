@@ -1,0 +1,52 @@
+{
+  "id": "case-20-ecommerce-cross-border-tributacao",
+  "name": "MegaStore Comércio Digital de Eletrônicos Ltda",
+  "cnpj": "00.111.222/0001-33",
+  "cnae": "47.51-2-01",
+  "segmento": "E-commerce Multicanal",
+  "months_revenue": [
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000,
+    2800000
+  ],
+  "expected_total_revenue": 33600000.0,
+  "tax_dispute_difal": true,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "PENDENCIA_DIFAL_ESTADUAL"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ALTO_VOLUME_TRANSACOES"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "MARGEM_OPERACIONAL_POSITIVA"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "INTEGRACAO_GATEWAY_PAGAMENTO"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "MegaStore Comércio Digital de Eletrônicos Ltda",
+    "00.111.222/0001-33",
+    "Thiago Camargo"
+  ],
+  "evidence_nodes": [
+    "extrato_gateway_mercado_pago",
+    "relatorio_tributario_difal"
+  ]
+}

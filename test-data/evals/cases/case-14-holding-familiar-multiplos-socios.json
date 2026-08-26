@@ -1,0 +1,54 @@
+{
+  "id": "case-14-holding-familiar-multiplos-socios",
+  "name": "Petry & Filhos Participações S/A",
+  "cnpj": "44.555.666/0001-77",
+  "cnae": "64.62-0-00",
+  "segmento": "Holding Patrimonial",
+  "months_revenue": [
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000,
+    1800000
+  ],
+  "expected_total_revenue": 21600000.0,
+  "partners_count": 6,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "ESTRUTURA_SOCIETARIA_MAPEADA"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "GESTAO_DE_PATRIMONIO"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "DIVIDENDOS_RECEBIDOS_CONTROLADAS"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "FAMILY_OFFICE"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Petry & Filhos Participações S/A",
+    "44.555.666/0001-77",
+    "Helmuth Petry",
+    "Elisa Petry"
+  ],
+  "evidence_nodes": [
+    "estatuto_social_holding",
+    "acordo_de_acionistas",
+    "dre_consolidada"
+  ]
+}

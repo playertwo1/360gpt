@@ -1,0 +1,53 @@
+{
+  "id": "case-05-logistica-restricao-serasa-ativa",
+  "name": "TransRápido Logística & Cargas Ltda",
+  "cnpj": "56.789.012/0001-34",
+  "cnae": "49.30-2-02",
+  "segmento": "Transporte Rodoviário",
+  "months_revenue": [
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000,
+    1500000
+  ],
+  "expected_total_revenue": 18000000.0,
+  "protests": 3,
+  "protest_value": 450000.0,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "APONTAMENTO_CADASTRAL_CONFIRMADO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ESTEIRA_COMERCIAL_ATIVA"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "FLUXO_CAIXA_OPERACIONAL_POSITIVO"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CONTATO_FREQUENTE"
+    }
+  },
+  "ground_truth_decision": "REJEITADA",
+  "entities": [
+    "TransRápido Logística & Cargas Ltda",
+    "56.789.012/0001-34",
+    "Roberto Alves"
+  ],
+  "evidence_nodes": [
+    "consulta_serasa_experian",
+    "certidao_distribuidor_judicial"
+  ]
+}

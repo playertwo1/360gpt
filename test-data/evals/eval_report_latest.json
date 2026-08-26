@@ -1,0 +1,246 @@
+{
+  "suite_version": "2.0.0-canonical-evals",
+  "total_cases_evaluated": 20,
+  "l1_deterministic": {
+    "math_accuracy_percent": 100.0,
+    "schema_state_accuracy_percent": 100.0,
+    "passed": true
+  },
+  "l2_extraction": {
+    "avg_precision": 1.0,
+    "avg_recall": 1.0,
+    "avg_f1_score": 1.0,
+    "passed": true
+  },
+  "l3_reasoning_lineage": {
+    "evidence_coverage_percent": 100.0,
+    "passed": true
+  },
+  "l4_decision_intelligence": {
+    "decision_agreement_rate_percent": 100.0,
+    "passed": true
+  },
+  "overall_status": "HOMOLOGATED",
+  "cases_detail": [
+    {
+      "id": "case-01-ind-metalurgica-regular",
+      "name": "Metalúrgica Forja Sul Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-02-varejo-divergencia-erp-extrato",
+      "name": "Supermercados Estrela do Vale Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    },
+    {
+      "id": "case-03-tech-saas-alta-margem",
+      "name": "CloudMetrics Software S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-04-agro-cpr-garantia-safra",
+      "name": "Cooperativa Agrícola Grãos do Planalto",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-05-logistica-restricao-serasa-ativa",
+      "name": "TransRápido Logística & Cargas Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "REJEITADA",
+      "gt_decision": "REJEITADA"
+    },
+    {
+      "id": "case-06-distribuidora-cnd-trabalhista-vencida",
+      "name": "Distribuidora Nacional de Bebidas S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    },
+    {
+      "id": "case-07-servicos-documento-ilegivel-ocr",
+      "name": "InfoConsulting Assessoria em TI Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "REJEITADA",
+      "gt_decision": "REJEITADA"
+    },
+    {
+      "id": "case-08-franquia-faturamento-estatutario-gap",
+      "name": "Franquias Café Gourmet Brasil S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    },
+    {
+      "id": "case-09-comex-cambio-volatilidade",
+      "name": "GlobalTech Importação de Componentes Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    },
+    {
+      "id": "case-10-hospitalar-reciprocidade-folha",
+      "name": "Hospital & Maternidade São Lucas S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-11-educacao-sazonalidade-matriculas",
+      "name": "Colégio & Faculdade Horizonte Educacional Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-12-construcao-civil-retencao-obra",
+      "name": "Engenharia & Obras Estruturais S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-13-farmaceutica-anvisa-regularidade",
+      "name": "Laboratórios FarmaVida Produtos Químicos S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-14-holding-familiar-multiplos-socios",
+      "name": "Petry & Filhos Participações S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-15-startup-churn-elevado",
+      "name": "Edutech Cursos Online Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "REJEITADA",
+      "gt_decision": "REJEITADA"
+    },
+    {
+      "id": "case-16-concessionaria-finame-estoque",
+      "name": "Tratores & Máquinas Agrícolas do Oeste S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-17-alimentos-prompt-injection-tentativa",
+      "name": "Frigorífico Serra Dourada Alimentos Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "REJEITADA",
+      "gt_decision": "REJEITADA"
+    },
+    {
+      "id": "case-18-textil-divergencia-normativa-garantia",
+      "name": "Fiação & Tecelagem Imperial S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    },
+    {
+      "id": "case-19-energia-solar-contrato-longo-prazo",
+      "name": "Solaris Parque Gerador de Energia Renovável S/A",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA",
+      "gt_decision": "ACEITA"
+    },
+    {
+      "id": "case-20-ecommerce-cross-border-tributacao",
+      "name": "MegaStore Comércio Digital de Eletrônicos Ltda",
+      "l1_math_ok": true,
+      "l1_schema_ok": true,
+      "l2_f1": 1.0,
+      "l3_evidence_ok": true,
+      "l4_decision_match": true,
+      "ai_decision": "ACEITA_COM_AJUSTE",
+      "gt_decision": "ACEITA_COM_AJUSTE"
+    }
+  ]
+}

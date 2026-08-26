@@ -1,0 +1,54 @@
+{
+  "id": "case-10-hospitalar-reciprocidade-folha",
+  "name": "Hospital & Maternidade São Lucas S/A",
+  "cnpj": "01.234.567/0001-89",
+  "cnae": "86.10-1-01",
+  "segmento": "Saúde Hospitalar",
+  "months_revenue": [
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000,
+    5000000
+  ],
+  "expected_total_revenue": 60000000.0,
+  "employees_count": 280,
+  "payroll_opportunity": true,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "ALVARA_SANITARIO_REGULAR"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "CROSS_SELL_FOLHA_PAGAMENTO"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "FLUXO_CONVENIOS_ESTAVEL"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CONTA_CHAVE_CORPORATIVA"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Hospital & Maternidade São Lucas S/A",
+    "01.234.567/0001-89",
+    "Dra. Helena Peixoto"
+  ],
+  "evidence_nodes": [
+    "balanco_auditado_pwc",
+    "relacao_caged_funcionarios",
+    "convenios_medicos_contrato"
+  ]
+}

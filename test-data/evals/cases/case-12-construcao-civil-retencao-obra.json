@@ -1,0 +1,53 @@
+{
+  "id": "case-12-construcao-civil-retencao-obra",
+  "name": "Engenharia & Obras Estruturais S/A",
+  "cnpj": "22.333.444/0001-55",
+  "cnae": "41.20-4-00",
+  "segmento": "Construção Civil",
+  "months_revenue": [
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000,
+    3500000
+  ],
+  "expected_total_revenue": 42000000.0,
+  "retention_rate": 0.11,
+  "expected_status": "READY",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CREA_REGISTRO_ATIVO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "OPORTUNIDADE_CONTA_ESCROW"
+    },
+    "financeiro": {
+      "status": "ELEGIVEL",
+      "reason_code": "MEDICOES_HOMOLOGADAS"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "PARCERIA_CONSTRUTORA"
+    }
+  },
+  "ground_truth_decision": "ACEITA",
+  "entities": [
+    "Engenharia & Obras Estruturais S/A",
+    "22.333.444/0001-55",
+    "Eng. Marcos Pontes"
+  ],
+  "evidence_nodes": [
+    "art_crea",
+    "contrato_obra_infraestrutura",
+    "boletim_medicao_aprovado"
+  ]
+}

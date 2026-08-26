@@ -1,0 +1,52 @@
+{
+  "id": "case-15-startup-churn-elevado",
+  "name": "Edutech Cursos Online Ltda",
+  "cnpj": "55.666.777/0001-88",
+  "cnae": "85.99-6-04",
+  "segmento": "Edutech / Cursos Digitais",
+  "months_revenue": [
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000,
+    600000
+  ],
+  "expected_total_revenue": 7200000.0,
+  "monthly_churn": 0.095,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "CADASTRO_STARTUP_OK"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "AQUISICAO_DIGITAL"
+    },
+    "financeiro": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "QUEDA_RECEITA_RECORRENTE_CHURN"
+    },
+    "relacionamento": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "RECLAMACOES_CONSUMIDOR_ALTA"
+    }
+  },
+  "ground_truth_decision": "REJEITADA",
+  "entities": [
+    "Edutech Cursos Online Ltda",
+    "55.666.777/0001-88",
+    "Lucas Viana"
+  ],
+  "evidence_nodes": [
+    "painel_metricas_stripe",
+    "relatorio_churn_reclamacoes"
+  ]
+}

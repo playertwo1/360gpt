@@ -1,0 +1,53 @@
+{
+  "id": "case-09-comex-cambio-volatilidade",
+  "name": "GlobalTech Importação de Componentes Ltda",
+  "cnpj": "90.123.456/0001-78",
+  "cnae": "46.51-6-01",
+  "segmento": "Comércio Exterior",
+  "months_revenue": [
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000,
+    2500000
+  ],
+  "expected_total_revenue": 30000000.0,
+  "hedge_active": false,
+  "fx_exposure_ratio": 0.75,
+  "expected_status": "MANUAL_REVIEW_REQUIRED",
+  "domain_expectations": {
+    "conta": {
+      "status": "ELEGIVEL",
+      "reason_code": "RADAR_SISCOMEX_ATIVO"
+    },
+    "performance": {
+      "status": "ELEGIVEL",
+      "reason_code": "ALTO_VOLUME_IMPORTACAO"
+    },
+    "financeiro": {
+      "status": "MANUAL_REVIEW_REQUIRED",
+      "reason_code": "EXPOSICAO_CAMBIAL_SEM_HEDGE"
+    },
+    "relacionamento": {
+      "status": "ELEGIVEL",
+      "reason_code": "CLIENTE_COMEX"
+    }
+  },
+  "ground_truth_decision": "ACEITA_COM_AJUSTE",
+  "entities": [
+    "GlobalTech Importação de Componentes Ltda",
+    "90.123.456/0001-78",
+    "Claudio Nogueira"
+  ],
+  "evidence_nodes": [
+    "declaracao_importacao_siscomex",
+    "balanco_fechamento_cambial"
+  ]
+}
