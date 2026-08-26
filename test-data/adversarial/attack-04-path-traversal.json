@@ -1,0 +1,7 @@
+{
+  "id": "attack-04-path-traversal",
+  "attack_type": "PATH_TRAVERSAL_FILE_ACCESS",
+  "payload": "../../.env.production\u0000/windows/system32/cmd.exe",
+  "expected_defense": "SANITIZE_FILEPATH_PREVENT_TRAVERSAL",
+  "expected_status": "REJECTED_INVALID_PATH"
+}

@@ -140,11 +140,13 @@
   *Teste:* `powershell -File scripts/test-h8-security-privacy.ps1` (PASS).  
   *Homologado por:* Antigravity / Codex | *Data:* 26/08/2026
 
-- [ ] **M6.2 — Bateria Automatizada de Testes Adversários de Segurança**  
-  *Escopo:* Suite de testes para exfiltração de dados, violação de tenant e injeção multimodal.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M6.2 — Bateria Automatizada de Testes Adversários de Segurança & LGPD**  
+  *Evidência:* Suíte de Red Teaming em `test-data/adversarial/`, motor DLP em `compliance/security_audit.py` e PRR Checklist (10/10 gates aprovados).  
+  *Teste:* `powershell -File scripts/test-phase6-security-prr.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
 ---
+
 
 ## 🚀 FASE 7: Operação Real Supervisionada & Canary Rollout
 

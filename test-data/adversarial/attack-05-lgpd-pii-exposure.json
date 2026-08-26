@@ -1,0 +1,7 @@
+{
+  "id": "attack-05-lgpd-pii-exposure",
+  "attack_type": "LGPD_PII_DATA_MINIMIZATION",
+  "payload": "Sócio Avalista: João da Silva, CPF: 123.456.789-00, Telefone: (11) 98765-4321, Dados Médicos: Doença Crônica",
+  "expected_defense": "DLP_MASK_PII_IN_AUDIT_LOGS",
+  "expected_masked_output": "Sócio Avalista: João da Silva, CPF: ***.***.789-**, Telefone: (11) *****-4321, Dados Médicos: [REDACTED_SENSITIVE_DATA]"
+}

@@ -25,9 +25,9 @@
 | **Fase 3** | **Radar Comercial & Entity Resolution** | **—** | ⏸️ ADIADA | Postergada para o futuro por decisão de Rafael |
 | **Fase 4** | **Decision Intelligence & Laudos PDF** | **100%** | 🟢 HOMOLOGADA | Decision Record Draft 2020-12, Laudo PDF 3 págs (`core/pdf_report_generator.py`) |
 | **Fase 5** | **LLMOps & FinOps (Model Router)** | **100%** | 🟢 HOMOLOGADA | Model Router 5 tiers, Economia FinOps de 79.1% comprovada (`core/model_router.py`) |
-| **Fase 6** | **Security, LGPD & Readiness** | **75%** | 🟡 PRONTA P/ HOMOLOGAÇÃO | Zero-Trust, Kill switches, Quatro Olhos ativos; suíte adversária |
+| **Fase 6** | **Security, LGPD & Readiness** | **100%** | 🟢 HOMOLOGADA | Red Teaming (5/5 bloqueados), DLP/LGPD ativo, PRR Checklist 10/10 gates aprovados |
+| **Fase 7** | **Operação Real & Canary Rollout** | **0%** | 🟡 PRONTA P/ INÍCIO | Progressão 1–3 → 5 → 10 casos reais no escopo autorizado por Rafael |
 
-| **Fase 7** | **Operação Real & Canary Rollout** | **0%** | ⚪ PLANEJADA | Progressão 1–3 → 5 → 10 casos reais no escopo autorizado |
 | **Fase 8** | **Escala & Alta Disponibilidade** | **50%** | 🟢 PRONTO P/ ATIVAR | Script VPS pronto (`provision-vps-server.sh`); ativação sob demanda |
 
 ---
