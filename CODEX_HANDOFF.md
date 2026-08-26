@@ -2,7 +2,7 @@
 ## Diretor 360: Plataforma Multiagente de Inteligência e Governança PJ
 
 **Data do Handoff:** 26 de agosto de 2026
-**Versão Atual da Release:** `v3.0.0-final-hybrid` (100% Homologado: 24 Marcos + 10 Fases H1–H10 Concluídos)
+**Versão Atual da Release:** `v3.1.0-confianca` (Fases 0 e 1 100% Homologadas — Fases 2 e 3 Prontas para Início)
 **Autoridade Decisória do Projeto:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)
 **Repositório GitHub Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)
 **Workspace Local Primário:** `C:\Users\fael\Documents\Codex\2026-08-24\vamos-criar-um-progama-360-de`
@@ -10,17 +10,17 @@
 **Pastas de Backup no Google Drive:** `C:\Users\fael\Google Drive\360` e `C:\Users\fael\Meu Drive\360`
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`
 
-**Ciclo atual:** Evolução Pós-Homologação, acompanhada em `ROADMAP_POS_HOMOLOGACAO.md`.
-
-**Fase atual:** `P1 — Operação diária sintética medida`.
-
-**Próxima ação:** Jornada `P1-01` pelo Telegram, usando exclusivamente dados sintéticos.
+**Documentos Canônicos de Trabalho:**
+- **Roadmap Oficial:** `ROADMAP.md` (Evolução Orientada à Confiança — Fases 0 a 8).
+- **Checklist Compartilhado (Codex & Antigravity):** `checklist.md`.
+- **Status Executivo:** `status.md`.
 
 ---
 
 ## 📌 1. Princípio Fundamental & Regra Áurea de Governança
-> *"Fontes governam. Motores calculam e consolidam. Especialistas analisam. Gerentes Gerais coordenam. O Assessor sintetiza. O Diretor governa. **Rafael decide.***"
-> Nenhum componente de IA aprova crédito, altera cadastros ou movimenta valores sem despacho humano de Rafael na Mesa do Revisor (`/reviews`).
+> *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
+> **Rafael decide.** Nenhum componente de IA aprova crédito, altera cadastros ou movimenta valores sem despacho humano de Rafael na Mesa do Revisor (`/reviews`).
+> Há autorização institucional vigente para uso de dados reais em escopo autorizado, com governança estrita e Human-in-the-Loop.
 
 ---
 
@@ -37,7 +37,7 @@
 8. **Bateria Geral de Testes Automatizados:** `scripts/run-all-hybrid-tests.ps1` (executa H3 a H10 com código de saída 0).
 
 ### ⚠️ O QUE NÃO EXISTE / NÃO É USADO / ADIADO INTENCIONALMENTE:
-1. **Bancos de Dados Bancários Reais:** Não existem por design de segurança. O sistema opera estritamente no modo `OFFLINE_EVAL` com dados sintéticos.
+1. **Bancos de Dados Bancários Reais:** Não existem por design de segurança. O sistema opera estritamente no modo `OFFLINE_EVAL` com dados sintéticos até transição em Canary.
 2. **Servidor VPS 24h na Nuvem:** A VPS foi adiada por decisão de Rafael. O site e a fila permanecem na nuvem (Cloudflare) e o processamento roda localmente no Docker.
 3. **Credenciais SMTP de E-mail Reais no `.env`:** O servidor local não envia TLS sem configuração; todos os relatórios são salvos permanentemente em `docs/email-reports/`.
 4. **Bot Token Real do Telegram no Git:** Tokens reais nunca são versionados. O teste utiliza segredos sintéticos locais e validação perimetral.
@@ -122,7 +122,7 @@ powershell -File scripts/run-all-hybrid-tests.ps1
    ```
 4. **Sincronizar Workspace Secundário:**
    - Executar `git pull origin main --tags` na pasta `c:\Users\fael\Downloads\A`.
-5. **Atualizar `status.md`, `ROADMAP_POS_HOMOLOGACAO.md` e, quando aplicável, o `ROADMAP_HIBRIDO.md`.**
+5. **Atualizar `status.md`, `ROADMAP.md`, `checklist.md` e emitir relatório de e-mail.**
 
 ---
-*Guia Mestre de Transição atualizado para o ciclo pós-homologação. Dados reais continuam bloqueados até o Gate institucional P6.*
+*Guia Mestre de Transição atualizado e 100% auditável.*

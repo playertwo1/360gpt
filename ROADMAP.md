@@ -1,0 +1,285 @@
+# ROADMAP DIRETOR 360 — EVOLUÇÃO ORIENTADA À CONFIANÇA
+
+**Base:** Consolidação e Governança do Diretor 360  
+**Versão:** 3.1.0-confianca  
+**Data:** 26 de agosto de 2026  
+**Objetivo:** Evoluir o Diretor 360 de um conjunto de funcionalidades para uma plataforma decisória confiável, testável, observável, auditável e segura.  
+**Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
+
+> **Princípio Central:**  
+> *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
+
+> **Premissa Institucional Vigente:**  
+> Há autorização institucional para utilização de dados reais no Diretor 360. Toda operação real deve respeitar estritamente o escopo autorizado, LGPD, minimização, segregação, DLP, controle de acesso, auditoria e **Human-in-the-Loop**.
+
+---
+
+## 1. Princípio de Evolução Orientada à Confiança
+
+A evolução da plataforma segue a hierarquia obrigatória:
+
+$$\text{Confiabilidade} \longrightarrow \text{Qualidade} \longrightarrow \text{Valor} \longrightarrow \text{Governança} \longrightarrow \text{Produção Controlada} \longrightarrow \text{Escala}$$
+
+### Regra de Sequenciamento
+$$\text{Implementar} \longrightarrow \text{Homologar com Dados Sintéticos} \longrightarrow \text{Medir Evals} \longrightarrow \text{Corrigir} \longrightarrow \text{Liberar Dados Reais Autorizados Gradualmente}$$
+
+---
+
+# Fase 0 — Baseline, Governança de Entrega e Definition of Done
+
+## Objetivo
+Estabelecer critérios únicos e rigorosos para determinar quando um marco está realmente concluído e auditável.
+
+## Definition of Done (DoD)
+Todo marco, entrega ou funcionalidade deve possuir obrigatoriamente:
+1. **Código versionado** no Git com commit semântico e tag SemVer.
+2. **Testes automatizados aplicáveis** (com asserções reais sobre arquivos, schemas e execuções).
+3. **Telemetria** e métricas de execução registradas (latência, tokens, custo).
+4. **Evidência de homologação** verificável no Evidence Graph ou log de execução.
+5. **Tratamento de falhas** e caminhos explícitos de erro (sem fail-open).
+6. **Procedimento de rollback** transacional e documentado.
+7. **Documentação técnica e operacional** atualizada.
+8. **Changelog** versionado.
+9. **Versão identificável** nos contratos e schemas JSON.
+
+## Ciclo de Vida dos Marcos
+$$\text{PLANNED} \longrightarrow \text{IN\_PROGRESS} \longrightarrow \text{VALIDATING} \longrightarrow \text{HOMOLOGATED} \longrightarrow \text{RELEASED} \longrightarrow \text{MONITORED}$$
+
+*Regra de Ouro:* Um marco **nunca** é considerado concluído apenas porque funcionou uma vez manualmente.
+
+---
+
+# Fase 1 — Reliability Foundation (Fundação de Confiabilidade)
+
+## Objetivo
+Garantir que toda entrada seja processada de forma confiável, idempotente e recuperável.
+Toda entrada deve:
+1. Ser processada exatamente uma vez do ponto de vista lógico; ou
+2. Terminar em um estado de erro conhecido, rastreável e recuperável.
+
+## 1.1 — Secure Channel Gateway
+- **Telegram Oficial:** Webhook protegido por header `x-telegram-bot-api-secret-token`.
+- **Allowlist Estrita:** Restrição ao `chat_id` autorizado de Rafael (`app/api/ingest/telegram/route.ts`).
+- **SMTP Dedicado:** Canal para resumos executivos e alertas preventivos.
+- **Postura Zero-Trust:** Secrets fora do Git, configurados exclusivamente via `.env`.
+- **Resiliência:** Rate limiting, timeout, retry com exponential backoff e sanitização de logs.
+- **Rastreabilidade:** Todo evento possui `request_id`, `correlation_id`, timestamp, origem e status.
+- *Regra Arquitetural:* Telegram e e-mail são **canais de trânsito**, não fontes de verdade. O estado interno e o Evidence Graph permanecem como fonte única da verdade.
+
+## 1.2 — Document Intake Gateway
+Fluxo obrigatório em pipeline:
+$$\text{Arquivo Original} \longrightarrow \text{Validação} \longrightarrow \text{Extração} \longrightarrow \text{Normalização} \longrightarrow \text{Validação Humana} \longrightarrow \text{Análise}$$
+
+*(Proibido: Injeção direta de `Arquivo Original → LLM` sem validação e normalização prévia).*
+
+### Metadados Contratuais Obrigatórios
+- `document_id`, `sha256`, `mime_type`, `size`, `received_at`, `parser_version`, `extraction_version`, `confidence`, `warnings[]`, `source`, `raw_preserved`, `normalized_payload`.
+
+### Requisitos Funcionais
+- Preservação do arquivo binário original imutável.
+- Identificação de PDF digital vs. digitalizado com OCR controlado.
+- Parser de planilhas XLSX/CSV com múltiplas abas, períodos e conciliação de faturamento.
+- Rejeição atômica de arquivos corrompidos ou vazios (`0 bytes` -> `invalid_file_size`).
+- Defesa ativa contra **Prompt Injection** em documentos (`UNTRUSTED_CONTENT` -> `MANUAL_REVIEW_REQUIRED`).
+
+## 1.3 — Durable Processing & DLQ (Fila Persistente)
+Toda entrada recebe uma `idempotency_key` única.
+
+### Máquina de Estados Finita
+$$\text{RECEIVED} \rightarrow \text{VALIDATED} \rightarrow \text{QUEUED} \rightarrow \text{PROCESSING} \rightarrow \text{COMPLETED}$$
+$$\text{PROCESSING} \rightarrow \text{FAILED\_RETRYABLE} \rightarrow \text{FAILED\_FINAL} \rightarrow \text{MANUAL\_REVIEW}$$
+
+### Dead Letter Queue (DLQ)
+Após 3 tentativas de retry com lease lock expirado, a entrada nunca é descartada silenciosamente. Ela é automaticamente encaminhada para `MANUAL_REVIEW` com:
+- Código do erro, contagem de tentativas, última execução, contexto técnico e ação recomendada de saneamento.
+
+## Gate de Saída da Fase 1
+- **Status:** ✅ **HOMOLOGADO (Fases H1 a H10 / Marcos 1 a 15)**
+- 5 jornadas sintéticas completas sem perda, sem duplicidade lógica e com persistência verificada após reinicialização de containers.
+
+---
+
+# Fase 2 — Observability & Evals (Avaliação Contínua de Qualidade)
+
+## Objetivo
+Comprovar matematicamente que o Diretor 360 interpreta corretamente os dados antes de aumentar a quantidade de informações processadas.
+
+## Suíte Canônica de Evals (20 Casos Sintéticos)
+Criar e manter uma suíte versionada em `test-data/evals/` cobrindo:
+1. Conta (Identidade, Cadastro, Apontamentos, Restrições e Elegibilidade).
+2. Performance (Metas, Pontos, Produção, Esteiras e Prazos).
+3. Financeiro (DRE, Faturamento, Margem, Rentabilidade e Tarifas).
+4. Relacionamento (Histórico, Compromissos e Abordagem).
+5. Casos de borda: Conflitos de fontes, dados ausentes, certidões vencidas e ambiguidades.
+
+## Evals em Quatro Camadas
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│ L4 — Decisão: Decision Agreement Rate (Aceita / Ajuste / Rejeita)│
+├──────────────────────────────────────────────────────────────────┤
+│ L3 — Raciocínio: 100% de afirmações ancoradas no Evidence Graph  │
+├──────────────────────────────────────────────────────────────────┤
+│ L2 — Extração: Precision, Recall, F1-Score e Cobertura de Dados  │
+├──────────────────────────────────────────────────────────────────┤
+│ L1 — Determinístico: Cálculos, deduplicação, estados e regras    │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Metas por Camada
+- **L1 (Determinístico):** 100% de precisão em cálculos financeiros, deduplicação e transições de estado.
+- **L2 (Extração):** $F_1 > 0.95$ na extração de faturamento, sócios e débitos.
+- **L3 (Raciocínio):** 100% das afirmações materiais com nó rastreável no Evidence Graph.
+- **L4 (Decisão):** $\text{Decision Agreement Rate} \ge 90\%$ com revisores humanos.
+
+*Regra de Bloqueio:* Qualquer regressão material na suíte de Evals impede o release em produção.
+
+---
+
+# Fase 3 — Radar Comercial e Entity Resolution
+
+## Objetivo
+Transformar dados públicos em oportunidades comerciais qualificadas sem introduzir dados bancários sigilosos.
+
+$$\text{Source Adapter} \longrightarrow \text{Raw Data} \longrightarrow \text{Normalização} \longrightarrow \text{Entity Resolution} \longrightarrow \text{Qualificação} \longrightarrow \text{NBA}$$
+
+## Conectores Públicos Autorizados
+- Consulta automatizada via APIs públicas/autorizadas (ReceitaWS, Serpro, Sintegra):
+  - CNPJ, Razão Social, Nome Fantasia, CNAE Primário/Secundários, Endereço, Município, Capital Social, Data de Abertura, Situação Cadastral e QSA (Quadro de Sócios e Administradores).
+- Implementação com cache local, TTL configurável, circuit breaker e rate-limiting.
+
+## Entity Resolution & Deduplicação
+O grafo de entidades deve resolver e vincular:
+- Matriz $\leftrightarrow$ Filiais.
+- Sócios comuns em diferentes empresas (Grupo Econômico de Fato).
+- Cliente existente $\leftrightarrow$ Prospect $\leftrightarrow$ Lead inativo.
+- *Regra:* Uma empresa já analisada não pode retornar ciclicamente como "novo lead" sem fato novo material.
+
+---
+
+# Fase 4 — Decision Intelligence & Laudo Executivo
+
+## Objetivo
+Transformar informações consolidadas em decisões assistidas, explicáveis e auditáveis.
+
+## Segregação Ontológica Obrigatória
+O sistema separa explicitamente:
+$$\mathbf{FATO} \longrightarrow \mathbf{INFER\hat{E}NCIA} \longrightarrow \mathbf{RECOMENDA\c{C}\tilde{A}O} \longrightarrow \mathbf{DECIS\tilde{A}O}$$
+- Nenhuma inferência estatística pode ser apresentada como fato consumado.
+- Nenhuma recomendação do agente pode ser apresentada como decisão executada.
+
+## Decision Record Contratual (`contracts/decision-record.schema.json`)
+Toda recomendação material gera um registro imutável:
+- `decision_id`, `company_id`, `timestamp`, `facts[]`, `inferences[]`, `recommendation`, `evidence_ids[]`, `confidence`, `model_id`, `prompt_version`, `rule_version`, `human_decision`, `human_reason_code`.
+
+## Laudo Executivo 360 em PDF Diagramado
+- Geração com 1 clique de relatório PDF de 3 páginas para diretoria e comitês de crédito.
+- Ancoragem 100% rastreável ao Evidence Graph, com hash SHA-256 e carimbo temporal bitemporal.
+
+---
+
+# Fase 5 — LLMOps & FinOps
+
+## Objetivo
+Otimizar simultaneamente qualidade, custo e latência, operando sob o **Princípio da Menor Autonomia e Capacidade Suficiente**.
+
+## Model Router Hierárquico (`policies/model-router.yaml`)
+```text
+Regra Determinística (Cálculos, CNAE, Elegibilidade)
+        ↓
+Modelo Econômico (Gemini Flash Lite — Triagem, OCR, Classificação Simples)
+        ↓
+Modelo Intermediário (Gemini 2.5 Flash — Extração e Raciocínio de Domínio)
+        ↓
+Modelo Avançado (Gemini 2.5 Pro / Claude 3.5 Sonnet — Síntese e Casos Complexos)
+        ↓
+Revisão Humana Obrigatória (Mesa do Revisor / Despacho de Rafael)
+```
+
+## Telemetria & Unit Economics
+- Registro contínuo em `/api/metrics/finops` de tokens, custo por análise ($< \text{R\$ } 0,15$), latência ($P_{95} < 30\text{s}$) e taxa de assertividade.
+
+---
+
+# Fase 6 — Security, LGPD & Production Readiness Review
+
+## Objetivo
+Manter e comprovar continuamente a aderência do Diretor 360 à autorização institucional já concedida para uso de dados reais, garantindo segurança, LGPD, rastreabilidade e controles de produção.
+
+## Requisitos de Conformidade
+- Relatório de Impacto à Proteção de Dados (DPIA / RIPD).
+- Princípios da LGPD aplicados: Finalidade, Adequação, Necessidade (minimização), Livre Acesso, Qualidade dos Dados, Transparência, Segurança, Prevenção, Não Discriminação e Responsabilização.
+- Gestão estrita de segredos (Secrets Management).
+- Data Loss Prevention (DLP) com mascaramento e redação prévia de PII sensível em logs e dashboards.
+
+## Bateria de Testes de Segurança Obrigatórios
+1. **Prompt Injection Test:** Injeção de instruções adversárias em mensagens e documentos.
+2. **Data Exfiltration Test:** Tentativa de forçar saída de dados não autorizados fora do tenant.
+3. **Privilege Boundary Test:** Tentativa de um especialista de domínio atuar fora de seu escopo.
+4. **Kill-Switch Test:** Desligamento granular e atômico de canais (Telegram, SMTP, LLM, Conectores) sem indisponibilizar a base.
+
+## Gate de Autorização Contínua
+- Estados da autorização: `AUTORIZADO | AUTORIZADO_COM_RESTRICOES | AJUSTES_NECESSARIOS | SUSPENSO`.
+- Se o status for `SUSPENSO`, o processamento de dados reais afetado é interrompido imediatamente, preservando trilhas de auditoria.
+
+---
+
+# Fase 7 — Operação Real Supervisionada & Canary Rollout
+
+## Objetivo
+Expandir o uso dos dados reais já autorizados de maneira progressiva, mensurável e reversível, validando o comportamento do sistema em produção assistida.
+
+### Progressão em Canary
+$$\text{1 a 3 Casos Reais} \longrightarrow \text{5 Casos} \longrightarrow \text{10 Casos} \longrightarrow \text{Amostra Ampliada}$$
+
+## Human-in-the-Loop Mandatório
+- Nenhuma recomendação do Diretor 360 produz efeito transacional ou decisão final sem despacho humano explícito na Mesa do Revisor (`/reviews`).
+
+## Critérios Automáticos de Rollback
+- Incidente de segurança ou exfiltração $\rightarrow$ **ROLLBACK IMEDIATO**.
+- Evidence Coverage $< 100\%$ em campos materiais $\rightarrow$ **PAUSAR OPERAÇÃO**.
+- Taxa de erro de extração $> 5\%$ $\rightarrow$ **PAUSAR & INVESTIGAR**.
+
+---
+
+# Fase 8 — Escala e Alta Disponibilidade
+
+## Objetivo
+Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade operacional comprovada.
+
+- O modelo híbrido (Docker local + Site Cloudflare) permanece como padrão oficial de baixo custo e alta segurança.
+- Provisionamento automatizado de VPS Linux (Ubuntu 24.04 / Hetzner) via `scripts/provision-vps-server.sh` pronto para ativação sob demanda.
+
+---
+
+# KPIs Executivos & Métricas de Sucesso
+
+| KPI | Fórmula / Critério | Meta |
+|---|---|:---:|
+| **Decision Utility Rate** | $(\text{Aceitas} + \text{Aceitas com Ajustes}) / \text{Total Recomendações}$ | $\ge 85\%$ |
+| **Override Rate** | $\text{Recomendações Rejeitadas} / \text{Total Recomendações}$ | $\le 15\%$ |
+| **Evidence Coverage** | $\text{Afirmações com Linhagem PROV} / \text{Total Afirmações}$ | **100%** |
+| **False Critical Alert Rate** | $\text{Alertas Falsos} / \text{Total de Alertas Críticos}$ | $< 5\%$ |
+| **Time-to-Decision** | Tempo entre entrada da informação e despacho de Rafael | $< 15\text{ min}$ |
+| **Cost-per-Useful-Decision** | Custo total de LLM / Decisões Úteis | $< \text{R\$ } 0,20$ |
+| **Reliability** | Entradas processadas sem perda ou duplicidade | **100%** |
+| **Security Incident Rate** | Incidentes materiais de segurança ou vazamento | **0** |
+
+---
+
+# 12 Regras Arquiteturais Permanentes
+
+1. **Motor determinístico primeiro:** Cálculos e regras conhecidas nunca dependem desnecessariamente de LLM.
+2. **Evidence First:** Nenhuma afirmação material existe sem evidência verificável no Evidence Graph.
+3. **Human-in-the-Loop:** Decisões materiais permanecem sob responsabilidade humana exclusiva.
+4. **Fail-Safe & Safe Defaults:** Erro desconhecido gera `MANUAL_REVIEW_REQUIRED`, nunca decisão automática.
+5. **Idempotência Absoluta:** O reenvio do mesmo payload nunca duplica efeitos ou tarefas.
+6. **Imutabilidade da Origem:** O artefato original recebido nunca é alterado ou sobrescrito.
+7. **Observabilidade Total:** Nenhuma automação crítica opera como caixa-preta.
+8. **Versionamento Semântico:** Modelos, prompts, regras, parsers e contratos são identificáveis por versão.
+9. **Least Privilege:** Cada agente e conector acessa estritamente os dados necessários para sua tarefa.
+10. **Progressive Delivery:** Novas capacidades são liberadas gradualmente em fases controladas.
+11. **Rollback Transacional:** Todo componente crítico possui procedimento de retorno rápido e seguro.
+12. **Dados Reais no Escopo Autorizado:** Toda operação real segue estritamente a autorização institucional vigente.
