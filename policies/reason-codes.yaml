@@ -58,3 +58,10 @@ codes:
   HISTORICO_INTERACOES_CONSOLIDADO:
     category: RELACIONAMENTO
     review_required: false
+  ELEGIBILIDADE_CONDICIONAL:
+    category: CONTA
+    review_required: true
+  RECIPROCIDADE_PENDENTE:
+    category: RELACIONAMENTO
+    review_required: true
+

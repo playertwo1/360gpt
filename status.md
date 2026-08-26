@@ -53,34 +53,33 @@ pm run build) | Código limpo | 🟢 |
 
 | Marco | Descrição | Inspiração de Mercado | Estado |
 |:---:|---|---|:---:|
-| **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ✅ **Concluído** |
-| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | ⏳ **Próximo** |
-| **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | 📋 Planejado |
+| **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ✅ Concluído |
+| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | ✅ **Concluído** |
+| **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | ⏳ **Próximo** |
 | **19** | **Infraestrutura Cloud & Deploy em Produção Hospedada** — Deploy do Frontend Next.js/Vite no Cloudflare Pages/Workers + D1 e subida do n8n/PostgreSQL em VPS com HTTPS/TLS, incluindo plano de rollback documentado (reversão de DNS, restore de banco, rollback de contêiner) antes da virada | Inspirado em 12-Factor App & CIS Benchmarks | 📋 Planejado |
 | **20** | **Ativação dos Canais Oficiais de Produção** — Conexão do Bot Telegram oficial com webhooks autenticados, processamento de áudio/PDF/planilhas em tempo real e entrega contínua | Inspirado em Enterprise API Gateway & Zero-Trust | 📋 Planejado |
 
 ---
 
-## 3. Último Marco Concluído: Marco 16
+## 3. Último Marco Concluído: Marco 17
 
-**Sessão prática de operação assistida homologada com 100% de sucesso:**
-- Criadas 3 fixtures de casos complexos de borda em `test-data/assisted-ops/`:
-  * **Caso Alfa**: Divergência material entre faturamento declarado em ERP (R$ 12M) vs. extrato bancário (R$ 8.5M) identificada e rejeitada sob `DIVERGENCIA_DE_DADOS`.
-  * **Caso Beta**: Restrição cadastral parcial mitigada por garantia fiduciária de R$ 2.2M, aprovada sob `ELEGIBILIDADE_CONDICIONAL`.
-  * **Caso Gama**: Quebra de reciprocidade tarifária com compromissos vencidos, aprovada condicionalmente sob `RECIPROCIDADE_PENDENTE`.
-- Resoluções humanas registradas com assinatura digital SHA-256 e gravadas de forma append-only no **Evidence Graph 360**.
-- Script automatizado `scripts/test-assisted-operations.ps1` executado e aprovado com código 0.
+**Manual e Playbook Operacional do Revisor 360 concluído e homologado:**
+- Documento executivo formal `docs/PLAYBOOK_REVISOR_360.md` elaborado, detalhando os procedimentos padrão operacionais (SOP) para a Mesa do Revisor.
+- Codificação do rito de triagem determinística (`PENDING_TRIAGE → ASSIGNED → IN_REVIEW → RESOLVED`), leases de lock de 10 minutos e regras de desempate por autoridade de fontes.
+- Matriz definitiva de reason codes alinhada com `policies/reason-codes.yaml` (incluindo `ELEGIBILIDADE_CONDICIONAL` e `RECIPROCIDADE_PENDENTE`).
+- Roteiro de inspeção de linhagem PROV no Evidence Graph e protocolo de assinatura digital SHA-256 para despachos humanos imutáveis.
+- Script automatizado de validação de governança `scripts/test-playbook-governance.ps1` executado e aprovado com código 0 (`PLAYBOOK_GOVERNANCE_PASS`).
 
 ---
 
 ## 4. Próximo Passo Exato
 
-**Marco 17 — Manual e Playbook Operacional do Revisor 360:**
-Consolidar a documentação formal (`docs/PLAYBOOK_REVISOR_360.md`) baseada nas evidências empíricas coletadas no Marco 16:
-1. Rito de triagem determinística de pendências (`PENDING_TRIAGE → ASSIGNED`).
-2. Matriz definitiva de reason codes e critérios de desempate em divergências de dados/normativas.
-3. Procedimentos operacionais padrão (SOP) para aprovação condicionada com garantias reais.
-4. Roteiro de auditoria e conferência visual de linhagem no Evidence Graph.
+**Marco 18 — Alertas Proativos de SLA e Telemetria FinOps:**
+Implementar o módulo de disparo automático de alertas e monitoramento de capacidade da Central de Revisão:
+1. Notificação proativa no Telegram/E-mail quando um ticket na fila atingir **80% do tempo de SLA** (`policies/review-sla.yaml`).
+2. Telemetria de consumo de tokens de IA, latência por domínio analítico e estimativa de custo por execução (*Unit Economics*).
+3. Script automatizado de validação de alertas e métricas de capacidade.
+
 
 
 ---
