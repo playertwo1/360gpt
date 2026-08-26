@@ -1,0 +1,72 @@
+{
+  "manifest_version": "1.0.0",
+  "release_tag": "v1.0.0-assisted-prod",
+  "release_status": "APPROVED_FOR_ASSISTED_PRODUCTION",
+  "governance": {
+    "architecture_version": "1.11",
+    "orchestrator": "Diretor 360 (n8n self-hosted em Docker)",
+    "governance_authority": "Diretor 360",
+    "decision_authority": "Rafael (fael@live.de / rafa.pedrosa1@gmail.com)"
+  },
+  "readiness_gate": {
+    "status": "PASSED",
+    "verified_at": "2026-08-26T14:03:00Z",
+    "passed_checks": [
+      "IDEMPOTENCY_VERIFIED",
+      "DOMAIN_MANAGERS_V2_ACTIVE",
+      "MANUAL_REVIEW_READ_MODEL_AUTHENTICATED",
+      "EVIDENCE_GRAPH_APPEND_ONLY_IMMUTABLE",
+      "PROV_OPENLINEAGE_COMPLIANT",
+      "CONCURRENCY_AND_BACKPRESSURE_VALIDATED",
+      "ZERO_DATA_LEAK_DEFENSE_ACTIVE"
+    ]
+  },
+  "artifact_integrity": {
+    "contracts\\backpressure.schema.json": "sha256:1afceaa80635f5ce02971cefceb16ed4f89820606ebd3d8b4967a116ac7ecaeb",
+    "contracts\\evidence-graph.schema.json": "sha256:25c91b5daa6a09e2b8f9cd3968f69e037df3b9306fb5eae0a6c2f8b04a3b010c",
+    "contracts\\handoff.schema.json": "sha256:9ce8440004e9cc564dadd61437106818eae9425a4400a640ed02e0b0ae8b3145",
+    "contracts\\manual-review.schema.json": "sha256:db76ab5137c9776a5593da033f04639acbf0f6dacdfbb40c1abbc9212a4778e5",
+    "contracts\\release-manifest.schema.json": "sha256:b4c95d21bbd2badcee626c23f52a4fcc8100cf0fd834ccaa0228ee4204d8f12b",
+    "contracts\\review-resolution.schema.json": "sha256:ad42c9d47cc260f57b0936cece7e28c912799526006858ce8b48695005d5ca87",
+    "contracts\\routing-decision.schema.json": "sha256:35c8459c95f75112297b5ed5ac1e1ab31a1130dd5414916c4496a939f8b2b309",
+    "contracts\\state-360.schema.json": "sha256:98807823ff7e65c601c4cd5bbecbf0120edaa50b3026045e2e9c22933941508a",
+    "infra/postgres/init\\02-visao360-schema.sql": "sha256:37e61c970baf5b68b5ed9615644b159ddfd98afa8c354fe759012e3d0bafea31",
+    "infra/postgres/init\\03-ingestion-artifacts.sql": "sha256:42d64d37f7a513e8aaabb9645f504db587dced5277643457e90f249e6b03c3b8",
+    "infra/postgres/init\\04-routing-idempotency.sql": "sha256:bbcf961d4ff9a578fee002377445fd576fb205bb3ab14a3417cbf33b758129a0",
+    "infra/postgres/init\\05-state-publication.sql": "sha256:ca6a8f9bda1313d7b1edd7d1f1b7fccc2cf2a7e53a242a452d77c8bcb3b8276d",
+    "infra/postgres/init\\06-manual-review.sql": "sha256:32e9d09e1c53021933d6c931aacbc4acc90b4e34c89e1a6bf1c849419038cd02",
+    "infra/postgres/init\\07-evidence-graph.sql": "sha256:324a6d6a3f6eff4297a7a1238f97530b55d88a6f69efb22b2423f3193311a9c3",
+    "n8n/workflows\\wf-00-offline-entrada-diretor.json": "sha256:6ab136e2846800d7c56c371cc5377cdadd77fa1f36f32a14da5dbc27df4951f2",
+    "n8n/workflows\\wf-01-webhook-entrada-teste.json": "sha256:6b4bab36e5f002af967d50b0d98ac64f38e4c8495e6127b56508e122a63f2066",
+    "n8n/workflows\\wf-02-registro-idempotente.json": "sha256:b12cdeed08337a2b018a0b849759b4ed30016cd3a5949e3a0b809ab07cc76f6e",
+    "n8n/workflows\\wf-03-registro-roteamento.json": "sha256:943b07ffce82b4611317d46234a23553298223ae2e0b089f5197b490fbdafa8c",
+    "n8n/workflows\\wf-04-orquestracao-gerentes.json": "sha256:2651a361a1cfee01f50ab9613afeb62e40a60a3601965e974c6a7977c26cf777",
+    "n8n/workflows\\wf-05-gerente-geral-simulado.json": "sha256:aaff995fa8ee45ec92e71835150e2a275c1ebd1f4bd711d1771ee67c2ff72576",
+    "n8n/workflows\\wf-06-motor-estado-360.json": "sha256:b00e16c98b52bcf636b4ce9b6ad1f6cded40570ae8db6f7d33dbb0a473d03a32",
+    "n8n/workflows\\wf-07-assessor-executivo.json": "sha256:7d987f2f3124045ab3899924c4e753c47d14360267b27f4be8afb144b5d8f402",
+    "n8n/workflows\\wf-08-consulta-estado-360.json": "sha256:0b7b1b03fbd227e1b58f5cc71f62850ae33e2bb4bb02804cfbc6b9d2f39f4b44",
+    "n8n/workflows\\wf-09-ponte-hospedada.json": "sha256:67aea1f6237ab12c900cb2ae9b604175890d59d77110fc347261c61c9650654f",
+    "policies\\backpressure.yaml": "sha256:d058ce11f0eb16a5660eac3710aea6df3d89cb80c82b425ddb80c6d66c00fb9e",
+    "policies\\capability-registry.yaml": "sha256:49803230a9d9ae18e41d64f9c3604e7fc922e62fa92710bba7649ede046728e7",
+    "policies\\evidence-graph.yaml": "sha256:17fcc98a9a17ab0bb96fbdb034d0ebd98f59fb998ee6694a6ab371474c65e7eb",
+    "policies\\freshness.yaml": "sha256:c3063d1ebb15a26c68a49f947fda1e4e40daebb497194d3d2e0876fb1b87bc74",
+    "policies\\reason-codes.yaml": "sha256:6454159610f25fb10eac6eb1aca588d13063defbf38104660fa796918b52922a",
+    "policies\\review-sla.yaml": "sha256:ea4fe8b1fe3a7d54520191dc216659fdced3499d69ab194add07f0a9a5af33bc",
+    "policies\\routing.yaml": "sha256:49b473cfc5d24fbbaa9e82b6dfd3a589a6fcd50c9253f1197ecd1150b70546f8"
+  },
+  "approved_capabilities": [
+    "conta.identity_verification.v2",
+    "conta.eligibility_gate.v2",
+    "performance.goals_tracking.v2",
+    "performance.pipeline_analysis.v2",
+    "financeiro.profitability_calc.v2",
+    "financeiro.fee_viability.v2",
+    "relacionamento.interaction_history.v2",
+    "relacionamento.commitment_monitoring.v2"
+  ],
+  "signoff": {
+    "released_by": "Diretor 360 / Orquestrador Executivo",
+    "target_environment": "Hospedado / Produ\u00e7\u00e3o Assistida",
+    "operating_mode": "OFFLINE_EVAL_WITH_HUMAN_IN_THE_LOOP"
+  }
+}

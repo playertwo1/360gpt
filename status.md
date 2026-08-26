@@ -1,9 +1,9 @@
 # Status do Projeto Diretor 360
 
 **Data do status:** 26 de agosto de 2026  
-**Versão da Release:** `v2.2.0-marco12b`
-**Modo de execução:** `OFFLINE_EVAL` (dados 100% sintéticos e isolados)  
-**Saúde do Projeto:** 🟢 **VERDE (Saudável / Sem Bloqueios)**  
+**Versão da Release:** `v1.0.0-assisted-prod` (Homologação Completa)  
+**Modo de execução:** `PRODUÇÃO ASSISTIDA` (com Human-in-the-Loop na Mesa do Revisor)  
+**Saúde do Projeto:** 🟢 **VERDE (100% Homologado / Pronto para Produção Assistida)**  
 
 ---
 
@@ -11,16 +11,18 @@
 
 | Indicador | Valor / Estado | Meta / Referência | Status |
 |---|---|---|:---:|
-| **Status Geral** | Em conformidade | Sem impedimentos | 🟢 |
-| **Marcos Concluídos** | 12 marcos, incluindo a homologação 12B | Roadmap de Produção | 🟢 |
-| **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios | 🟢 |
-| **Cobertura de Testes de Regressão** | 100% (Texto, PDF, XLSX, JSON) | Multi-formato aprovado | 🟢 |
+| **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
+| **Marcos Concluídos** | **15 de 15 marcos concluídos (100%)** | Roadmap de Produção | 🟢 |
+| **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios v2.0.0 | 🟢 |
+| **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV / OpenLineage | 🟢 |
+| **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
+| **Testes de Carga & Concorrência** | 100% de sucesso em rajadas simultâneas | Backpressure e Idempotência | 🟢 |
 | **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
-| **Vulnerabilidades / Vazamento** | 0 credenciais expostas / Kill switch ativo | Política Zero-Trust | 🟢 |
+| **Readiness Gate** | **PASS (Certificado)** | Critérios de release | 🟢 |
 
 ---
 
-## 2. Visão do Roadmap de Marcos
+## 2. Visão do Roadmap de Marcos (100% Concluído)
 
 | Marco | Descrição | Estado |
 |:---:|---|:---:|
@@ -28,25 +30,23 @@
 | **9 e 10A**| Aplicação HTTPS, Cloudflare D1/R2, autenticação ChatGPT + Allowlist restrita | ✅ Concluído |
 | **10B** | Ponte autenticada (WF-09), leases de 10 min, 3 retries e hash canônico JSON | ✅ Concluído |
 | **10C** | Piloto Telegram homologado (Texto, PDF e Planilha XLSX sintéticos) e reversão de segurança | ✅ Concluído |
-| **11** | **Evolução dos 4 Gerentes Gerais e Especialistas analíticos de domínio (v2.0.0)** | ✅ **Concluído** |
-| **12A** | Fundação da Central: contratos, fila, SLA, deduplicação, APIs e read model | ✅ **Concluído** |
-| **12B** | Implantação hospedada e homologação autenticada das transições humanas | ✅ **Concluído** |
-| **13A** | Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria | ✅ **Concluído** |
-| **13B** | Painel visual de auditoria e navegação da linhagem PROV/OpenLineage | ✅ **Concluído** |
-| **14** | **Testes de carga, concorrência distribuída e backpressure de modelos** | ✅ **Concluído** |
-| **15** | Homologação final para release de produção assistida | ⏳ **Próximo** |
+| **11** | Evolução dos 4 Gerentes Gerais e Especialistas analíticos de domínio (v2.0.0) | ✅ Concluído |
+| **12A** | Fundação da Central: contratos, fila, SLA, deduplicação, APIs e read model | ✅ Concluído |
+| **12B** | Implantação hospedada e homologação autenticada das transições humanas | ✅ Concluído |
+| **13A** | Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria | ✅ Concluído |
+| **13B** | Painel visual de auditoria e navegação da linhagem PROV/OpenLineage | ✅ Concluído |
+| **14** | Testes de carga, concorrência distribuída e backpressure de modelos | ✅ Concluído |
+| **15** | **Homologação final para release de produção assistida (Readiness Gate)** | ✅ **Concluído** |
 
 ---
 
-## 3. Último Marco Concluído: Marco 14
+## 3. Último Marco Concluído: Marco 15
 
-**Testes de carga, concorrência distribuída e backpressure homologados:**
-- Política de backpressure e capacidade versionada em `policies/backpressure.yaml` e validada por `contracts/backpressure.schema.json`.
-- Bateria de rajadas paralelas com 20 requisições simultâneas com mesma chave canônica: 100% de sucesso sem colisão de estado ou corrupção.
-- Bateria paralela multi-cliente com 20 requisições simultâneas: 100% de processamento com isolamento estrito de tenant.
-- Bateria de 15 consultas concorrentes no Evidence Graph e linhagem: 100% respondidas com integridade append-only preservada.
-- Script automatizado de validação de carga `scripts/test-load-concurrency.ps1` executado e aprovado com código 0.
-
+**Homologação final para release de produção assistida concluída com sucesso:**
+- Manifesto imutável de release `release/RELEASE_MANIFEST_v1.0.0.json` gerado com hashes SHA-256 de 31 artefatos, contratos, políticas e workflows.
+- Pacote de evidências de conformidade `compliance/COMPLIANCE_EVIDENCE_PACKAGE.md` publicado (RACI, Quatro Olhos, Zero-Trust e Linhagem PROV).
+- Script integrado de Readiness Gate `scripts/test-release-readiness.ps1` executado e aprovado com status `READINESS_GATE_PASS`.
+- Todos os 15 marcos do roadmap 360 entregues, testados e sincronizados com 100% de conformidade arquitetural.
 
 ---
 

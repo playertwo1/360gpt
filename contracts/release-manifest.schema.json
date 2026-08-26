@@ -1,0 +1,114 @@
+{
+  "": "https://visao360.local/contracts/release-manifest.schema.json",
+  "title": "ReleaseManifestContract",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "release_tag",
+    "release_status",
+    "governance",
+    "readiness_gate",
+    "artifact_integrity",
+    "approved_capabilities",
+    "signoff"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string"
+    },
+    "release_tag": {
+      "type": "string"
+    },
+    "release_status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "STAGING_HOMOLOGATED",
+        "APPROVED_FOR_ASSISTED_PRODUCTION"
+      ]
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "architecture_version",
+        "orchestrator",
+        "governance_authority",
+        "decision_authority"
+      ],
+      "properties": {
+        "architecture_version": {
+          "type": "string"
+        },
+        "orchestrator": {
+          "type": "string"
+        },
+        "governance_authority": {
+          "type": "string"
+        },
+        "decision_authority": {
+          "type": "string"
+        }
+      }
+    },
+    "readiness_gate": {
+      "type": "object",
+      "required": [
+        "status",
+        "verified_at",
+        "passed_checks"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASSED",
+            "FAILED"
+          ]
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "passed_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "artifact_integrity": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      }
+    },
+    "approved_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "signoff": {
+      "type": "object",
+      "required": [
+        "released_by",
+        "target_environment",
+        "operating_mode"
+      ],
+      "properties": {
+        "released_by": {
+          "type": "string"
+        },
+        "target_environment": {
+          "type": "string"
+        },
+        "operating_mode": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
