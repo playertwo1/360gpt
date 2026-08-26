@@ -23,13 +23,25 @@ Os valores secretos nunca devem ser enviados para o Git, arquivos de documentaç
 | `TELEGRAM_ALLOWED_CHAT_IDS` | ID fechado do chat privado |
 | `TELEGRAM_INGEST_ENABLED` | `false` durante configuração; `true` apenas no início do teste |
 | `TELEGRAM_SEND_ACK_ENABLED` | `false` por padrão |
+| `DASHBOARD_ALLOWED_EMAILS` | lista privada das contas autorizadas no Dashboard |
+
+## Fronteira pública e superfície privada
+
+O projeto usa uma única aplicação HTTPS com separação de autorização por rota:
+
+- `/api/ingest/telegram` aceita chamadas externas sem login do ChatGPT, mas exige kill switch ativo, segredo do webhook e chat privado na allowlist;
+- `/` exige login do ChatGPT e e-mail presente em `DASHBOARD_ALLOWED_EMAILS`;
+- `/api/state/latest` exige o mesmo login e a mesma allowlist do Dashboard;
+- nenhuma outra rota recebe autorização por ser chamada pelo Telegram.
+
+Manter a aplicação em acesso público no provedor não torna o Dashboard público: a autorização do Dashboard é aplicada novamente no servidor. Ausência da allowlist deve falhar fechada.
 
 ## Ordem de ativação
 
-1. Confirmar que o site está privado e acessível apenas ao proprietário.
+1. Confirmar que o Dashboard redireciona visitante anônimo para o login e bloqueia conta fora de `DASHBOARD_ALLOWED_EMAILS`.
 2. Aplicar a migração D1 mais recente.
 3. Cadastrar as variáveis hospedadas mantendo o kill switch desligado.
-4. Testar que a rota retorna `ingest_disabled`.
+4. Confirmar que `/api/state/latest` rejeita visitante sem login e que `/api/ingest/telegram` retorna `ingest_disabled`.
 5. Validar o script sem efeitos: `./scripts/configure-telegram-webhook.ps1 -WebhookUrl "https://DOMINIO/api/ingest/telegram"`.
 6. Habilitar `TELEGRAM_INGEST_ENABLED=true`.
 7. Cadastrar o webhook executando o mesmo script com `-Apply`.

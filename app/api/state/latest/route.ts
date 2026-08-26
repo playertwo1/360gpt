@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server';
+import { getChatGPTUser, isDashboardUserAllowed } from '../../../chatgpt-auth';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) {
+    return NextResponse.json({ available: false, error: 'authentication_required' }, { status: 401 });
+  }
+  if (!isDashboardUserAllowed(user)) {
+    return NextResponse.json({ available: false, error: 'access_denied' }, { status: 403 });
+  }
+
   const requestUrl = new URL(request.url);
   const tenantId = bounded(requestUrl.searchParams.get('tenant_id') ?? 'tenant-demo', 120);
   const subjectRef = bounded(requestUrl.searchParams.get('subject_ref') ?? 'cust-demo-001', 160);

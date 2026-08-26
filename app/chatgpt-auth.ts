@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -46,6 +47,21 @@ export async function requireChatGPTUser(
   if (user) return user;
 
   redirect(chatGPTSignInPath(returnTo));
+}
+
+export function isDashboardUserAllowed(
+  user: Pick<ChatGPTUser, 'email'>,
+  configuredEmails = env.DASHBOARD_ALLOWED_EMAILS,
+): boolean {
+  const normalizedEmail = user.email.trim().toLowerCase();
+  if (!normalizedEmail || !configuredEmails) return false;
+
+  const allowedEmails = configuredEmails
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  return allowedEmails.includes(normalizedEmail);
 }
 
 export function chatGPTSignInPath(returnTo: string): string {

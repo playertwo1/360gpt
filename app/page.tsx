@@ -32,7 +32,10 @@ export default function Home() {
       setModel({ available: false, error: 'local_read_model_unavailable' });
     } finally { setLoading(false); }
   }, []);
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    const initialRefresh = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(initialRefresh);
+  }, [refresh]);
 
   const snapshot = model?.snapshot;
   const findings = snapshot?.findings ?? [];
