@@ -1,8 +1,8 @@
 # Status do Projeto Diretor 360
 
 **Data do status:** 26 de agosto de 2026  
-**Versão da Release:** 1.0.0-assisted-prod (Fase 1 Homologada — 100%)  
-**Modo de execução:** PRODUÇÃO ASSISTIDA (Human-in-the-Loop na Mesa do Revisor 360)  
+**Versão da Release:** `v1.0.0-assisted-prod` (Fase 1 Homologada — 100%)  
+**Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
 **Saúde do Projeto:** 🟢 **VERDE (100% Homologado / Pronto para Operação Assistida)**  
 
 > Projeto pessoal, executado inteiramente fora do ambiente Bradesco, com dados sintéticos (OFFLINE_EVAL).
@@ -20,10 +20,9 @@
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | Inspirado em W3C PROV / OpenLineage | 🟢 |
 | **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
 | **Testes de Carga & Concorrência** | 100% de sucesso em rajadas simultâneas | Backpressure e Idempotência | 🟢 |
-| **Build & Linter** | 0 erros (
-pm run lint / 
-pm run build) | Código limpo | 🟢 |
+| **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
 | **Readiness Gate** | **PASS (Certificado)** | Critérios de release | 🟢 |
+
 
 ---
 
