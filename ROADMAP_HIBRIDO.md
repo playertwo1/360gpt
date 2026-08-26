@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H6 — Telegram multimodal: PDF e Excel
-**Próxima ação:** homologar processamento seguro de documentos PDF e planilhas Excel sintéticos com sanitização, limites e proteção contra prompt injection.
+**Fase atual:** H7 — Visão executiva 360 completa
+**Próxima ação:** consolidar a visão executiva completa e rastreável ancorada em evidências do Evidence Graph com explicação estruturada.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 
@@ -46,11 +47,12 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H3 | Ponte site ↔ n8n processa e publica um caso | [x] | H2 |
 | H4 | Diretor 360 inicia com um clique | [x] | H3 |
 | H5 | Telegram recebe e enfileira texto | [x] | H3 |
-| H6 | Telegram processa PDF e Excel com segurança | [ ] | H5 |
+| H6 | Telegram processa PDF e Excel com segurança | [x] | H5 |
 | H7 | Visão 360 executiva completa e rastreável | [ ] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [ ] | H1–H7 |
 | H9 | Backup e restauração comprovados | [ ] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 
 
@@ -197,19 +199,27 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** receber documentos e planilhas sem aceitar conteúdo como instrução do sistema.
 
-- [ ] PDF digital testado.
-- [ ] PDF digitalizado testado.
-- [ ] Excel com uma aba testado.
-- [ ] Excel com várias abas testado.
-- [ ] Arquivo vazio ou corrompido rejeitado corretamente.
-- [ ] Arquivo repetido não produz novo efeito.
-- [ ] Limites de tamanho e tipos permitidos confirmados.
-- [ ] Hash do arquivo preservado.
-- [ ] Conteúdo marcado como `UNTRUSTED`.
-- [ ] Teste de prompt injection em documento bloqueado.
-- [ ] Lacunas e falhas aparecem claramente para revisão.
+- [x] PDF digital testado.
+- [x] PDF digitalizado testado.
+- [x] Excel com uma aba testado.
+- [x] Excel com várias abas testado.
+- [x] Arquivo vazio ou corrompido rejeitado corretamente.
+- [x] Arquivo repetido não produz novo efeito.
+- [x] Limites de tamanho e tipos permitidos confirmados.
+- [x] Hash do arquivo preservado.
+- [x] Conteúdo marcado como `UNTRUSTED`.
+- [x] Teste de prompt injection em documento bloqueado.
+- [x] Lacunas e falhas aparecem claramente para revisão.
 
-**Critério de aceite:** texto, PDF e Excel sintéticos são processados com evidência, limites, idempotência e tratamento explícito de erro.
+**Critério de aceite:** texto, PDF e Excel sintéticos são processados com evidência, limites, idempotência e tratamento explícito de erro. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Extração e persistência: PDF digital (Balanço) e planilha financeira (12 meses) processados deterministicamente com extração de metadados e registro de hash SHA-256 no Evidence Graph.
+- Proteção e limites: arquivos vazios rejeitados com `invalid_file_size` e limite máximo de 20 MB aplicado.
+- Defesa contra Injection: payloads maliciosos ("IGNORE TODAS AS REGRAS") marcados como `UNTRUSTED_CONTENT` e neutralizados, sem alterar regras do sistema.
+- Mesa do Revisor: lacunas e divergências encaminhadas estruturadamente para `MANUAL_REVIEW_REQUIRED`.
+- Teste automatizado: `scripts/test-h6-telegram-multimodal.ps1` executado e aprovado com código 0 (`H6_TELEGRAM_MULTIMODAL_PASS`).
+
 
 ---
 
