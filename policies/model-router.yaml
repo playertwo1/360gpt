@@ -1,0 +1,69 @@
+# Matriz de Roteamento de Modelos por Menor Capacidade Suficiente
+# Diretor 360 - Governanca FinOps & LLMOps v1.11
+
+version: "1.11.0"
+pricing_table_usd_per_1m_tokens:
+  deterministic:
+    input: 0.000000
+    output: 0.000000
+    latency_ms_p95: 5
+  flash_lite:
+    model_id: "gemini-2.0-flash-lite"
+    input: 0.075
+    output: 0.300
+    latency_ms_p95: 450
+  flash:
+    model_id: "gemini-2.0-flash"
+    input: 0.150
+    output: 0.600
+    latency_ms_p95: 950
+  pro:
+    model_id: "gemini-2.5-pro"
+    input: 1.250
+    output: 5.000
+    latency_ms_p95: 2400
+  human_review:
+    handler: "rafael_mesa_revisor"
+    cost: 0.000
+    sla_hours: 4
+
+routing_rules:
+  # Nivel 0: Determinístico (Custo 0, Latencia ultra-baixa)
+  deterministic_tasks:
+    - "math_revenue_aggregation"
+    - "schema_validation_draft_2020_12"
+    - "hash_sha256_generation"
+    - "event_deduplication"
+    - "precedence_matrix_lookup"
+    - "csv_parser_and_cleaner"
+
+  # Nivel 1: Flash Lite (Tarefas de categorização e extração leve)
+  flash_lite_tasks:
+    - "telegram_intent_classification"
+    - "document_type_classifier"
+    - "cnpj_entity_extraction_simple"
+    - "ocr_raw_text_cleaner"
+
+  # Nivel 2: Flash (Analistas e Pareceres Setoriais dos 4 Gerentes Gerais)
+  flash_tasks:
+    - "gerente_geral_conta_assessment"
+    - "gerente_geral_performance_assessment"
+    - "gerente_geral_financeiro_assessment"
+    - "gerente_geral_relacionamento_assessment"
+    - "dialogue_turn_synthesis"
+
+  # Nivel 3: Pro (Raciocínio Profundo, Conflitos e Laudo Executivo)
+  pro_tasks:
+    - "director_executive_synthesis"
+    - "normative_conflict_resolution"
+    - "complex_holding_qsa_analysis"
+    - "decision_record_formal_verdict"
+
+  # Nivel 4: Humano Obrigatório (Rafael /reviews)
+  human_escalation_triggers:
+    - "APONTAMENTO_CADASTRAL_CONFIRMADO"
+    - "CERTIDAO_VENCIDA_REQUER_SANEAMENTO"
+    - "DIVERGENCIA_DE_DADOS"
+    - "DIVERGENCIA_NORMATIVA"
+    - "DOCUMENTO_ILEGIVEL_REQUER_REENVIO"
+    - "ATAQUE_INJECAO_DETECTADO_UNTRUSTED"

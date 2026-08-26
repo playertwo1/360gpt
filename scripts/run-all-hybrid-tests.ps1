@@ -17,8 +17,10 @@ $tests = @(
     @{ Name = 'H9 - Backup e Recuperacao'; Script = 'scripts/test-h9-backup-recovery.ps1' },
     @{ Name = 'H10 - Rotina Diaria e Aceite'; Script = 'scripts/test-h10-daily-routine-acceptance.ps1' },
     @{ Name = 'Fase 2 - Observability & Evals (L1-L4)'; Script = 'scripts/test-phase2-evals.ps1' },
-    @{ Name = 'Fase 4 - Decision Intelligence & Laudo PDF'; Script = 'scripts/test-phase4-decision-pdf.ps1' }
+    @{ Name = 'Fase 4 - Decision Intelligence & Laudo PDF'; Script = 'scripts/test-phase4-decision-pdf.ps1' },
+    @{ Name = 'Fase 5 - LLMOps & FinOps Model Router'; Script = 'scripts/test-phase5-finops-router.ps1' }
 )
+
 
 
 

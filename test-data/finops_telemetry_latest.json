@@ -1,0 +1,19 @@
+{
+  "total_cases_processed": 20,
+  "total_tasks_executed": 170,
+  "tier_distribution": {
+    "deterministic": 40,
+    "flash_lite": 20,
+    "flash": 86,
+    "pro": 20,
+    "human_review": 4
+  },
+  "total_cost_usd": 0.1278,
+  "total_cost_brl": 0.7351,
+  "pro_baseline_cost_usd": 0.6125,
+  "pro_baseline_cost_brl": 3.5219,
+  "total_savings_usd": 0.4847,
+  "total_savings_brl": 2.7868,
+  "overall_savings_percent": 79.13,
+  "finops_status": "OPTIMIZED"
+}

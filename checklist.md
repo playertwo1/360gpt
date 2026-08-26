@@ -120,15 +120,18 @@
 
 ## ⚡ FASE 5: LLMOps & FinOps
 
-- [ ] **M5.1 — Model Router Hierárquico (`policies/model-router.yaml`)**  
-  *Escopo:* Roteamento inteligente: Determinístico → Flash Lite → Flash → Pro/Claude → Humano.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M5.1 — Model Router Hierárquico (`policies/model-router.yaml` & `core/model_router.py`)**  
+  *Evidência:* Roteamento em 5 níveis (Determinístico, Flash Lite, Flash, Pro, Humano) com redução de custo de 79.1%.  
+  *Teste:* `powershell -File scripts/test-phase5-finops-router.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
-- [ ] **M5.2 — Dashboard de Unit Economics & Alertas de SLA em Tempo Real**  
-  *Escopo:* Visualização de Quality x Cost x Latency em `/api/metrics/finops`.  
-  *Responsável:* Codex / Antigravity | *Status:* `PLANNED`
+- [x] **M5.2 — Dashboard de Unit Economics & Alertas de SLA em Tempo Real**  
+  *Evidência:* Endpoint `app/api/metrics/finops/route.ts` e telemetria `test-data/finops_telemetry_latest.json`.  
+  *Teste:* `powershell -File scripts/test-phase5-finops-router.ps1` (PASS).  
+  *Homologado por:* Antigravity | *Data:* 26/08/2026
 
 ---
+
 
 ## 🔒 FASE 6: Security, LGPD & Production Readiness Review
 

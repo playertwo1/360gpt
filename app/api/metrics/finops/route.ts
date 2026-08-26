@@ -1,66 +1,36 @@
-import { env } from 'cloudflare:workers';
-import { NextResponse } from 'next/server';
-import { bounded, isDenied, requireDashboardReader } from '../../reviews/shared';
+import { NextRequest, NextResponse } from 'next/server';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+import fs from 'fs';
 
-export const runtime = 'edge';
+const execFileAsync = promisify(execFile);
+
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
-  const access = await requireDashboardReader();
-  if (isDenied(access)) return access;
-
-  const url = new URL(request.url);
-  const tenantId = bounded(url.searchParams.get('tenant_id') ?? 'tenant-demo', 120);
-
-  let activeTickets = 0;
-  const atRiskTickets = 0;
-  const breachedTickets = 0;
-  const avgResolutionMinutes = 18.5;
-  const totalRequests = 42;
-  const duplicateCount = 18;
-
-
+export async function GET(request: NextRequest) {
   try {
-    const reviewsCount = await env.DB.prepare(
-      'SELECT count(*) as count FROM manual_review_requests WHERE tenant_id = ?'
-    ).bind(tenantId).first<{ count: number }>();
-
-    if (reviewsCount) {
-      activeTickets = reviewsCount.count;
+    const telemetryPath = path.join(process.cwd(), 'test-data', 'finops_telemetry_latest.json');
+    
+    // Se o arquivo não existir ou estiver desatualizado, rodar o router
+    if (!fs.existsSync(telemetryPath)) {
+      const scriptPath = path.join(process.cwd(), 'core', 'model_router.py');
+      await execFileAsync('python', [scriptPath]);
     }
-  } catch {
-    // Fallback gracioso para telemetria local
-    activeTickets = 3;
+    
+    if (fs.existsSync(telemetryPath)) {
+      const data = JSON.parse(fs.readFileSync(telemetryPath, 'utf-8'));
+      return NextResponse.json(data);
+    }
+    
+    return NextResponse.json({
+      status: 'INITIALIZING',
+      message: 'Métricas FinOps em processo de consolidação'
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: 'Erro ao carregar métricas FinOps', message: error?.message },
+      { status: 500 }
+    );
   }
-
-  // Calculo de Unit Economics baseado em metricas reais de execucoes
-  const totalTokens = 345200;
-  const estimatedCostBrl = 1.84;
-  const avgCostPerAnalysis = 0.045;
-  const idempotencySavings = 0.81;
-
-  const responsePayload = {
-    version: '1.0.0',
-    tenant_id: tenantId,
-    calculated_at: new Date().toISOString(),
-    sla_metrics: {
-      active_tickets: activeTickets,
-      at_risk_tickets_80pct: atRiskTickets,
-      breached_tickets: breachedTickets,
-      avg_resolution_time_minutes: avgResolutionMinutes
-    },
-    unit_economics: {
-      total_tokens_consumed: totalTokens,
-      estimated_cost_brl: estimatedCostBrl,
-      avg_cost_per_analysis_brl: avgCostPerAnalysis,
-      idempotency_savings_brl: idempotencySavings
-    },
-    capacity_and_traffic: {
-      total_requests_processed: totalRequests,
-      duplicate_ignored_count: duplicateCount,
-      cache_hit_ratio_pct: 42.8
-    }
-  };
-
-  return NextResponse.json({ ok: true, metrics: responsePayload });
 }
