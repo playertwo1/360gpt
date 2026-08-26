@@ -1,0 +1,20 @@
+{
+  "case_id": "caso-beta-restricao-parcial-garantia",
+  "tenant_id": "tenant-demo",
+  "source_event_id": "case-beta-event-001",
+  "actor_id": "rafael-demo",
+  "subject_ref": "cust-beta-tech",
+  "purpose": "offline_evaluation",
+  "data_classification": "INTERNAL",
+  "company_name": "Beta Tech Servicos Sinteticos Ltda.",
+  "text": "Proposta de antecipacao de recebiveis R$ 500.000. Apontamento cartorario de R$ 12.500 em discussao judicial. Garantia real ofertada: Imovel comercial avaliado em R$ 2.200.000. Escopo delimitado ao produto antecipacao.",
+  "account_data": {
+    "active_restriction_amount": 12500.0,
+    "restriction_status": "DISPUTED_JUDICIAL",
+    "collateral_value": 2200000.0,
+    "requested_operation": "ANTECIPACAO_RECEBIVEIS",
+    "operation_value": 500000.0
+  },
+  "expected_reason_code": "ELEGIBILIDADE_CONDICIONAL",
+  "expected_envelope": "MANUAL_REVIEW_REQUIRED"
+}

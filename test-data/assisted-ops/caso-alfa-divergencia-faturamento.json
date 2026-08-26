@@ -1,0 +1,18 @@
+{
+  "case_id": "caso-alfa-divergencia-faturamento",
+  "tenant_id": "tenant-demo",
+  "source_event_id": "case-alfa-event-001",
+  "actor_id": "rafael-demo",
+  "subject_ref": "cust-alfa-corp",
+  "purpose": "offline_evaluation",
+  "data_classification": "INTERNAL",
+  "company_name": "Alfa Industria e Comercio Sintetica S.A.",
+  "text": "Solicitacao de limite de credito PJ de R$ 2.000.000. Faturamento informado no ERP: R$ 12.000.000/ano. Extrato bancario conciliado: R$ 8.500.000/ano. Divergencia relevante de dados contabeis.",
+  "financial_data": {
+    "reported_annual_revenue": 12000000.0,
+    "bank_verified_revenue": 8500000.0,
+    "requested_credit_limit": 2000000.0
+  },
+  "expected_reason_code": "DIVERGENCIA_DE_DADOS",
+  "expected_envelope": "MANUAL_REVIEW_REQUIRED"
+}

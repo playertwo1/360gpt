@@ -53,34 +53,35 @@ pm run build) | Código limpo | 🟢 |
 
 | Marco | Descrição | Inspiração de Mercado | Estado |
 |:---:|---|---|:---:|
-| **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ⏳ **Próximo** |
-| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | 📋 Planejado |
+| **16** | **Sessão Prática de Operação Assistida com Casos Complexos** — Simulação ponta a ponta: divergência ERP vs. Extratos, restrições cadastrais parciais e esteira de aprovação assistida | Inspirado em Shadow Piloting / Assisted Production | ✅ **Concluído** |
+| **17** | **Manual e Playbook Operacional do Revisor 360** — Diretrizes de decisão humana, matriz de reason codes, critérios de desempate e auditoria de linhagem, consolidados a partir dos casos reais do Marco 16 | Inspirado em ISO/IEC 42001 & NIST AI RMF | ⏳ **Próximo** |
 | **18** | **Alertas Proativos de SLA e Telemetria FinOps** — Notificações automáticas no Telegram/E-mail ao atingir 80% do SLA e monitoramento de custos/tokens de IA | Inspirado em Google SRE & FinOps Foundation | 📋 Planejado |
 | **19** | **Infraestrutura Cloud & Deploy em Produção Hospedada** — Deploy do Frontend Next.js/Vite no Cloudflare Pages/Workers + D1 e subida do n8n/PostgreSQL em VPS com HTTPS/TLS, incluindo plano de rollback documentado (reversão de DNS, restore de banco, rollback de contêiner) antes da virada | Inspirado em 12-Factor App & CIS Benchmarks | 📋 Planejado |
 | **20** | **Ativação dos Canais Oficiais de Produção** — Conexão do Bot Telegram oficial com webhooks autenticados, processamento de áudio/PDF/planilhas em tempo real e entrega contínua | Inspirado em Enterprise API Gateway & Zero-Trust | 📋 Planejado |
 
 ---
 
-## 3. Último Marco Concluído: Marco 15
+## 3. Último Marco Concluído: Marco 16
 
-**Homologação final para release de produção assistida concluída com sucesso:**
-- Manifesto imutável de release 
-elease/RELEASE_MANIFEST_v1.0.0.json gerado com hashes SHA-256 de 31 artefatos, contratos, políticas e workflows.
-- Pacote de evidências de conformidade compliance/COMPLIANCE_EVIDENCE_PACKAGE.md publicado (RACI, Quatro Olhos, Zero-Trust e Linhagem PROV).
-- Script integrado de Readiness Gate scripts/test-release-readiness.ps1 executado e aprovado com status READINESS_GATE_PASS.
-- Todos os 15 marcos da Fase 1 entregues, testados e sincronizados com 100% de conformidade arquitetural.
+**Sessão prática de operação assistida homologada com 100% de sucesso:**
+- Criadas 3 fixtures de casos complexos de borda em `test-data/assisted-ops/`:
+  * **Caso Alfa**: Divergência material entre faturamento declarado em ERP (R$ 12M) vs. extrato bancário (R$ 8.5M) identificada e rejeitada sob `DIVERGENCIA_DE_DADOS`.
+  * **Caso Beta**: Restrição cadastral parcial mitigada por garantia fiduciária de R$ 2.2M, aprovada sob `ELEGIBILIDADE_CONDICIONAL`.
+  * **Caso Gama**: Quebra de reciprocidade tarifária com compromissos vencidos, aprovada condicionalmente sob `RECIPROCIDADE_PENDENTE`.
+- Resoluções humanas registradas com assinatura digital SHA-256 e gravadas de forma append-only no **Evidence Graph 360**.
+- Script automatizado `scripts/test-assisted-operations.ps1` executado e aprovado com código 0.
 
 ---
 
 ## 4. Próximo Passo Exato
 
-**Marco 16 — Sessão Prática de Operação Assistida com Casos Complexos:**
-Rodar cenários sintéticos de divergência ERP vs. extratos, restrições cadastrais parciais e garantias mistas pela esteira completa (Mesa do Revisor + Evidence Graph), registrando:
-1. Casos onde a IA acertou vs. errou a recomendação.
-2. Pontos de atrito ou ambiguidade na decisão humana.
-3. Reason codes usados na prática, para consolidar a matriz definitiva no Marco 17.
+**Marco 17 — Manual e Playbook Operacional do Revisor 360:**
+Consolidar a documentação formal (`docs/PLAYBOOK_REVISOR_360.md`) baseada nas evidências empíricas coletadas no Marco 16:
+1. Rito de triagem determinística de pendências (`PENDING_TRIAGE → ASSIGNED`).
+2. Matriz definitiva de reason codes e critérios de desempate em divergências de dados/normativas.
+3. Procedimentos operacionais padrão (SOP) para aprovação condicionada com garantias reais.
+4. Roteiro de auditoria e conferência visual de linhagem no Evidence Graph.
 
-Só depois de coletar essa evidência real de operação, parte-se para o **Marco 17 (Manual e Playbook)**, que passa a documentar critérios já testados em vez de regras hipotéticas.
 
 ---
 

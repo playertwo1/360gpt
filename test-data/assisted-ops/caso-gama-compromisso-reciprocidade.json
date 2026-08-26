@@ -1,0 +1,18 @@
+{
+  "case_id": "caso-gama-compromisso-reciprocidade",
+  "tenant_id": "tenant-demo",
+  "source_event_id": "case-gama-event-001",
+  "actor_id": "rafael-demo",
+  "subject_ref": "cust-gama-log",
+  "purpose": "offline_evaluation",
+  "data_classification": "INTERNAL",
+  "company_name": "Gama Transportes Sinteticos S.A.",
+  "text": "Solicitacao de isencao de tarifas de cobranca bancaria. Historico de relacionamento aponta 2 compromissos de retorno de folha de pagamento vencidos sem cumprimento da reciprocidade acordada.",
+  "relationship_data": {
+    "active_tariffs_exemption_requested": true,
+    "overdue_commitments_count": 2,
+    "relationship_score": 62.5
+  },
+  "expected_reason_code": "RECIPROCIDADE_PENDENTE",
+  "expected_envelope": "MANUAL_REVIEW_REQUIRED"
+}
