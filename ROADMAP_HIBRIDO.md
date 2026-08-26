@@ -109,7 +109,7 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 - [ ] Criar um segredo forte exclusivo para a ponte.
 - [ ] Configurar o segredo no ambiente hospedado.
 - [ ] Configurar o mesmo segredo localmente, fora do Git.
-- [ ] Revisar os kill switches antes da ativação.
+- [x] Revisar os kill switches antes da ativação.
 - [ ] Ativar o `WF-09` para o piloto sintético.
 - [ ] Enfileirar um trabalho sintético pelo site.
 - [ ] Confirmar lease/lock de uma única execução.
@@ -123,6 +123,8 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Evidências:**
 
+- Pré-verificação: `BRIDGE_ENABLED=false` no ambiente local e hospedado; `TELEGRAM_INGEST_ENABLED=false`; nenhum segredo versionado no Git.
+- Bloqueio seguro: `os dois arquivos locais possuem segredos diferentes e um deles não atende ao padrão forte; rotação coordenada obrigatória antes da ativação`.
 - `correlation_id`: `pendente`
 - Estado final: `pendente`
 - Teste de repetição/retomada: `pendente`
@@ -303,6 +305,7 @@ Ao encerrar uma sessão:
 | 2026-08-26 | Rafael/Codex | H1 | Conta principal identificada e barreira de login confirmada em outro navegador/modo anônimo | `fael@live.de` acessou diretamente pela sessão existente; sessão alternativa pediu login | Testar `rafa.pedrosa1@gmail.com` e concluir H1 | consultar `git log` |
 | 2026-08-26 | Rafael/Codex | H1 concluída | Segunda conta autorizada validada | `rafa.pedrosa1@gmail.com` completou senha + código e abriu Dashboard e `/reviews` | Iniciar H2: persistência hospedada | consultar `git log` |
 | 2026-08-26 | Codex | H2 concluída | Persistência hospedada comprovada com serviços locais desligados | Snapshot `cust-demo-001` v37 e hash `e94d…1264b` permaneceram no site; D1 com 11 tabelas; serviços religados saudáveis | Iniciar H3: novo caso sintético pela ponte | consultar `git log` |
+| 2026-08-26 | Codex | H3 pré-verificação | Kill switches confirmados; divergência entre segredos locais detectada sem exposição de valores | Ponte e Telegram permanecem desativados; arquivos de segredo não são rastreados pelo Git | Autorizar rotação coordenada, republicação e teste sintético | consultar `git log` |
 
 ## Modelo para nova entrada
 
