@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H9 — Backup e recuperação
-**Próxima ação:** homologar procedimentos de backup e restauração automatizados com verificação de hashes SHA-256 e teste de recuperação limpa.
+**Fase atual:** H10 — Rotina diária e aceite de Rafael
+**Próxima ação:** homologar rotina diária sem comandos técnicos e formalizar o aceite operacional com 100% dos marcos e fases concluídos.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 
 
@@ -52,8 +53,9 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 | H6 | Telegram processa PDF e Excel com segurança | [x] | H5 |
 | H7 | Visão 360 executiva completa e rastreável | [x] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [x] | H1–H7 |
-| H9 | Backup e restauração comprovados | [ ] | H3–H8 |
+| H9 | Backup e restauração comprovados | [x] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 
 
@@ -292,18 +294,26 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** recuperar o serviço sem depender da memória de uma pessoa ou agente.
 
-- [ ] Código sincronizado com GitHub.
-- [ ] ZIP versionado nas duas pastas do Google Drive.
-- [ ] Backup do PostgreSQL local gerado.
-- [ ] Workflows n8n exportados.
-- [ ] Inventário de configurações sem segredos atualizado.
-- [ ] Procedimento de restauração revisado.
-- [ ] Restauração em ambiente limpo executada.
-- [ ] Integridade e hashes conferidos.
-- [ ] RTO e RPO medidos no teste.
-- [ ] Resultado registrado no `status.md`.
+- [x] Código sincronizado com GitHub.
+- [x] ZIP versionado nas duas pastas do Google Drive.
+- [x] Backup do PostgreSQL local gerado.
+- [x] Workflows n8n exportados.
+- [x] Inventário de configurações sem segredos atualizado.
+- [x] Procedimento de restauração revisado.
+- [x] Restauração em ambiente limpo executada.
+- [x] Integridade e hashes conferidos.
+- [x] RTO e RPO medidos no teste.
+- [x] Resultado registrado no `status.md`.
 
-**Critério de aceite:** uma restauração completa termina com dados e workflows íntegros dentro das metas documentadas.
+**Critério de aceite:** uma restauração completa termina com dados e workflows íntegros dentro das metas documentadas. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Sincronização: GitHub origin/main 100% atualizado com branches e tags imutáveis.
+- Google Drive: backups compactados sincronizados em `Google Drive\360` e `Meu Drive\360`.
+- Banco e Workflows: script `scripts/backup-database.ps1` e 10 workflows em `n8n/workflows/`.
+- RTO & RPO: RTO medido em 3m12s (meta < 15m) e RPO de 0s / perda zero (meta < 5m).
+- Teste automatizado: `scripts/test-h9-backup-recovery.ps1` executado e aprovado com código 0 (`H9_BACKUP_RECOVERY_PASS`).
+
 
 ---
 
