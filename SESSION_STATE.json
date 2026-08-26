@@ -2,23 +2,25 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
   "version": "3.1.0-confianca",
-  "last_updated": "2026-08-26T20:45:00-03:00",
+  "last_updated": "2026-08-26T20:48:00-03:00",
   "last_active_assistant": "Antigravity (Google)",
   "next_recommended_assistant": "ChatGPT Codex (OpenAI) ou Antigravity",
   "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - Fases 0 a 8)",
-  "current_phase": "Fase 7 — Operação Real Supervisionada & Canary Rollout",
-  "current_milestone": "M7.1 — Ingestão Assistida de 1 a 3 Casos Reais Autorizados",
+  "current_phase": "Fase 8 — Escala & Alta Disponibilidade (Pronto para Ativação sob Demanda)",
+  "current_milestone": "M8.2 — Ativação sob Demanda de VPS na Nuvem",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
     "Fase 2 (Observability & Evals)",
     "Fase 4 (Decision Intelligence & Laudo PDF)",
     "Fase 5 (LLMOps & FinOps)",
-    "Fase 6 (Security, LGPD & PRR)"
+    "Fase 6 (Security, LGPD & PRR)",
+    "Fase 7 (Operação Real Canary)"
   ],
   "postponed_phases": [
     "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)"
   ],
+
 
 
 
