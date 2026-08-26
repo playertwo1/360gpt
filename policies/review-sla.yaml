@@ -1,0 +1,59 @@
+version: "1.0.0"
+last_updated: "2026-08-26"
+
+slas:
+  CRITICAL:
+    priority: "P0"
+    max_duration_minutes: 60
+    warning_threshold_percent: 75
+    auto_escalation_minutes: 45
+    policy_id: "manual-review.critical.v1"
+  HIGH:
+    priority: "P1"
+    max_duration_minutes: 240
+    warning_threshold_percent: 80
+    auto_escalation_minutes: 180
+    policy_id: "manual-review.high.v1"
+  MEDIUM:
+    priority: "P2"
+    max_duration_minutes: 1440
+    warning_threshold_percent: 85
+    auto_escalation_minutes: 1200
+    policy_id: "manual-review.medium.v1"
+  LOW:
+    priority: "P3"
+    max_duration_minutes: 2880
+    warning_threshold_percent: 90
+    auto_escalation_minutes: 2400
+    policy_id: "manual-review.low.v1"
+
+queues:
+  REVISAO_GESTOR_AUTORIZADO:
+    description: "Fila padrao para gestores de dominio autorizados a resolver conflitos de dados e elegibilidade."
+    categories: ["DATA_CONFLICT", "AMBIGUOUS_INPUT", "BUDGET_EXCEEDED"]
+    authorized_roles: ["GESTOR_AUTORIZADO", "DIRET_EXECUTIVO"]
+  REVISAO_COMPLIANCE:
+    description: "Fila especializada para conformidade regulatoria, conflitos normativos e identidade cadastral."
+    categories: ["NORMATIVE_CONFLICT", "COMPLIANCE_HOLD", "IDENTITY_UNCERTAIN"]
+    authorized_roles: ["ANALISTA_COMPLIANCE", "GESTOR_COMPLIANCE"]
+  REVISAO_CADASTRO:
+    description: "Fila especializada para divergencias de fontes cadastrais, bureaus e limites operacionais."
+    categories: ["INSUFFICIENT_EVIDENCE", "ORPHAN_EVIDENCE", "UNVERIFIABLE_EVIDENCE", "GATE_FAILED"]
+    authorized_roles: ["ANALISTA_CADASTRO", "GESTOR_CADASTRO"]
+  REVISAO_COMERCIAL:
+    description: "Fila especializada para ajustes de metas, esteiras comerciais e produtos."
+    categories: ["COMMERCIAL_GAP", "OPPORTUNITY_REVIEW"]
+    authorized_roles: ["GESTOR_COMERCIAL", "GERENTE_CONTA"]
+
+escalation:
+  max_level: 3
+  levels:
+    1:
+      role: "GESTOR_SENIOR"
+      notify: true
+    2:
+      role: "DIRETOR_DOMINIO"
+      notify: true
+    3:
+      role: "DIRETORIA_EXECUTIVA"
+      notify: true

@@ -64,6 +64,19 @@ export function isDashboardUserAllowed(
   return allowedEmails.includes(normalizedEmail);
 }
 
+export function isReviewerAllowed(
+  user: Pick<ChatGPTUser, 'email'>,
+  configuredEmails = env.REVIEWER_ALLOWED_EMAILS,
+): boolean {
+  const normalizedEmail = user.email.trim().toLowerCase();
+  if (!normalizedEmail || !configuredEmails) return false;
+  return configuredEmails
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(normalizedEmail);
+}
+
 export function chatGPTSignInPath(returnTo: string): string {
   const safeReturnTo = safeRelativeReturnPath(returnTo);
   return `${SIGN_IN_PATH}?return_to=${encodeURIComponent(safeReturnTo)}`;

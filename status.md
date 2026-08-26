@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360
 
 **Data do status:** 26 de agosto de 2026  
-**Versão da Release:** `v2.0.0-marco11`  
+**Versão da Release:** `v2.1.0-marco12a`
 **Modo de execução:** `OFFLINE_EVAL` (dados 100% sintéticos e isolados)  
 **Saúde do Projeto:** 🟢 **VERDE (Saudável / Sem Bloqueios)**  
 
@@ -12,7 +12,7 @@
 | Indicador | Valor / Estado | Meta / Referência | Status |
 |---|---|---|:---:|
 | **Status Geral** | Em conformidade | Sem impedimentos | 🟢 |
-| **Marcos Concluídos** | 11 / 15 marcos | Roadmap de Produção | 🟢 |
+| **Marcos Concluídos** | 11 marcos + fundação 12A | Roadmap de Produção | 🟢 |
 | **Domínios Analíticos Ativos** | 4 (Conta, Performance, Financeiro, Relacionamento) | 4 domínios | 🟢 |
 | **Cobertura de Testes de Regressão** | 100% (Texto, PDF, XLSX, JSON) | Multi-formato aprovado | 🟢 |
 | **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
@@ -29,21 +29,23 @@
 | **10B** | Ponte autenticada (WF-09), leases de 10 min, 3 retries e hash canônico JSON | ✅ Concluído |
 | **10C** | Piloto Telegram homologado (Texto, PDF e Planilha XLSX sintéticos) e reversão de segurança | ✅ Concluído |
 | **11** | **Evolução dos 4 Gerentes Gerais e Especialistas analíticos de domínio (v2.0.0)** | ✅ **Concluído** |
-| **12** | Central de Revisão Manual 360 com fila de reason codes e workflow de resolução | ⏳ **Próximo** |
+| **12A** | Fundação da Central: contratos, fila, SLA, deduplicação, APIs e read model | ✅ **Concluído** |
+| **12B** | Implantação hospedada e homologação autenticada das transições humanas | ⏳ **Próximo** |
 | **13** | Painel de auditoria e Evidence Graph 360 (linhagem PROV/OpenLineage) | 📋 Planejado |
 | **14** | Testes de carga, concorrência distribuída e backpressure de modelos | 📋 Planejado |
 | **15** | Homologação final para release de produção assistida | 📋 Planejado |
 
 ---
 
-## 3. Último Marco Concluído: Marco 11
+## 3. Último Marco Concluído: Marco 12A
 
-**Evolução dos Gerentes Gerais e Especialistas Analíticos de Domínio:**
-- **Conta (`GERENTE_GERAL_CONTA`)**: Identidade sintética validada (`cust-demo-001`), conformidade aprovada e aplicação do Gate de Elegibilidade com `IDENTIDADE_CONFIRMADA_SINTETICA` (`state: PASS`).
-- **Performance (`GERENTE_GERAL_PERFORMANCE`)**: Produção realizada de R$ 28.000,00 vs. Meta de R$ 35.000,00 (80,0% atingido), cálculo determinístico de gap de R$ 7.000,00 (20,0%) e ação prioritária P1 para aceleração comercial na esteira.
-- **Financeiro (`GERENTE_GERAL_FINANCEIRO`)**: Faturamento médio mensal apurado de R$ 1.250.000,00 superando referência (R$ 1.200.000,00), margem bancária estimada e viabilidade econômica para pacote de serviços e otimização de tarifas.
-- **Relacionamento (`GERENTE_GERAL_RELACIONAMENTO`)**: 4 reuniões executivas registradas, compromisso de retorno alinhado para 05/09/2026 e proposta consultiva customizada estruturada com aprovação humana obrigatória (`PENDING_HUMAN`).
-- **Persistência do Estado 360**: 8 achados materiais (`findings`), 1 gate de elegibilidade (`gates`) e 4 ações recomendadas (`recommended_actions`) consolidados com hash canônico e linhagem íntegros.
+**Fundação funcional da Central de Revisão Manual 360:**
+- Contratos Draft 2020-12 de pedido e resolução corrigidos e alinhados em UUID.
+- Fila determinística gerada a partir de snapshots `MANUAL_REVIEW_REQUIRED`, com SHA-256 de deduplicação, prioridade, SLA e fila proprietária.
+- Ciclo de atribuição, início de revisão, escalonamento em até três níveis e resolução humana estruturada implementado.
+- Resolução imutável com hash canônico e auditoria integrada, sem executar reprocessamento ou qualquer efeito externo.
+- Dashboard ampliado com visão somente leitura das revisões abertas e estado do SLA.
+- Migrações equivalentes criadas para D1 hospedado e PostgreSQL local.
 
 ---
 
@@ -62,6 +64,8 @@
 | WF-08 | Consulta somente leitura do último Estado 360 | Concluído |
 | WF-09 | Ponte autenticada: reservar, processar no n8n e publicar Estado 360 hospedado | Criado e homologado; mantido despublicado fora das janelas controladas |
 
+As APIs da Central são componentes determinísticos da aplicação hospedada e não adicionam autonomia ao n8n. O Dashboard permanece somente leitura.
+
 ---
 
 ## 5. Postura de Segurança & Conformidade
@@ -72,6 +76,17 @@
 - [x] **Idempotência Garantida**: Reexecuções e updates repetidos retornam `DUPLICATE_IGNORED` sem duplicar eventos.
 - [x] **Segregação de Funções**: Separação estrita entre propor, validar, decidir, executar e auditar.
 - [x] **Isolamento de Dados**: Modo `OFFLINE_EVAL` com dados estritamente sintéticos, sem conexões externas ativas.
+- [x] **Kill switches reconciliados**: `TELEGRAM_INGEST_ENABLED=false`, `BRIDGE_ENABLED=false`, confirmação externa desligada e WF-09 despublicado.
+- [x] **Quatro olhos**: escrita na Central exige allowlist separada de revisores; usuários do Dashboard recebem apenas leitura.
+
+### Testes do Marco 12A
+
+- Pedido sintético `ROUTING_AMBIGUOUS` persistido como `PENDING_TRIAGE`, prioridade `P2`, fila autorizada e SLA definido.
+- Deduplicação SHA-256 e UUID determinístico validados.
+- Consulta e resolução sem identidade rejeitadas com `401`.
+- Migração PostgreSQL reaplicada de forma idempotente e índices de fila/resolução confirmados.
+- Regressão de texto, PDF, XLSX e JSON aprovada; idempotência e adaptador Telegram permaneceram íntegros.
+- `npm run lint` e `npm run build` aprovados com as rotas `/api/reviews`, `/api/reviews/:id` e `/api/reviews/:id/resolve`.
 
 ---
 
@@ -82,10 +97,11 @@
 | **Conexão acidental com fontes reais** | Alto | Baixa | Bloqueio em código (`OFFLINE_EVAL` obrigatório) e ausência intencional de credenciais bancárias. |
 | **Operação contínua indevida da ponte** | Médio | Baixa | Kill switches ativos por padrão (`BRIDGE_ENABLED=false` e `TELEGRAM_INGEST_ENABLED=false`). |
 | **Aviso de task runner Python no n8n** | Baixo | Baixa | Todos os workflows utilizam runtime nativo JavaScript (Node.js), eliminando dependência do runner Python. |
+| **Revisor não configurado na hospedagem** | Médio | Controlada | Escrita falha fechada até `REVIEWER_ALLOWED_EMAILS` ser definido e homologado no Marco 12B. |
 
 ---
 
 ## 7. Próximo Passo Exato
 
-**Marco 12 — Implementação da Central de Revisão Manual 360:**
-Desenvolver a fila determinística de reason codes, atribuição de SLA e workflow estruturado de confirmação / saneamento humano para itens com status `MANUAL_REVIEW_REQUIRED`, garantindo que toda pendência ou conflito tenha fluxo resolutivo formal antes de qualquer efeito externo.
+**Marco 12B — Implantação e homologação da Central de Revisão Manual 360:**
+Publicar a versão com a migração D1, configurar uma allowlist separada de revisores humanos e homologar `ASSIGN_TO_ME → START_REVIEW → resolução` com um pedido exclusivamente sintético. Confirmar auditoria, hash da resolução, bloqueio de usuário não autorizado e permanência dos kill switches de Telegram e ponte em `false`.

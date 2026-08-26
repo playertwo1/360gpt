@@ -15,6 +15,12 @@ type ReadModel = {
     manual_review: null | { reason_code?: string; required_decision?: string; owner_queue?: string };
   };
 };
+type ReviewItem = {
+  review_request_id: string; reason_code: string; category: string; severity: string; review_priority: string; status: string;
+  owner_queue: string; assigned_to: string | null; escalation_level: number; problem_statement: string; impact: string;
+  required_decision: string; due_at: string | null; sla_state: 'ON_TRACK' | 'DUE_SOON' | 'OVERDUE' | 'NO_DUE_DATE';
+};
+type ReviewReadModel = { ok: boolean; read_only?: boolean; count?: number; reviews?: ReviewItem[]; error?: string };
 
 const domainLabels: Record<string, string> = { conta: 'Conta', performance: 'Performance', financeiro: 'Financeiro', relacionamento: 'Relacionamento' };
 const stages = ['Entrada', 'Registro', 'Roteamento', 'Gerentes', 'Motor', 'Estado 360', 'Assessor'];
@@ -22,12 +28,17 @@ const stages = ['Entrada', 'Registro', 'Roteamento', 'Gerentes', 'Motor', 'Estad
 export default function Home() {
   const [model, setModel] = useState<ReadModel | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reviewModel, setReviewModel] = useState<ReviewReadModel | null>(null);
   const [selectedFinding, setSelectedFinding] = useState<Finding | null>(null);
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/state/latest?tenant_id=tenant-demo&subject_ref=cust-demo-001', { cache: 'no-store' });
-      setModel((await response.json()) as ReadModel);
+      const [stateResponse, reviewResponse] = await Promise.all([
+        fetch('/api/state/latest?tenant_id=tenant-demo&subject_ref=cust-demo-001', { cache: 'no-store' }),
+        fetch('/api/reviews?tenant_id=tenant-demo&status=OPEN', { cache: 'no-store' }),
+      ]);
+      setModel((await stateResponse.json()) as ReadModel);
+      setReviewModel((await reviewResponse.json()) as ReviewReadModel);
     } catch {
       setModel({ available: false, error: 'hosted_read_model_unavailable' });
     } finally { setLoading(false); }
@@ -42,6 +53,7 @@ export default function Home() {
   const gaps = snapshot?.data_gaps ?? [];
   const domains = snapshot?.domain_status ?? [];
   const ready = model?.overall_status === 'READY';
+  const reviews = reviewModel?.reviews ?? [];
 
   return (
     <main className="min-h-screen bg-[#f3f6f7] text-[#14212b]">
@@ -52,6 +64,7 @@ export default function Home() {
           <a href="#dominios" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5"><span>◎</span> Domínios</a>
           <a href="#evidencias" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5"><span>▤</span> Evidências</a>
           <a href="#lacunas" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5"><span>△</span> Pontos cegos</a>
+          <a href="#revisoes" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5"><span>◇</span> Revisões</a>
         </nav>
         <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4"><p className="flex items-center gap-2 text-xs font-bold text-[#65e5c3]"><span className="h-2 w-2 rounded-full bg-[#39d6ac]" /> OFFLINE_EVAL</p><p className="mt-2 text-xs leading-5 text-slate-400">Somente dados sintéticos. Nenhuma ação externa autorizada.</p></div>
       </aside>
@@ -81,6 +94,8 @@ export default function Home() {
           ].map(([label, value, note]) => <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5"><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-3 break-words text-2xl font-black tracking-[-.04em] text-slate-900">{value}</p><p className="mt-1 text-xs text-slate-400">{note}</p></article>)}</section>
 
           <section id="dominios" className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">Orquestração mínima</p><h2 className="mt-1 text-xl font-black tracking-tight">Pareceres por domínio</h2></div><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{domains.length ? domains.map((domain) => <article key={domain.domain} className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><div className="flex items-center justify-between"><h3 className="font-black">{domainLabels[domain.domain] ?? domain.domain}</h3><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" /></div><dl className="mt-4 space-y-2 text-xs"><Row label="Execução" value={domain.execution_status} /><Row label="Evidência" value={domain.evidence_quality} /><Row label="Completude" value={domain.data_completeness} /><Row label="Decisão" value={domain.decision_status} /></dl></article>) : <p className="text-sm text-slate-500">Nenhum domínio foi acionado no snapshot atual.</p>}</div></section>
+
+          <section id="revisoes" className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">Central de Revisão 360</p><h2 className="mt-1 text-xl font-black tracking-tight">Fila humana estruturada</h2></div><span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">Somente leitura · {reviews.length} aberta(s)</span></div><div className="mt-5 grid gap-3">{reviews.length ? reviews.map((review) => <article key={review.review_request_id} className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 lg:grid-cols-[auto_1fr_auto] lg:items-center"><div className={`grid h-11 w-11 place-items-center rounded-xl text-xs font-black ${review.sla_state === 'OVERDUE' ? 'bg-red-100 text-red-700' : review.sla_state === 'DUE_SOON' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-700'}`}>{review.review_priority}</div><div><div className="flex flex-wrap gap-2"><span className="text-xs font-black text-slate-900">{review.reason_code}</span><span className="text-xs text-slate-400">{review.owner_queue}</span></div><p className="mt-1 text-sm font-semibold leading-6 text-slate-700">{review.problem_statement}</p><p className="mt-1 text-xs leading-5 text-slate-500">Decisão necessária: {review.required_decision}</p></div><div className="text-xs lg:text-right"><p className="font-black text-slate-700">{review.status}</p><p className="mt-1 text-slate-400">SLA: {review.sla_state}</p><p className="mt-1 text-slate-400">Até {formatDate(review.due_at ?? undefined)}</p></div></article>) : <p className="rounded-2xl bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">Nenhuma revisão manual aberta para o tenant demonstrativo.</p>}</div></section>
 
           <div className="mt-6 grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
             <section id="evidencias" className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6"><p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">Drill-down</p><h2 className="mt-1 text-xl font-black tracking-tight">Achados e evidências</h2><div className="mt-5 divide-y divide-slate-100">{findings.length ? findings.map((finding) => <button key={finding.finding_id} onClick={() => setSelectedFinding(finding)} className="grid w-full gap-3 py-4 text-left sm:grid-cols-[1fr_auto] sm:items-center"><div><p className="text-xs font-bold uppercase tracking-wider text-[#16856b]">{finding.topic.replaceAll('_', ' ')}</p><p className="mt-1 text-sm font-semibold leading-6 text-slate-800">{finding.statement}</p></div><span className="w-fit rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-bold text-slate-600">Ver origem →</span></button>) : <p className="py-5 text-sm text-slate-500">Nenhum achado material publicado.</p>}</div></section>

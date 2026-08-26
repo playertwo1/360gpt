@@ -14,6 +14,7 @@ $migrationFiles = @(
   '03-ingestion-artifacts.sql'
   '04-routing-idempotency.sql'
   '05-state-publication.sql'
+  '06-manual-review.sql'
 )
 
 foreach ($migrationFile in $migrationFiles) {

@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.diretor360.local/contracts/manual-review.schema.json",
+  "title": "ManualReviewRequest",
+  "description": "Contrato estruturado para pedidos de revisão manual da Central de Revisão 360",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "review_request_id",
+    "tenant_id",
+    "correlation_id",
+    "state_id",
+    "state_version",
+    "created_at",
+    "due_at",
+    "status",
+    "category",
+    "reason_code",
+    "severity",
+    "review_priority",
+    "owner_queue",
+    "sla_policy_id",
+    "escalation_level",
+    "dedupe_key",
+    "problem_statement",
+    "affected_scope",
+    "impact",
+    "required_decision",
+    "suggested_checks",
+    "reviewer_role",
+    "allowed_resolutions",
+    "execution_authorization"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "2.0.0"
+    },
+    "review_request_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "correlation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "state_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "state_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "due_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING_TRIAGE",
+        "ASSIGNED",
+        "IN_REVIEW",
+        "RESOLVED_CONFIRMED",
+        "RESOLVED_CORRECTED",
+        "RESOLVED_DISMISSED",
+        "MORE_DATA_REQUIRED",
+        "CANCELLED_DUPLICATE",
+        "ESCALATED"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "DATA_CONFLICT",
+        "NORMATIVE_CONFLICT",
+        "INSUFFICIENT_EVIDENCE",
+        "GATE_FAILED",
+        "COMPLIANCE_HOLD",
+        "ORPHAN_EVIDENCE",
+        "UNVERIFIABLE_EVIDENCE",
+        "BUDGET_EXCEEDED",
+        "AMBIGUOUS_INPUT",
+        "IDENTITY_UNCERTAIN"
+      ]
+    },
+    "reason_code": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]{3,64}$"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "review_priority": {
+      "type": "string",
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ]
+    },
+    "owner_queue": {
+      "type": "string",
+      "minLength": 3
+    },
+    "assigned_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sla_policy_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "escalation_level": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "dedupe_key": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "duplicate_of": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "problem_statement": {
+      "type": "string",
+      "minLength": 10
+    },
+    "affected_scope": {
+      "type": "object",
+      "required": [
+        "type",
+        "ids"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "CLIENT",
+            "ACCOUNT",
+            "PRODUCT",
+            "OPERATION",
+            "ACTION"
+          ]
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "conflicting_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "statement",
+          "captured_at"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "captured_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "impact": {
+      "type": "string",
+      "minLength": 5
+    },
+    "required_decision": {
+      "type": "string",
+      "minLength": 5
+    },
+    "suggested_checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "suggested_remediation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reviewer_role": {
+      "type": "string",
+      "minLength": 3
+    },
+    "allowed_resolutions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "execution_authorization": {
+      "type": "string",
+      "const": "PENDING_MANUAL_REVIEW"
+    }
+  },
+  "additionalProperties": false
+}

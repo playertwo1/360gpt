@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.diretor360.local/contracts/review-resolution.schema.json",
+  "title": "ManualReviewResolution",
+  "description": "Contrato estruturado para resolução humana de revisão manual",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "resolution_id",
+    "review_request_id",
+    "tenant_id",
+    "decision",
+    "reviewer_id",
+    "reviewer_role",
+    "resolved_at",
+    "rationale",
+    "affected_scope",
+    "next_action",
+    "resolution_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "resolution_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "review_request_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "RESOLVED_CONFIRMED",
+        "RESOLVED_CORRECTED",
+        "RESOLVED_DISMISSED",
+        "MORE_DATA_REQUIRED",
+        "CONFIRM_SOURCE_A",
+        "CONFIRM_SOURCE_B"
+      ]
+    },
+    "reviewer_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "reviewer_role": {
+      "type": "string",
+      "minLength": 3
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 10
+    },
+    "new_evidence_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "source_type",
+          "statement",
+          "observed_at"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "source_type": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locator": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "affected_scope": {
+      "type": "object",
+      "required": [
+        "type",
+        "ids"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "CLIENT",
+            "ACCOUNT",
+            "PRODUCT",
+            "OPERATION",
+            "ACTION"
+          ]
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "next_action": {
+      "type": "string",
+      "enum": [
+        "TRIGGER_REPROCESS",
+        "DISMISS_DEPENDENTS",
+        "AWAIT_EXTERNAL_DATA",
+        "NO_ACTION_REQUIRED"
+      ]
+    },
+    "resolution_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false
+}

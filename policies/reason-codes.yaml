@@ -7,6 +7,9 @@ codes:
   ROUTING_AMBIGUOUS:
     category: ROUTING
     review_required: true
+  DOMAIN_REVIEW_REQUIRED:
+    category: REVIEW
+    review_required: true
   CAPABILITY_GAP:
     category: CAPABILITY
     review_required: true

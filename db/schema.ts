@@ -62,6 +62,60 @@ export const decisions = sqliteTable('decisions', {
   action: text('action').notNull(), rationale: text('rationale'), decidedAt: integer('decided_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
+export const manualReviewRequests = sqliteTable('manual_review_requests', {
+  reviewRequestId: text('review_request_id').primaryKey(),
+  eventId: text('event_id').notNull(),
+  tenantId: text('tenant_id').notNull(),
+  correlationId: text('correlation_id').notNull(),
+  stateId: text('state_id').notNull(),
+  stateVersion: integer('state_version').notNull(),
+  reasonCode: text('reason_code').notNull(),
+  category: text('category').notNull(),
+  severity: text('severity').notNull(),
+  reviewPriority: text('review_priority').notNull(),
+  status: text('status').notNull().default('PENDING_TRIAGE'),
+  ownerQueue: text('owner_queue').notNull(),
+  assignedTo: text('assigned_to'),
+  slaPolicyId: text('sla_policy_id').notNull(),
+  escalationLevel: integer('escalation_level').notNull().default(0),
+  dedupeKey: text('dedupe_key').notNull(),
+  duplicateOf: text('duplicate_of'),
+  problemStatement: text('problem_statement').notNull(),
+  affectedScopeJson: text('affected_scope_json').notNull(),
+  impact: text('impact').notNull(),
+  requiredDecision: text('required_decision').notNull(),
+  suggestedChecksJson: text('suggested_checks_json').notNull().default('[]'),
+  reviewerRole: text('reviewer_role').notNull(),
+  allowedResolutionsJson: text('allowed_resolutions_json').notNull().default('[]'),
+  dueAt: integer('due_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  completedAt: integer('completed_at', { mode: 'timestamp_ms' }),
+}, (table) => [
+  index('idx_manual_review_tenant_status').on(table.tenantId, table.status),
+  index('idx_manual_review_queue_priority').on(table.ownerQueue, table.reviewPriority),
+  index('idx_manual_review_due_at').on(table.dueAt),
+  uniqueIndex('uq_manual_review_dedupe').on(table.dedupeKey)
+]);
+
+export const manualReviewResolutions = sqliteTable('manual_review_resolutions', {
+  resolutionId: text('resolution_id').primaryKey(),
+  reviewRequestId: text('review_request_id').notNull().references(() => manualReviewRequests.reviewRequestId),
+  tenantId: text('tenant_id').notNull(),
+  decision: text('decision').notNull(),
+  reviewerId: text('reviewer_id').notNull(),
+  reviewerRole: text('reviewer_role').notNull(),
+  rationale: text('rationale').notNull(),
+  affectedScopeJson: text('affected_scope_json').notNull(),
+  newEvidenceSourcesJson: text('new_evidence_sources_json').notNull().default('[]'),
+  nextAction: text('next_action').notNull(),
+  resolutionHash: text('resolution_hash').notNull().unique(),
+  resolvedAt: integer('resolved_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_resolutions_request').on(table.reviewRequestId),
+  index('idx_resolutions_tenant_date').on(table.tenantId, table.resolvedAt)
+]);
+
 export const auditLog = sqliteTable('audit_log', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), actor: text('actor').notNull(), action: text('action').notNull(),
   entityType: text('entity_type').notNull(), entityId: text('entity_id').notNull(), detailsJson: text('details_json').notNull().default('{}'),

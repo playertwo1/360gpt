@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { boundedString, readBoundedJson, requestErrorResponse, requireBridge, sha256 } from '../shared';
+import { hashCanonical } from '../../reviews/shared';
 
 export const runtime = 'edge';
 
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
       .bind(snapshot.tenant_id, snapshot.subject_ref).first<{ version: number }>();
     const stateVersion = Number.isSafeInteger(requestedVersion) && requestedVersion > (currentVersion?.version ?? 0) ? requestedVersion : (currentVersion?.version ?? 0) + 1;
     const executiveJson = result?.executive_assessment ? JSON.stringify(result.executive_assessment) : null;
-    await env.DB.batch([
+    const statements = [
       env.DB.prepare(`INSERT INTO state_snapshots (state_id, tenant_id, subject_ref, state_version, event_id, correlation_id, state_hash, overall_status, snapshot_json, executive_assessment_json, generated_at, published_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(event_id) DO NOTHING`)
         .bind(stateId, snapshot.tenant_id, snapshot.subject_ref, stateVersion, snapshot.event_id, snapshot.correlation_id, suppliedHash, snapshot.overall_status, snapshotJson, executiveJson, generatedAt, now),
@@ -52,9 +53,68 @@ export async function POST(request: Request) {
       env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
         SELECT ?, d.owner_id, 'bridge:n8n-local', 'state_published', 'state_snapshot', ?, ?, ? FROM agent_runs ar JOIN documents d ON d.id = ar.document_id WHERE ar.id = ?`)
         .bind(`bridge-complete-${jobId}`, stateId, JSON.stringify({ stateHash: suppliedHash, eventId: snapshot.event_id, externalEffectsAllowed: false }), now, jobId),
-    ]);
+    ];
+    const review = snapshot.overall_status === 'MANUAL_REVIEW_REQUIRED'
+      ? await buildReviewRequest(snapshot, stateId, stateVersion, now)
+      : null;
+    if (review) {
+      statements.push(
+        env.DB.prepare(`INSERT OR IGNORE INTO manual_review_requests (review_request_id, event_id, tenant_id, correlation_id, state_id, state_version,
+          reason_code, category, severity, review_priority, status, owner_queue, assigned_to, sla_policy_id, escalation_level, dedupe_key, duplicate_of,
+          problem_statement, affected_scope_json, impact, required_decision, suggested_checks_json, reviewer_role, allowed_resolutions_json, due_at, created_at, completed_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING_TRIAGE', ?, NULL, ?, 0, ?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`)
+          .bind(review.reviewRequestId, snapshot.event_id, snapshot.tenant_id, snapshot.correlation_id, stateId, stateVersion, review.reasonCode,
+            review.category, review.severity, review.priority, review.ownerQueue, review.slaPolicyId, review.dedupeKey, review.problemStatement,
+            JSON.stringify({ type: 'CLIENT', ids: [snapshot.subject_ref] }), review.impact, review.requiredDecision,
+            JSON.stringify(review.suggestedChecks), review.reviewerRole, JSON.stringify(review.allowedResolutions), review.dueAt, now),
+        env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
+          SELECT ?, d.owner_id, 'central-review:deterministic', 'review_enqueued', 'manual_review', ?, ?, ?
+          FROM agent_runs ar JOIN documents d ON d.id = ar.document_id WHERE ar.id = ?`)
+          .bind(`review-enqueued-${jobId}`, review.reviewRequestId, JSON.stringify({ reasonCode: review.reasonCode, priority: review.priority, dueAt: review.dueAt }), now, jobId),
+      );
+    }
+    await env.DB.batch(statements);
     return NextResponse.json({ ok: true, duplicate: Boolean(existing), state_id: stateId, state_version: stateVersion, state_hash: suppliedHash });
   } catch (error) { return requestErrorResponse(error); }
+}
+
+async function buildReviewRequest(snapshot: StateSnapshot, stateId: string, stateVersion: number, now: number) {
+  const input = snapshot.manual_review && typeof snapshot.manual_review === 'object' ? snapshot.manual_review as Record<string, unknown> : {};
+  const reasonCode = boundedString(input.reason_code, 64, /^[A-Z0-9_]+$/) || 'DOMAIN_REVIEW_REQUIRED';
+  const category = reviewCategory(reasonCode);
+  const high = ['NORMATIVE_CONFLICT', 'COMPLIANCE_HOLD', 'IDENTITY_UNCERTAIN'].includes(category);
+  const severity = high ? 'HIGH' : 'MEDIUM'; const priority = high ? 'P1' : 'P2'; const duration = high ? 4 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+  const requestedQueue = boundedString(input.owner_queue, 80, /^[A-Z0-9_]+$/);
+  const allowedQueues = ['REVISAO_GESTOR_AUTORIZADO', 'REVISAO_COMPLIANCE', 'REVISAO_CADASTRO', 'REVISAO_COMERCIAL'];
+  const ownerQueue = allowedQueues.includes(requestedQueue) ? requestedQueue : category === 'NORMATIVE_CONFLICT' || category === 'COMPLIANCE_HOLD' || category === 'IDENTITY_UNCERTAIN'
+    ? 'REVISAO_COMPLIANCE' : 'REVISAO_GESTOR_AUTORIZADO';
+  const reviewerRole = ownerQueue === 'REVISAO_COMPLIANCE' ? 'GESTOR_COMPLIANCE' : 'GESTOR_AUTORIZADO';
+  const requiredDecision = boundedString(input.required_decision, 1000) || 'Confirmar, corrigir, rejeitar ou solicitar dados adicionais para o item.';
+  const problemStatement = boundedString(input.problem_statement, 1000) || `O Estado 360 ${stateId} requer revisão humana pelo motivo ${reasonCode}.`;
+  const impact = boundedString(input.impact, 1000) || 'O item dependente não pode avançar para READY enquanto a revisão estiver aberta.';
+  const dedupeKey = await hashCanonical({ tenant_id: snapshot.tenant_id, state_id: stateId, state_version: stateVersion, reason_code: reasonCode });
+  return { reviewRequestId: uuidFromSha256(dedupeKey), reasonCode, category, severity, priority, ownerQueue,
+    slaPolicyId: high ? 'manual-review.high.v1' : 'manual-review.medium.v1', dedupeKey, problemStatement, impact, requiredDecision,
+    suggestedChecks: ['Revalidar identidade, vigência e autoridade das evidências.', 'Registrar a justificativa humana estruturada.'], reviewerRole,
+    allowedResolutions: ['RESOLVED_CONFIRMED', 'RESOLVED_CORRECTED', 'RESOLVED_DISMISSED', 'MORE_DATA_REQUIRED'], dueAt: now + duration };
+}
+
+function reviewCategory(reasonCode: string) {
+  if (reasonCode === 'DIVERGENCIA_NORMATIVA') return 'NORMATIVE_CONFLICT';
+  if (reasonCode === 'DIVERGENCIA_DE_DADOS' || reasonCode === 'DIVERGENCIA_INTERNA') return 'DATA_CONFLICT';
+  if (reasonCode === 'CAPABILITY_GAP') return 'INSUFFICIENT_EVIDENCE';
+  if (reasonCode === 'ORPHAN_EVIDENCE') return 'ORPHAN_EVIDENCE';
+  if (reasonCode === 'UNVERIFIABLE_EVIDENCE') return 'UNVERIFIABLE_EVIDENCE';
+  if (reasonCode.includes('IDENTIDADE')) return 'IDENTITY_UNCERTAIN';
+  if (reasonCode.includes('GATE')) return 'GATE_FAILED';
+  if (reasonCode.includes('BUDGET')) return 'BUDGET_EXCEEDED';
+  return 'AMBIGUOUS_INPUT';
+}
+
+function uuidFromSha256(hash: string) {
+  const hex = hash.replace(/^sha256:/, '').slice(0, 32).split('');
+  hex[12] = '5'; hex[16] = ((Number.parseInt(hex[16], 16) & 0x3) | 0x8).toString(16);
+  const value = hex.join(''); return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`;
 }
 
 function validSnapshot(value: StateSnapshot | undefined): value is StateSnapshot {
