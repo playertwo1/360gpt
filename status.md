@@ -32,20 +32,20 @@
 | **12A** | Fundação da Central: contratos, fila, SLA, deduplicação, APIs e read model | ✅ **Concluído** |
 | **12B** | Implantação hospedada e homologação autenticada das transições humanas | ✅ **Concluído** |
 | **13A** | Fundação do Evidence Graph 360: contratos, persistência append-only e auditoria | ✅ **Concluído** |
-| **13B** | **Painel visual de auditoria e navegação da linhagem PROV/OpenLineage** | ✅ **Concluído** |
-| **14** | Testes de carga, concorrência distribuída e backpressure de modelos | ⏳ **Próximo** |
-| **15** | Homologação final para release de produção assistida | 📋 Planejado |
+| **13B** | Painel visual de auditoria e navegação da linhagem PROV/OpenLineage | ✅ **Concluído** |
+| **14** | **Testes de carga, concorrência distribuída e backpressure de modelos** | ✅ **Concluído** |
+| **15** | Homologação final para release de produção assistida | ⏳ **Próximo** |
 
 ---
 
-## 3. Último Marco Concluído: Marco 13B
+## 3. Último Marco Concluído: Marco 14
 
-**Painel visual de auditoria e navegação da linhagem PROV/OpenLineage homologado:**
-- Rota autenticada de auditoria de snapshot `/api/audit/state/latest` implementada com proteção falha-fechada (`401` sem identidade).
-- Modal visual interativo de navegação do **Evidence Graph 360** integrado ao Dashboard principal (`app/page.tsx`).
-- Visualizador de linhagem e auditoria integrado à Mesa do Revisor (`app/reviews/page.tsx`) com navegação de nós e arestas.
-- Mapeamento PROV/OpenLineage (Entidades, Atividades, Agentes) e conferência de integridade por hashes SHA-256 e timestamps bitemporais.
-- Script automatizado de validação de auditoria `scripts/test-audit-ui.ps1` aprovado.
+**Testes de carga, concorrência distribuída e backpressure homologados:**
+- Política de backpressure e capacidade versionada em `policies/backpressure.yaml` e validada por `contracts/backpressure.schema.json`.
+- Bateria de rajadas paralelas com 20 requisições simultâneas com mesma chave canônica: 100% de sucesso sem colisão de estado ou corrupção.
+- Bateria paralela multi-cliente com 20 requisições simultâneas: 100% de processamento com isolamento estrito de tenant.
+- Bateria de 15 consultas concorrentes no Evidence Graph e linhagem: 100% respondidas com integridade append-only preservada.
+- Script automatizado de validação de carga `scripts/test-load-concurrency.ps1` executado e aprovado com código 0.
 
 
 ---

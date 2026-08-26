@@ -1,0 +1,34 @@
+{
+  "": "https://visao360.local/contracts/backpressure.schema.json",
+  "title": "BackpressureAndCapacityContract",
+  "type": "object",
+  "required": [
+    "version",
+    "governance",
+    "concurrency_limits",
+    "rate_limits",
+    "priority_queues",
+    "backpressure_actions"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "governance": {
+      "type": "object"
+    },
+    "concurrency_limits": {
+      "type": "object"
+    },
+    "rate_limits": {
+      "type": "object"
+    },
+    "priority_queues": {
+      "type": "object"
+    },
+    "backpressure_actions": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

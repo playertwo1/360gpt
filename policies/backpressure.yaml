@@ -1,0 +1,55 @@
+# ==============================================================================
+# POLÍTICA DE BACKPRESSURE, CAPACIDADE E CONCORRÊNCIA — DIRETOR 360
+# Versão: 1.0.0
+# ==============================================================================
+
+version: '1.0.0'
+governance:
+  status: 'ACTIVE'
+  owner: 'Diretor de Operações e Infraestrutura 360'
+  effective_date: '2026-08-26T00:00:00Z'
+
+concurrency_limits:
+  max_parallel_executions_per_tenant: 20
+  max_active_claims_per_worker: 5
+  max_queue_depth_per_tenant: 100
+  lease_timeout_seconds: 600 # 10 minutos
+  max_lease_renewals: 3
+
+rate_limits:
+  telegram_webhook:
+    max_requests_per_minute: 120
+    burst_capacity: 30
+  api_ingest:
+    max_requests_per_minute: 300
+    burst_capacity: 50
+  bridge_claims:
+    max_claims_per_minute: 60
+
+priority_queues:
+  P0_CRITICAL:
+    description: 'Impedimentos regulatórios, segurança e revisões com SLA iminente'
+    preemption_allowed: true
+    max_wait_time_seconds: 30
+  P1_HIGH:
+    description: 'Eventos de cliente com decisão comercial pendente'
+    preemption_allowed: false
+    max_wait_time_seconds: 120
+  P2_NORMAL:
+    description: 'Consultas rotineiras, ingestão em lote e reprocessamento determinístico'
+    preemption_allowed: false
+    max_wait_time_seconds: 600
+
+backpressure_actions:
+  on_limit_exceeded:
+    http_status: 429
+    reason_code: 'RATE_LIMIT_EXCEEDED'
+    retry_after_seconds: 15
+    action: 'QUEUE_OR_THROTTLE'
+  on_queue_overflow:
+    http_status: 503
+    reason_code: 'BACKPRESSURE_QUEUE_FULL'
+    action: 'REJECT_WITH_RETRY_NOTICE'
+  on_concurrency_lock_contention:
+    resolution: 'IDEMPOTENT_DEDUPLICATION'
+    status: 'DUPLICATE_IGNORED'
