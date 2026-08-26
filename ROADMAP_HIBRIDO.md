@@ -5,9 +5,10 @@
 **Público:** Rafael e qualquer agente autorizado trabalhando pelo Codex ou Antigravity.
 
 **Última atualização:** 26 de agosto de 2026
-**Fase atual:** H4 — Operação local com um clique
-**Próxima ação:** criar um iniciador simples que verifique Docker, suba os serviços, valide site e ponte e apresente um resumo compreensível para Rafael.
+**Fase atual:** H5 — Telegram hospedado: texto
+**Próxima ação:** configurar e testar o webhook seguro do Telegram com secret_token para receber mensagens enquanto o computador estiver desligado.
 **Dados permitidos:** somente dados sintéticos em `OFFLINE_EVAL` até homologação formal do banco.
+
 
 ---
 
@@ -38,17 +39,18 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 ## Painel geral
 
 | Fase | Resultado esperado | Estado | Dependência principal |
-|---|---|:---:|---|
+|---|---|---|---|
 | H1 | Acesso privado ao site confirmado | [x] | Login autorizado |
 | H2 | Dados hospedados persistem com o computador desligado | [x] | H1 |
 | H3 | Ponte site ↔ n8n processa e publica um caso | [x] | H2 |
-| H4 | Diretor 360 inicia com um clique | [ ] | H3 |
+| H4 | Diretor 360 inicia com um clique | [x] | H3 |
 | H5 | Telegram recebe e enfileira texto | [ ] | H3 |
 | H6 | Telegram processa PDF e Excel com segurança | [ ] | H5 |
 | H7 | Visão 360 executiva completa e rastreável | [ ] | H6 |
 | H8 | Segurança e privacidade homologadas para o piloto | [ ] | H1–H7 |
 | H9 | Backup e restauração comprovados | [ ] | H3–H8 |
 | H10 | Rotina diária documentada e testada por Rafael | [ ] | H1–H9 |
+
 
 ---
 
@@ -136,19 +138,25 @@ O site permanece acessível com o computador desligado e exibe o último estado 
 
 **Objetivo:** Rafael iniciar e verificar o sistema sem usar comandos técnicos.
 
-- [ ] Conferir se o Docker Desktop está aberto.
-- [ ] Iniciar PostgreSQL e n8n automaticamente.
-- [ ] Aguardar os healthchecks.
-- [ ] Iniciar os componentes locais necessários.
-- [ ] Testar a conexão da ponte hospedada.
-- [ ] Mostrar estado simples: Docker, banco, n8n, site, ponte e Telegram.
-- [ ] Mostrar quantidade de trabalhos aguardando.
-- [ ] Mostrar data do último backup.
-- [ ] Abrir Dashboard e Mesa do Revisor.
-- [ ] Oferecer encerramento seguro sem apagar volumes.
-- [ ] Testar após reiniciar o Windows.
+- [x] Conferir se o Docker Desktop está aberto.
+- [x] Iniciar PostgreSQL e n8n automaticamente.
+- [x] Aguardar os healthchecks.
+- [x] Iniciar os componentes locais necessários.
+- [x] Testar a conexão da ponte hospedada.
+- [x] Mostrar estado simples: Docker, banco, n8n, site, ponte e Telegram.
+- [x] Mostrar quantidade de trabalhos aguardando.
+- [x] Mostrar data do último backup.
+- [x] Abrir Dashboard e Mesa do Revisor.
+- [x] Oferecer encerramento seguro sem apagar volumes.
+- [x] Testar após reiniciar o Windows.
 
-**Critério de aceite:** Rafael liga o computador, abre o Docker e coloca o Diretor 360 online com um clique.
+**Critério de aceite:** Rafael liga o computador, abre o Docker e coloca o Diretor 360 online com um clique. **ATENDIDO em 2026-08-26.**
+
+**Evidências:**
+- Scripts criados: `iniciar-diretor-360.ps1`, `iniciar-diretor-360.bat`, `parar-diretor-360.ps1`, `parar-diretor-360.bat`.
+- Teste automatizado: `scripts/test-h4-launcher.ps1` executado e aprovado com código 0 (`H4_ONE_CLICK_LAUNCHER_PASS`).
+- Painel executivo: exibição clara do status do Docker, PostgreSQL (porta 5432), n8n (porta 5678), Site hospedado (`https://visao-360-diretor.fael360092.chatgpt.site`), ponte segura WF-09, fila de revisão e último backup.
+
 
 ---
 

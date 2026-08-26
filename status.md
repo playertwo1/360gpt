@@ -2,7 +2,7 @@
 
 
 **Data do status:** 26 de agosto de 2026  
-**Versão Atual da Release:** `v2.4.0-final-phase3` (automação dos Marcos 1 ao 24 concluída)
+**Versão Atual da Release:** `v2.4.1-h4` (Marcos 1 ao 24 + Fases H1 a H4 do Piloto Híbrido Homologadas)
 **Modo de execução:** `PILOTO HÍBRIDO LOCAL + SITE HOSPEDADO` (somente dados sintéticos)
 **Saúde do Projeto:** 🟡 **AMARELO (24 marcos implementados; operação híbrida ponta a ponta ainda não homologada)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
@@ -87,7 +87,7 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** executar H4 do `ROADMAP_HIBRIDO.md`: construir um iniciador de um clique que verifique Docker Desktop, inicie PostgreSQL/n8n, aguarde saúde, valide site/ponte, mostre fila e último backup e abra o Dashboard.
+**Próximo passo exato:** executar H5 do `ROADMAP_HIBRIDO.md`: configurar e testar o webhook seguro do Telegram com secret_token para receber mensagens enquanto o computador estiver desligado.
 
 ---
 
@@ -100,8 +100,8 @@
 | H1 | Acesso privado ao site | ✅ Concluída — as duas contas autorizadas e o bloqueio sem login foram comprovados |
 | H2 | Persistência hospedada | ✅ Concluída — snapshot v37 permaneceu no site com Docker desligado |
 | H3 | Ponte site ↔ computador | ✅ Concluída — caso H3 processado uma vez, deduplicado e publicado como estado v380 |
-| H4 | Inicialização com um clique | ⏳ Próxima |
-| H5 | Telegram com texto | ⬜ Pendente |
+| H4 | Inicialização com um clique | ✅ Concluída — scripts `iniciar-diretor-360` e `parar-diretor-360` (.bat e .ps1) homologados |
+| H5 | Telegram com texto | ⏳ Próxima |
 | H6 | Telegram com PDF e Excel | ⬜ Pendente |
 | H7 | Visão executiva completa | ⬜ Pendente |
 | H8 | Segurança do piloto | ⬜ Pendente |
@@ -111,6 +111,7 @@
 **Decisão arquitetural atual:** o site, a fila e o último Estado 360 devem permanecer hospedados e acessíveis pela internet; Docker, PostgreSQL, n8n e agentes continuam na máquina de Rafael. Trabalhos novos podem aguardar quando o computador estiver desligado. A VPS foi adiada e não é dependência do piloto.
 
 **Regra de continuidade:** Codex e Antigravity devem ler `AGENTS.md`, `status.md`, `ROADMAP_HIBRIDO.md` e `CODEX_HANDOFF.md`, nessa ordem, antes de executar a próxima fase.
+
 
 
 
