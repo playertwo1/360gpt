@@ -23,3 +23,7 @@ O Marco 24 conclui a automação de implantação do Diretor 360. A VPS Ubuntu 2
 ## Pendência operacional
 
 O go-live real não foi executado nesta estação porque domínio, VPS e credenciais de produção não foram fornecidos. Esse bloqueio não afeta a implementação, mas impede afirmar que DNS, TLS público e webhook real estejam homologados.
+
+## Decisão posterior ao Marco 24
+
+Rafael optou por adiar a VPS e avançar com uma arquitetura híbrida: site, fila e último Estado 360 hospedados; processamento por Docker, PostgreSQL, n8n e agentes no computador local. A execução e as evidências das próximas fases devem ser registradas em `ROADMAP_HIBRIDO.md`, começando por H1 — acesso privado ao site.

@@ -3,8 +3,8 @@
 
 **Data do status:** 26 de agosto de 2026  
 **Versão Atual da Release:** `v2.4.0-final-phase3` (automação dos Marcos 1 ao 24 concluída)
-**Modo de execução:** `PRODUÇÃO ASSISTIDA` (Human-in-the-Loop na Mesa do Revisor 360)  
-**Saúde do Projeto:** 🟡 **AMARELO (24 de 24 Marcos implementados; go-live remoto aguarda domínio, VPS e credenciais)**
+**Modo de execução:** `PILOTO HÍBRIDO LOCAL + SITE HOSPEDADO` (somente dados sintéticos)
+**Saúde do Projeto:** 🟡 **AMARELO (24 marcos implementados; operação híbrida ponta a ponta ainda não homologada)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 
@@ -18,7 +18,7 @@
 
 | Indicador | Valor / Estado | Meta / Referência | Status |
 |---|---|---|:---:|
-| **Status Geral** | Pronto para Produção Assistida | Sem impedimentos | 🟢 |
+| **Status Geral** | Base técnica pronta; piloto híbrido em homologação | Concluir H1 a H10 | 🟡 |
 | **Fase 1 (Fundação & Homologação)** | **15 de 15 marcos concluídos (100%)** | Release v1.0.0 Certificada | 🟢 |
 | **Fase 2 (Operação & Produção Assistida)** | **5 de 5 marcos concluídos (100%)** | Release v2.0.0 Certificada | 🟢 |
 | **Fase 3 (Evolução & Go-Live)** | **4 de 4 marcos implementados (100%)** | Release v2.4.0 | 🟢 |
@@ -28,8 +28,8 @@
 | **Evidence Graph & Auditoria** | Append-Only ativo / Linhagem PROV completa | W3C PROV & OpenLineage | 🟢 |
 | **Central de Revisão Manual** | Mesa autenticada com Quatro Olhos e hash SHA-256 | Fila estruturada | 🟢 |
 | **Guardião de SLA & FinOps** | Alertas aos 80% do SLA / Unit Economics < R$ 0,15 | Google SRE & FinOps Foundation | 🟢 |
-| **Cloud Deploy & Rollback** | Manifestos Cloudflare/VPS + RTO < 15m / RPO < 5m | 12-Factor App & CIS Benchmarks | 🟢 |
-| **Canais Oficiais de Produção** | Gateway Telegram Live com Secret Token e Multimodal | Enterprise API Gateway | 🟢 |
+| **Cloud Deploy & Rollback** | Automação VPS preservada, mas VPS adiada | Site hospedado + processamento local | 🟡 |
+| **Canal Telegram** | Gateway implementado; fluxo hospedado real ainda não homologado | Texto, PDF e XLSX ponta a ponta | 🟡 |
 | **Testes de Carga & Concorrência** | 100% de sucesso em rajadas simultâneas | Backpressure e Idempotência | 🟢 |
 | **Build & Linter** | 0 erros (`npm run lint` / `npm run build`) | Código limpo | 🟢 |
 | **Readiness Gate** | **PASS (Certificado)** | Critérios de release | 🟢 |
@@ -87,7 +87,30 @@
 
 **Decisões tomadas:** segredos são obrigatórios e nunca versionados; provisionamento interrompe antes de subir containers quando `.env.prod` não está preenchido; Caddy publica somente o n8n da VPS, enquanto o frontend/API Telegram permanece no ambiente hospedado; o webhook usa `secret_token` e confirmação via `getWebhookInfo`.
 
-**Próximo passo exato:** contratar ou informar a VPS Ubuntu 24.04 e o domínio, configurar DNS e segredos, executar `provision-vps-server.sh`, publicar o frontend, rodar `test-cloud-deployment.ps1 -Live` e somente então ativar o webhook oficial com `activate-telegram-webhook.ps1`.
+**Próximo passo exato:** executar a fase H1 do `ROADMAP_HIBRIDO.md`: abrir o site hospedado, entrar com uma conta autorizada, validar Dashboard e Mesa do Revisor e registrar a evidência. Não contratar VPS nesta fase.
+
+---
+
+## 3A. Fase 4 — Piloto híbrido acompanhado
+
+**Documento canônico de acompanhamento:** `ROADMAP_HIBRIDO.md`.
+
+| Fase | Escopo | Estado |
+|---|---|:---:|
+| H1 | Acesso privado ao site | ⏳ Próxima |
+| H2 | Persistência hospedada | ⬜ Pendente |
+| H3 | Ponte site ↔ computador | ⬜ Pendente |
+| H4 | Inicialização com um clique | ⬜ Pendente |
+| H5 | Telegram com texto | ⬜ Pendente |
+| H6 | Telegram com PDF e Excel | ⬜ Pendente |
+| H7 | Visão executiva completa | ⬜ Pendente |
+| H8 | Segurança do piloto | ⬜ Pendente |
+| H9 | Backup e restauração | ⬜ Pendente |
+| H10 | Operação diária e aceite | ⬜ Pendente |
+
+**Decisão arquitetural atual:** o site, a fila e o último Estado 360 devem permanecer hospedados e acessíveis pela internet; Docker, PostgreSQL, n8n e agentes continuam na máquina de Rafael. Trabalhos novos podem aguardar quando o computador estiver desligado. A VPS foi adiada e não é dependência do piloto.
+
+**Regra de continuidade:** Codex e Antigravity devem ler `AGENTS.md`, `status.md`, `ROADMAP_HIBRIDO.md` e `CODEX_HANDOFF.md`, nessa ordem, antes de executar a próxima fase.
 
 
 

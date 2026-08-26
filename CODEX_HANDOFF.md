@@ -19,7 +19,7 @@
 
 ## 📊 2. Onde Paramos (Estado Exato do Projeto)
 
-Concluímos **23 de 24 marcos (95.8%)** com 100% de testes automatizados e builds sem erros.
+Concluímos a implementação dos **24 marcos originais**. A fase atual é a homologação operacional híbrida, acompanhada em `ROADMAP_HIBRIDO.md`.
 
 ### ✅ O Que Já Está Pronto e Homologado:
 1. **Infraestrutura Local & Workflows n8n:** PostgreSQL 16 + n8n (10 workflows ativos `WF-00` a `WF-09`).
@@ -33,7 +33,7 @@ Concluímos **23 de 24 marcos (95.8%)** com 100% de testes automatizados e build
 
 ---
 
-## 🎯 3. Marco 24 implementado — próxima ação: go-live remoto
+## 🎯 3. Marco 24 implementado — arquitetura operacional revisada
 
 ### 🌐 **Marco 24 — Automação de Deploy em Nuvem Real (Cloudflare Pages + VPS + Bot Telegram Live)**
 * **Objetivo alcançado:** scripts finais de automação, validação e ativação segura foram implementados.
@@ -43,7 +43,16 @@ Concluímos **23 de 24 marcos (95.8%)** com 100% de testes automatizados e build
   3. `scripts/test-cloud-deployment.ps1`: Script que roda testes remotos contra o endpoint de produção.
   4. Release de código `v2.4.0-final-phase3` preparada. A homologação externa final exige domínio, VPS e credenciais reais.
 
-O próximo passo é seguir `docs/DEPLOY_CLOUD_MARCO24.md`, executar o teste com `-Live` e ativar o webhook somente após HTTPS e healthchecks aprovados.
+Rafael decidiu adiar a VPS. O site, a fila e o último Estado 360 permanecem hospedados; Docker, PostgreSQL, n8n e agentes processam localmente. O próximo passo obrigatório é a fase H1 de `ROADMAP_HIBRIDO.md`: validar o acesso privado ao site hospedado. Os scripts de VPS permanecem preservados para uma migração futura opcional.
+
+### Ordem obrigatória para Codex e Antigravity
+
+1. Ler `AGENTS.md`.
+2. Ler `status.md`.
+3. Ler `ROADMAP_HIBRIDO.md`.
+4. Ler este `CODEX_HANDOFF.md`.
+5. Verificar `git status` e preservar mudanças existentes.
+6. Executar a primeira fase híbrida não concluída e registrar evidências antes de marcar `[x]`.
 
 ---
 
@@ -95,4 +104,4 @@ powershell -File scripts/test-showcase-personas.ps1
 
 ---
 
-**Sucesso no trabalho com o Codex, Rafael! O projeto está 100% estruturado, limpo e pronto para o Marco 24.**
+**Estado atual:** código-base estruturado e Marco 24 concluído; piloto híbrido H1–H10 em homologação, começando pelo acesso ao site.
