@@ -1,4 +1,4 @@
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 registry_status: ACTIVE
 maximum_general_managers_per_execution: 5
 maximum_business_general_managers_per_execution: 4
@@ -9,7 +9,7 @@ maximum_delegation_depth: 2
 domains:
   conta:
     manager_id: GERENTE_GERAL_CONTA
-    manager_version: "4.0.0-base"
+    manager_version: "4.38.0"
     state: ACTIVE
     capabilities:
       resolver_identidade:
@@ -26,6 +26,96 @@ domains:
         state: ACTIVE
         tools: []
         data_scope: SYNTHETIC_ONLY
+      analisar_identidade_qualidade_cadastral:
+        primary_implementation: CONTA_IDENTIDADE_QUALIDADE
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/identidade-qualidade
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
+      acompanhar_prospeccao_abertura_oxigenacao:
+        primary_implementation: CONTA_PROSPECCAO_OXIGENACAO
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/prospeccao-oxigenacao
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
+      analisar_ciclo_vida_saude_carteira:
+        primary_implementation: CONTA_CICLO_VIDA_SAUDE
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/ciclo-vida-saude
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
+      analisar_atividade_centralizacao_produtos_limites:
+        primary_implementation: CONTA_ATIVIDADE_CENTRALIZACAO
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/atividade-centralizacao
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
+      analisar_risco_restricoes_elegibilidade:
+        primary_implementation: CONTA_RISCO_ELEGIBILIDADE
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/risco-elegibilidade
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
+      analisar_credito_aprendizado_controlado:
+        primary_implementation: CONTA_CREDITO_APRENDIZADO
+        implementation_version: "1.0.0"
+        implementation_type: ANALYTICAL_SPECIALIST
+        state: PROPOSED
+        input_schema: contracts/conta-specialist-request.schema.json
+        output_schema: contracts/handoff.schema.json
+        tools: []
+        data_scope: CONFIDENTIAL_MINIMIZED
+        permission_profile: READ_ONLY_CONTA
+        budget_profile: CONTA_STANDARD
+        timeout_seconds: 20
+        evaluation_suite: evals/conta/credito-aprendizado
+        activation_criteria: governance/RELEASE_GATES.md
+        rollback: DISABLE_CAPABILITY
   performance:
     manager_id: GERENTE_GERAL_PERFORMANCE
     manager_version: "4.0.0-base"
