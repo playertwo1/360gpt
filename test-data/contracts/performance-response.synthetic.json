@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "perf-synthetic-001",
+  "specialist_id": "PERFORMANCE_GAP_SCENARIOS",
+  "base_date": "2026-08-26",
+  "evidence_status": "PARTIAL",
+  "ranked_actions": [
+    {
+      "rank": 1,
+      "indicator_id": "produto_piso_proximo",
+      "action": "Avaliar esforço para superar o piso de 50% antes de deslocar capacidade para metas mais distantes.",
+      "threshold_position": "NEAR_MINIMUM",
+      "expected_point_gain": 9,
+      "effort": "LOW",
+      "why_now": "Faltam apenas dois pontos percentuais para evitar perda integral da pontuação potencial.",
+      "confidence": 0.9,
+      "requires_owner_approval": true
+    }
+  ],
+  "challenges": [
+    "O produto acima do teto pode continuar gerando retorno, mas não deve consumir capacidade destinada a recuperar pontuação sem decisão consciente de Rafael."
+  ],
+  "uncertainties": [
+    "O indicador defasado precisa ser reconciliado antes de entrar no ranking."
+  ],
+  "decision_authority": "RAFAEL"
+}

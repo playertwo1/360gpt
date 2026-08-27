@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "fin-synthetic-001",
+  "manager_id": "GERENTE_GERAL_FINANCEIRO",
+  "specialist_id": "FINANCIAL_DIAGNOSIS_CONCENTRATION",
+  "reference_month": "2026-07",
+  "base_date": "2026-07-31",
+  "source_status": "OFFICIAL_PARTIAL",
+  "line_items": [
+    {
+      "line_id": "resultado_total",
+      "budget": 100000,
+      "actual": 82000,
+      "unit": "BRL",
+      "source_ref": "gdad-synthetic-jul-2026"
+    },
+    {
+      "line_id": "receita_credito",
+      "budget": 50000,
+      "actual": 47000,
+      "unit": "BRL",
+      "source_ref": "gdad-synthetic-jul-2026"
+    }
+  ],
+  "known_attribution_rules": []
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "fin-synthetic-001",
+  "specialist_id": "FINANCIAL_DIAGNOSIS_CONCENTRATION",
+  "base_date": "2026-07-31",
+  "variance_analysis": [
+    {
+      "line_id": "resultado_total",
+      "absolute_variance": -18000,
+      "relative_variance": -0.18,
+      "status": "BELOW_BUDGET"
+    },
+    {
+      "line_id": "receita_credito",
+      "absolute_variance": -3000,
+      "relative_variance": -0.06,
+      "status": "BELOW_BUDGET"
+    }
+  ],
+  "concentration_risks": [
+    "A decomposição disponível não permite medir toda a concentração do resultado."
+  ],
+  "attribution_status": "UNKNOWN",
+  "recommendations": [
+    {
+      "action": "Reconciliar as linhas ausentes antes de atribuir o desvio a uma ação comercial específica.",
+      "expected_financial_direction": "UNKNOWN",
+      "confidence": 0.95,
+      "requires_owner_approval": true
+    }
+  ],
+  "uncertainties": [
+    "A fonte oficial é parcial e não contém regra de atribuição homologada."
+  ],
+  "decision_authority": "RAFAEL"
+}
