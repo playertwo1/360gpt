@@ -1,7 +1,7 @@
 schema_version: "1.0.0"
 registry_status: ACTIVE
-maximum_general_managers_per_execution: 4
-maximum_specialists_per_domain: 3
+maximum_general_managers_per_execution: 5
+maximum_specialists_per_domain: 4
 maximum_model_cycles_per_agent: 4
 maximum_delegation_depth: 2
 domains:
@@ -81,3 +81,37 @@ domains:
         state: ACTIVE
         tools: []
         data_scope: SYNTHETIC_ONLY
+  conhecimento:
+    manager_id: GERENTE_GERAL_CONHECIMENTO
+    manager_version: "1.0.0"
+    state: ACTIVE
+    capabilities:
+      consultar_normativos:
+        primary_implementation: CONHECIMENTO_NORMATIVOS_SIM
+        implementation_version: "1.0.0"
+        implementation_type: DETERMINISTIC_SEARCH_AND_LLM
+        state: ACTIVE
+        tools: []
+        data_scope: SYNTHETIC_AND_DOCUMENTS
+      consultar_metas_pontuacao:
+        primary_implementation: CONHECIMENTO_METAS_SIM
+        implementation_version: "1.0.0"
+        implementation_type: DETERMINISTIC_CALC_AND_LLM
+        state: ACTIVE
+        tools: []
+        data_scope: SYNTHETIC_AND_DOCUMENTS
+      consultar_processos_formularios:
+        primary_implementation: CONHECIMENTO_PROCESSOS_SIM
+        implementation_version: "1.0.0"
+        implementation_type: DETERMINISTIC_SEARCH_AND_LLM
+        state: ACTIVE
+        tools: []
+        data_scope: SYNTHETIC_AND_DOCUMENTS
+      consultar_contatos_ramais:
+        primary_implementation: CONHECIMENTO_CONTATOS_SIM
+        implementation_version: "1.0.0"
+        implementation_type: DETERMINISTIC_SEARCH
+        state: ACTIVE
+        tools: []
+        data_scope: SYNTHETIC_AND_DOCUMENTS
+

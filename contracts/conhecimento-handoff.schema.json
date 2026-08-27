@@ -1,0 +1,124 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.visao360.local/conhecimento-handoff.schema.json",
+  "title": "ConhecimentoHandoffPayload",
+  "type": "object",
+  "required": [
+    "domain",
+    "status",
+    "query_context",
+    "findings",
+    "source_citations",
+    "conflicts_detected",
+    "generated_at"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "const": "conhecimento"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["READY", "MANUAL_REVIEW_REQUIRED", "EVIDENCE_NOT_FOUND"]
+    },
+    "query_context": {
+      "type": "object",
+      "required": ["query_type", "subject"],
+      "properties": {
+        "query_type": {
+          "type": "string",
+          "enum": ["NORMATIVO", "METAS_PONTUACAO", "PROCESSO_SOP", "FORMULARIO", "CONTATO_RAMAL"]
+        },
+        "subject": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding_id", "category", "statement", "valid_from"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "category": { "type": "string" },
+          "statement": { "type": "string" },
+          "valid_from": { "type": "string" },
+          "valid_to": { "type": ["string", "null"] },
+          "is_active": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "source_citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_document_id", "title", "version", "page_or_section", "sha256_hash"],
+        "properties": {
+          "source_document_id": { "type": "string" },
+          "title": { "type": "string" },
+          "version": { "type": "string" },
+          "page_or_section": { "type": "string" },
+          "sha256_hash": { "type": "string" },
+          "excerpt": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "conflicts_detected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["conflict_id", "conflict_type", "doc_a", "doc_b", "reason"],
+        "properties": {
+          "conflict_id": { "type": "string" },
+          "conflict_type": { "type": "string", "enum": ["DIVERGENCIA_NORMATIVA", "VIGENCIA_AMBIGUA"] },
+          "doc_a": { "type": "string" },
+          "doc_b": { "type": "string" },
+          "reason": { "type": "string" },
+          "decision_required_from": { "type": "string", "const": "rafael" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "forms_and_contacts": {
+      "type": "object",
+      "properties": {
+        "forms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["form_code", "form_name"],
+            "properties": {
+              "form_code": { "type": "string" },
+              "form_name": { "type": "string" },
+              "system_route": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["department", "phone", "email"],
+            "properties": {
+              "department": { "type": "string" },
+              "phone": { "type": "string" },
+              "email": { "type": "string" },
+              "responsible_person": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "generated_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,167 @@
+[
+  {
+    "doc_id": "IN_CRED_2026_01",
+    "title": "Instrução Normativa de Crédito PJ - Alçadas e Limites",
+    "version": "1.0",
+    "category": "NORMATIVO",
+    "valid_from": "2026-01-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro sem garantia real é de até R$ 500.000,00 para empresas com faturamento anual superior a R$ 2.400.000,00 e Rating mínimo B. Operações acima de R$ 500.000,00 exigem parecer do Comitê Regional de Crédito.",
+    "page_or_section": "Artigo 4º, § 2º, Página 3",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite",
+      "garantia real",
+      "comite",
+      "rating"
+    ],
+    "sha256_hash": "cb5dcfad0d37abb84eacdecdf6df2bb58345276d597b263bdcfa4df49983d03f"
+  },
+  {
+    "doc_id": "TAB_METAS_2026_Q3",
+    "title": "Tabela de Pontuação de Produtos PJ - Q3 2026",
+    "version": "3.0",
+    "category": "METAS_PONTUACAO",
+    "valid_from": "2026-07-01",
+    "valid_to": "2026-09-30",
+    "is_active": true,
+    "supersedes": "TAB_METAS_2026_Q2",
+    "content": "Regra 1: Antecipação de Recebíveis (Cartões/Duplicatas) pontua 150 pontos a cada R$ 10.000,00 contratados. Capital de Giro pontua 100 pontos a cada R$ 10.000,00. Seguro Empresarial pontua 300 pontos fixos por apólice emitida com prêmio anual > R$ 1.200,00.",
+    "page_or_section": "Tabela 2.1 - Pesos e Fatores de Produção, Página 5",
+    "keywords": [
+      "metas",
+      "pontuacao",
+      "pontos",
+      "antecipacao",
+      "recebiveis",
+      "seguro",
+      "giro"
+    ],
+    "sha256_hash": "e88758f7d7cc9f43c46b62860ac96b2f49cf49a17ab73535b10b023e7a12fe09"
+  },
+  {
+    "doc_id": "SOP_CARTAO_EMP_2026",
+    "title": "Procedimento Operacional - Limite e Emissão de Cartão Empresarial",
+    "version": "2.1",
+    "category": "PROCESSO_SOP",
+    "valid_from": "2026-02-15",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Passo 1: Acessar o sistema SIS_CORP > Menu Crédito > Cartões PJ. Passo 2: Anexar o Balanço DRE dos últimos 12 meses assinado pelo contador. Passo 3: Emitir e colher assinatura no Termo de Adesão e Limite F-4089.",
+    "page_or_section": "Seção 4 - Fluxo Operacional Sistêmico, Página 2",
+    "keywords": [
+      "cartao",
+      "limite",
+      "processo",
+      "passo a passo",
+      "formulario",
+      "f-4089"
+    ],
+    "sha256_hash": "fc54f4d20152e3bb23bcd11cf47a6d07b1b1377cacd8cebae1e91940bcd80724"
+  },
+  {
+    "doc_id": "CAT_FORMULARIOS_2026",
+    "title": "Catálogo Geral de Formulários Oficiais do Banco",
+    "version": "1.4",
+    "category": "FORMULARIO",
+    "valid_from": "2026-01-10",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Formulário F-1020: Abertura de Conta Corrente PJ e Cadastro de Sócios. Formulário F-4089: Termo de Adesão e Proposta de Cartão Corporativo. Formulário F-7721: Cédula de Crédito Bancário (CCB) para Capital de Giro. Formulário F-9012: Termo de Garantia e Fiança Bancária.",
+    "page_or_section": "Índice de Formulários PJ, Páginas 1-4",
+    "keywords": [
+      "formulario",
+      "f-1020",
+      "f-4089",
+      "f-7721",
+      "f-9012",
+      "ccb",
+      "termo"
+    ],
+    "sha256_hash": "4fe8080b714e1afaeecec890be2c918ad1ab63a8701163b9d5ef9f4e49dde01a"
+  },
+  {
+    "doc_id": "CAT_RAMAIS_MESAS_2026",
+    "title": "Guia Oficial de Ramais, Mesas e Suporte Interno",
+    "version": "2026.08",
+    "category": "CONTATO_RAMAL",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Mesa de Câmbio e Comex: Telefone (11) 3388-4100 / Ramal 4102 / E-mail: cambio.pj@banco.local / Horário: 09h às 17h. Suporte a Sistemas de Crédito: Telefone 0800-770-3600 / Ramal 8820 / E-mail: suporte.credito@banco.local. Mesa de Derivativos e Hedge: Ramal 4150.",
+    "page_or_section": "Tabela de Contatos Corporativos, Página 1",
+    "keywords": [
+      "telefone",
+      "ramal",
+      "contato",
+      "cambio",
+      "suporte",
+      "derivativos",
+      "email"
+    ],
+    "sha256_hash": "35a825a8ee2883ecf609ddc422165b9a60fc2e5a7a1e0a49cf63512b6fe30f98"
+  },
+  {
+    "doc_id": "IN_CRED_2026_02_CONFLITO",
+    "title": "Instrucao Normativa Conflitante de Alçada",
+    "version": "1.1",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro é de R$ 800.000,00.",
+    "page_or_section": "Artigo 4º, Página 1",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite"
+    ],
+    "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
+    "recorded_at": "2026-08-26T22:09:43.222369"
+  },
+  {
+    "doc_id": "IN_CRED_2026_02_CONFLITO",
+    "title": "Instrucao Normativa Conflitante de Alçada",
+    "version": "1.1",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro é de R$ 800.000,00.",
+    "page_or_section": "Artigo 4º, Página 1",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite"
+    ],
+    "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
+    "recorded_at": "2026-08-26T22:10:05.803158"
+  },
+  {
+    "doc_id": "IN_CRED_2026_02_CONFLITO",
+    "title": "Instrucao Normativa Conflitante de Alçada",
+    "version": "1.1",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro é de R$ 800.000,00.",
+    "page_or_section": "Artigo 4º, Página 1",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite"
+    ],
+    "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
+    "recorded_at": "2026-08-26T22:10:26.642516"
+  }
+]

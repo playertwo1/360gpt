@@ -20,8 +20,10 @@ $tests = @(
     @{ Name = 'Fase 4 - Decision Intelligence & Laudo PDF'; Script = 'scripts/test-phase4-decision-pdf.ps1' },
     @{ Name = 'Fase 5 - LLMOps & FinOps Model Router'; Script = 'scripts/test-phase5-finops-router.ps1' },
     @{ Name = 'Fase 6 - Security, LGPD & PRR'; Script = 'scripts/test-phase6-security-prr.ps1' },
-    @{ Name = 'Fase 7 - Operacao Real Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' }
+    @{ Name = 'Fase 7 - Operacao Real Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' },
+    @{ Name = 'Fase 9 - O Bibliotecario (Knowledge Base)'; Script = 'scripts/test-phase9-bibliotecario-knowledge.ps1' }
 )
+
 
 
 

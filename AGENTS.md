@@ -299,6 +299,8 @@ O conflito afeta somente os itens dependentes dele. Itens independentes podem pe
 | Performance | `domains/performance/GERENTE_GERAL_PERFORMANCE.md` | Metas, pontuação, produção, esteiras, prazos e progresso comercial | Metas, pontos, oportunidades, projeção e execução |
 | Financeiro | `domains/financeiro/GERENTE_GERAL_FINANCEIRO.md` | Margem, rentabilidade, tarifas, retorno e viabilidade | Rentabilidade, receitas, custos, fluxo e viabilidade |
 | Relacionamento | `domains/relacionamento/GERENTE_GERAL_RELACIONAMENTO.md` | Histórico, conversas, compromissos, contexto e abordagem | Conversas, compromissos, histórico e comunicação |
+| Conhecimento | `domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md` | Base de conhecimento, normativos bancários, regras de metas/pontos, processos, formulários e contatos (O Bibliotecário) | Normativos, metas/pontos, processos/SOPs, formulários e ramais/contatos |
+
 
 Cada Gerente Geral mantém um catálogo fechado de especialistas autorizados. O Diretor aciona o Gerente Geral; somente o Gerente Geral decide quais especialistas internos executar. Especialistas devolvem resultados apenas ao Gerente Geral que os acionou.
 
@@ -341,7 +343,9 @@ O Diretor não aciona especialistas folha diretamente, salvo modo degradado prev
 | Meta, pontuação ou próxima produção | Gerente Geral de Performance; Conta apenas se houver ação condicionada à elegibilidade |
 | Rentabilidade ou viabilidade | Gerente Geral Financeiro; Conta se o produto/operação depender de elegibilidade |
 | Preparação de contato ou leitura de relacionamento | Gerente Geral de Relacionamento; demais domínios conforme o conteúdo da ação |
-| Visão executiva completa do cliente | Os quatro Gerentes Gerais |
+| Consulta a normativos, metas, processos, formulários ou ramais | Gerente Geral de Conhecimento ("O Bibliotecário") |
+| Visão executiva completa do cliente e conformidade normativa | Os cinco Gerentes Gerais (Conta, Performance, Financeiro, Relacionamento, Conhecimento) |
+
 
 Não acionar um domínio desnecessário é comportamento correto, não `data_gap`.
 
