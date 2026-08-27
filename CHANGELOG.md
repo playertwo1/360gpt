@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-26 — Endurecimento da verificação de backups
+
+- O teste H9 passou a abrir cada backup ZIP e confirmar que ele contém entradas válidas.
+- O teste deixou de apresentar RTO/RPO fixos como se fossem medição; agora sinaliza corretamente que a medição operacional depende de restauração controlada.
+- Bateria geral mantida em 13/13 testes aprovados.
+
 ## 2026-08-26 — Auditoria retrospectiva Fases 0–7
 
 - Bateria híbrida executada com 13/13 testes aprovados.
@@ -9,4 +15,3 @@
 - Erros de lint nos endpoints corrigidos; build e compilação Python validados.
 - Registradas limitações que permanecem: avaliações L2–L4 com risco de leakage, canário e recuperação ainda simulados, rotas com dependência de runtime Node, métricas do Dashboard estáticas e necessidade de evidência formal para dados reais.
 - Ambiente mantido em `OFFLINE_EVAL`; nenhuma integração externa ou dado real foi ativado.
-

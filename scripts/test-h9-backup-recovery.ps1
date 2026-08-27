@@ -18,11 +18,22 @@ Write-Host "  [OK] Todos os $($wfFiles.Count) workflows JSON sao validos e parse
 Write-Host ''
 Write-Host '[2/4] Verificando integridade dos backups ZIP no Google Drive...' -ForegroundColor Yellow
 $gdriveFolders = @('C:\Users\fael\Google Drive\360', 'C:\Users\fael\Meu Drive\360')
+$null = Add-Type -AssemblyName System.IO.Compression
+$null = Add-Type -AssemblyName System.IO.Compression.FileSystem
 $foundBackups = 0
 foreach ($folder in $gdriveFolders) {
     if (Test-Path $folder) {
-        $zipCount = (Get-ChildItem $folder -Filter "backup-*.zip").Count
-        Write-Host "  [OK] Pasta Google Drive: $folder ($zipCount backups encontrados)." -ForegroundColor Green
+        $zipFiles = @(Get-ChildItem $folder -Filter "backup-*.zip")
+        $zipCount = $zipFiles.Count
+        foreach ($zip in $zipFiles) {
+            $archive = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
+            try {
+                if ($archive.Entries.Count -eq 0) { throw "Backup vazio: $($zip.Name)" }
+            } finally {
+                $archive.Dispose()
+            }
+        }
+        Write-Host "  [OK] Pasta Google Drive: $folder ($zipCount backups íntegros encontrados)." -ForegroundColor Green
         $foundBackups += $zipCount
     }
 }
@@ -42,8 +53,7 @@ Write-Host ''
 Write-Host '[4/4] Verificando plano de rollback e limites de recuperacao...' -ForegroundColor Yellow
 $rollbackPlan = 'docs/ROLLBACK_PLAN_PRODUCAO.md'
 if (-not (Test-Path $rollbackPlan)) { throw "Plano de rollback $rollbackPlan ausente!" }
-Write-Host '  • RTO Homologado: 3m12s (Meta < 15m)' -ForegroundColor White
-Write-Host '  • RPO Homologado: 0s / Perda Zero (Meta < 5m)' -ForegroundColor White
+Write-Host '  • RTO/RPO: plano de recuperação presente; medição operacional requer restauração controlada.' -ForegroundColor White
 Write-Host '  [OK] Plano de Rollback e recuperacao transacional validados.' -ForegroundColor Green
 
 Write-Host ''

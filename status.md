@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** bateria geral executada com `ALL_HYBRID_TESTS_PASS`; auditoria retrospectiva Fases 0–7 iniciada e duas correções críticas aplicadas.  
+**Último marco concluído:** bateria geral executada com `ALL_HYBRID_TESTS_PASS`; auditoria retrospectiva Fases 0–7 atualizada e verificação de integridade dos backups endurecida.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** tornar os Evals L2/L3/L4 independentes dos gabaritos e substituir os testes de backup por restauração mensurável.
+**Próximo passo exato:** tornar os Evals L2/L3/L4 independentes dos gabaritos e executar restauração controlada para medir RTO/RPO.
 
 ---
 
