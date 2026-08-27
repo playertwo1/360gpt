@@ -15,6 +15,9 @@
 - Adicionados seis exemplos sintéticos canônicos e testes para piso próximo, teto superado, defasagem, GDAD parcial, atribuição desconhecida e compromisso vencido.
 - Criado contrato Performance–Conta mediado pelo Motor 360; a fase inicial trabalha no nível da meta e proíbe empresa, conta ou origem por ação.
 - Criado gate formal da Etapa B, pendente apenas de aprovação explícita de Rafael.
+- Gate da Etapa B homologado por Rafael em 27/08/2026; nenhuma capacidade foi ativada.
+- Iniciada a Etapa C com motor POBJ determinístico para piso, meta, teto, produção pendente, projeção e ranking de até cinco indicadores.
+- Pontos intermediários agora exigem curva oficial; sem regra versionada, o motor retorna `UNDETERMINED`.
 
 
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado
