@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
+import { extractText, getDocumentProxy } from 'unpdf';
 import { isDenied, requireDashboardReader } from '../../reviews/shared';
 
 export const runtime = 'edge';
@@ -47,7 +48,8 @@ export async function POST(request: Request) {
   const now = Date.now();
   const id = `pobj-${crypto.randomUUID()}`;
   const storageKey = `pobj/${access.userId}/${new Date(now).toISOString().slice(0, 10)}/${id}.${extension}`;
-  const metadata = { competence, baseDate, size: file.size, reviewRequired: true, official: false };
+  const extraction = await extractContent(bytes, mime);
+  const metadata = { competence, baseDate, size: file.size, reviewRequired: true, official: false, ...extraction };
 
   await env.FILES.put(storageKey, bytes, {
     httpMetadata: { contentType: mime },
@@ -56,7 +58,7 @@ export async function POST(request: Request) {
   try {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO documents (id, owner_id, source, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
-        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, 'pending_validation', ?)`).bind(id, access.userId, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), now),
+        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, ?)`).bind(id, access.userId, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), extraction.extractionStatus === 'extracted' ? 'pending_review' : 'pending_extraction', now),
       env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
         VALUES (?, ?, ?, 'pobj_received', 'document', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, id, JSON.stringify({ ...metadata, hash }), now),
     ]);
@@ -65,14 +67,14 @@ export async function POST(request: Request) {
     throw error;
   }
 
-  return NextResponse.json({ ok: true, import: { id, name: safeName(file.name), mime, hash, competence, baseDate, size: file.size, status: 'pending_validation', receivedAt: new Date(now).toISOString(), official: false } }, { status: 202 });
+  return NextResponse.json({ ok: true, import: { id, name: safeName(file.name), mime, hash, competence, baseDate, size: file.size, status: extraction.extractionStatus === 'extracted' ? 'pending_review' : 'pending_extraction', receivedAt: new Date(now).toISOString(), official: false, ...extraction } }, { status: 202 });
 }
 
 type ImportRow = { id: string; original_name: string | null; mime_type: string | null; content_hash: string | null; raw_text: string | null; status: string; received_at: number };
 function toImport(row: ImportRow) {
   let meta: Record<string, unknown> = {};
   try { meta = JSON.parse(row.raw_text ?? '{}') as Record<string, unknown>; } catch { /* metadata remains empty */ }
-  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: false };
+  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, approved: meta.approved };
 }
 function invalid(error: string) { return NextResponse.json({ ok: false, error }, { status: 400 }); }
 function safeName(value: string) { return value.normalize('NFKC').replace(/[\\/\u0000-\u001f]/g, '_').slice(0, 120); }
@@ -84,3 +86,16 @@ function contentMatches(value: ArrayBuffer, mime: string) {
   return mime === 'text/csv' && !bytes.slice(0, Math.min(bytes.length, 8192)).includes(0);
 }
 async function sha256Hex(value: ArrayBuffer) { const digest = await crypto.subtle.digest('SHA-256', value); return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
+
+async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[] }> {
+  try {
+    let content = ''; let totalPages: number | undefined;
+    if (mime === 'application/pdf') {
+      const pdf = await getDocumentProxy(new Uint8Array(bytes)); const result = await extractText(pdf, { mergePages: true });
+      content = typeof result.text === 'string' ? result.text : result.text.join('\n'); totalPages = result.totalPages; await pdf.destroy();
+    } else if (mime === 'text/csv') content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    else return { extractionStatus: 'awaiting_spreadsheet_parser', previewLines: [] };
+    const previewLines = content.split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 60);
+    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines };
+  } catch { return { extractionStatus: 'extraction_failed', previewLines: [] }; }
+}
