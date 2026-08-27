@@ -1,5 +1,15 @@
 # Changelog
 
+### v2.0 — AGENTS do Diretor Geral 360 consolidado
+
+- Publicada a identidade do Diretor como parceiro executivo, integrador crítico e orquestrador dos quatro Gerentes Gerais.
+- Formalizadas as abas individuais de Conta, Performance, Financeiro e Relacionamento.
+- Instituídos desafio construtivo, provocação respeitosa, agenda executiva, memória em camadas e promoção governada de conhecimento.
+- Atualizada a parceria prioritária Conta–Performance e os modos Conversa Direta, Visão do Diretor e Evento.
+- Separados placar oficial, produção pendente, cenários, impacto financeiro e valor de carteira.
+- Mantidas as regras técnicas de proveniência, segurança, resiliência, auditoria, homologação e rollback.
+- Documento promovido para v2.0 `APPROVED_DESIGN`; runtime permanece inativo até implementação e avaliação.
+
 ## Não publicado — Gerente Geral Financeiro v2.0 aprovado
 
 > Gerente Geral e cinco especialistas aprovados por Rafael em 27/08/2026. Runtime permanece inativo.
