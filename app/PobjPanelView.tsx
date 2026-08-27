@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
-type Item={id:string;name:string;status:string;competence:string;baseDate:string;official:boolean;extractionStatus?:string;totalPages?:number;previewLines?:string[];approved?:{currentPoints:number;targetPoints:number}};
+type Item={id:string;name:string;status:string;competence:string;baseDate:string;official:boolean;extractionStatus?:string;totalPages?:number;previewLines?:string[];candidateLines?:string[];approved?:{currentPoints:number;targetPoints:number}};
 
 export default function PobjPanelView(){
  const input=useRef<HTMLInputElement>(null); const [file,setFile]=useState<File|null>(null); const [competence,setCompetence]=useState(''); const [baseDate,setBaseDate]=useState(''); const [state,setState]=useState<'idle'|'sending'|'done'|'error'>('idle'); const [error,setError]=useState(''); const [items,setItems]=useState<Item[]>([]); const [review,setReview]=useState<Item|null>(null); const [current,setCurrent]=useState(''); const [target,setTarget]=useState('1000'); const [note,setNote]=useState(''); const [publishing,setPublishing]=useState(false);

@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { extractText, getDocumentProxy } from 'unpdf';
+import { strFromU8, unzipSync } from 'fflate';
 import { isDenied, requireDashboardReader } from '../../reviews/shared';
 
 export const runtime = 'edge';
@@ -74,7 +75,7 @@ type ImportRow = { id: string; original_name: string | null; mime_type: string |
 function toImport(row: ImportRow) {
   let meta: Record<string, unknown> = {};
   try { meta = JSON.parse(row.raw_text ?? '{}') as Record<string, unknown>; } catch { /* metadata remains empty */ }
-  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, approved: meta.approved };
+  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, approved: meta.approved };
 }
 function invalid(error: string) { return NextResponse.json({ ok: false, error }, { status: 400 }); }
 function safeName(value: string) { return value.normalize('NFKC').replace(/[\\/\u0000-\u001f]/g, '_').slice(0, 120); }
@@ -87,15 +88,39 @@ function contentMatches(value: ArrayBuffer, mime: string) {
 }
 async function sha256Hex(value: ArrayBuffer) { const digest = await crypto.subtle.digest('SHA-256', value); return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
 
-async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[] }> {
+async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[]; candidateLines?: string[] }> {
   try {
     let content = ''; let totalPages: number | undefined;
     if (mime === 'application/pdf') {
       const pdf = await getDocumentProxy(new Uint8Array(bytes)); const result = await extractText(pdf, { mergePages: true });
       content = typeof result.text === 'string' ? result.text : result.text.join('\n'); totalPages = result.totalPages; await pdf.destroy();
     } else if (mime === 'text/csv') content = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    else if (mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') content = extractXlsxText(new Uint8Array(bytes));
     else return { extractionStatus: 'awaiting_spreadsheet_parser', previewLines: [] };
     const previewLines = content.split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 60);
-    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines };
+    const candidateLines = previewLines.filter((line) => /(pontos?|pts?|%|meta|realizado|atingimento|pobj|saldo|quantidade)/i.test(line) && /\d/.test(line)).slice(0, 20);
+    const reviewLines = [...candidateLines.map((line) => `★ Possível indicador: ${line}`), ...previewLines.filter((line) => !candidateLines.includes(line))].slice(0, 60);
+    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines: reviewLines, candidateLines };
   } catch { return { extractionStatus: 'extraction_failed', previewLines: [] }; }
 }
+
+function extractXlsxText(bytes: Uint8Array) {
+  const files = unzipSync(bytes, { filter: (file) => file.name === 'xl/sharedStrings.xml' || /^xl\/worksheets\/sheet\d+\.xml$/.test(file.name) });
+  const sharedXml = files['xl/sharedStrings.xml'] ? strFromU8(files['xl/sharedStrings.xml']) : '';
+  const shared = [...sharedXml.matchAll(/<si[\s>][\s\S]*?<\/si>/g)].map((match) => [...match[0].matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map((part) => decodeXml(part[1])).join(''));
+  const rows: string[] = [];
+  for (const name of Object.keys(files).filter((entry) => /^xl\/worksheets\/sheet\d+\.xml$/.test(entry)).sort().slice(0, 5)) {
+    const xml = strFromU8(files[name]);
+    for (const row of xml.matchAll(/<row[\s>][\s\S]*?<\/row>/g)) {
+      const values: string[] = [];
+      for (const cell of row[0].matchAll(/<c([^>]*)>([\s\S]*?)<\/c>/g)) {
+        const type = /\bt="([^"]+)"/.exec(cell[1])?.[1]; const body = cell[2]; const raw = /<v>([\s\S]*?)<\/v>/.exec(body)?.[1] ?? /<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/.exec(body)?.[1] ?? '';
+        const value = type === 's' ? shared[Number(raw)] ?? '' : decodeXml(raw); if (value.trim()) values.push(value.trim());
+      }
+      if (values.length) rows.push(values.join(' | ')); if (rows.length >= 200) break;
+    }
+    if (rows.length >= 200) break;
+  }
+  return rows.join('\n');
+}
+function decodeXml(value: string) { return value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); }
