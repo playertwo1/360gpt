@@ -1,0 +1,24 @@
+Olá, Codex! Estou retomando o projeto Diretor 360 v3.1.0 com você.
+
+Por favor, siga a ordem canônica:
+
+1. Leia o SESSION_STATE.json, o status.md, o checklist.md e o CODEX_HANDOFF.md.
+2. Execute a bateria geral para conferir que os 13 testes estão 100% aprovados:
+
+powershell -File scripts/run-all-hybrid-tests.ps1
+
+3. Conforme definido no CODEX_HANDOFF.md (Seção 2), realize uma Auditoria Retrospectiva Completa e Minuciosa de todas as Fases já homologadas (Fase 0 até Fase 7), inspecionando código, schemas JSON Draft 2020-12, regras dos 4 Gerentes Gerais, proteção de segurança/LGPD e testes.
+4. Apresente um relatório detalhado com:
+
+- Eventuais falhas, inconsistências ou edge cases encontrados;
+- Oportunidades de melhorias ou otimizações no código;
+- E, se houver melhorias, proponha os ajustes mantendo 100% dos testes aprovados.
+
+Regras desta execução agendada:
+
+- Trabalhe somente dentro deste repositório.
+- Não exponha senhas, tokens, chaves ou dados pessoais nos logs e no relatório.
+- Não implemente as melhorias propostas e não altere código, configurações, banco, site hospedado ou serviços externos.
+- Não faça commit, push, deploy, envio de mensagens ou qualquer efeito externo.
+- A execução é uma auditoria somente leitura, exceto pelos arquivos temporários inevitáveis dos testes.
+- Entregue o relatório final completo na resposta; o agendador salvará essa resposta em docs/audits/AUDITORIA_RETROSPECTIVA_AGENDADA_2026-08-26.md.
