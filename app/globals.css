@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-:root { --background: #f4f6f8; --foreground: #17202a; }
+:root { --background: #000; --foreground: #f5f5f7; }
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -9,7 +9,7 @@
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; overscroll-behavior-y: none; }
 button, a { transition: opacity .18s ease, transform .18s ease, background-color .18s ease; }
 button:hover, a:hover { opacity: .88; }
 button:active { transform: translateY(1px); }
