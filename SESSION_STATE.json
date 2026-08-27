@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
   "version": "3.1.0-confianca",
-  "last_updated": "2026-08-26T22:44:00-03:00",
-  "last_active_assistant": "Antigravity (Google)",
+  "last_updated": "2026-08-26T22:54:00-03:00",
+  "last_active_assistant": "ChatGPT Codex (OpenAI)",
   "next_recommended_assistant": "ChatGPT Codex (OpenAI)",
-  "current_mission": "INTEGRACAO_CARTEIRA_PJ_FLORESTA_REMIX_E_ROTEAMENTO_POBJ_METAS",
-  "current_mission_goal": "Integracao canonica do GG Conta com Floresta-remix, roteamento automatico de POBJ para GG Performance & Bibliotecario, OCR e diagnostico de metas no Telegram.",
+  "current_mission": "EVALS_L2_L4_INDEPENDENTES_DO_GABARITO",
+  "current_mission_goal": "Eliminar leakage nos Evals, explicitar o escopo L2 e endurecer referências L3 mantendo 14 de 14 testes aprovados.",
   "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - Fases 0 a 9)",
-  "current_phase": "Homologacao Consolidada (5 Gerentes Gerais Ativos)",
+  "current_phase": "Homologacao Consolidada com Evals 2.1 Anti-Leakage",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
@@ -38,6 +38,6 @@
   },
   "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
   "launcher_command": ".\\iniciar-diretor-360.bat",
-  "last_commit": "f2829f1",
-  "last_backup": "backup-2026-08-26_224308-handoff-sync.zip"
+  "last_commit": "7712ba1",
+  "last_backup": "backup-post-evals-hardening-20260826-225400.zip"
 }
