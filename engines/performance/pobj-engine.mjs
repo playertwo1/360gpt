@@ -105,8 +105,11 @@ export function evaluateIndicator(input) {
     pointCurve = null,
     pointCurveMode = null,
     updateLagStatus = "UNKNOWN",
+    freshnessAssessment = null,
     estimatedEffort = null
   } = input;
+
+  const effectiveLagStatus = freshnessAssessment?.freshnessStatus ?? updateLagStatus;
 
   requireFinite("officialActual", officialActual);
   requireFinite("pendingActual", pendingActual);
@@ -123,7 +126,7 @@ export function evaluateIndicator(input) {
       projection: { actualAfterRecognition: round(officialActual + pendingActual), attainmentPercent: null, thresholdPosition: "NOT_APPLICABLE", isOfficial: false },
       gaps: { toMinimumPercent: null, toTargetPercent: null, toCapPercent: null },
       prioritization: { actionClass: "EXCLUDE_ZERO_TARGET", estimatedEffort: null, eligibleForAutomaticRanking: false },
-      updateLagStatus
+      updateLagStatus: effectiveLagStatus
     };
   }
 
@@ -148,7 +151,7 @@ export function evaluateIndicator(input) {
   const gapToCap = round(Math.max(0, capPercent - officialAttainment));
 
   let actionClass;
-  if (updateLagStatus !== "CURRENT") actionClass = "RECONCILE_BEFORE_PRIORITIZING";
+  if (effectiveLagStatus !== "CURRENT") actionClass = "RECONCILE_BEFORE_PRIORITIZING";
   else if (position === "AT_OR_ABOVE_CAP") actionClass = "DEPRIORITIZE_FOR_POINTS";
   else if (position === "NEAR_MINIMUM") actionClass = "RESCUE_MINIMUM";
   else if (position === "NEAR_TARGET") actionClass = "CLOSE_TARGET";
@@ -183,9 +186,10 @@ export function evaluateIndicator(input) {
     prioritization: {
       actionClass,
       estimatedEffort: effort,
-      eligibleForAutomaticRanking: updateLagStatus === "CURRENT" && effort !== null
+      eligibleForAutomaticRanking: effectiveLagStatus === "CURRENT" && effort !== null
     },
-    updateLagStatus
+    updateLagStatus: effectiveLagStatus,
+    freshnessAssessment
   };
 }
 
@@ -201,6 +205,7 @@ export function rankIndicators(evaluations) {
   };
 
   return [...evaluations]
+    .filter((item) => item.prioritization.eligibleForAutomaticRanking)
     .filter((item) => !["DEPRIORITIZE_FOR_POINTS", "EXCLUDE_ZERO_TARGET"].includes(item.prioritization.actionClass))
     .sort((a, b) => {
       const classDifference = priority[b.prioritization.actionClass] - priority[a.prioritization.actionClass];
