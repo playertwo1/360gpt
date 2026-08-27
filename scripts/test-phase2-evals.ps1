@@ -52,6 +52,13 @@ if ($report.l3_reasoning_lineage.evidence_coverage_percent -ne 100) {
 if ($report.l4_decision_intelligence.decision_agreement_rate_percent -lt 90) {
     throw "L4 Decision Agreement Rate abaixo de 90%!"
 }
+if (-not $report.leakage_guard.ground_truth_excluded_from_model_input -or
+    -not $report.leakage_guard.tamper_invariance_passed) {
+    throw "Proteção contra leakage do gabarito não comprovada!"
+}
+if ($report.l2_extraction.scope -ne "business_identity_name_and_cnpj") {
+    throw "Escopo homologado do L2 não está explícito!"
+}
 
 Write-Host "  [OK] Todas as 4 camadas atingiram ou superaram as metas contratuais." -ForegroundColor Green
 Write-Host ""

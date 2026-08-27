@@ -1,5 +1,5 @@
 {
-  "suite_version": "2.0.0-canonical-evals",
+  "suite_version": "2.1.0-independent-ground-truth",
   "total_cases_evaluated": 20,
   "l1_deterministic": {
     "math_accuracy_percent": 100.0,
@@ -7,18 +7,24 @@
     "passed": true
   },
   "l2_extraction": {
+    "scope": "business_identity_name_and_cnpj",
     "avg_precision": 1.0,
     "avg_recall": 1.0,
     "avg_f1_score": 1.0,
     "passed": true
   },
   "l3_reasoning_lineage": {
+    "validation_scope": "reference_format_uniqueness_and_non_empty",
     "evidence_coverage_percent": 100.0,
     "passed": true
   },
   "l4_decision_intelligence": {
     "decision_agreement_rate_percent": 100.0,
     "passed": true
+  },
+  "leakage_guard": {
+    "ground_truth_excluded_from_model_input": true,
+    "tamper_invariance_passed": true
   },
   "overall_status": "HOMOLOGATED",
   "cases_detail": [

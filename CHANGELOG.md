@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-26 — Evals L2–L4 independentes do gabarito
+
+- Campos de gabarito passaram a ser removidos antes de qualquer inferência avaliada.
+- L2 foi delimitado explicitamente à extração de identidade PJ: razão social e CNPJ.
+- Adicionada prova negativa de invariância: adulterar `entities`, `expected_status` ou `ground_truth_decision` não pode mudar a previsão.
+- L3 passou a rejeitar referências de evidência vazias, duplicadas, malformadas ou com caracteres de caminho.
+- Relatório dos Evals atualizado para `2.1.0-independent-ground-truth`.
+
 ## 2026-08-26 — Endurecimento da verificação de backups
 
 - O teste H9 passou a abrir cada backup ZIP e confirmar que ele contém entradas válidas.

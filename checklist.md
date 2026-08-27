@@ -87,6 +87,11 @@
   *Teste:* `powershell -File scripts/test-phase2-evals.ps1` (PASS).  
   *Homologado por:* Antigravity | *Data:* 26/08/2026
 
+- [x] **M2.4 — Isolamento do Gabarito e Teste Anti-Leakage**  
+  *Evidência:* `evals/eval_engine.py` remove o ground truth antes da inferência e comprova invariância após adulteração do gabarito.  
+  *Teste:* `powershell -File scripts/test-phase2-evals.ps1` (PASS).  
+  *Homologado por:* Codex | *Data:* 26/08/2026
+
 
 ---
 
