@@ -12,6 +12,25 @@ assert.equal(current.freshnessStatus, "CURRENT");
 assert.equal(current.lagDays, 2);
 assert.equal(current.eligibleForAutomaticRanking, true);
 
+const watermarkCurrent = assessIndicatorFreshness({
+  indicatorBaseDate: "2026-08-24",
+  reportBaseDate: "2026-08-25",
+  asOfDate: "2026-08-26",
+  expectedBaseDate: "2026-08-24"
+});
+assert.equal(watermarkCurrent.assessmentMode, "SOURCE_WATERMARK");
+assert.equal(watermarkCurrent.freshnessStatus, "CURRENT");
+
+const watermarkLagged = assessIndicatorFreshness({
+  indicatorBaseDate: "2026-08-21",
+  reportBaseDate: "2026-08-25",
+  asOfDate: "2026-08-26",
+  expectedBaseDate: "2026-08-24",
+  graceDays: 1
+});
+assert.equal(watermarkLagged.lagDays, 3);
+assert.equal(watermarkLagged.freshnessStatus, "POSSIBLY_LAGGED");
+
 const stale = assessIndicatorFreshness({
   indicatorBaseDate: "2026-08-21",
   reportBaseDate: "2026-08-25",

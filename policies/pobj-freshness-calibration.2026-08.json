@@ -1,0 +1,49 @@
+{
+  "policyId": "POBJ_FRESHNESS_CALIBRATION_2026_08",
+  "version": "0.1.0",
+  "status": "CALIBRATING",
+  "activationAllowed": false,
+  "sampleSize": 5,
+  "conclusion": "INDICATOR_SPECIFIC_CADENCE_REQUIRED",
+  "productionModeRecommendation": "SOURCE_WATERMARK",
+  "fallbackMode": "CALENDAR_LAG_OFFLINE_EVAL_ONLY",
+  "sources": [
+    { "artifact": "pobj1908.pdf", "sha256": "580d5cd1f5506043a3e1daada1ddb1b4a2c4b5421346876618d69a051b620d05" },
+    { "artifact": "pobj2008.pdf", "sha256": "eb5e2c1d3f6b0c28585c36fd2cfa2901c5bb9aef615c6cc40531e10a8d55b86b" },
+    { "artifact": "POBJ2108.pdf", "sha256": "5d92adab43dc967c5826b93239979078b23e9b155b3a53c2a494ac788043c268" },
+    { "artifact": "POBJ2408.pdf", "sha256": "2650755939bedea2ce20979ada9af5fb9e24dd4d84ab747bbfbdc90727a73d5f" },
+    { "artifact": "POBJ2608.pdf", "sha256": "134b283fd059921d4c35f1fdf274c3dc5769b0e0ebc1dd5c8b87eba1fcdbc370" }
+  ],
+  "observations": [
+    {
+      "indicator": "Producao de Credito PJ (Todos os Produtos)",
+      "baseDates": ["2026-08-17", "2026-08-18", "2026-08-19", "2026-08-21", "2026-08-24"],
+      "candidateProfile": "FREQUENT_BUSINESS_DAY_UPDATE"
+    },
+    {
+      "indicator": "Vencidos Ate 59 dias",
+      "baseDates": ["2026-08-13", "2026-08-13", "2026-08-13", "2026-08-13", "2026-08-24"],
+      "candidateProfile": "BATCH_OR_IRREGULAR_UPDATE"
+    },
+    {
+      "indicator": "Cartoes (Academia de Astros)",
+      "baseDates": ["2026-08-14", "2026-08-19", "2026-08-18", "2026-08-20", "2026-08-20"],
+      "candidateProfile": "SOURCE_SPECIFIC_UPDATE",
+      "warning": "NON_MONOTONIC_OCR_OR_SOURCE_OBSERVATION_REQUIRES_REVIEW"
+    },
+    {
+      "indicator": "Seguros (Olimpiada de Producao)",
+      "baseDates": [null, null, "2026-08-18", "2026-08-19", "2026-08-21"],
+      "candidateProfile": "SOURCE_SPECIFIC_UPDATE",
+      "warning": "PARTIAL_OBSERVATION"
+    }
+  ],
+  "promotionRequirements": [
+    "CONFIRM_OCR_OBSERVATIONS_AGAINST_SOURCE",
+    "OBSERVE_AT_LEAST_ONE_COMPLETE_MONTH",
+    "DEFINE_EXPECTED_WATERMARK_OWNER_PER_INDICATOR",
+    "TEST_WEEKENDS_HOLIDAYS_AND_LATE_BATCHES",
+    "OWNER_APPROVAL",
+    "ROLLBACK_DEFINED"
+  ]
+}
