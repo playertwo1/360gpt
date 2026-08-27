@@ -12,6 +12,13 @@ type StateSnapshot = {
   gates: unknown[]; recommended_actions: unknown[]; manual_review: unknown;
 };
 
+type CompletedJob = {
+  status: string;
+  output_json: string | null;
+  source: string;
+  owner_id: string;
+};
+
 export async function POST(request: Request) {
   const denied = await requireBridge(request); if (denied) return denied;
   try {
@@ -27,8 +34,10 @@ export async function POST(request: Request) {
     const computedHash = `sha256:${await sha256(JSON.stringify(canonicalize(snapshot)))}`;
     const suppliedHash = boundedString(persisted?.state_hash, 80, /^sha256:[0-9a-f]{64}$/);
     if (!suppliedHash || suppliedHash !== computedHash) return NextResponse.json({ ok: false, error: 'state_hash_mismatch' }, { status: 409 });
-    const job = await env.DB.prepare(`SELECT status, output_json FROM agent_runs WHERE id = ? AND ((status = 'PROCESSING' AND lease_token = ? AND lease_expires_at >= ?) OR status = 'SUCCEEDED')`)
-      .bind(jobId, leaseToken, Date.now()).first<{ status: string; output_json: string | null }>();
+    const job = await env.DB.prepare(`SELECT ar.status, ar.output_json, d.source, d.owner_id
+      FROM agent_runs ar JOIN documents d ON d.id = ar.document_id
+      WHERE ar.id = ? AND ((ar.status = 'PROCESSING' AND ar.lease_token = ? AND ar.lease_expires_at >= ?) OR ar.status = 'SUCCEEDED')`)
+      .bind(jobId, leaseToken, Date.now()).first<CompletedJob>();
     if (!job) return NextResponse.json({ ok: false, error: 'lease_not_found' }, { status: 409 });
     if (job.status === 'SUCCEEDED') {
       const previous = job.output_json ? JSON.parse(job.output_json) as { state_id?: string; state_hash?: string } : {};
@@ -98,8 +107,73 @@ export async function POST(request: Request) {
       );
     }
     await env.DB.batch(statements);
-    return NextResponse.json({ ok: true, duplicate: Boolean(existing), state_id: stateId, state_version: stateVersion, state_hash: suppliedHash });
+    const telegramReplySent = await maybeSendTelegramResult(job, jobId, snapshot, result, stateId, now);
+    return NextResponse.json({ ok: true, duplicate: Boolean(existing), state_id: stateId, state_version: stateVersion, state_hash: suppliedHash, telegram_reply_sent: telegramReplySent });
   } catch (error) { return requestErrorResponse(error); }
+}
+
+async function maybeSendTelegramResult(
+  job: CompletedJob,
+  jobId: string,
+  snapshot: StateSnapshot,
+  result: Record<string, unknown>,
+  stateId: string,
+  now: number,
+) {
+  if (job.source !== 'telegram' || env.TELEGRAM_SEND_RESULTS_ENABLED !== 'true' || !env.TELEGRAM_BOT_TOKEN) return false;
+  if (!/^-?[0-9]{1,20}$/.test(job.owner_id)) return false;
+
+  const auditId = `telegram-result-${jobId}`;
+  const previous = await env.DB.prepare('SELECT action FROM audit_log WHERE id = ?').bind(auditId).first<{ action: string }>();
+  if (previous?.action === 'telegram_reply_sent') return true;
+  if (previous) {
+    await env.DB.prepare(`UPDATE audit_log SET action = 'telegram_reply_pending', details_json = ?, created_at = ? WHERE id = ?`)
+      .bind(JSON.stringify({ stateId, retry: true }), now, auditId).run();
+  } else {
+    await env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
+      VALUES (?, ?, 'bridge:telegram-reply', 'telegram_reply_pending', 'state_snapshot', ?, ?, ?)`)
+      .bind(auditId, job.owner_id, stateId, JSON.stringify({ stateId }), now).run();
+  }
+
+  try {
+    await sendTelegramResult(Number(job.owner_id), buildTelegramResultText(snapshot, result, stateId));
+    await env.DB.prepare(`UPDATE audit_log SET action = 'telegram_reply_sent', details_json = ? WHERE id = ?`)
+      .bind(JSON.stringify({ stateId, sentAt: Date.now() }), auditId).run();
+    return true;
+  } catch (error) {
+    const errorCode = error instanceof Error ? error.message : 'telegram_result_failed';
+    await env.DB.prepare(`UPDATE audit_log SET action = 'telegram_reply_failed', details_json = ? WHERE id = ?`)
+      .bind(JSON.stringify({ stateId, errorCode }), auditId).run();
+    return false;
+  }
+}
+
+function buildTelegramResultText(snapshot: StateSnapshot, result: Record<string, unknown>, stateId: string) {
+  const assessment = result.executive_assessment && typeof result.executive_assessment === 'object'
+    ? result.executive_assessment as Record<string, unknown>
+    : {};
+  const summary = boundedString(assessment.summary, 1500) || boundedString(assessment.executive_summary, 1500);
+  const statusLabel = snapshot.overall_status === 'READY' ? 'Pronto para análise' : 'Revisão humana necessária';
+  const lines = [
+    'Diretor 360 concluiu o processamento.',
+    `Status: ${statusLabel}`,
+    `Achados: ${snapshot.findings.length}`,
+    `Ações recomendadas: ${snapshot.recommended_actions.length}`,
+    `Lacunas de dados: ${snapshot.data_gaps.length}`,
+  ];
+  if (summary) lines.push('', summary);
+  lines.push('', `Protocolo: ${stateId}`);
+  return lines.join('\n').slice(0, 3900);
+}
+
+async function sendTelegramResult(chatId: number, text: string) {
+  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text }),
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) throw new Error(`telegram_send_${response.status}`);
 }
 
 async function buildReviewRequest(snapshot: StateSnapshot, stateId: string, stateVersion: number, now: number) {

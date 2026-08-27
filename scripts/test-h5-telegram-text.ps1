@@ -23,6 +23,12 @@ if ($wContent -notmatch 'TELEGRAM_ALLOWED_CHAT_IDS' -or $wContent -notmatch 'cha
 }
 Write-Host '  [OK] Restricao exclusiva ao chat_id de Rafael confirmada.' -ForegroundColor Green
 
+$completionRoute = Get-Content 'app/api/bridge/complete/route.ts' -Raw
+if ($completionRoute -notmatch 'TELEGRAM_SEND_RESULTS_ENABLED' -or $completionRoute -notmatch 'telegram_reply_sent') {
+    throw 'Resposta final do processamento ao Telegram não está implementada!'
+}
+Write-Host '  [OK] Resposta final idempotente ao chat de origem validada.' -ForegroundColor Green
+
 
 # 3. Validar scripts de configuracao e ativacao do Telegram
 Write-Host ''

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-26 — Correção do canal Telegram real
+
+- Diagnosticado webhook sem URL ativa e ingestão hospedada desabilitada, com mensagens pendentes no Telegram.
+- Confirmação imediata preparada para cada mensagem aceita.
+- Conclusão da ponte passou a responder ao chat Telegram de origem com status, achados, ações, lacunas e protocolo.
+- Resposta final protegida por registro de auditoria para reduzir duplicidade e permitir retry após falha.
+- Variáveis hospedadas preparadas; publicação em produção aguarda aprovação explícita por o site possuir acesso público.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
