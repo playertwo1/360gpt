@@ -5,6 +5,7 @@ declare namespace Cloudflare {
     TELEGRAM_BOT_TOKEN?: string;
     TELEGRAM_WEBHOOK_SECRET?: string;
     TELEGRAM_ALLOWED_CHAT_IDS?: string;
+    TELEGRAM_OWNER_ACCOUNT_USER_ID?: string;
     DASHBOARD_ALLOWED_EMAILS?: string;
     REVIEWER_ALLOWED_EMAILS?: string;
     TELEGRAM_INGEST_ENABLED?: string;

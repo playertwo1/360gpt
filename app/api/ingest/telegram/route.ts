@@ -90,6 +90,7 @@ export async function POST(request: Request) {
 
   const updateId = String(update.update_id);
   const chatId = String(message.chat.id);
+  const ownerId = env.TELEGRAM_OWNER_ACCOUNT_USER_ID?.trim() || chatId;
   const documentId = `telegram-${chatId}-${updateId}`;
   const receivedAt = Date.now();
   const reservation = await reserveUpdate(updateId, chatId, String(message.message_id), documentId, receivedAt);
@@ -116,11 +117,11 @@ export async function POST(request: Request) {
     const auditId = `telegram-audit-${chatId}-${updateId}`;
     await env.DB.batch([
       env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?)`)
-        .bind(documentId, chatId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
+        .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
       env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary, available_at) VALUES (?, ?, 'diretor', 'QUEUED', ?, ?)`)
         .bind(runId, documentId, text || document?.file_name || 'Nova entrada', receivedAt),
       env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'ingested', 'document', ?, ?, ?)`)
-        .bind(auditId, chatId, `telegram:${message.from?.id ?? 'unknown'}`, documentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, contentTrust: 'UNTRUSTED', externalEffectsAllowed: false }), receivedAt),
+        .bind(auditId, ownerId, `telegram:${message.from?.id ?? 'unknown'}`, documentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, contentTrust: 'UNTRUSTED', externalEffectsAllowed: false }), receivedAt),
       env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`)
         .bind(Date.now(), updateId),
     ]);

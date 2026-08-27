@@ -6,7 +6,7 @@ export const runtime = 'edge';
 
 type ClaimedJob = {
   id: string; document_id: string; attempt_count: number; lease_token: string; lease_expires_at: number;
-  owner_id: string; source_message_id: string; original_name: string | null; mime_type: string | null;
+  owner_id: string; source: string; source_message_id: string | null; original_name: string | null; mime_type: string | null;
   storage_key: string | null; content_hash: string | null; raw_text: string | null;
 };
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
           ) ORDER BY d.received_at, ar.id LIMIT 1)`)
         .bind(now, leaseToken, leaseExpiresAt, BRIDGE_MAX_ATTEMPTS, now, now),
       env.DB.prepare(`SELECT ar.id, ar.document_id, ar.attempt_count, ar.lease_token, ar.lease_expires_at,
-          d.owner_id, d.source_message_id, d.original_name, d.mime_type, d.storage_key, d.content_hash, d.raw_text
+          d.owner_id, d.source, d.source_message_id, d.original_name, d.mime_type, d.storage_key, d.content_hash, d.raw_text
         FROM agent_runs ar JOIN documents d ON d.id = ar.document_id WHERE ar.lease_token = ? AND ar.status = 'PROCESSING'`)
         .bind(leaseToken),
     ]);
@@ -37,8 +37,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true, schema_version: '1.0.0', worker_id: workerId, job_id: job.id, document_id: job.document_id,
       lease_token: job.lease_token, lease_expires_at: new Date(job.lease_expires_at).toISOString(), attempt: job.attempt_count,
-      source_event_id: `telegram-update-${job.source_message_id}`, tenant_id: 'tenant-demo', subject_ref: 'cust-demo-001',
-      actor_id: `telegram:${job.owner_id}`, purpose: 'offline_evaluation', data_classification: 'INTERNAL', text: job.raw_text ?? '',
+      source_event_id: `${job.source}-${job.source_message_id ?? job.document_id}`, tenant_id: 'tenant-demo', subject_ref: job.source === 'pobj_mobile' ? 'pobj-performance' : 'cust-demo-001',
+      actor_id: `${job.source}:${job.owner_id}`, purpose: job.source === 'pobj_mobile' ? 'pobj_performance_analysis' : 'offline_evaluation', data_classification: 'INTERNAL', text: job.raw_text ?? '',
       document: job.storage_key ? { file_name: job.original_name, mime_type: job.mime_type, content_hash: job.content_hash, download_path: `/api/bridge/file?job_id=${encodeURIComponent(job.id)}` } : null,
       security: { content_trust: 'UNTRUSTED', external_effects_allowed: false },
     }, { headers: { 'Cache-Control': 'no-store' } });

@@ -46,8 +46,11 @@ export async function POST(request: Request) {
   const bytes = await file.arrayBuffer();
   if (!contentMatches(bytes, mime)) return invalid('file_content_mismatch');
   const hash = `sha256:${await sha256Hex(bytes)}`;
+  const duplicate = await env.DB.prepare(`SELECT id, original_name, mime_type, content_hash, raw_text, status, received_at FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile','telegram') ORDER BY received_at DESC LIMIT 1`).bind(access.userId, hash).first<ImportRow>();
+  if (duplicate) return NextResponse.json({ ok: true, duplicate: true, import: toImport(duplicate) }, { status: 200 });
   const now = Date.now();
   const id = `pobj-${crypto.randomUUID()}`;
+  const runId = `pobj-run-${crypto.randomUUID()}`;
   const storageKey = `pobj/${access.userId}/${new Date(now).toISOString().slice(0, 10)}/${id}.${extension}`;
   const extraction = await extractContent(bytes, mime);
   const metadata = { competence, baseDate, size: file.size, reviewRequired: true, official: false, ...extraction };
@@ -58,24 +61,26 @@ export async function POST(request: Request) {
   });
   try {
     await env.DB.batch([
-      env.DB.prepare(`INSERT INTO documents (id, owner_id, source, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
-        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, ?)`).bind(id, access.userId, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), extraction.extractionStatus === 'extracted' ? 'pending_review' : 'pending_extraction', now),
+      env.DB.prepare(`INSERT INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
+        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, 'received', ?)`).bind(id, access.userId, id, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), now),
+      env.DB.prepare(`INSERT INTO agent_runs (id, document_id, agent_role, status, input_summary, attempt_count, available_at)
+        VALUES (?, ?, 'diretor', 'QUEUED', ?, 0, ?)`).bind(runId, id, `POBJ ${competence} recebido pelo site; processar via ponte n8n e encaminhar ao Gerente de Performance.`, now),
       env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
-        VALUES (?, ?, ?, 'pobj_received', 'document', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, id, JSON.stringify({ ...metadata, hash }), now),
+        VALUES (?, ?, ?, 'ingested_and_enqueued', 'agent_run', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, runId, JSON.stringify({ documentId:id, channel:'site', competence, baseDate, hash, contentTrust:'UNTRUSTED', externalEffectsAllowed:false }), now),
     ]);
   } catch (error) {
     await env.FILES.delete(storageKey);
     throw error;
   }
 
-  return NextResponse.json({ ok: true, import: { id, name: safeName(file.name), mime, hash, competence, baseDate, size: file.size, status: extraction.extractionStatus === 'extracted' ? 'pending_review' : 'pending_extraction', receivedAt: new Date(now).toISOString(), official: false, ...extraction } }, { status: 202 });
+  return NextResponse.json({ ok: true, queued: true, jobId: runId, import: { id, name: safeName(file.name), mime, hash, competence, baseDate, size: file.size, status: 'received', receivedAt: new Date(now).toISOString(), official: false, pipeline: 'n8n', ...extraction } }, { status: 202 });
 }
 
 type ImportRow = { id: string; original_name: string | null; mime_type: string | null; content_hash: string | null; raw_text: string | null; status: string; received_at: number };
 function toImport(row: ImportRow) {
   let meta: Record<string, unknown> = {};
   try { meta = JSON.parse(row.raw_text ?? '{}') as Record<string, unknown>; } catch { /* metadata remains empty */ }
-  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, indicatorSuggestions: meta.indicatorSuggestions, approved: meta.approved };
+  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', pipeline: row.status === 'processed' ? 'n8n_processed' : 'n8n', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, indicatorSuggestions: meta.indicatorSuggestions, approved: meta.approved ?? meta.localReview };
 }
 function invalid(error: string) { return NextResponse.json({ ok: false, error }, { status: 400 }); }
 function safeName(value: string) { return value.normalize('NFKC').replace(/[\\/\u0000-\u001f]/g, '_').slice(0, 120); }
