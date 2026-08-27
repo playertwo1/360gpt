@@ -1,5 +1,29 @@
 # Changelog
 
+## Não publicado — Gerente Geral de Performance v5.3 aprovado
+
+> Desenho do Gerente Geral e dos cinco especialistas aprovado por Rafael em 27/08/2026. O runtime continua inalterado até implementação, avaliações e promoção próprias para `ACTIVE`.
+
+- Gerente Geral de Performance redesenhado a partir do projeto `Performance-PJ-mobile`, do manual POBJ e dos relatórios diários oficiais fornecidos por Rafael.
+- Performance e Conta definidos como núcleo prioritário do plano comercial: Performance mede reconhecimento e risco profissional; Conta identifica onde a produção pode acontecer na carteira.
+- Criado catálogo de cinco especialistas de Performance, limitado a quatro por execução: Fontes e Reconciliação, Pontuação e Estado, Gap e Cenários, Executabilidade e Plano, Desfechos e Aprendizado.
+- `Next Best Actions` preservado com até cinco prioridades, comparando piso, faixas, 100%, teto, pontos marginais, esforço, prazo, elegibilidade, DCO e executabilidade.
+- Incluído desafio estratégico para questionar hábitos, metas cronicamente baixas e caminhos pouco explorados, sem contrariar Rafael sem evidência.
+- Relatórios diários POBJ enviados por Rafael classificados como fontes oficiais; hash, extração e reconciliação permanecem controles técnicos de ingestão.
+- Especialista de Fontes e Reconciliação aprovado com manual normalmente semestral, metas mensais versionadas, revisões intramês, data-base por indicador e controle de produção ainda não refletida.
+- Especialista de Pontuação e Estado aprovado com separação obrigatória entre placar oficial, produção pendente de atualização e cenário determinístico após reconhecimento.
+- Especialista de Gap, Mudanças e Cenários aprovado com classificação de urgência temporal, considerando dias úteis, execução, data-base e janela provável de reconhecimento da competência mensal.
+- Especialista de Executabilidade e Plano aprovado com fila diária viva e até cinco prioridades; na fase inicial opera por meta, sem empresa ou origem por ação, até o cadastro de contas e a integração com Conta estarem prontos.
+- Especialista de Desfechos e Aprendizado aprovado com reconciliação entre execução e reconhecimento, operação inicial sem empresa por ação, tratamento `LOW_SAMPLE` e horizontes mensal, recorrente e estratégico.
+- Separados placar oficial, produção operacional pendente e cenários potenciais; IA não calcula pontos nem altera regras POBJ.
+- Formalizada parceria Performance–Conta por dependências mediadas pelo Motor 360, sem chamadas laterais entre gerentes.
+- Diferenciadas produção originada na carteira existente e aquisição de contas novas, com pipelines e evidências próprios.
+- Proposta arquitetura de abas individuais para conversa direta com cada Gerente Geral, mantendo Diretor para visão transversal e Motor 360 para auditoria e compartilhamento.
+- Conversas passam a gerar contexto de sessão, candidatos a aprendizado, fatos confirmados e aprendizados aprovados, impedindo que hipótese vire fato automaticamente.
+- Adotado tratamento `LOW_SAMPLE` para o início com poucas empresas e poucos desfechos.
+- Financeiro reconhecido como domínio em amadurecimento, com estados `NOT_AVAILABLE`, `LEARNING`, `ESTIMATED` e `VALIDATED`; sua ausência não fabrica retorno nem bloqueia Conta e Performance.
+- Registrada necessidade de versionar `AGENTS.md`, base dos Gerentes Gerais, schemas, políticas de memória e UI antes da ativação.
+
 ## 2026-08-26 — Correção do canal Telegram real
 
 - Diagnosticado webhook sem URL ativa e ingestão hospedada desabilitada, com mensagens pendentes no Telegram.
