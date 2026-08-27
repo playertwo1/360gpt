@@ -27,4 +27,25 @@ function validateIndicators(value: unknown): ApprovedIndicator[] | null {
   for (const item of value) { if (!item || typeof item !== 'object') return null; const row = item as Record<string, unknown>; const key = String(row.key??'').trim().slice(0,40); const name = String(row.name??'').trim().slice(0,80); const unit = String(row.unit??''); const numeric = numberInRange(row.value,-1_000_000_000,1_000_000_000); const target = row.target === null || row.target === '' || row.target === undefined ? null : numberInRange(row.target,0,1_000_000_000); if (!key || !name || numeric===null || !['percent','points','currency','count'].includes(unit) || target===null && row.target!==null && row.target!=='' && row.target!==undefined) return null; result.push({key,name,value:numeric,unit:unit as ApprovedIndicator['unit'],target}); }
   return result;
 }
-function analyzeIndicators(items: ApprovedIndicator[]) { return items.map((item) => { if (item.target === null || item.target === 0) return { key:item.key,status:'MONITORAR',message:'Meta não informada; acompanhar evolução.' }; const ratio=item.value/item.target; const inverse=item.key==='vencidos'; const good=inverse?item.value<=item.target:ratio>=1; const attention=inverse?item.value<=item.target*1.3:ratio>=0.7; return {key:item.key,status:good?'ATINGIDO':attention?'ATENCAO':'CRITICO',message:good?'Meta atingida ou dentro do limite.':attention?'Próximo da meta; exige plano de fechamento.':'Distante da meta; priorizar ação.'}; }); }
+function analyzeIndicators(items: ApprovedIndicator[]) {
+  const priority = { CRITICO: 0, ATENCAO: 1, MONITORAR: 2, ATINGIDO: 3 } as const;
+  return items.map((item) => {
+    const action = nextAction(item.key); const inverse = item.key === 'vencidos';
+    if (item.target === null || item.target === 0) return { key:item.key,status:'MONITORAR' as const,priority:'P2',gap:null,message:`Meta não informada. Próxima ação: ${action}` };
+    const ratio=item.value/item.target; const good=inverse?item.value<=item.target:ratio>=1; const attention=inverse?item.value<=item.target*1.3:ratio>=0.7; const status=good?'ATINGIDO' as const:attention?'ATENCAO' as const:'CRITICO' as const; const gap=inverse?Math.max(0,item.value-item.target):Math.max(0,item.target-item.value);
+    const gapLabel=gap===0?'sem gap':`gap de ${formatGap(gap,item.unit)}`; const message=good?`Meta atingida ou dentro do limite; ${gapLabel}. Preserve o resultado e confirme o processamento.`:`${gapLabel}. Próxima ação: ${action}`;
+    return {key:item.key,status,priority:status==='CRITICO'?'P0':status==='ATENCAO'?'P1':'P3',gap,message};
+  }).sort((left,right)=>priority[left.status]-priority[right.status]);
+}
+function nextAction(key: string) { const actions: Record<string,string> = {
+  contas:'confirmar contas abertas ainda não contabilizadas e priorizar candidatos pré-aprovados com maior chance de ativação.',
+  cielo:'validar o faturamento já transacionado e selecionar clientes com volume fora da Cielo.',
+  rotativo:'conferir limites liberados pendentes de contabilização e clientes elegíveis com uso recorrente.',
+  risco:'tratar vencidos, restrições e exceções que reduzem a qualidade da carteira.',
+  captacao:'confirmar entradas previstas, data de liquidação e risco de saída de recursos.',
+  vencidos:'ordenar cobranças por impacto, probabilidade de regularização e prazo restante.',
+  consorcio:'priorizar clientes sem o produto e com capacidade financeira e objetivo compatível.',
+  seguros:'revisar lacunas de proteção nos clientes com maior aderência e relacionamento.',
+  credito:'validar operações em andamento e alternativas adequadas à necessidade real do cliente.',
+  }; return actions[key]??'validar a origem do dado, o prazo e as oportunidades em andamento.'; }
+function formatGap(value:number,unit:ApprovedIndicator['unit']) { if(unit==='percent') return `${value.toFixed(1).replace('.',',')} p.p.`; if(unit==='currency') return `R$ ${value.toLocaleString('pt-BR')}`; if(unit==='points') return `${value.toLocaleString('pt-BR')} pontos`; return value.toLocaleString('pt-BR'); }
