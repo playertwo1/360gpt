@@ -148,14 +148,14 @@
 ---
 
 
-## 🚀 FASE 7: Operação Real Supervisionada & Canary Rollout
+## 🚀 FASE 7: Simulação Canary Supervisionada (dados sintéticos)
 
-- [x] **M7.1 — Canary 1-3 Casos Reais Autorizados**  
+- [x] **M7.1 — Simulação Canary de 1-3 Casos Sintéticos**  
   *Evidência:* `docs/PROTOCOLO_CANARY_SUPERVISIONADO.md` e rota `app/api/canary/route.ts` (Onda 1 homologada).  
   *Teste:* `powershell -File scripts/test-phase7-canary-rollout.ps1` (PASS).  
   *Homologado por:* Antigravity | *Data:* 26/08/2026
 
-- [x] **M7.2 — Expansão para 5 a 10 Casos com Monitoramento de Overrides**  
+- [x] **M7.2 — Simulação de 5 a 10 Casos com Monitoramento de Overrides**  
   *Evidência:* `core/canary_monitor.py` comprovando Human Override Rate de 10.0% (Meta <= 10.0%) e concordância de 90.0%.  
   *Teste:* `powershell -File scripts/test-phase7-canary-rollout.ps1` (PASS).  
   *Homologado por:* Antigravity | *Data:* 26/08/2026

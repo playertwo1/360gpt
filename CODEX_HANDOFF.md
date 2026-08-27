@@ -23,7 +23,7 @@
 ## 📌 1. Princípio Fundamental & Regra Áurea de Governança
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Rafael decide.** Nenhum componente de IA aprova crédito, altera cadastros ou movimenta valores sem despacho humano de Rafael na Mesa do Revisor (`/reviews`).  
-> Há autorização institucional vigente para uso de dados reais em escopo autorizado, com governança estrita e Human-in-the-Loop.
+> O repositório permanece em `OFFLINE_EVAL` com dados sintéticos. Qualquer autorização institucional deve ser arquivada com escopo, período, responsáveis e controles antes de dados reais.
 
 ---
 

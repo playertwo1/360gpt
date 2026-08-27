@@ -3,15 +3,19 @@
 **Data do status:** 26 de agosto de 2026  
 **Versão Atual da Release:** `v3.1.0-confianca`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
-**Modo de Execução:** `PRODUÇÃO ASSISTIDA & PILOTO HÍBRIDO HOMOLOGADO` (Dados sintéticos em `OFFLINE_EVAL` + transição autorizada)  
-**Saúde do Projeto:** 🟢 **VERDE (Fases 0 e 1 Homologadas — Fases 2 e 3 Prontas para Início)**  
+**Modo de Execução:** `AUDITORIA RETROSPECTIVA` (dados sintéticos em `OFFLINE_EVAL`)  
+**Saúde do Projeto:** 🟡 **AMARELO CONTROLADO (13/13 smoke tests verdes; achados de auditoria em tratamento)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
-> **Premissa Institucional:** Autorização vigente para dados reais em escopo autorizado sob Human-in-the-Loop.
+> **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
+
+**Último marco concluído:** bateria geral executada com `ALL_HYBRID_TESTS_PASS`; auditoria retrospectiva Fases 0–7 iniciada e duas correções críticas aplicadas.  
+**Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
+**Próximo passo exato:** tornar os Evals L2/L3/L4 independentes dos gabaritos e substituir os testes de backup por restauração mensurável.
 
 ---
 
@@ -26,7 +30,7 @@
 | **Fase 4** | **Decision Intelligence & Laudos PDF** | **100%** | 🟢 HOMOLOGADA | Decision Record Draft 2020-12, Laudo PDF 3 págs (`core/pdf_report_generator.py`) |
 | **Fase 5** | **LLMOps & FinOps (Model Router)** | **100%** | 🟢 HOMOLOGADA | Model Router 5 tiers, Economia FinOps de 79.1% comprovada (`core/model_router.py`) |
 | **Fase 6** | **Security, LGPD & Readiness** | **100%** | 🟢 HOMOLOGADA | Red Teaming (5/5 bloqueados), DLP/LGPD ativo, PRR Checklist 10/10 gates aprovados |
-| **Fase 7** | **Operação Real & Canary Rollout** | **100%** | 🟢 HOMOLOGADA | Canary 3 ondas (1-3 -> 5 -> 10 casos), Override Rate 10.0% (`core/canary_monitor.py`) |
+| **Fase 7** | **Simulação Canary Supervisionada** | **100%** | 🟡 SIMULAÇÃO HOMOLOGADA | 10 casos sintéticos; não constitui operação real (`core/canary_monitor.py`) |
 | **Fase 8** | **Escala & Alta Disponibilidade** | **100%** | 🟢 PRONTO P/ ATIVAR | Script VPS pronto (`provision-vps-server.sh`), Caddy HTTPS, ativação sob demanda |
 
 
@@ -76,6 +80,9 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ## 4. Próxima Ação Imediata Recomendada
 
-Avançar para a **Fase 2 (Observability & Evals)** do Roadmap:
-1. Estruturar a pasta `test-data/evals/` com 20 casos sintéticos representativos.
-2. Criar o runner de avaliação automatizada das 4 camadas (L1 Determinístico, L2 Extração, L3 Raciocínio, L4 Decisão).
+Avançar para a **auditoria retrospectiva**, acompanhando o relatório `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`:
+1. Separar entrada bruta, predição e gabarito nos Evals L2/L3/L4.
+2. Implementar restauração temporária real para medir RTO/RPO.
+3. Remover `child_process`/filesystem efêmero das rotas hospedadas.
+4. Corrigir métricas estáticas e o drill-down de evidências do Dashboard.
+5. Formalizar autorização institucional antes de qualquer dado real.
