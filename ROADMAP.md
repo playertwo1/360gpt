@@ -18,14 +18,14 @@
 ## Painel atual — Arquitetura dos Agentes
 
 **Atualizado em:** 27 de agosto de 2026  
-**Estado desta trilha:** Etapa A concluída; Etapa B em andamento.  
+**Estado desta trilha:** Etapas A e B concluídas; Etapa C em andamento.  
 **Escopo atual:** Diretor, Gerentes Gerais, especialistas, contratos, roteamento, testes e governança. O site está fora desta trilha.
 
 | Etapa | Entrega | Estado | Critério para avançar |
 |---|---|---|---|
 | A | Reconciliar arquitetura e lifecycles | CONCLUÍDA | Manifesto, 4 gerentes, 21 especialistas, registro e roteamento coerentes |
-| B | Contratos, exemplos e testes por domínio | EM ANDAMENTO | Entradas e respostas válidas, casos positivos, limites e falhas seguras |
-| C | Motores determinísticos | PLANEJADA | POBJ, GDAD, estados e datas calculados sem depender de LLM |
+| B | Contratos, exemplos e testes por domínio | CONCLUÍDA | Gate homologado por Rafael em 27/08/2026 |
+| C | Motores determinísticos | EM ANDAMENTO | POBJ, GDAD, estados e datas calculados sem depender de LLM |
 | D | Orquestração Diretor–Gerentes | PLANEJADA | Abas, handoffs, memória governada, agenda e no máximo 4 especialistas por domínio |
 | E | Homologação sintética e shadow | BLOQUEADA POR B–D | Evals aprovados, evidência completa, telemetria e rollback testado |
 | F | Ativação controlada | BLOQUEADA | Autorização de dados resolvida, revisão humana e promoção explícita de lifecycle |
@@ -59,7 +59,18 @@
 - [x] Testes iniciais de comportamento e falha segura.
 - [x] Contrato do plano diário integrado Performance–Conta, sem empresa por ação na fase inicial.
 - [x] Gate de saída documentado.
-- [ ] Gate de saída aprovado por Rafael.
+- [x] Gate de saída aprovado por Rafael.
+
+### Escopo inicial da Etapa C
+
+- [x] Motor POBJ v1: posição em piso, meta e teto.
+- [x] Separação entre oficial, pendente de reconhecimento e projeção.
+- [x] Pontuação zerada abaixo do piso e limitada no teto.
+- [x] Abstenção de pontuação intermediária sem curva oficial.
+- [x] Ranking inicial limitado a cinco indicadores.
+- [ ] Curvas oficiais de pontos versionadas a partir do manual vigente.
+- [ ] Motor determinístico do GDAD.
+- [ ] Motor de datas, compromissos e ausência de contato.
 
 ### Regra de leitura do roadmap
 

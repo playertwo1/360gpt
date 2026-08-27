@@ -1,7 +1,7 @@
 # Gate de saída — Etapa B
 
 **Versão:** 1.0.0  
-**Estado:** VALIDATING  
+**Estado:** HOMOLOGATED  
 **Autoridade de aprovação:** Rafael
 
 ## Objetivo
@@ -23,7 +23,7 @@ Comprovar que os contratos dos novos agentes são coerentes, seguros e testávei
 | Compromisso vencido preserva leitura alternativa | PASS | tests/domain-behavior.test.mjs |
 | Integração Performance–Conta é mediada pelo Motor 360 | PASS | tests/performance-conta-contract.test.mjs |
 | Fase inicial não contém empresa, conta ou origem por ação | PASS | tests/performance-conta-contract.test.mjs |
-| Aprovação formal de Rafael | PENDING | Registro explícito no changelog |
+| Aprovação formal de Rafael | PASS | Aprovação registrada em 27/08/2026 |
 
 ## Condição de saída
 
