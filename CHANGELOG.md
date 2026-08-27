@@ -1,5 +1,19 @@
 # Changelog
 
+## Não publicado — Gerente Geral Financeiro v2.0 aprovado
+
+> Gerente Geral e cinco especialistas aprovados por Rafael em 27/08/2026. Runtime permanece inativo.
+
+- `dashboard-pj` adotado somente como referência funcional; dados demonstrativos, fórmulas, thresholds e recomendações fixas não foram homologados.
+- GDAD reconhecido como fonte oficial de orçamento, realizado, saldo médio, spread, resultado, volume e variação.
+- Snapshot oficial histórico de julho de 2026 registrado como primeira linha de base real, preservando hierarquia e impedindo dupla contagem.
+- Cálculos permanecem determinísticos e valores publicados prevalecem sobre recálculos de validação.
+- Diagnóstico aprovado nas filas `PROTECT`, `RECOVER`, `INVESTIGATE`, `MONITOR` e `LEARN`.
+- Cenários e atribuição separados do oficial, com linha de base sem ação, risco, canibalização e POBJ em bloco próprio.
+- Aprendizado usa `LOW_SAMPLE`, escopo, evidência, validade e proibição de generalização automática.
+- Cinco especialistas aprovados: Fontes e Reconciliação; Cálculo e Estado; Diagnóstico e Concentração; Cenários e Atribuição; Desfechos e Aprendizado.
+- Máximo de quatro especialistas por execução; nenhum contato ou operação externa é autorizado.
+
 ## 2026-08-27 — GG Conta 4.38.0: catálogo de especialistas concluído
 
 - Concluída e aprovada a especificação do especialista `CONTA_CREDITO_APRENDIZADO` 1.0.0.
