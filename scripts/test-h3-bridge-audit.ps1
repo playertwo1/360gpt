@@ -16,11 +16,19 @@ Write-Host "  [OK] WF-09 validado ($nodeCount nós configurados)." -ForegroundCo
 # 2. Validar contratos de job e snapshot
 Write-Host ''
 Write-Host '[2/4] Verificando schemas contratuais da ponte...' -ForegroundColor Yellow
-$schemas = @('contracts/bridge-job.schema.json', 'contracts/state-360.schema.json')
+$schemas = Get-ChildItem 'contracts' -Filter '*.schema.json' -File
+if ($schemas.Count -lt 1) { throw 'Nenhum schema contratual encontrado!' }
 foreach ($schema in $schemas) {
-    if (-not (Test-Path $schema)) { throw "Schema $schema ausente!" }
-    $sContent = Get-Content $schema -Raw | ConvertFrom-Json
-    Write-Host "  [OK] Schema $schema validado (Draft 2020-12)." -ForegroundColor Green
+    $sContent = Get-Content $schema.FullName -Raw | ConvertFrom-Json
+    $schemaUrl = $sContent.PSObject.Properties['$schema']
+    $idUrl = $sContent.PSObject.Properties['$id']
+    if (-not $schemaUrl -or $schemaUrl.Value -ne 'https://json-schema.org/draft/2020-12/schema') {
+        throw "Schema $($schema.Name) sem declaracao Draft 2020-12!"
+    }
+    if (-not $idUrl -or [string]::IsNullOrWhiteSpace([string]$idUrl.Value)) {
+        throw "Schema $($schema.Name) sem `$id valido!"
+    }
+    Write-Host "  [OK] Schema $($schema.Name) validado (Draft 2020-12)." -ForegroundColor Green
 }
 
 
