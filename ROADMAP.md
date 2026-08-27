@@ -68,6 +68,12 @@
 - [x] Pontuação zerada abaixo do piso e limitada no teto.
 - [x] Abstenção de pontuação intermediária sem curva oficial.
 - [x] Ranking inicial limitado a cinco indicadores.
+- [x] Regra geral oficial POBJ 2026 versionada com proveniência, piso de 70%, teto de 150% e multiplicadores.
+- [x] Exceções registradas separadamente, sem herdar silenciosamente a regra geral.
+- [ ] Curvas dedicadas das exceções implementadas somente onde houver evidência normativa completa.
+- [ ] Reconciliação de `DT.BASE` por indicador e produção ainda não reconhecida.
+- [ ] Motor GDAD para orçamento, realizado, variação, concentração e atribuição.
+- [ ] Motor de compromissos, datas e vencimentos.
 - [ ] Curvas oficiais de pontos versionadas a partir do manual vigente.
 - [ ] Motor determinístico do GDAD.
 - [ ] Motor de datas, compromissos e ausência de contato.

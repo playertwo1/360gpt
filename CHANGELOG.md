@@ -18,6 +18,10 @@
 - Gate da Etapa B homologado por Rafael em 27/08/2026; nenhuma capacidade foi ativada.
 - Iniciada a Etapa C com motor POBJ determinístico para piso, meta, teto, produção pendente, projeção e ranking de até cinco indicadores.
 - Pontos intermediários agora exigem curva oficial; sem regra versionada, o motor retorna `UNDETERMINED`.
+- Versionada a regra geral oficial do POBJ 2026: piso de 70%, teto de 150% e multiplicadores de 0%, 50%, 75% e 100%.
+- Implementada a fórmula oficial `peso × atingimento limitado × multiplicador`, preservando o valor bruto e mantendo não resolvida a exibição de 6,375 como 6,37 no manual.
+- Registradas as exceções que não podem herdar a regra geral: Sucesso de Equipe - Crédito, EncantaBRA, Vencidos Até 59 dias, Consórcio, Cartões, Seguros e Aceleradores.
+- Confirmado no plano oficial POBJ de 26/08/2026 que a atualidade deve ser avaliada pela `DT.BASE` de cada indicador, e não apenas pela data-base geral do relatório.
 
 
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado

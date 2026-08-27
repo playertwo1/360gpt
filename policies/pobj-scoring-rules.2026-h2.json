@@ -1,0 +1,85 @@
+{
+  "policyId": "POBJ_SCORING_2026_H2",
+  "version": "1.0.0",
+  "status": "APPROVED_SOURCE_NOT_RUNTIME_ACTIVE",
+  "effectivePeriod": "SECOND_HALF_2026",
+  "source": {
+    "name": "Guia POBJ | PADE 2026",
+    "artifact": "Guia_POBJ_PADE_2026_Editavel.docx",
+    "sha256": "135390d194d7b148e7aae4bf94066b21e7824fa37a32852921d845bc195acacb",
+    "locator": "secao 6.1 - LIMITADORES E TABELA DE PESO",
+    "authority": "OFFICIAL_MANUAL",
+    "receivedFromOwnerAsOfficial": true
+  },
+  "generalRule": {
+    "ruleId": "POBJ_GENERAL_WEIGHT_ATTAINMENT_MULTIPLIER",
+    "minimumPercent": 70,
+    "capPercent": 150,
+    "formula": "weight * cappedAttainmentPercent / 100 * multiplier",
+    "negativeAttainmentTreatment": "CLAMP_TO_ZERO",
+    "zeroTargetTreatment": "EXCLUDE_WEIGHT_AND_NORMALIZE_OTHER_POSSIBLE_POINTS",
+    "multiplierBands": [
+      { "fromInclusive": 0, "toExclusive": 70, "multiplier": 0 },
+      { "fromInclusive": 70, "toExclusive": 80, "multiplier": 0.5 },
+      { "fromInclusive": 80, "toExclusive": 90, "multiplier": 0.75 },
+      { "fromInclusive": 90, "toExclusive": null, "multiplier": 1 }
+    ],
+    "displayRounding": {
+      "status": "UNRESOLVED",
+      "evidence": "O exemplo de 85% e peso 10 exibe 6,37; o valor matematico bruto e 6,375."
+    }
+  },
+  "exceptions": [
+    { "indicator": "Sucesso de Equipe - Credito", "ruleId": "P1_TEAM_CREDIT_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
+    { "indicator": "EncantaBRA", "ruleId": "Q1_ENCANTABRA_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
+    { "indicator": "Vencidos Ate 59 dias", "ruleId": "R2_OVERDUE_59_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
+    { "indicator": "Consorcio", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
+    { "indicator": "Cartoes", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
+    { "indicator": "Seguros", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
+    { "indicator": "Aceleradores", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" }
+  ],
+  "explicitRules": {
+    "R2_OVERDUE_59_STEP": {
+      "type": "STEP_PERCENT",
+      "bands": [
+        { "fromInclusive": 0, "toInclusive": 69.99, "scorePercent": 0 },
+        { "fromInclusive": 70, "toInclusive": 89.99, "scorePercent": 50 },
+        { "fromInclusive": 90, "toInclusive": 127.99, "scorePercent": 100 },
+        { "fromInclusive": 128, "toInclusive": null, "scorePercent": 150 }
+      ],
+      "sourceLocator": "R2 - Vencidos Ate 59 dias"
+    },
+    "P1_TEAM_CREDIT_STEP": {
+      "type": "STEP_PERCENT",
+      "bands": [
+        { "fromInclusive": 0, "toInclusive": 49.99, "scorePercent": 0 },
+        { "fromInclusive": 50, "toInclusive": 69.99, "scorePercent": 50 },
+        { "fromInclusive": 70, "toInclusive": 99.99, "scorePercent": 100 },
+        { "fromInclusive": 100, "toInclusive": 100, "scorePercent": 150 }
+      ],
+      "sourceLocator": "P1 - Sucesso de Equipe - Credito"
+    },
+    "Q1_ENCANTABRA_STEP": {
+      "type": "STEP_PERCENT",
+      "bands": [
+        { "fromInclusive": 0, "toInclusive": 112.5, "scorePercent": 0 },
+        { "fromInclusive": 112.51, "toInclusive": 137.99, "scorePercent": 70 },
+        { "fromInclusive": 138, "toInclusive": 143.99, "scorePercent": 100 },
+        { "fromInclusive": 144, "toInclusive": 150, "scorePercent": 150 }
+      ],
+      "sourceLocator": "Q1 - EncantaBRA"
+    },
+    "OPEN_FINANCE_PJ_BINARY": {
+      "type": "BINARY_TARGET",
+      "minimumPercent": 100,
+      "maximumPercent": 100,
+      "sourceLocator": "Aceleradores Individuais Especificos - Open Finance PJ"
+    },
+    "CONECTA_PJ_LEVELS": {
+      "type": "QUALIFICATION_LEVELS",
+      "minimumTargetPercent": 100,
+      "status": "REQUIRES_STRUCTURED_INPUT_CONTRACT",
+      "sourceLocator": "Aceleradores Individuais Especificos - Conecta PJ"
+    }
+  }
+}
