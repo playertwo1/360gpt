@@ -22,6 +22,9 @@
 - Implementada a fórmula oficial `peso × atingimento limitado × multiplicador`, preservando o valor bruto e mantendo não resolvida a exibição de 6,375 como 6,37 no manual.
 - Registradas as exceções que não podem herdar a regra geral: Sucesso de Equipe - Crédito, EncantaBRA, Vencidos Até 59 dias, Consórcio, Cartões, Seguros e Aceleradores.
 - Confirmado no plano oficial POBJ de 26/08/2026 que a atualidade deve ser avaliada pela `DT.BASE` de cada indicador, e não apenas pela data-base geral do relatório.
+- Criado motor determinístico de atualidade por indicador, com estados `CURRENT`, `POSSIBLY_LAGGED`, `LAGGED_WITH_PENDING`, `UNKNOWN` e `INVALID_FUTURE_DATE`.
+- Produção pendente passou a exigir estado de evidência e permanece projeção não oficial; o placar publicado nunca é sobrescrito.
+- Indicador fora da tolerância versionada deixa o ranking automático até reconciliação; a tolerância ainda depende de calibração por fonte e não é inventada pelo agente.
 
 
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado

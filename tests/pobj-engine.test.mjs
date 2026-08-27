@@ -82,10 +82,12 @@ assert.equal(withPending.official.attainmentPercent, 65);
 assert.equal(withPending.projection.attainmentPercent, 75);
 assert.equal(withPending.projection.isOfficial, false);
 assert.equal(withPending.prioritization.actionClass, "RECONCILE_BEFORE_PRIORITIZING");
+assert.equal(withPending.prioritization.eligibleForAutomaticRanking, false);
 
 const ranked = rankIndicators([aboveCap, noCurve, withPending, nearMinimum]);
 assert.equal(ranked[0].indicatorId, "near-minimum");
 assert.ok(!ranked.some((item) => item.indicatorId === "above-cap"));
+assert.ok(!ranked.some((item) => item.indicatorId === "pending"));
 assert.ok(ranked.length <= 5);
 
 const zeroTarget = evaluateIndicator({
