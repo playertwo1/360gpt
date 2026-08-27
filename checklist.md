@@ -28,6 +28,10 @@
 
 ## 🏗️ FASE 0: Baseline, Governança & Definition of Done
 
+- [x] **M0.4 — Base Canônica dos Quatro GGs e Bibliotecário Transversal**  
+  *Evidência:* `domains/GERENTES_GERAIS_BASE.md` e documentos canônicos em `domains/{conta,performance,financeiro,relacionamento,conhecimento}/`.  
+  *Homologado por:* Codex | *Data:* 26/08/2026
+
 - [x] **M0.1 — Contratos JSON Schema Draft 2020-12**  
   *Evidência:* `contracts/state-360.schema.json`, `evidence-graph.schema.json`, `bridge-job.schema.json`, `manual-review.schema.json`.  
   *Homologado por:* Antigravity / Codex | *Data:* 26/08/2026

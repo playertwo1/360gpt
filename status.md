@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Fases 0–9 homologadas; Evals L2–L4 isolados do gabarito com prova negativa contra leakage.  
+**Último marco concluído:** base uniforme criada para os quatro Gerentes Gerais de acompanhamento e para o Bibliotecário transversal.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** materializar fixtures de Evidence Graph completas para o L3 e executar restauração controlada para medir RTO/RPO.
+**Próximo passo exato:** revisar com Rafael, um a um, Conta, Performance, Financeiro, Relacionamento e Conhecimento; depois materializar schemas e testes específicos de cada domínio.
 
 ---
 

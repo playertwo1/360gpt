@@ -1,13 +1,15 @@
 schema_version: "1.0.0"
 registry_status: ACTIVE
 maximum_general_managers_per_execution: 5
+maximum_business_general_managers_per_execution: 4
+maximum_transversal_managers_per_execution: 1
 maximum_specialists_per_domain: 4
 maximum_model_cycles_per_agent: 4
 maximum_delegation_depth: 2
 domains:
   conta:
     manager_id: GERENTE_GERAL_CONTA
-    manager_version: "2.0.0"
+    manager_version: "4.0.0-base"
     state: ACTIVE
     capabilities:
       resolver_identidade:
@@ -26,7 +28,7 @@ domains:
         data_scope: SYNTHETIC_ONLY
   performance:
     manager_id: GERENTE_GERAL_PERFORMANCE
-    manager_version: "2.0.0"
+    manager_version: "4.0.0-base"
     state: ACTIVE
     capabilities:
       avaliar_performance:
@@ -45,7 +47,7 @@ domains:
         data_scope: SYNTHETIC_ONLY
   financeiro:
     manager_id: GERENTE_GERAL_FINANCEIRO
-    manager_version: "2.0.0"
+    manager_version: "1.0.0-base"
     state: ACTIVE
     capabilities:
       calcular_rentabilidade:
@@ -64,7 +66,7 @@ domains:
         data_scope: SYNTHETIC_ONLY
   relacionamento:
     manager_id: GERENTE_GERAL_RELACIONAMENTO
-    manager_version: "2.0.0"
+    manager_version: "1.0.0-base"
     state: ACTIVE
     capabilities:
       recuperar_contexto:
@@ -83,7 +85,7 @@ domains:
         data_scope: SYNTHETIC_ONLY
   conhecimento:
     manager_id: GERENTE_GERAL_CONHECIMENTO
-    manager_version: "1.0.0"
+    manager_version: "2.0.0-base"
     state: ACTIVE
     capabilities:
       consultar_normativos:
@@ -114,4 +116,3 @@ domains:
         state: ACTIVE
         tools: []
         data_scope: SYNTHETIC_AND_DOCUMENTS
-

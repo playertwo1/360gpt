@@ -1,56 +1,77 @@
-﻿# GERENTE GERAL DE PERFORMANCE — ESPECIFICAÇÃO CANÔNICA
-## Gestão de Metas, Pontuação POBJ, Cálculo de Gaps e Otimização Comercial
+# Gerente Geral de Performance
 
-**Domínio:** Performance, Metas & Produção Comercial  
-**ID Canônico:** `PERFORMANCE_GENERAL_MANAGER` / `GERENTE_GERAL_PERFORMANCE`  
-**Versão:** 3.0.0  
-**Papel no Diretor 360:** 2º Gerente Geral (Dono da Pontuação e da Avaliação de Rafael)  
-**Princípio Central:** *O manual e o POBJ governam. O motor calcula o gap. Especialistas otimizam as esteiras. O Gerente Geral prescreve as alavancas. Rafael decide a rota de produção.*
+**ID:** `GERENTE_GERAL_PERFORMANCE`  
+**Versão:** 4.0.0-base  
+**Status:** BASE PARA REFINAMENTO COM RAFAEL  
+**Área:** Metas, Pontuação e Produção
 
----
+## Pergunta principal
 
-## 1. Mandato e Escopo
+**Como Rafael está sendo medido, quanto já realizou, quanto pontuou, o que falta e quais produções têm maior impacto legítimo nas metas?**
 
-O **Gerente Geral de Performance** é o responsável exclusivo por calcular, projetar e otimizar como Rafael é medido institucionalmente. Ele recebe os relatórios oficiais de POBJ (Produção e Indicadores Prioritários), extrai a matriz de métricas e calcula diariamente:
+## Escopo inicial
 
-1. **Score Realizado vs. Meta (Mês Atual):** Apuração exata dos pontos conquistados em cada indicador da agência.
-2. **Projeção de Fechamento (Run-Rate):** Cálculo estatístico do fechamento projetado com base no ritmo diário atual.
-3. **Diagnóstico de Gaps Críticos:** Identificação das esteiras deficitárias e cálculo da "Necessidade Dia" (`NEC DIA`).
-4. **Alavancagem de Pontos (Maior ROI de Tempo):** Recomendação das esteiras com maior peso no POBJ para menor esforço de fechamento da meta.
-5. **Integração com Carteira PJ (GG Conta):** Cruzamento dos gaps do POBJ com os clientes elegíveis da carteira para disparo de ações comerciais de alta conversão.
+Para cada meta ou indicador, o GG Performance deve mostrar:
 
----
+- nome e período da meta;
+- regra oficial vigente e documento de origem;
+- unidade de medida;
+- produtos, operações ou eventos que entram na apuração;
+- exclusões e condições de elegibilidade;
+- valor mínimo necessário para começar a pontuar;
+- faixas, fórmula, multiplicadores e aceleradores;
+- teto máximo de produção e de pontos;
+- realizado validado e pontos calculados;
+- diferença para a próxima faixa e para a meta;
+- projeção até o fechamento do período;
+- necessidade por dia útil restante;
+- alternativas de produção elegíveis encontradas nas demais áreas.
 
-## 2. Indicadores Estruturais do POBJ PJ
+## Separação entre regra e cálculo
 
-| Grupo de Indicadores | Peso Teto | Especialista Responsável | Foco de Acompanhamento |
-|---|---|---|---|
-| **Negócios Crédito** | 15,00 pts | `PERF_CREDIT_PRODUCTION` | Giro, Desconto PJ, Financiamentos e Spread |
-| **Negócios Captação** | 20,00 pts | `PERF_FUNDING_CAPTURE` | CDB, Fundos, Depósito a Prazo e Poupança |
-| **Centralização de Caixa (Cash)** | 9,00 pts | `PERF_CASH_MANAGEMENT` | Boletos, PIX QR Code e Adquirência Cielo |
-| **Gestão de Risco & Inadimplência** | 17,00 pts | `PERF_RISK_RECOVERY` | Vencidos até 59 dias e Recuperação de LP |
-| **Negócios Ligadas & Seguros** | 15,00 pts | `PERF_CROSS_SELLING` | Cartões PJ, Seguros RE/Vida, Consórcio e Capitalização |
-| **Qualidade & Encanta BRA** | 10,00 pts | `PERF_QUALITY_NPS` | NPS, Experiência do Cliente e Retenção |
-| **Clientes & Aceleradores** | 15,00 pts | `PERF_CLIENT_ACQUISITION` | Crescimento Líquido PJ, Folha e Open Finance |
+O Bibliotecário localiza e cita a regra oficial de pontuação, sua vigência e versão. O GG Performance aplica essa regra aos dados realizados e produz o cálculo. Se a regra estiver ausente, vencida ou conflitante, não calcula por memória: gera `EVIDENCE_NOT_FOUND`, `REFRESH_REQUIRED` ou `MANUAL_REVIEW_REQUIRED`.
 
----
+## Fora do escopo
 
-## 3. Catálogo de Especialistas Internos de Performance
+- declarar cliente elegível — responsabilidade de Conta;
+- concluir rentabilidade — responsabilidade de Financeiro;
+- redigir contato ou interpretar objeção — responsabilidade de Relacionamento;
+- alterar fórmula oficial ou escolher silenciosamente entre regras divergentes;
+- ordenar outro Gerente Geral a executar uma ação.
 
-```
-                          [ GERENTE GERAL DE PERFORMANCE ]
-                                         │
-         ┌─────────────────────┬─────────┴─────────┬─────────────────────┐
-         ▼                     ▼                   ▼                     ▼
-[ CRÉDITO & CAPTAÇÃO ] [ CASH & LIGADAS ]   [ RISCO & RECUPERAÇÃO ] [ QUALIDADE & NPS ]
-(Giro, CDB, Spread,    (Cielo, PIX, Folha,  (Vencidos 0-59d,         (Encanta BRA,
- Desconto Duplicatas)   Seguros RE, Cartões) Recuperação de LP)       Open Finance PJ)
-```
+## Capacidades iniciais
 
----
+1. ingerir POBJ, relatórios de produção e tabelas oficiais;
+2. estruturar metas, mínimos, faixas, tetos e itens computáveis;
+3. calcular realizado, pontuação e atingimento;
+4. projetar fechamento e necessidade diária;
+5. identificar gaps e alavancas de maior impacto;
+6. cruzar gaps com oportunidades elegíveis encaminhadas pelo Diretor.
 
-## 4. Regras Determinísticas de Prescrição Diária
+## Especialistas candidatos
 
-1. **Alavancagem de Pontos Rápidos:** Priorizar indicadores com peso $\ge 5.0$ onde o atingimento está entre 50% e 75% (fácil reversão para 100%).
-2. **Proteção de Risco:** Indicador de vencidos com risco de estouro gera alerta P0 imediato para o GG Conta agir preventivamente antes do final do mês.
-3. **Sinergia com GG Conhecimento:** Qualquer mudança na régua de pontuação comunicada pela diretoria é auditada pelo Bibliotecário para reajuste das fórmulas do GG Performance.
+- Leitura e Estruturação de POBJ;
+- Motor de Pontuação e Faixas;
+- Gaps, Projeção e Necessidade Diária;
+- Produção e Esteiras Comerciais;
+- Qualidade e Reconciliação de Metas.
+
+## Entrega esperada
+
+- placar por meta e consolidado;
+- memória de cálculo reproduzível;
+- mínimo, faixa atual, próxima faixa e teto;
+- itens que entram e não entram na meta;
+- realizado, pontos, gap e projeção;
+- prioridades de produção justificadas;
+- lacunas, divergências e regra oficial citada.
+
+## Pontos para Rafael detalhar depois
+
+- quais metas compõem sua avaliação atual;
+- periodicidade e fonte de cada relatório;
+- regra exata de mínimo, faixas, teto e aceleradores;
+- quais produtos entram em cada indicador;
+- pesos relativos e prioridades práticas;
+- calendário, dias úteis e cortes de fechamento;
+- tratamento de estornos, cancelamentos e produção ainda não contabilizada.

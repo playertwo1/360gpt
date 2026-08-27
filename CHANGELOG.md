@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-26 — Base canônica dos Gerentes Gerais
+
+- Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
+- Conhecimento/Bibliotecário classificado como função transversal de suporte, não como quinta área de resultado.
+- Criados documentos canônicos ausentes para Financeiro e Relacionamento.
+- Conta, Performance e Conhecimento reestruturados com fronteiras, dependências, entregas e pontos para refinamento de Rafael.
+- Performance passou a exigir mínimo de pontuação, faixas, fórmula, itens computáveis, teto, realizado, gap, projeção e memória de cálculo.
+- Documento histórico de arquitetura marcado explicitamente como legado.
+- Limite alinhado em quatro especialistas acionados por domínio.
+
 ## 2026-08-26 — Evals L2–L4 independentes do gabarito
 
 - Campos de gabarito passaram a ser removidos antes de qualquer inferência avaliada.

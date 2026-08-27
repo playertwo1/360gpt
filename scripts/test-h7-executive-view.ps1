@@ -3,19 +3,29 @@ $ErrorActionPreference = 'Stop'
 
 Write-Host 'Testando homologacao da Fase H7 (Visao Executiva 360 Completa)...' -ForegroundColor Cyan
 
-# 1. Validar consolidacao dos 4 Gerentes Gerais
+# 1. Validar os 4 Gerentes Gerais e o Bibliotecario transversal
 Write-Host ''
-Write-Host '[1/4] Verificando documentos e contratos dos 4 Gerentes Gerais...' -ForegroundColor Yellow
+Write-Host '[1/4] Verificando documentos canônicos dos 4 Gerentes Gerais e do Bibliotecário...' -ForegroundColor Yellow
 $gmFiles = @(
-    'docs/arquitetura-agentes-360/conta/GERENTE_GERAL_CONTA.md',
-    'docs/arquitetura-agentes-360/performance/GERENTE_GERAL_PERFORMANCE.md',
-    'docs/arquitetura-agentes-360/financeiro/RENTABILIDADE_RESULTADO.md',
-    'docs/arquitetura-agentes-360/conversas/ANALISTA_CONVERSAS.md'
+    'domains/conta/GERENTE_GERAL_CONTA.md',
+    'domains/performance/GERENTE_GERAL_PERFORMANCE.md',
+    'domains/financeiro/GERENTE_GERAL_FINANCEIRO.md',
+    'domains/relacionamento/GERENTE_GERAL_RELACIONAMENTO.md'
 )
 foreach ($file in $gmFiles) {
     if (-not (Test-Path $file)) { throw "Contrato de dominio $file ausente!" }
     Write-Host "  [OK] Dominio validado: $file" -ForegroundColor Green
 }
+$knowledgeFile = 'domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md'
+$baseFile = 'domains/GERENTES_GERAIS_BASE.md'
+if (-not (Test-Path $knowledgeFile) -or -not (Test-Path $baseFile)) {
+    throw 'Base canônica ou contrato transversal de Conhecimento ausente!'
+}
+$knowledgeSpec = Get-Content $knowledgeFile -Raw
+if ($knowledgeSpec -notmatch 'não é uma quinta área de resultado') {
+    throw 'O papel transversal do Bibliotecário não está explícito!'
+}
+Write-Host '  [OK] Bibliotecário transversal validado como apoio às quatro áreas.' -ForegroundColor Green
 
 # 2. Validar navegabilidade e contratos do Evidence Graph
 Write-Host ''
