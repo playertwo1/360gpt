@@ -38,6 +38,6 @@
   },
   "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
   "launcher_command": ".\\iniciar-diretor-360.bat",
-  "last_commit": "PENDING_COMMIT_AUDITORIA",
-  "last_backup": "PENDING_BACKUP_AUDITORIA_2026-08-26"
+  "last_commit": "64da137",
+  "last_backup": "backup-auditoria-retrospectiva-20260826-215343.zip"
 }
