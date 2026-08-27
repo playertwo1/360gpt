@@ -75,7 +75,7 @@ type ImportRow = { id: string; original_name: string | null; mime_type: string |
 function toImport(row: ImportRow) {
   let meta: Record<string, unknown> = {};
   try { meta = JSON.parse(row.raw_text ?? '{}') as Record<string, unknown>; } catch { /* metadata remains empty */ }
-  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, approved: meta.approved };
+  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, indicatorSuggestions: meta.indicatorSuggestions, approved: meta.approved };
 }
 function invalid(error: string) { return NextResponse.json({ ok: false, error }, { status: 400 }); }
 function safeName(value: string) { return value.normalize('NFKC').replace(/[\\/\u0000-\u001f]/g, '_').slice(0, 120); }
@@ -88,7 +88,9 @@ function contentMatches(value: ArrayBuffer, mime: string) {
 }
 async function sha256Hex(value: ArrayBuffer) { const digest = await crypto.subtle.digest('SHA-256', value); return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
 
-async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[]; candidateLines?: string[] }> {
+type IndicatorSuggestion = { key: string; name: string; value: number | null; unit: 'percent' | 'points' | 'currency' | 'count' | 'unknown'; confidence: 'high' | 'medium'; sourceLine: string };
+
+async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[]; candidateLines?: string[]; indicatorSuggestions?: IndicatorSuggestion[] }> {
   try {
     let content = ''; let totalPages: number | undefined;
     if (mime === 'application/pdf') {
@@ -98,9 +100,10 @@ async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extra
     else if (mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') content = extractXlsxText(new Uint8Array(bytes));
     else return { extractionStatus: 'awaiting_spreadsheet_parser', previewLines: [] };
     const previewLines = content.split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 60);
-    const candidateLines = previewLines.filter((line) => /(pontos?|pts?|%|meta|realizado|atingimento|pobj|saldo|quantidade)/i.test(line) && /\d/.test(line)).slice(0, 20);
-    const reviewLines = [...candidateLines.map((line) => `★ Possível indicador: ${line}`), ...previewLines.filter((line) => !candidateLines.includes(line))].slice(0, 60);
-    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines: reviewLines, candidateLines };
+    const indicatorSuggestions = identifyIndicators(previewLines);
+    const candidateLines = indicatorSuggestions.map((item) => item.sourceLine);
+    const reviewLines = [...indicatorSuggestions.map((item) => `★ ${item.name}${item.value === null ? '' : ` · ${formatDetectedValue(item.value, item.unit)}`}: ${item.sourceLine}`), ...previewLines.filter((line) => !candidateLines.includes(line))].slice(0, 60);
+    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines: reviewLines, candidateLines, indicatorSuggestions };
   } catch { return { extractionStatus: 'extraction_failed', previewLines: [] }; }
 }
 
@@ -124,3 +127,32 @@ function extractXlsxText(bytes: Uint8Array) {
   return rows.join('\n');
 }
 function decodeXml(value: string) { return value.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); }
+
+const INDICATORS = [
+  { key: 'contas', name: 'Crescimento líquido PJ', pattern: /(crescimento.*l[ií]quido.*pj|contas?.*(abert|ativ|l[ií]quid))/i },
+  { key: 'cielo', name: 'Faturamento Cielo', pattern: /(cielo|faturamento.*cart[aã]o)/i },
+  { key: 'rotativo', name: 'Limite rotativo', pattern: /(limite.*rotativo|rotativo)/i },
+  { key: 'risco', name: 'Gestão de risco', pattern: /(gest[aã]o.*risco|qualidade.*cr[eé]dito)/i },
+  { key: 'captacao', name: 'Captação líquida PJ', pattern: /(capta[cç][aã]o.*(l[ií]quid|pj)|saldo.*capta[cç][aã]o)/i },
+  { key: 'vencidos', name: 'Vencidos', pattern: /(vencid|inadimpl|atraso)/i },
+  { key: 'consorcio', name: 'Consórcio', pattern: /cons[oó]rc/i },
+  { key: 'seguros', name: 'Seguros', pattern: /(seguro|prote[cç][aã]o)/i },
+  { key: 'credito', name: 'Crédito', pattern: /(cr[eé]dito|capital.*giro|bndes)/i },
+] as const;
+
+function identifyIndicators(lines: string[]): IndicatorSuggestion[] {
+  const found: IndicatorSuggestion[] = [];
+  for (const line of lines) for (const indicator of INDICATORS) {
+    if (!indicator.pattern.test(line) || found.some((item) => item.key === indicator.key)) continue;
+    const detected = detectValue(line); found.push({ key: indicator.key, name: indicator.name, ...detected, confidence: detected.value === null ? 'medium' : 'high', sourceLine: line });
+  }
+  return found;
+}
+function detectValue(line: string): Pick<IndicatorSuggestion, 'value' | 'unit'> {
+  const percent = /(-?\d{1,3}(?:[.,]\d+)?)\s*%/.exec(line); if (percent) return { value: parsePtNumber(percent[1]), unit: 'percent' };
+  const points = /(-?\d+(?:[.,]\d+)?)\s*(?:pts?|pontos?)/i.exec(line); if (points) return { value: parsePtNumber(points[1]), unit: 'points' };
+  const money = /R\$\s*([\d.]+(?:,\d+)?)/i.exec(line); if (money) return { value: parsePtNumber(money[1]), unit: 'currency' };
+  const number = /(?:^|\s)(-?\d+(?:[.,]\d+)?)(?:\s|$)/.exec(line); return { value: number ? parsePtNumber(number[1]) : null, unit: number ? 'count' : 'unknown' };
+}
+function parsePtNumber(value: string) { const normalized = value.includes(',') ? value.replace(/\./g, '').replace(',', '.') : value; const number = Number(normalized); return Number.isFinite(number) ? number : null; }
+function formatDetectedValue(value: number, unit: IndicatorSuggestion['unit']) { if (unit === 'percent') return `${value}%`; if (unit === 'points') return `${value} pts`; if (unit === 'currency') return `R$ ${value.toLocaleString('pt-BR')}`; return String(value); }
