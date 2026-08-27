@@ -1,5 +1,19 @@
 # Changelog
 
+## Não publicado — reconciliação arquitetural e contratos por domínio
+
+- Criado manifesto central verificável para Diretor, quatro Gerentes Gerais e 21 especialistas.
+- Separados os estados de desenho, implementação e runtime; aprovação deixa de significar ativação.
+- Preservados oito fluxos sintéticos legados sem ativar os novos agentes.
+- Migrados o registro de capacidades e o roteamento para lifecycle explícito e falha segura.
+- Conhecimento consolidado como capacidade transversal; antigo Gerente de Conhecimento e filhos aposentados.
+- Criados contratos específicos de entrada e resposta para Performance, Financeiro e Relacionamento.
+- Performance passou a exigir data-base, fonte oficial, piso, teto, pontos, esforço e defasagem.
+- Financeiro passou a separar orçamento, realizado, variação, concentração e grau de atribuição.
+- Relacionamento passou a exigir finalidade, consentimento, linha do tempo, incertezas e aprovação humana.
+- Rafael permanece como autoridade final; runtime novo e dados reais permanecem sem liberação automática.
+
+
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado
 
 - Publicada a identidade do Diretor como parceiro executivo, integrador crítico e orquestrador dos quatro Gerentes Gerais.

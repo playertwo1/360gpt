@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/relationship-specialist-request.schema.json",
+  "title": "Solicitação para especialista de Relacionamento",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "manager_id", "specialist_id", "purpose", "customer_ref", "consent_basis", "timeline"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "manager_id": { "const": "GERENTE_GERAL_RELACIONAMENTO" },
+    "specialist_id": {
+      "enum": ["RELATIONSHIP_SOURCES_TIMELINE", "RELATIONSHIP_NEEDS_OBJECTIONS_DISCOVERY", "RELATIONSHIP_COMMITMENTS_FOLLOWUP", "RELATIONSHIP_CONVERSATION_STRATEGY_DRAFTING", "RELATIONSHIP_OUTCOMES_LEARNING"]
+    },
+    "purpose": { "type": "string", "minLength": 1 },
+    "customer_ref": { "type": "string", "minLength": 1 },
+    "consent_basis": { "enum": ["OWNER_AUTHORIZED", "LEGITIMATE_INTERNAL_USE", "SYNTHETIC"] },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["occurred_at", "event_type", "summary", "source_ref"],
+        "properties": {
+          "occurred_at": { "type": "string", "format": "date-time" },
+          "event_type": { "enum": ["CONTACT", "NEED", "OBJECTION", "COMMITMENT", "OUTCOME", "NOTE"] },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 4000 },
+          "source_ref": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "conversation_goal": { "type": ["string", "null"], "maxLength": 2000 }
+  }
+}
