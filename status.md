@@ -3,8 +3,8 @@
 **Data do status:** 26 de agosto de 2026  
 **Versão Atual da Release:** `v3.1.0-confianca`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
-**Modo de Execução:** `AUDITORIA RETROSPECTIVA` (dados sintéticos em `OFFLINE_EVAL`)  
-**Saúde do Projeto:** 🟡 **AMARELO CONTROLADO (13/13 smoke tests verdes; achados de auditoria em tratamento)**  
+**Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
+**Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** causa da ausência de resposta no Telegram identificada e correção de confirmação/resposta final preparada.  
+**Último marco concluído:** Telegram ativado em produção e validado de ponta a ponta com texto, comandos e arquivos.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** obter aprovação de Rafael para publicar a correção no site público, cadastrar o webhook e executar teste real pelo Telegram.
+**Próximo passo exato:** melhorar a interpretação especializada de documentos reais, começando pelo POBJ no Gerente Geral de Performance, sem ampliar os efeitos externos do modo `OFFLINE_EVAL`.
 
 ---
 

@@ -109,7 +109,7 @@ Write-Host '   * Banco PostgreSQL:   ATIVO (Porta 5432) [OK]' -ForegroundColor G
 Write-Host '   * Orquestrador n8n:   ATIVO (Porta 5678) [OK]' -ForegroundColor Green
 Write-Host '   * Site Hospedado:     CONECTADO [OK]' -ForegroundColor Green
 Write-Host '   * Ponte WF-09:        AUTENTICADA & SEGURA [OK]' -ForegroundColor Green
-Write-Host '   * Telegram Ingest:    STANDBY SEGURO (Fase H5) [STANDBY]' -ForegroundColor Yellow
+Write-Host '   * Telegram Ingest:    ATIVO VIA WEBHOOK HOSPEDADO [OK]' -ForegroundColor Green
 
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''

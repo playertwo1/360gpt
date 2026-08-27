@@ -3,10 +3,12 @@
 ## 2026-08-26 — Correção do canal Telegram real
 
 - Diagnosticado webhook sem URL ativa e ingestão hospedada desabilitada, com mensagens pendentes no Telegram.
-- Confirmação imediata preparada para cada mensagem aceita.
+- Site v9 publicado e webhook oficial ativado na rota hospedada autenticada.
+- Confirmação imediata habilitada para cada mensagem aceita.
 - Conclusão da ponte passou a responder ao chat Telegram de origem com status, achados, ações, lacunas e protocolo.
 - Resposta final protegida por registro de auditoria para reduzir duplicidade e permitir retry após falha.
-- Variáveis hospedadas preparadas; publicação em produção aguarda aprovação explícita por o site possuir acesso público.
+- Teste real comprovou ingestão, armazenamento protegido de PDF, reserva da fila, download pela ponte, processamento no n8n, publicação do Estado 360 e resposta final no Telegram.
+- Fila pendente anterior drenada sem erro; processamento permanece sequencial, em ciclos de aproximadamente um minuto.
 
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
