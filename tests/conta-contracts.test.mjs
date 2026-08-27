@@ -26,7 +26,7 @@ for (const [id, filename] of specialists) {
   const path = `domains/conta/especialistas/${filename}`;
   assert.ok(existsSync(path), `arquivo ausente: ${path}`);
   assert.ok(readFileSync(path, "utf8").includes(id), `ID ausente em ${path}`);
-  assert.match(registry, new RegExp(`primary_implementation: ${id}\\n[\\s\\S]{0,180}state: PROPOSED`));
+  assert.match(registry, new RegExp(`primary_implementation: ${id}\\r?\\n[\\s\\S]{0,180}state: PROPOSED`));
   assert.ok(requestSchema.properties.specialist_id.enum.includes(id));
 }
 

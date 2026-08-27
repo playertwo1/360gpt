@@ -151,7 +151,6 @@ Os valores ficam versionados em `policies/autonomy-budget.yaml` e devem ser cali
 | Limite inicial | Valor |
 |---|---:|
 | Gerentes Gerais de acompanhamento por execução | 4 |
-| Função transversal de Conhecimento | 1, somente quando necessária |
 | Especialistas acionados por domínio | 4 |
 | Ciclos de modelo por agente | 4 |
 | Profundidade de delegação | 2 |
@@ -294,7 +293,9 @@ O conflito afeta somente os itens dependentes dele. Itens independentes podem pe
 
 ## 3. Domínios e limites de responsabilidade
 
-O Diretor 360 acompanha quatro áreas de negócio: **Conta, Performance, Financeiro e Relacionamento**. Conhecimento, chamado de **O Bibliotecário**, é uma função transversal que fornece normas, fórmulas, processos, formulários e contatos oficiais às quatro áreas; não constitui uma quinta área de resultado. A estrutura-base comum está em `domains/GERENTES_GERAIS_BASE.md`.
+O Diretor 360 acompanha quatro áreas de negócio: **Conta, Performance, Financeiro e Relacionamento**. A estrutura-base comum está em `domains/GERENTES_GERAIS_BASE.md`.
+
+> **Nota de Governança:** O desenvolvimento do Gerente Geral de Conhecimento ("O Bibliotecário") foi **paralisado para o futuro sem definição**, focando 100% dos recursos nas quatro áreas essenciais de negócio.
 
 | Domínio | Gerente Geral responsável | Responsabilidade | Especialistas possíveis |
 |---|---|---|---|
@@ -302,7 +303,7 @@ O Diretor 360 acompanha quatro áreas de negócio: **Conta, Performance, Finance
 | Performance | `domains/performance/GERENTE_GERAL_PERFORMANCE.md` | Metas, pontuação, produção, esteiras, prazos e progresso comercial | Metas, pontos, oportunidades, projeção e execução |
 | Financeiro | `domains/financeiro/GERENTE_GERAL_FINANCEIRO.md` | Margem, rentabilidade, tarifas, retorno e viabilidade | Rentabilidade, receitas, custos, fluxo e viabilidade |
 | Relacionamento | `domains/relacionamento/GERENTE_GERAL_RELACIONAMENTO.md` | Histórico, conversas, compromissos, contexto e abordagem | Conversas, compromissos, histórico e comunicação |
-| Conhecimento (transversal) | `domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md` | Apoio oficial às quatro áreas: normativos, regras de metas/pontos, processos, formulários e contatos (O Bibliotecário) | Normativos, metas/pontos, processos/SOPs, formulários e ramais/contatos |
+| *Conhecimento* | `domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md` | *(Desenvolvimento paralisado para o futuro sem definição)* | *(Inativo)* |
 
 
 Cada Gerente Geral mantém um catálogo fechado de especialistas autorizados. O Diretor aciona o Gerente Geral; somente o Gerente Geral decide quais especialistas internos executar. Especialistas devolvem resultados apenas ao Gerente Geral que os acionou.
@@ -346,8 +347,7 @@ O Diretor não aciona especialistas folha diretamente, salvo modo degradado prev
 | Meta, pontuação ou próxima produção | Gerente Geral de Performance; Conta apenas se houver ação condicionada à elegibilidade |
 | Rentabilidade ou viabilidade | Gerente Geral Financeiro; Conta se o produto/operação depender de elegibilidade |
 | Preparação de contato ou leitura de relacionamento | Gerente Geral de Relacionamento; demais domínios conforme o conteúdo da ação |
-| Consulta a normativos, metas, processos, formulários ou ramais | Gerente Geral de Conhecimento ("O Bibliotecário") |
-| Visão executiva completa | Os quatro Gerentes Gerais de acompanhamento; Conhecimento é acionado apenas para sustentar regras, fórmulas, processos ou contatos necessários |
+| Visão executiva completa | Os quatro Gerentes Gerais de acompanhamento (Conta, Performance, Financeiro, Relacionamento) |
 
 
 Não acionar um domínio desnecessário é comportamento correto, não `data_gap`.

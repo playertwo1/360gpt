@@ -241,5 +241,24 @@
     ],
     "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
     "recorded_at": "2026-08-26T22:43:08.261527"
+  },
+  {
+    "doc_id": "IN_CRED_2026_02_CONFLITO",
+    "title": "Instrucao Normativa Conflitante de Alçada",
+    "version": "1.1",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro é de R$ 800.000,00.",
+    "page_or_section": "Artigo 4º, Página 1",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite"
+    ],
+    "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
+    "recorded_at": "2026-08-27T07:50:09.600869"
   }
 ]

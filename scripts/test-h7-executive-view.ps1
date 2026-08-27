@@ -1,11 +1,11 @@
-# Test H7 - Visao Executiva 360 Completa
+﻿# Test H7 - Visao Executiva 360 Completa (4 Gerentes Gerais)
 $ErrorActionPreference = 'Stop'
 
 Write-Host 'Testando homologacao da Fase H7 (Visao Executiva 360 Completa)...' -ForegroundColor Cyan
 
-# 1. Validar os 4 Gerentes Gerais e o Bibliotecario transversal
+# 1. Validar os 4 Gerentes Gerais
 Write-Host ''
-Write-Host '[1/4] Verificando documentos canônicos dos 4 Gerentes Gerais e do Bibliotecário...' -ForegroundColor Yellow
+Write-Host '[1/4] Verificando documentos canônicos dos 4 Gerentes Gerais...' -ForegroundColor Yellow
 $gmFiles = @(
     'domains/conta/GERENTE_GERAL_CONTA.md',
     'domains/performance/GERENTE_GERAL_PERFORMANCE.md',
@@ -19,13 +19,13 @@ foreach ($file in $gmFiles) {
 $knowledgeFile = 'domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md'
 $baseFile = 'domains/GERENTES_GERAIS_BASE.md'
 if (-not (Test-Path $knowledgeFile) -or -not (Test-Path $baseFile)) {
-    throw 'Base canônica ou contrato transversal de Conhecimento ausente!'
+    throw 'Base canônica ausente!'
 }
 $knowledgeSpec = Get-Content $knowledgeFile -Raw
-if ($knowledgeSpec -notmatch 'não é uma quinta área de resultado') {
-    throw 'O papel transversal do Bibliotecário não está explícito!'
+if ($knowledgeSpec -notmatch 'PARALISADO') {
+    throw 'O status de desativação/paralisação de Conhecimento não está explícito!'
 }
-Write-Host '  [OK] Bibliotecário transversal validado como apoio às quatro áreas.' -ForegroundColor Green
+Write-Host '  [OK] Registro de Conhecimento (Bibliotecário) validado como PARALISADO SEM DEFINIÇÃO.' -ForegroundColor Green
 
 # 2. Validar navegabilidade e contratos do Evidence Graph
 Write-Host ''
@@ -51,7 +51,6 @@ $playbookPath = 'docs/PLAYBOOK_REVISOR_360.md'
 $reviewSchema = 'contracts/manual-review.schema.json'
 if (-not (Test-Path $playbookPath) -or -not (Test-Path $reviewSchema)) { throw 'Playbook ou Schema de revisao ausentes!' }
 Write-Host '  [OK] Conflitos geram reason_code fechado e pergunta objetiva na Mesa do Revisor.' -ForegroundColor Green
-
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan

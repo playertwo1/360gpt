@@ -1,8 +1,8 @@
 schema_version: "1.1.0"
 registry_status: ACTIVE
-maximum_general_managers_per_execution: 5
+maximum_general_managers_per_execution: 4
 maximum_business_general_managers_per_execution: 4
-maximum_transversal_managers_per_execution: 1
+maximum_transversal_managers_per_execution: 0
 maximum_specialists_per_domain: 4
 maximum_model_cycles_per_agent: 4
 maximum_delegation_depth: 2
@@ -176,7 +176,7 @@ domains:
   conhecimento:
     manager_id: GERENTE_GERAL_CONHECIMENTO
     manager_version: "2.0.0-base"
-    state: ACTIVE
+    state: RETIRED # PARALISADO PARA O FUTURO SEM DEFINICAO (Decisao Rafael 27/08/2026)
     capabilities:
       consultar_normativos:
         primary_implementation: CONHECIMENTO_NORMATIVOS_SIM

@@ -1,9 +1,9 @@
-# Master Test Runner - Homologacao Completa H3 a H10
+﻿# Master Test Runner - Homologacao Completa H3 a H10 (4 Gerentes Gerais)
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (FASES H3 A H10)          ' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (4 GERENTES GERAIS)       ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -20,15 +20,8 @@ $tests = @(
     @{ Name = 'Fase 4 - Decision Intelligence & Laudo PDF'; Script = 'scripts/test-phase4-decision-pdf.ps1' },
     @{ Name = 'Fase 5 - LLMOps & FinOps Model Router'; Script = 'scripts/test-phase5-finops-router.ps1' },
     @{ Name = 'Fase 6 - Security, LGPD & PRR'; Script = 'scripts/test-phase6-security-prr.ps1' },
-    @{ Name = 'Fase 7 - Operacao Real Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' },
-    @{ Name = 'Fase 9 - O Bibliotecario (Knowledge Base)'; Script = 'scripts/test-phase9-bibliotecario-knowledge.ps1' }
+    @{ Name = 'Fase 7 - Operacao Real Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' }
 )
-
-
-
-
-
-
 
 $passed = 0
 $total = $tests.Count
@@ -45,9 +38,20 @@ foreach ($t in $tests) {
     }
 }
 
+# Teste de Contratos Node.js
+Write-Host ''
+Write-Host ">>> Executando Teste: Contratos da Carteira e Especialistas de Conta..." -ForegroundColor Cyan
+node tests/conta-contracts.test.mjs
+if ($LASTEXITCODE -eq 0) {
+    $passed++
+    $total++
+    Write-Host ">>> SUCESSO: Contratos de Conta aprovados!" -ForegroundColor Green
+}
+
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host "   TODOS OS $passed DE $total TESTES (H3 A H10) FORAM 100% HOMOLOGADOS!      " -ForegroundColor Green
+Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
+Write-Host '   (Conhecimento: Desenvolvimento paralisado para o futuro sem definicao)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 

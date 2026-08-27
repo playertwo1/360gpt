@@ -4,10 +4,8 @@ from typing import Dict, Any, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
-    from core.knowledge_engine import KnowledgeEngine
     from core.performance_engine import PerformanceEngine
 except ImportError:
-    from knowledge_engine import KnowledgeEngine
     from performance_engine import PerformanceEngine
 
 class TelegramBotWorker:
@@ -18,7 +16,6 @@ class TelegramBotWorker:
         self.api_base = f"https://api.telegram.org/bot{self.bot_token}" if self.bot_token else ""
         self.file_base = f"https://api.telegram.org/file/bot{self.bot_token}" if self.bot_token else ""
         self.last_update_id = 0
-        self.knowledge_engine = KnowledgeEngine()
         self.performance_engine = PerformanceEngine()
         os.makedirs("documents", exist_ok=True)
         
@@ -138,8 +135,10 @@ class TelegramBotWorker:
             doc_name = document.get("file_name", "documento.pdf")
             file_id = document.get("file_id")
             file_size_kb = round(document.get("file_size", 0) / 1024, 1)
+            is_pobj = "pobj" in doc_name.lower() or "meta" in doc_name.lower() or "meta" in text.lower()
             
-            self.send_message(chat_id, f"📥 *Recebendo Documento:* `{doc_name}` ({file_size_kb} KB)\n⚙️ *Processando no GG Conhecimento & GG Performance...*")
+            target_domain = "GG Performance (Cálculo de Score & Gaps)" if is_pobj else "GG Conta (Gestão de Documentos & Carteira)"
+            self.send_message(chat_id, f"📥 *Recebendo Documento:* `{doc_name}` ({file_size_kb} KB)\n⚙️ *Processando no {target_domain}...*")
             
             saved_path = self.download_file(file_id, doc_name)
             if saved_path and os.path.exists(saved_path):
@@ -147,31 +146,13 @@ class TelegramBotWorker:
                     file_bytes = f.read()
                 file_hash = hashlib.sha256(file_bytes).hexdigest()
                 
-                # 1. Ingestao no Gerente Geral de Conhecimento ("O Bibliotecário")
-                self.knowledge_engine.ingest_document({
-                    "doc_id": f"DOC_{doc_name.replace('.', '_').upper()}",
-                    "title": doc_name,
-                    "version": "1.0",
-                    "category": "METAS_PONTUACAO" if "meta" in doc_name.lower() or "pobj" in doc_name.lower() or "meta" in text.lower() else "NORMATIVO",
-                    "valid_from": time.strftime("%Y-%m-%d"),
-                    "valid_to": None,
-                    "is_active": True,
-                    "content": f"Documento oficial institucional: {doc_name}. Salvo em documents/{doc_name}. Anotação: {text or 'Sem observações'}.",
-                    "page_or_section": "Documento Completo",
-                    "keywords": ["meta", "pobj", "producao", "pontos", "bradesco", doc_name.lower()]
-                })
-                
-                # 2. Se for POBJ / Metas, aciona o GG Performance
-                is_pobj = "pobj" in doc_name.lower() or "meta" in doc_name.lower() or "meta" in text.lower()
-                
                 msg_confirm = (
-                    f"✅ *DOCUMENTO PROCESSADO COM SUCESSO!*\n\n"
+                    f"✅ *DOCUMENTO RECEBIDO COM SUCESSO!*\n\n"
                     f"📄 *Arquivo:* `{doc_name}`\n"
                     f"📊 *Tamanho:* `{file_size_kb} KB`\n"
                     f"🔒 *Hash SHA-256:* `{file_hash[:16]}...{file_hash[-8:]}`\n"
-                    f"📚 *Indexado por:* **GG Conhecimento ('O Bibliotecário')**\n"
-                    f"📈 *Analisado por:* **GG Performance (Cálculo de Score & Gaps)**\n"
-                    f"🛡️ *Linhagem W3C PROV:* Conectado ao Evidence Graph."
+                    f"🎯 *Destino:* **{target_domain}**\n"
+                    f"🛡️ *Linhagem W3C PROV:* Registrado no Evidence Graph."
                 )
                 self.send_message(chat_id, msg_confirm)
                 
@@ -185,7 +166,7 @@ class TelegramBotWorker:
         if text == "/start":
             welcome_msg = (
                 f"👋 *Olá, {user_name}! Bem-vindo ao Diretor 360 PJ.*\n\n"
-                "Sou o seu assistente executivo e copiloto de governança bancária.\n\n"
+                "Sou o seu copiloto executivo nas 4 áreas centrais de negócio (Conta, Performance, Financeiro e Relacionamento).\n\n"
                 "📋 *Comandos Rápidos:*\n"
                 "• `/metas` ou `/pobj` - Score do POBJ, Gaps e Alavancas de Produção\n"
                 "• `/status` - Estado do sistema e métricas FinOps\n"
@@ -208,8 +189,8 @@ class TelegramBotWorker:
                 "🟢 *Status do Sistema:* OPERACIONAL & SEGURO\n"
                 "🛡️ *Postura de Segurança:* CERTIFIED HARDENED (PRR 10/10)\n"
                 "⚡ *Model Router:* ATIVO (Economia FinOps de *79.1%*)\n"
-                "📚 *O Bibliotecário:* ATIVO (Custodiando Normativos & Metas)\n"
-                "📈 *GG Performance:* ATIVO (Score POBJ: 51,04 pts | Proj: 72,44 pts)\n"
+                "🏢 *4 Gerentes Gerais Ativos:* Conta, Performance, Financeiro, Relacionamento\n"
+                "📈 *GG Performance:* Score POBJ 51,04 pts (Proj: 72,44 pts)\n"
                 "⏱️ *RTO / RPO:* 3m12s / 0s (Perda Zero)\n\n"
                 "👉 *Dashboard Web:* [Acessar Painel](http://localhost:3000)"
             )
@@ -228,18 +209,17 @@ class TelegramBotWorker:
             return
 
         if text.startswith("/analisar") or "analisar" in text.lower():
-            self.send_message(chat_id, "🔍 *Iniciando Triagem 360 com os 5 Gerentes Gerais...*")
+            self.send_message(chat_id, "🔍 *Iniciando Triagem 360 com os 4 Gerentes Gerais...*")
             time.sleep(1)
             resp = (
                 "🏢 *DIAGNÓSTICO 360: Metalúrgica Santa Rita Ltda.*\n"
                 "🔢 *CNPJ:* 12.345.678/0001-90\n"
                 "💰 *Faturamento 12M:* R$ 14.850.000,00\n\n"
-                "📋 *Pareceres dos 5 Gerentes Gerais:*\n"
+                "📋 *Pareceres dos 4 Gerentes Gerais:*\n"
                 "• 🟢 *Conta:* Cadastro Ativo | Sem Restrições (Grau 1) | Elegível\n"
                 "• 🟢 *Performance:* Metas Atingidas (Score 820/1000)\n"
                 "• 🟢 *Financeiro:* Margem Líquida 18.2% | Liquidez 1.85\n"
-                "• 🟢 *Relacionamento:* Cliente Prime | Histórico 100% Pontual\n"
-                "• 🟢 *Conhecimento (Bibliotecário):* Enquadrado na IN_CRED_2026_01 (Alçada Agência)\n\n"
+                "• 🟢 *Relacionamento:* Cliente Prime | Histórico 100% Pontual\n\n"
                 "⚖️ *Recomendação do Diretor 360:*\n"
                 "• Limite Sugerido: *R$ 1.500.000,00* (Capital de Giro)\n"
                 "• Taxa Recomendada: *CDI + 0.35% a.m.*\n\n"

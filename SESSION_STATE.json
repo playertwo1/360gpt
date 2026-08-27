@@ -2,13 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
   "version": "3.1.0-confianca",
-  "last_updated": "2026-08-26T23:25:01-03:00",
-  "last_active_assistant": "ChatGPT Codex (OpenAI)",
-  "next_recommended_assistant": "ChatGPT Codex (OpenAI)",
-  "current_mission": "TELEGRAM_REAL_END_TO_END",
-  "current_mission_goal": "Ativar webhook hospedado, confirmar recebimento e devolver o resultado do processamento ao chat de origem.",
-  "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - Fases 0 a 9)",
-  "current_phase": "Telegram real ativo e validado ponta a ponta",
+  "last_updated": "2026-08-27T08:00:00-03:00",
+  "last_active_assistant": "Antigravity (Google)",
+  "next_recommended_assistant": "Antigravity (Google) ou ChatGPT Codex (OpenAI)",
+  "current_mission": "CONSOLIDACAO_4_GERENTES_GERAIS_E_DESATIVACAO_CONHECIMENTO",
+  "current_mission_goal": "Operacao focada em 4 Gerentes Gerais de negocio (Conta, Performance, Financeiro e Relacionamento). Modulo de Conhecimento paralisado para o futuro sem definicao.",
+  "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - 4 Gerentes Gerais)",
+  "current_phase": "4 Gerentes Gerais Ativos (Conta, Performance, Financeiro, Relacionamento)",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
@@ -17,11 +17,11 @@
     "Fase 5 (LLMOps & FinOps)",
     "Fase 6 (Security, LGPD & PRR)",
     "Fase 7 (Operação Real Canary)",
-    "Fase 9 (Gerente Geral de Conhecimento — O Bibliotecário)",
-    "Fase Conta/Performance (Integração Carteira PJ Floresta-Remix + POBJ Engine)"
+    "Fase 4-GGs (Especialização Profunda de Conta, Performance, Financeiro e Relacionamento)"
   ],
   "postponed_phases": [
-    "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)"
+    "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)",
+    "Fase 9 (Gerente Geral de Conhecimento / O Bibliotecário — Paralisado seu desenvolvimento para o futuro sem definição por decisão de Rafael em 27/08/2026)"
   ],
   "health_status": "GREEN_OPERATIONAL",
   "mode": "OFFLINE_EVAL",
@@ -37,10 +37,8 @@
     "gg_performance": "domains/performance/GERENTE_GERAL_PERFORMANCE.md",
     "gg_financeiro": "domains/financeiro/GERENTE_GERAL_FINANCEIRO.md",
     "gg_relacionamento": "domains/relacionamento/GERENTE_GERAL_RELACIONAMENTO.md",
-    "gg_conhecimento": "domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md"
+    "gg_conhecimento_status": "domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md (PARALISADO)"
   },
   "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
-  "launcher_command": ".\\iniciar-diretor-360.bat",
-  "last_commit": "59ecf72",
-  "last_backup": "backup-telegram-homologado-20260826-232501.zip"
+  "launcher_command": ".\\iniciar-diretor-360.bat"
 }
