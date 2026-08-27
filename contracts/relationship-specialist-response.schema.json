@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/relationship-specialist-response.schema.json",
+  "title": "Resposta de especialista de Relacionamento",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "specialist_id", "timeline_summary", "needs", "objections", "open_commitments", "suggested_approach", "alternative_view", "uncertainties", "decision_authority"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "specialist_id": { "type": "string", "pattern": "^RELATIONSHIP_" },
+    "timeline_summary": { "type": "string" },
+    "needs": { "type": "array", "items": { "type": "string" } },
+    "objections": { "type": "array", "items": { "type": "string" } },
+    "open_commitments": { "type": "array", "items": { "type": "string" } },
+    "suggested_approach": {
+      "type": "object",
+      "required": ["objective", "opening", "questions", "next_step", "requires_owner_approval"],
+      "properties": {
+        "objective": { "type": "string", "minLength": 1 },
+        "opening": { "type": "string", "minLength": 1 },
+        "questions": { "type": "array", "items": { "type": "string" } },
+        "next_step": { "type": "string", "minLength": 1 },
+        "requires_owner_approval": { "const": true }
+      }
+    },
+    "alternative_view": { "type": "string", "minLength": 1 },
+    "uncertainties": { "type": "array", "items": { "type": "string" } },
+    "decision_authority": { "const": "RAFAEL" }
+  }
+}

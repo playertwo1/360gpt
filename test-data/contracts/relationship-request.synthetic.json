@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "rel-synthetic-001",
+  "manager_id": "GERENTE_GERAL_RELACIONAMENTO",
+  "specialist_id": "RELATIONSHIP_COMMITMENTS_FOLLOWUP",
+  "purpose": "Preparar acompanhamento de compromisso vencido.",
+  "customer_ref": "customer-synthetic-001",
+  "consent_basis": "SYNTHETIC",
+  "timeline": [
+    {
+      "occurred_at": "2026-08-10T14:00:00Z",
+      "event_type": "COMMITMENT",
+      "summary": "Retornar ao cliente até 20/08 sobre documentação pendente.",
+      "source_ref": "note-synthetic-001"
+    },
+    {
+      "occurred_at": "2026-08-21T14:00:00Z",
+      "event_type": "NOTE",
+      "summary": "Não há evidência de retorno concluído.",
+      "source_ref": "note-synthetic-002"
+    }
+  ],
+  "conversation_goal": "Retomar o contato sem presumir desinteresse do cliente."
+}

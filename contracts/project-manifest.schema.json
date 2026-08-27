@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://360.local/contracts/project-manifest.schema.json",
+  "title": "Manifesto central do Projeto 360",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "director", "operating_mode", "governance", "domains", "transversal_capabilities"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "director": { "$ref": "#/$defs/component" },
+    "operating_mode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_mode", "external_channel", "real_data_authorization"],
+      "properties": {
+        "analysis_mode": { "enum": ["OFFLINE_EVAL", "SHADOW", "CONTROLLED", "PRODUCTION"] },
+        "external_channel": { "type": "string", "minLength": 1 },
+        "real_data_authorization": { "enum": ["UNRESOLVED", "BLOCKED", "AUTHORIZED_SCOPED"] }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "maximum_general_managers", "maximum_active_specialists_per_domain", "approved_does_not_imply_active"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "maximum_general_managers": { "const": 4 },
+        "maximum_active_specialists_per_domain": { "const": 4 },
+        "approved_does_not_imply_active": { "const": true }
+      }
+    },
+    "domains": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conta", "performance", "financeiro", "relacionamento"],
+      "properties": {
+        "conta": { "$ref": "#/$defs/domain" },
+        "performance": { "$ref": "#/$defs/domain" },
+        "financeiro": { "$ref": "#/$defs/domain" },
+        "relacionamento": { "$ref": "#/$defs/domain" }
+      }
+    },
+    "transversal_capabilities": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "design_status", "implementation_status", "runtime_status", "source"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "design_status": { "enum": ["DRAFT", "PROPOSED", "APPROVED", "RETIRED"] },
+        "implementation_status": { "enum": ["NOT_STARTED", "SPECIFICATION_ONLY", "PARTIAL", "IMPLEMENTED"] },
+        "runtime_status": { "enum": ["INACTIVE", "SHADOW", "ACTIVE", "RETIRED"] },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "specialist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "design_status", "implementation_status", "runtime_status", "source", "capability"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "design_status": { "enum": ["DRAFT", "PROPOSED", "APPROVED", "RETIRED"] },
+        "implementation_status": { "enum": ["NOT_STARTED", "SPECIFICATION_ONLY", "PARTIAL", "IMPLEMENTED"] },
+        "runtime_status": { "enum": ["INACTIVE", "SHADOW", "ACTIVE", "RETIRED"] },
+        "source": { "type": "string", "minLength": 1 },
+        "capability": { "type": "string", "minLength": 1 }
+      }
+    },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manager", "specialists"],
+      "properties": {
+        "manager": { "$ref": "#/$defs/component" },
+        "specialists": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/specialist" }
+        }
+      }
+    }
+  }
+}

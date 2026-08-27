@@ -6,13 +6,67 @@
 **Objetivo:** Evoluir o Diretor 360 de um conjunto de funcionalidades para uma plataforma decisória confiável, testável, observável, auditável e segura.  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
-**Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
 
-> **Premissa Institucional Vigente:**  
-> Há autorização institucional para utilização de dados reais no Diretor 360. Toda operação real deve respeitar estritamente o escopo autorizado, LGPD, minimização, segregação, DLP, controle de acesso, auditoria e **Human-in-the-Loop**.
+> **Premissa de Segurança Vigente:**  
+> A autorização para uso de dados reais está em `UNRESOLVED` porque os documentos do projeto divergem. Até reconciliação formal, os novos agentes operam sem runtime e toda homologação permanece em `OFFLINE_EVAL`.
+
+---
+
+## Painel atual — Arquitetura dos Agentes
+
+**Atualizado em:** 27 de agosto de 2026  
+**Estado desta trilha:** Etapa A concluída; Etapa B em andamento.  
+**Escopo atual:** Diretor, Gerentes Gerais, especialistas, contratos, roteamento, testes e governança. O site está fora desta trilha.
+
+| Etapa | Entrega | Estado | Critério para avançar |
+|---|---|---|---|
+| A | Reconciliar arquitetura e lifecycles | CONCLUÍDA | Manifesto, 4 gerentes, 21 especialistas, registro e roteamento coerentes |
+| B | Contratos, exemplos e testes por domínio | EM ANDAMENTO | Entradas e respostas válidas, casos positivos, limites e falhas seguras |
+| C | Motores determinísticos | PLANEJADA | POBJ, GDAD, estados e datas calculados sem depender de LLM |
+| D | Orquestração Diretor–Gerentes | PLANEJADA | Abas, handoffs, memória governada, agenda e no máximo 4 especialistas por domínio |
+| E | Homologação sintética e shadow | BLOQUEADA POR B–D | Evals aprovados, evidência completa, telemetria e rollback testado |
+| F | Ativação controlada | BLOQUEADA | Autorização de dados resolvida, revisão humana e promoção explícita de lifecycle |
+| G | Evolução do site | ADIADA | Decisão futura de Rafael |
+
+### Baseline confirmado
+
+- Diretor Geral 360 v2.0: desenho aprovado, implementação apenas documental, runtime inativo.
+- Gerente Geral de Conta v4.38.0: seis especialistas aprovados, runtime inativo.
+- Gerente Geral de Performance v5.3: cinco especialistas aprovados, runtime inativo.
+- Gerente Geral Financeiro v2.0: cinco especialistas aprovados, runtime inativo.
+- Gerente Geral de Relacionamento v2.0: cinco especialistas aprovados, runtime inativo.
+- Conhecimento: capacidade transversal; o antigo quinto gerente permanece aposentado.
+- Runtime existente: somente oito fluxos legados com dados sintéticos.
+
+### Entregas concluídas na Etapa A
+
+- `registries/project-manifest.json` como fonte central da arquitetura aprovada.
+- `contracts/project-manifest.schema.json` para validar a estrutura.
+- `policies/capability-registry.yaml` com separação entre desenho e execução.
+- `policies/routing.yaml` com falha segura e bloqueio de agentes apenas aprovados.
+- Testes de manifesto e lifecycle.
+
+### Escopo da Etapa B
+
+- [x] Contratos de entrada e resposta para Performance.
+- [x] Contratos de entrada e resposta para Financeiro.
+- [x] Contratos de entrada e resposta para Relacionamento.
+- [x] Exemplos canônicos válidos para os seis contratos.
+- [x] Casos de borda: piso próximo, teto superado, fonte financeira parcial e compromisso vencido.
+- [x] Testes iniciais de comportamento e falha segura.
+- [ ] Contrato do plano diário integrado Performance–Conta, sem empresa por ação na fase inicial.
+- [ ] Gate de saída documentado e aprovado por Rafael.
+
+### Regra de leitura do roadmap
+
+Uma entrega documental `APPROVED` não está implementada nem ativa. Os estados válidos são acompanhados separadamente:
+
+`design_status` → `implementation_status` → `runtime_status`
+
+Somente uma promoção explícita, testada e registrada pode mudar o runtime para `SHADOW` ou `ACTIVE`.
 
 ---
 

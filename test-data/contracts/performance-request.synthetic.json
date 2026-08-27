@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "perf-synthetic-001",
+  "manager_id": "GERENTE_GERAL_PERFORMANCE",
+  "specialist_id": "PERFORMANCE_GAP_SCENARIOS",
+  "reference_month": "2026-08",
+  "base_date": "2026-08-26",
+  "official_sources": [
+    {
+      "source_id": "daily-plan-synthetic-2026-08-26",
+      "document_kind": "DAILY_PLAN",
+      "captured_at": "2026-08-27T09:00:00Z",
+      "official": true,
+      "content_hash": null
+    }
+  ],
+  "indicators": [
+    {
+      "indicator_id": "produto_piso_proximo",
+      "target": 100,
+      "actual": 48,
+      "minimum_percent": 50,
+      "maximum_percent": 100,
+      "maximum_points": 20,
+      "estimated_effort": 2,
+      "update_lag_status": "CURRENT"
+    },
+    {
+      "indicator_id": "produto_acima_teto",
+      "target": 100,
+      "actual": 155,
+      "minimum_percent": 70,
+      "maximum_percent": 150,
+      "maximum_points": 15,
+      "estimated_effort": 1,
+      "update_lag_status": "CURRENT"
+    },
+    {
+      "indicator_id": "produto_defasado",
+      "target": 100,
+      "actual": 65,
+      "minimum_percent": 70,
+      "maximum_percent": 100,
+      "maximum_points": 10,
+      "estimated_effort": null,
+      "update_lag_status": "POSSIBLY_LAGGED"
+    }
+  ],
+  "daily_capacity": 5,
+  "owner_context": "Cenario inteiramente sintetico para homologacao."
+}

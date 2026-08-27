@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/performance-specialist-request.schema.json",
+  "title": "Solicitação para especialista de Performance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "manager_id", "specialist_id", "reference_month", "base_date", "official_sources", "indicators"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "manager_id": { "const": "GERENTE_GERAL_PERFORMANCE" },
+    "specialist_id": {
+      "enum": ["PERFORMANCE_SOURCES_RECONCILIATION", "PERFORMANCE_SCORING_STATE", "PERFORMANCE_GAP_SCENARIOS", "PERFORMANCE_EXECUTABILITY_PLAN", "PERFORMANCE_OUTCOMES_LEARNING"]
+    },
+    "reference_month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
+    "base_date": { "type": "string", "format": "date" },
+    "official_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "indicators": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/indicator" }
+    },
+    "daily_capacity": { "type": ["number", "null"], "minimum": 0 },
+    "owner_context": { "type": ["string", "null"], "maxLength": 2000 }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "document_kind", "captured_at", "official"],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "document_kind": { "enum": ["POBJ_MANUAL", "DAILY_PLAN", "POBJ_PAGE", "OWNER_CONFIRMED"] },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "official": { "type": "boolean" },
+        "content_hash": { "type": ["string", "null"] }
+      }
+    },
+    "indicator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["indicator_id", "target", "actual", "minimum_percent", "maximum_percent", "maximum_points", "update_lag_status"],
+      "properties": {
+        "indicator_id": { "type": "string", "minLength": 1 },
+        "target": { "type": "number" },
+        "actual": { "type": "number" },
+        "minimum_percent": { "type": ["number", "null"], "minimum": 0 },
+        "maximum_percent": { "type": "number", "minimum": 0 },
+        "maximum_points": { "type": "number", "minimum": 0 },
+        "estimated_effort": { "type": ["number", "null"], "minimum": 0 },
+        "update_lag_status": { "enum": ["CURRENT", "POSSIBLY_LAGGED", "STALE", "UNKNOWN"] }
+      }
+    }
+  }
+}

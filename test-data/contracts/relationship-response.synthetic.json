@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "rel-synthetic-001",
+  "specialist_id": "RELATIONSHIP_COMMITMENTS_FOLLOWUP",
+  "timeline_summary": "Existe compromisso de retorno com prazo vencido e sem evidência de conclusão.",
+  "needs": [
+    "Confirmar a situação atual da documentação."
+  ],
+  "objections": [],
+  "open_commitments": [
+    "Retorno prometido até 20/08 permanece sem comprovação de conclusão."
+  ],
+  "suggested_approach": {
+    "objective": "Cumprir o compromisso e atualizar o contexto.",
+    "opening": "Retomar o assunto reconhecendo o prazo anterior e confirmar se a necessidade continua válida.",
+    "questions": [
+      "A documentação pendente ainda é necessária?",
+      "Houve alguma mudança desde o último contato?"
+    ],
+    "next_step": "Rafael revisa a abordagem e decide se fará o contato.",
+    "requires_owner_approval": true
+  },
+  "alternative_view": "A ausência de registro pode indicar falha de documentação interna, não necessariamente falta de retorno ao cliente.",
+  "uncertainties": [
+    "Não existe evidência suficiente para afirmar que o cliente não foi contatado por outro canal."
+  ],
+  "decision_authority": "RAFAEL"
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "director": {
+    "id": "DIRETOR_GERAL_360",
+    "version": "2.0",
+    "design_status": "APPROVED",
+    "implementation_status": "SPECIFICATION_ONLY",
+    "runtime_status": "INACTIVE",
+    "source": "AGENTS.md"
+  },
+  "operating_mode": {
+    "analysis_mode": "OFFLINE_EVAL",
+    "external_channel": "TELEGRAM",
+    "real_data_authorization": "UNRESOLVED"
+  },
+  "governance": {
+    "owner": "Rafael",
+    "maximum_general_managers": 4,
+    "maximum_active_specialists_per_domain": 4,
+    "approved_does_not_imply_active": true
+  },
+  "domains": {
+    "conta": {
+      "manager": {
+        "id": "GERENTE_GERAL_CONTA",
+        "version": "4.38.0",
+        "design_status": "APPROVED",
+        "implementation_status": "SPECIFICATION_ONLY",
+        "runtime_status": "INACTIVE",
+        "source": "domains/conta/AGENTS.md"
+      },
+      "specialists": [
+        {"id":"CONTA_IDENTIDADE_QUALIDADE","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_IDENTIDADE_QUALIDADE.md","capability":"identidade e qualidade cadastral"},
+        {"id":"CONTA_PROSPECCAO_OXIGENACAO","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_PROSPECCAO_OXIGENACAO.md","capability":"prospeccao e oxigenacao"},
+        {"id":"CONTA_CICLO_VIDA_SAUDE","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_CICLO_VIDA_SAUDE.md","capability":"ciclo de vida e saude da conta"},
+        {"id":"CONTA_ATIVIDADE_CENTRALIZACAO","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_ATIVIDADE_CENTRALIZACAO.md","capability":"atividade e centralizacao"},
+        {"id":"CONTA_RISCO_ELEGIBILIDADE","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_RISCO_ELEGIBILIDADE.md","capability":"risco e elegibilidade"},
+        {"id":"CONTA_CREDITO_APRENDIZADO","version":"1.0.0","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/conta/specialists/CONTA_CREDITO_APRENDIZADO.md","capability":"credito e aprendizado"}
+      ]
+    },
+    "performance": {
+      "manager": {
+        "id": "GERENTE_GERAL_PERFORMANCE",
+        "version": "5.3.0-approved-design",
+        "design_status": "APPROVED",
+        "implementation_status": "SPECIFICATION_ONLY",
+        "runtime_status": "INACTIVE",
+        "source": "domains/performance/AGENTS.md"
+      },
+      "specialists": [
+        {"id":"PERFORMANCE_SOURCES_RECONCILIATION","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_SOURCES_RECONCILIATION.md","capability":"fontes e reconciliacao"},
+        {"id":"PERFORMANCE_SCORING_STATE","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_SCORING_STATE.md","capability":"pontuacao e estado"},
+        {"id":"PERFORMANCE_GAP_SCENARIOS","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_GAP_SCENARIOS.md","capability":"gaps e cenarios"},
+        {"id":"PERFORMANCE_EXECUTABILITY_PLAN","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_EXECUTABILITY_PLAN.md","capability":"executabilidade e plano diario"},
+        {"id":"PERFORMANCE_OUTCOMES_LEARNING","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_OUTCOMES_LEARNING.md","capability":"resultados e aprendizado"}
+      ]
+    },
+    "financeiro": {
+      "manager": {
+        "id": "GERENTE_GERAL_FINANCEIRO",
+        "version": "2.0.0-approved-design",
+        "design_status": "APPROVED",
+        "implementation_status": "SPECIFICATION_ONLY",
+        "runtime_status": "INACTIVE",
+        "source": "domains/financeiro/AGENTS.md"
+      },
+      "specialists": [
+        {"id":"FINANCIAL_SOURCES_RECONCILIATION","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/financeiro/specialists/FINANCIAL_SOURCES_RECONCILIATION.md","capability":"fontes e reconciliacao financeira"},
+        {"id":"FINANCIAL_CALCULATION_STATE","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/financeiro/specialists/FINANCIAL_CALCULATION_STATE.md","capability":"calculo e estado financeiro"},
+        {"id":"FINANCIAL_DIAGNOSIS_CONCENTRATION","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/financeiro/specialists/FINANCIAL_DIAGNOSIS_CONCENTRATION.md","capability":"diagnostico e concentracao"},
+        {"id":"FINANCIAL_SCENARIOS_ATTRIBUTION","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/financeiro/specialists/FINANCIAL_SCENARIOS_ATTRIBUTION.md","capability":"cenarios e atribuicao"},
+        {"id":"FINANCIAL_OUTCOMES_LEARNING","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/financeiro/specialists/FINANCIAL_OUTCOMES_LEARNING.md","capability":"resultados e aprendizado financeiro"}
+      ]
+    },
+    "relacionamento": {
+      "manager": {
+        "id": "GERENTE_GERAL_RELACIONAMENTO",
+        "version": "2.0.0-approved-design",
+        "design_status": "APPROVED",
+        "implementation_status": "SPECIFICATION_ONLY",
+        "runtime_status": "INACTIVE",
+        "source": "domains/relacionamento/AGENTS.md"
+      },
+      "specialists": [
+        {"id":"RELATIONSHIP_SOURCES_TIMELINE","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/relacionamento/specialists/RELATIONSHIP_SOURCES_TIMELINE.md","capability":"fontes e linha do tempo"},
+        {"id":"RELATIONSHIP_NEEDS_OBJECTIONS_DISCOVERY","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/relacionamento/specialists/RELATIONSHIP_NEEDS_OBJECTIONS_DISCOVERY.md","capability":"necessidades e objecoes"},
+        {"id":"RELATIONSHIP_COMMITMENTS_FOLLOWUP","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/relacionamento/specialists/RELATIONSHIP_COMMITMENTS_FOLLOWUP.md","capability":"compromissos e acompanhamento"},
+        {"id":"RELATIONSHIP_CONVERSATION_STRATEGY_DRAFTING","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/relacionamento/specialists/RELATIONSHIP_CONVERSATION_STRATEGY_DRAFTING.md","capability":"estrategia de conversa e rascunhos"},
+        {"id":"RELATIONSHIP_OUTCOMES_LEARNING","version":"1.0.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/relacionamento/specialists/RELATIONSHIP_OUTCOMES_LEARNING.md","capability":"resultados e aprendizado relacional"}
+      ]
+    }
+  },
+  "transversal_capabilities": [
+    {
+      "id": "KNOWLEDGE_GOVERNANCE",
+      "version": "1.0.0-design",
+      "design_status": "APPROVED",
+      "implementation_status": "SPECIFICATION_ONLY",
+      "runtime_status": "INACTIVE",
+      "source": "AGENTS.md"
+    }
+  ]
+}

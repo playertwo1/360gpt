@@ -1,18 +1,61 @@
-schema_version: "1.0.0"
-status: ACTIVE
+schema_version: "2.0.0"
+status: MIGRATION_READY
+manifest_ref: registries/project-manifest.json
+capability_registry_ref: policies/capability-registry.yaml
 fallback: MANUAL_REVIEW_REQUIRED
-rules:
-  routing.full_view.v1:
-    intent: visao_executiva_completa
-    domains:
-      conta: [resolver_identidade, avaliar_elegibilidade]
-      performance: [avaliar_performance, identificar_gap_execucao]
-      financeiro: [calcular_rentabilidade, avaliar_viabilidade]
-      relacionamento: [recuperar_contexto, preparar_abordagem]
-  routing.keyword.v1:
-    intent: triagem_por_capacidade
-    deterministic_terms: true
-    ambiguous_result: MANUAL_REVIEW_REQUIRED
+
+execution_policy:
+  approved_is_routable: false
+  executable_runtime_states: [SHADOW, ACTIVE]
+  require_runtime_authorization: true
+  require_data_scope_authorization: true
+  maximum_specialists_per_domain: 4
+
+routes:
+  legacy_synthetic:
+    executable: true
+    data_scope: SYNTHETIC_ONLY
+    intents:
+      visao_executiva_completa:
+        conta: [resolver_identidade, avaliar_elegibilidade]
+        performance: [avaliar_performance, identificar_gap_execucao]
+        financeiro: [calcular_rentabilidade, avaliar_viabilidade]
+        relacionamento: [recuperar_contexto, preparar_abordagem]
+      triagem_por_capacidade:
+        deterministic_terms: true
+        ambiguous_result: MANUAL_REVIEW_REQUIRED
+
+  approved_design:
+    executable: false
+    route_result: MANUAL_REVIEW_REQUIRED
+    reason: APPROVED_DESIGN_WITHOUT_ACTIVE_RUNTIME
+    intents:
+      conta:
+        - analisar_identidade_qualidade_cadastral
+        - acompanhar_prospeccao_abertura_oxigenacao
+        - analisar_ciclo_vida_saude_carteira
+        - analisar_atividade_centralizacao
+        - analisar_risco_elegibilidade
+        - analisar_credito_aprendizado
+      performance:
+        - reconciliar_fontes_performance
+        - calcular_pontuacao_estado
+        - analisar_gaps_cenarios
+        - construir_plano_executavel
+        - aprender_com_resultados
+      financeiro:
+        - reconciliar_fontes_financeiras
+        - calcular_estado_financeiro
+        - diagnosticar_concentracao
+        - simular_cenarios_atribuicao
+        - aprender_com_resultados_financeiros
+      relacionamento:
+        - organizar_fontes_linha_tempo
+        - descobrir_necessidades_objecoes
+        - acompanhar_compromissos
+        - preparar_estrategia_conversa
+        - aprender_com_resultados_relacionais
+
 dependencies:
   - before: identity_resolution
     after: domain_consolidation

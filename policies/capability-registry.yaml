@@ -1,208 +1,153 @@
-schema_version: "1.1.0"
-registry_status: ACTIVE
-maximum_general_managers_per_execution: 4
-maximum_business_general_managers_per_execution: 4
-maximum_transversal_managers_per_execution: 0
-maximum_specialists_per_domain: 4
-maximum_model_cycles_per_agent: 4
-maximum_delegation_depth: 2
+schema_version: "2.0.0"
+registry_status: MIGRATION_READY
+manifest_ref: registries/project-manifest.json
+lifecycle_semantics:
+  design_status_source: manifest_ref
+  approved_does_not_imply_active: true
+  executable_states: [SHADOW, ACTIVE]
+  inactive_design_route_result: MANUAL_REVIEW_REQUIRED
+limits:
+  maximum_general_managers_per_execution: 4
+  maximum_specialists_per_domain: 4
+  maximum_model_cycles_per_agent: 4
+  maximum_delegation_depth: 2
+
 domains:
   conta:
-    manager_id: GERENTE_GERAL_CONTA
-    manager_version: "4.38.0"
-    state: ACTIVE
-    capabilities:
-      resolver_identidade:
-        primary_implementation: CONTA_IDENTIDADE_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
-      avaliar_elegibilidade:
-        primary_implementation: CONTA_ELEGIBILIDADE_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
+    manager:
+      id: GERENTE_GERAL_CONTA
+      version: "4.38.0"
+      design_status: APPROVED
+      implementation_status: SPECIFICATION_ONLY
+      runtime_status: INACTIVE
+    specialists:
       analisar_identidade_qualidade_cadastral:
-        primary_implementation: CONTA_IDENTIDADE_QUALIDADE
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/identidade-qualidade
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
+        id: CONTA_IDENTIDADE_QUALIDADE
+        version: "1.0.0"
       acompanhar_prospeccao_abertura_oxigenacao:
-        primary_implementation: CONTA_PROSPECCAO_OXIGENACAO
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/prospeccao-oxigenacao
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
+        id: CONTA_PROSPECCAO_OXIGENACAO
+        version: "1.0.0"
       analisar_ciclo_vida_saude_carteira:
-        primary_implementation: CONTA_CICLO_VIDA_SAUDE
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/ciclo-vida-saude
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
-      analisar_atividade_centralizacao_produtos_limites:
-        primary_implementation: CONTA_ATIVIDADE_CENTRALIZACAO
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/atividade-centralizacao
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
-      analisar_risco_restricoes_elegibilidade:
-        primary_implementation: CONTA_RISCO_ELEGIBILIDADE
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/risco-elegibilidade
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
-      analisar_credito_aprendizado_controlado:
-        primary_implementation: CONTA_CREDITO_APRENDIZADO
-        implementation_version: "1.0.0"
-        implementation_type: ANALYTICAL_SPECIALIST
-        state: PROPOSED
-        input_schema: contracts/conta-specialist-request.schema.json
-        output_schema: contracts/handoff.schema.json
-        tools: []
-        data_scope: CONFIDENTIAL_MINIMIZED
-        permission_profile: READ_ONLY_CONTA
-        budget_profile: CONTA_STANDARD
-        timeout_seconds: 20
-        evaluation_suite: evals/conta/credito-aprendizado
-        activation_criteria: governance/RELEASE_GATES.md
-        rollback: DISABLE_CAPABILITY
+        id: CONTA_CICLO_VIDA_SAUDE
+        version: "1.0.0"
+      analisar_atividade_centralizacao:
+        id: CONTA_ATIVIDADE_CENTRALIZACAO
+        version: "1.0.0"
+      analisar_risco_elegibilidade:
+        id: CONTA_RISCO_ELEGIBILIDADE
+        version: "1.0.0"
+      analisar_credito_aprendizado:
+        id: CONTA_CREDITO_APRENDIZADO
+        version: "1.0.0"
   performance:
-    manager_id: GERENTE_GERAL_PERFORMANCE
-    manager_version: "4.0.0-base"
-    state: ACTIVE
-    capabilities:
-      avaliar_performance:
-        primary_implementation: PERFORMANCE_AVALIACAO_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
-      identificar_gap_execucao:
-        primary_implementation: PERFORMANCE_GAP_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
+    manager:
+      id: GERENTE_GERAL_PERFORMANCE
+      version: "5.3.0-approved-design"
+      design_status: APPROVED
+      implementation_status: SPECIFICATION_ONLY
+      runtime_status: INACTIVE
+    specialists:
+      reconciliar_fontes_performance:
+        id: PERFORMANCE_SOURCES_RECONCILIATION
+        version: "1.1.0-approved-design"
+      calcular_pontuacao_estado:
+        id: PERFORMANCE_SCORING_STATE
+        version: "1.1.0-approved-design"
+      analisar_gaps_cenarios:
+        id: PERFORMANCE_GAP_SCENARIOS
+        version: "1.1.0-approved-design"
+      construir_plano_executavel:
+        id: PERFORMANCE_EXECUTABILITY_PLAN
+        version: "1.1.0-approved-design"
+      aprender_com_resultados:
+        id: PERFORMANCE_OUTCOMES_LEARNING
+        version: "1.1.0-approved-design"
+    contracts:
+      request: contracts/performance-specialist-request.schema.json
+      response: contracts/performance-specialist-response.schema.json
   financeiro:
-    manager_id: GERENTE_GERAL_FINANCEIRO
-    manager_version: "1.0.0-base"
-    state: ACTIVE
-    capabilities:
-      calcular_rentabilidade:
-        primary_implementation: FINANCEIRO_RENTABILIDADE_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
-      avaliar_viabilidade:
-        primary_implementation: FINANCEIRO_VIABILIDADE_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
+    manager:
+      id: GERENTE_GERAL_FINANCEIRO
+      version: "2.0.0-approved-design"
+      design_status: APPROVED
+      implementation_status: SPECIFICATION_ONLY
+      runtime_status: INACTIVE
+    specialists:
+      reconciliar_fontes_financeiras:
+        id: FINANCIAL_SOURCES_RECONCILIATION
+        version: "1.0.0-approved-design"
+      calcular_estado_financeiro:
+        id: FINANCIAL_CALCULATION_STATE
+        version: "1.0.0-approved-design"
+      diagnosticar_concentracao:
+        id: FINANCIAL_DIAGNOSIS_CONCENTRATION
+        version: "1.0.0-approved-design"
+      simular_cenarios_atribuicao:
+        id: FINANCIAL_SCENARIOS_ATTRIBUTION
+        version: "1.0.0-approved-design"
+      aprender_com_resultados_financeiros:
+        id: FINANCIAL_OUTCOMES_LEARNING
+        version: "1.0.0-approved-design"
+    contracts:
+      request: contracts/financial-specialist-request.schema.json
+      response: contracts/financial-specialist-response.schema.json
   relacionamento:
-    manager_id: GERENTE_GERAL_RELACIONAMENTO
-    manager_version: "1.0.0-base"
-    state: ACTIVE
-    capabilities:
-      recuperar_contexto:
-        primary_implementation: RELACIONAMENTO_CONTEXTO_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
-      preparar_abordagem:
-        primary_implementation: RELACIONAMENTO_ABORDAGEM_SIM
-        implementation_version: "2.0.0"
-        implementation_type: DETERMINISTIC_WORKFLOW
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_ONLY
-  conhecimento:
-    manager_id: GERENTE_GERAL_CONHECIMENTO
-    manager_version: "2.0.0-base"
-    state: RETIRED # PARALISADO PARA O FUTURO SEM DEFINICAO (Decisao Rafael 27/08/2026)
-    capabilities:
-      consultar_normativos:
-        primary_implementation: CONHECIMENTO_NORMATIVOS_SIM
-        implementation_version: "1.0.0"
-        implementation_type: DETERMINISTIC_SEARCH_AND_LLM
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_AND_DOCUMENTS
-      consultar_metas_pontuacao:
-        primary_implementation: CONHECIMENTO_METAS_SIM
-        implementation_version: "1.0.0"
-        implementation_type: DETERMINISTIC_CALC_AND_LLM
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_AND_DOCUMENTS
-      consultar_processos_formularios:
-        primary_implementation: CONHECIMENTO_PROCESSOS_SIM
-        implementation_version: "1.0.0"
-        implementation_type: DETERMINISTIC_SEARCH_AND_LLM
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_AND_DOCUMENTS
-      consultar_contatos_ramais:
-        primary_implementation: CONHECIMENTO_CONTATOS_SIM
-        implementation_version: "1.0.0"
-        implementation_type: DETERMINISTIC_SEARCH
-        state: ACTIVE
-        tools: []
-        data_scope: SYNTHETIC_AND_DOCUMENTS
+    manager:
+      id: GERENTE_GERAL_RELACIONAMENTO
+      version: "2.0.0-approved-design"
+      design_status: APPROVED
+      implementation_status: SPECIFICATION_ONLY
+      runtime_status: INACTIVE
+    specialists:
+      organizar_fontes_linha_tempo:
+        id: RELATIONSHIP_SOURCES_TIMELINE
+        version: "1.0.0-approved-design"
+      descobrir_necessidades_objecoes:
+        id: RELATIONSHIP_NEEDS_OBJECTIONS_DISCOVERY
+        version: "1.0.0-approved-design"
+      acompanhar_compromissos:
+        id: RELATIONSHIP_COMMITMENTS_FOLLOWUP
+        version: "1.0.0-approved-design"
+      preparar_estrategia_conversa:
+        id: RELATIONSHIP_CONVERSATION_STRATEGY_DRAFTING
+        version: "1.0.0-approved-design"
+      aprender_com_resultados_relacionais:
+        id: RELATIONSHIP_OUTCOMES_LEARNING
+        version: "1.0.0-approved-design"
+    contracts:
+      request: contracts/relationship-specialist-request.schema.json
+      response: contracts/relationship-specialist-response.schema.json
+
+specialist_defaults:
+  design_status: APPROVED
+  implementation_status: SPECIFICATION_ONLY
+  runtime_status: INACTIVE
+  tools: []
+  data_scope: NO_RUNTIME_ACCESS
+  activation_criteria: governance/RELEASE_GATES.md
+  rollback: DISABLE_CAPABILITY
+
+legacy_synthetic_runtime:
+  status: ACTIVE
+  data_scope: SYNTHETIC_ONLY
+  migration_note: Fluxos executaveis antigos; nao representam ativacao dos novos gerentes.
+  capabilities:
+    resolver_identidade: CONTA_IDENTIDADE_SIM
+    avaliar_elegibilidade: CONTA_ELEGIBILIDADE_SIM
+    avaliar_performance: PERFORMANCE_AVALIACAO_SIM
+    identificar_gap_execucao: PERFORMANCE_GAP_SIM
+    calcular_rentabilidade: FINANCEIRO_RENTABILIDADE_SIM
+    avaliar_viabilidade: FINANCEIRO_VIABILIDADE_SIM
+    recuperar_contexto: RELACIONAMENTO_CONTEXTO_SIM
+    preparar_abordagem: RELACIONAMENTO_ABORDAGEM_SIM
+
+transversal_capabilities:
+  knowledge_governance:
+    id: KNOWLEDGE_GOVERNANCE
+    design_status: APPROVED
+    implementation_status: SPECIFICATION_ONLY
+    runtime_status: INACTIVE
+  retired_knowledge_manager:
+    id: GERENTE_GERAL_CONHECIMENTO
+    runtime_status: RETIRED
+    child_runtime_status: RETIRED
