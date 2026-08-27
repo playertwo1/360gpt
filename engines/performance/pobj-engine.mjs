@@ -14,6 +14,29 @@ export function attainmentPercent(actual, target) {
   return round(actual / target * 100);
 }
 
+export function scoreGeneralRule({ attainment, weight, rule }) {
+  requireFinite("attainment", attainment);
+  requireFinite("weight", weight);
+  if (weight < 0) throw new RangeError("weight nao pode ser negativo");
+  if (!rule || !Array.isArray(rule.multiplierBands)) {
+    return { status: "UNDETERMINED", points: null, reason: "OFFICIAL_SCORING_RULE_REQUIRED" };
+  }
+  const scoringAttainment = Math.min(Math.max(0, attainment), rule.capPercent);
+  const band = rule.multiplierBands.find(({ fromInclusive, toExclusive }) =>
+    scoringAttainment >= fromInclusive && (toExclusive === null || scoringAttainment < toExclusive)
+  );
+  if (!band) return { status: "UNDETERMINED", points: null, reason: "OFFICIAL_SCORING_BAND_NOT_FOUND" };
+  const rawPoints = weight * scoringAttainment / 100 * band.multiplier;
+  return {
+    status: "CALCULATED_FROM_OFFICIAL_RULE",
+    points: round(rawPoints),
+    rawPoints,
+    multiplier: band.multiplier,
+    scoringAttainmentPercent: scoringAttainment,
+    reason: "OFFICIAL_WEIGHT_ATTAINMENT_MULTIPLIER"
+  };
+}
+
 export function thresholdPosition({ attainment, minimumPercent, capPercent }) {
   requireFinite("attainment", attainment);
   requireFinite("capPercent", capPercent);
@@ -77,6 +100,8 @@ export function evaluateIndicator(input) {
     minimumPercent = null,
     capPercent,
     maximumPoints,
+    weight = null,
+    scoringRule = null,
     pointCurve = null,
     pointCurveMode = null,
     updateLagStatus = "UNKNOWN",
@@ -86,8 +111,20 @@ export function evaluateIndicator(input) {
   requireFinite("officialActual", officialActual);
   requireFinite("pendingActual", pendingActual);
   requireFinite("maximumPoints", maximumPoints);
-  if (officialActual < 0 || pendingActual < 0 || maximumPoints < 0) {
-    throw new RangeError("producao e pontos nao podem ser negativos");
+  if (maximumPoints < 0) throw new RangeError("pontos nao podem ser negativos");
+
+  if (target === 0) {
+    return {
+      indicatorId,
+      official: { actual: officialActual, attainmentPercent: null, thresholdPosition: "NOT_APPLICABLE", points: {
+        status: "EXCLUDED_FROM_DENOMINATOR", points: null, reason: "ZERO_TARGET_WEIGHT_EXCLUDED"
+      } },
+      pending: { actual: pendingActual, recognitionStatus: pendingActual !== 0 ? "PENDING_RECOGNITION" : "NONE" },
+      projection: { actualAfterRecognition: round(officialActual + pendingActual), attainmentPercent: null, thresholdPosition: "NOT_APPLICABLE", isOfficial: false },
+      gaps: { toMinimumPercent: null, toTargetPercent: null, toCapPercent: null },
+      prioritization: { actionClass: "EXCLUDE_ZERO_TARGET", estimatedEffort: null, eligibleForAutomaticRanking: false },
+      updateLagStatus
+    };
   }
 
   const officialAttainment = attainmentPercent(officialActual, target);
@@ -96,7 +133,9 @@ export function evaluateIndicator(input) {
   const projectedPosition = thresholdPosition({ attainment: projectedAttainment, minimumPercent, capPercent });
 
   let officialPoints;
-  if (minimumPercent !== null && officialAttainment < minimumPercent) {
+  if (scoringRule !== null && weight !== null) {
+    officialPoints = scoreGeneralRule({ attainment: officialAttainment, weight, rule: scoringRule });
+  } else if (minimumPercent !== null && officialAttainment < minimumPercent) {
     officialPoints = { status: "CONFIRMED_BY_FLOOR_RULE", points: 0, reason: "BELOW_MINIMUM_ZEROES_POINTS" };
   } else if (officialAttainment >= capPercent) {
     officialPoints = { status: "CONFIRMED_BY_CAP_RULE", points: maximumPoints, reason: "AT_OR_ABOVE_CAP" };
@@ -157,11 +196,12 @@ export function rankIndicators(evaluations) {
     ADVANCE_WITHIN_SCORING_RANGE: 3,
     CHALLENGE_FEASIBILITY: 2,
     RECONCILE_BEFORE_PRIORITIZING: 1,
-    DEPRIORITIZE_FOR_POINTS: 0
+    DEPRIORITIZE_FOR_POINTS: 0,
+    EXCLUDE_ZERO_TARGET: 0
   };
 
   return [...evaluations]
-    .filter((item) => item.prioritization.actionClass !== "DEPRIORITIZE_FOR_POINTS")
+    .filter((item) => !["DEPRIORITIZE_FOR_POINTS", "EXCLUDE_ZERO_TARGET"].includes(item.prioritization.actionClass))
     .sort((a, b) => {
       const classDifference = priority[b.prioritization.actionClass] - priority[a.prioritization.actionClass];
       if (classDifference !== 0) return classDifference;

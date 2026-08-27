@@ -1,5 +1,31 @@
 import assert from "node:assert/strict";
-import { evaluateIndicator, rankIndicators } from "../engines/performance/pobj-engine.mjs";
+import { readFileSync } from "node:fs";
+import { evaluateIndicator, rankIndicators, scoreGeneralRule } from "../engines/performance/pobj-engine.mjs";
+
+const policy = JSON.parse(readFileSync(new URL("../policies/pobj-scoring-rules.2026-h2.json", import.meta.url)));
+const generalRule = policy.generalRule;
+
+assert.equal(scoreGeneralRule({ attainment: 65, weight: 10, rule: generalRule }).points, 0);
+assert.equal(scoreGeneralRule({ attainment: 75, weight: 10, rule: generalRule }).points, 3.75);
+assert.equal(scoreGeneralRule({ attainment: 85, weight: 10, rule: generalRule }).rawPoints, 6.375);
+assert.equal(scoreGeneralRule({ attainment: 150, weight: 10, rule: generalRule }).points, 15);
+assert.equal(scoreGeneralRule({ attainment: 180, weight: 10, rule: generalRule }).points, 15);
+assert.equal(scoreGeneralRule({ attainment: -20, weight: 10, rule: generalRule }).points, 0);
+
+const officialGeneral = evaluateIndicator({
+  indicatorId: "official-general-rule",
+  target: 100,
+  officialActual: 85,
+  minimumPercent: 70,
+  capPercent: 150,
+  maximumPoints: 15,
+  weight: 10,
+  scoringRule: generalRule,
+  updateLagStatus: "CURRENT",
+  estimatedEffort: 2
+});
+assert.equal(officialGeneral.official.points.status, "CALCULATED_FROM_OFFICIAL_RULE");
+assert.equal(officialGeneral.official.points.points, 6.375);
 
 const nearMinimum = evaluateIndicator({
   indicatorId: "near-minimum",
@@ -62,13 +88,15 @@ assert.equal(ranked[0].indicatorId, "near-minimum");
 assert.ok(!ranked.some((item) => item.indicatorId === "above-cap"));
 assert.ok(ranked.length <= 5);
 
-assert.throws(() => evaluateIndicator({
+const zeroTarget = evaluateIndicator({
   indicatorId: "invalid",
   target: 0,
   officialActual: 1,
   minimumPercent: 50,
   capPercent: 100,
   maximumPoints: 1
-}), /target deve ser maior que zero/);
+});
+assert.equal(zeroTarget.official.points.status, "EXCLUDED_FROM_DENOMINATOR");
+assert.equal(zeroTarget.prioritization.eligibleForAutomaticRanking, false);
 
 console.log("pobj-engine: pisos, tetos, curvas, pendencias e ranking validados");
