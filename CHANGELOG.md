@@ -25,6 +25,9 @@
 - Criado motor determinístico de atualidade por indicador, com estados `CURRENT`, `POSSIBLY_LAGGED`, `LAGGED_WITH_PENDING`, `UNKNOWN` e `INVALID_FUTURE_DATE`.
 - Produção pendente passou a exigir estado de evidência e permanece projeção não oficial; o placar publicado nunca é sobrescrito.
 - Indicador fora da tolerância versionada deixa o ranking automático até reconciliação; a tolerância ainda depende de calibração por fonte e não é inventada pelo agente.
+- Criada política `CALIBRATING` com cinco planos oficiais de agosto e ativação explicitamente proibida.
+- Identificadas cadências distintas entre Crédito, Vencidos, Cartões e Seguros; um limite global de dias foi rejeitado como desenho de produção.
+- Motor de atualidade passou a aceitar `SOURCE_WATERMARK`, comparando a `DT.BASE` à data esperada da própria fonte; modo por dias permanece apenas como fallback controlado.
 
 
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado

@@ -72,7 +72,9 @@
 - [x] Exceções registradas separadamente, sem herdar silenciosamente a regra geral.
 - [ ] Curvas dedicadas das exceções implementadas somente onde houver evidência normativa completa.
 - [x] Motor inicial de reconciliação de `DT.BASE` por indicador e produção ainda não reconhecida.
-- [ ] Calibrar a tolerância de defasagem por indicador/fonte; nenhum prazo será inventado pelo agente.
+- [x] Criar política inicial de calibração por indicador/fonte, ainda proibida para ativação.
+- [x] Adicionar comparação preferencial com watermark esperado da fonte.
+- [ ] Observar ao menos um mês completo, validar OCR e homologar perfis de cadência com Rafael.
 - [ ] Motor GDAD para orçamento, realizado, variação, concentração e atribuição.
 - [ ] Motor de compromissos, datas e vencimentos.
 - [ ] Curvas oficiais de pontos versionadas a partir do manual vigente.
