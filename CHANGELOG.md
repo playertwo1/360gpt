@@ -1,5 +1,28 @@
 # Changelog
 
+## Não publicado — Gerente Geral de Relacionamento v2.0 aprovado
+
+> Desenho aprovado por Rafael em 27/08/2026. Especialistas ainda serão revisados individualmente e o runtime permanece inalterado.
+
+- Projeto `Minhas-respostas` adotado como referência funcional, sem copiar exemplos estáticos, heurísticas de sentimento ou mistura de responsabilidades.
+- Criados três modos de trabalho: `UNDERSTAND`, `PREPARE` e `RESPOND`.
+- Formalizada separação entre fato textual, necessidade, objeção, inferência, hipótese, pergunta de descoberta, compromisso e sugestão de abordagem.
+- Gerente passa a atuar como memória de conversas, guardião de compromissos, preparador consultivo e parceiro crítico de interpretação.
+- Rascunhos permanecem em `PENDING_HUMAN_APPROVAL`; nenhum contato externo é enviado automaticamente.
+- Prevista conversa direta na aba Relacionamento com compartilhamento apenas de fatos e aprendizados promovidos ao Estado 360.
+- Proposto catálogo de cinco especialistas, limitado a quatro por execução.
+- Criadas as cinco especificações candidatas em `SANDBOX`: Fontes e Linha do Tempo; Necessidades, Objeções e Descoberta; Compromissos e Follow-up; Estratégia e Redação; Desfechos e Aprendizado.
+- Especialistas receberam IDs canônicos, contratos de entrada e saída, fronteiras sem sobreposição, revisão humana, trilha de auditoria, critérios de aceite, falha segura e rollback.
+- Conteúdo importado passou a ser tratado como dado não confiável, com isolamento contra instruções embutidas; ferramentas de envio externo permanecem indisponíveis.
+- Formalizada a divisão entre interpretação por IA e controles determinísticos para hashes, versões, datas, estados, alertas e invalidações.
+- Especialista `RELATIONSHIP_SOURCES_TIMELINE` aprovado por Rafael em 27/08/2026; desenho promovido para `APPROVED`, mantendo o runtime inativo.
+- Os cinco especialistas do Gerente Geral de Relacionamento foram aprovados integralmente por Rafael em 27/08/2026 e promovidos para `APPROVED`; nenhum foi ativado no runtime.
+- Aprovadas fontes controladas da primeira fase: texto, WhatsApp exportado, notas, áudio, e-mail, PDF, imagem e registro manual.
+- Definida preservação do original e estados `LINKED`, `UNRESOLVED`, `MULTIPLE_CANDIDATES` e `PORTFOLIO_GENERAL`, sem vínculo silencioso.
+- Aprovada gestão de compromissos por responsável, estados de follow-up, prazo explícito prioritário e alerta de ausência de contato após 60 dias com exceções.
+- Aprovada preparação estruturada com leituras alternativas, perguntas, abordagem, rascunhos e critério de sucesso, adaptada por canal e tom sem alterar fatos.
+- Aprovado aprendizado relacional baseado em desfechos, sem confundir silêncio, rapidez, sentimento, correlação ou rejeição de produto com intenção comprovada.
+
 ## Não publicado — Gerente Geral de Performance v5.3 aprovado
 
 > Desenho do Gerente Geral e dos cinco especialistas aprovado por Rafael em 27/08/2026. O runtime continua inalterado até implementação, avaliações e promoção próprias para `ACTIVE`.
