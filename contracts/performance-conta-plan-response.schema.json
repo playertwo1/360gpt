@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/performance-conta-plan-response.schema.json",
+  "title": "Resposta de Conta ao plano de Performance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "provided_by", "mediated_by", "operating_phase", "account_data_status", "portfolio_signals", "account_candidates", "limitations", "decision_authority"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "provided_by": { "const": "GERENTE_GERAL_CONTA" },
+    "mediated_by": { "const": "MOTOR_CONSOLIDACAO_360" },
+    "operating_phase": { "enum": ["GOAL_LEVEL_INITIAL", "ACCOUNT_LEVEL_FUTURE"] },
+    "account_data_status": { "enum": ["NOT_AVAILABLE", "PARTIAL", "AVAILABLE"] },
+    "portfolio_signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["signal", "evidence_status", "use_in_plan"],
+        "properties": {
+          "signal": { "type": "string", "minLength": 1 },
+          "evidence_status": { "enum": ["CONFIRMED", "PARTIAL", "UNKNOWN"] },
+          "use_in_plan": { "enum": ["ALLOW", "CAUTION", "BLOCK"] }
+        }
+      }
+    },
+    "account_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["account_ref", "eligibility_status", "evidence_refs"],
+        "properties": {
+          "account_ref": { "type": "string", "minLength": 1 },
+          "eligibility_status": { "enum": ["ELIGIBLE", "INELIGIBLE", "UNDETERMINED"] },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "decision_authority": { "const": "RAFAEL" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "operating_phase": { "const": "GOAL_LEVEL_INITIAL" } } },
+      "then": {
+        "properties": {
+          "account_data_status": { "const": "NOT_AVAILABLE" },
+          "account_candidates": { "maxItems": 0 }
+        }
+      }
+    }
+  ]
+}

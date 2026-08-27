@@ -57,8 +57,9 @@
 - [x] Exemplos canônicos válidos para os seis contratos.
 - [x] Casos de borda: piso próximo, teto superado, fonte financeira parcial e compromisso vencido.
 - [x] Testes iniciais de comportamento e falha segura.
-- [ ] Contrato do plano diário integrado Performance–Conta, sem empresa por ação na fase inicial.
-- [ ] Gate de saída documentado e aprovado por Rafael.
+- [x] Contrato do plano diário integrado Performance–Conta, sem empresa por ação na fase inicial.
+- [x] Gate de saída documentado.
+- [ ] Gate de saída aprovado por Rafael.
 
 ### Regra de leitura do roadmap
 

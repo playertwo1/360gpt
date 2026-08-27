@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "perf-conta-synthetic-001",
+  "provided_by": "GERENTE_GERAL_CONTA",
+  "mediated_by": "MOTOR_CONSOLIDACAO_360",
+  "operating_phase": "GOAL_LEVEL_INITIAL",
+  "account_data_status": "NOT_AVAILABLE",
+  "portfolio_signals": [
+    {
+      "signal": "Sem base de contas integrada, o plano deve permanecer no nível da meta.",
+      "evidence_status": "CONFIRMED",
+      "use_in_plan": "CAUTION"
+    }
+  ],
+  "account_candidates": [],
+  "limitations": [
+    "Nenhuma empresa, conta ou origem pode ser anexada à ação nesta fase.",
+    "A eventual seleção de clientes dependerá de dados de Conta e nova promoção de contrato."
+  ],
+  "decision_authority": "RAFAEL"
+}
