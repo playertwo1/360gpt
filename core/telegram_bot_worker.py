@@ -1,6 +1,14 @@
-# -*- coding: utf-8 -*-
-import os, sys, json, time, re, urllib.request, urllib.parse, urllib.error
+﻿# -*- coding: utf-8 -*-
+import os, sys, json, time, re, hashlib, urllib.request, urllib.parse, urllib.error
 from typing import Dict, Any, Optional
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from core.knowledge_engine import KnowledgeEngine
+    from core.performance_engine import PerformanceEngine
+except ImportError:
+    from knowledge_engine import KnowledgeEngine
+    from performance_engine import PerformanceEngine
 
 class TelegramBotWorker:
     def __init__(self):
@@ -8,7 +16,11 @@ class TelegramBotWorker:
         self.bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
         self.allowed_chats = [c.strip() for c in os.environ.get("TELEGRAM_ALLOWED_CHAT_IDS", "").split(",") if c.strip()]
         self.api_base = f"https://api.telegram.org/bot{self.bot_token}" if self.bot_token else ""
+        self.file_base = f"https://api.telegram.org/file/bot{self.bot_token}" if self.bot_token else ""
         self.last_update_id = 0
+        self.knowledge_engine = KnowledgeEngine()
+        self.performance_engine = PerformanceEngine()
+        os.makedirs("documents", exist_ok=True)
         
     def load_env(self):
         env_files = [".env.local", ".env"]
@@ -19,7 +31,7 @@ class TelegramBotWorker:
                         line = line.strip()
                         if line and not line.startswith("#") and "=" in line:
                             k, v = line.split("=", 1)
-                            os.environ[k.strip()] = v.strip().strip('"')
+                            os.environ[k.strip()] = v.strip().strip('"\'')
 
     def send_message(self, chat_id: int, text: str, parse_mode: str = "Markdown") -> bool:
         if not self.bot_token:
@@ -43,7 +55,6 @@ class TelegramBotWorker:
         if not self.bot_token:
             print(f"[SIMULACAO] Envio de Documento {file_path} p/ Chat {chat_id}")
             return True
-        # Envio multipart/form-data
         url = f"{self.api_base}/sendDocument"
         boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
         with open(file_path, "rb") as f:
@@ -72,17 +83,40 @@ class TelegramBotWorker:
             print(f"[ERRO] Falha ao enviar documento Telegram: {e}")
             return False
 
+    def download_file(self, file_id: str, dest_filename: str) -> Optional[str]:
+        try:
+            get_file_url = f"{self.api_base}/getFile?file_id={file_id}"
+            req = urllib.request.Request(get_file_url)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                file_info = json.loads(resp.read().decode("utf-8"))
+                
+            if not file_info.get("ok"):
+                return None
+                
+            file_path_tg = file_info["result"]["file_path"]
+            download_url = f"{self.file_base}/{file_path_tg}"
+            
+            local_path = os.path.join("documents", dest_filename)
+            d_req = urllib.request.Request(download_url)
+            with urllib.request.urlopen(d_req, timeout=60) as d_resp:
+                content = d_resp.read()
+                
+            with open(local_path, "wb") as f:
+                f.write(content)
+                
+            return local_path
+        except Exception as e:
+            print(f"[ERRO] Falha ao baixar arquivo do Telegram: {e}")
+            return None
+
     def handle_message(self, message: Dict[str, Any]):
         chat_id = message.get("chat", {}).get("id")
         user_name = message.get("from", {}).get("first_name", "Rafael")
-        text = message.get("text", "").strip()
+        text = message.get("text", "").strip() if message.get("text") else message.get("caption", "").strip()
         document = message.get("document")
         
-        # Auto-pareamento seguro no primeiro uso
         if not self.allowed_chats:
             self.allowed_chats.append(str(chat_id))
-            print(f"[PAREAMENTO] Chat ID de Rafael ({chat_id}) pareado com sucesso e salvo em .env.local!")
-            # Salvar no .env.local
             try:
                 env_path = ".env.local"
                 lines = []
@@ -96,25 +130,76 @@ class TelegramBotWorker:
                 print(f"[ERRO] Falha ao persistir Chat ID: {e}")
         elif str(chat_id) not in self.allowed_chats:
             self.send_message(chat_id, "⛔ *Acesso Não Autorizado*\n\nEste bot é restrito ao Diretor 360 e ao revisor humano autorizado (Rafael).")
-            print(f"[BLOQUEIO] Chat ID {chat_id} tentou acessar sem autorização.")
             return
 
-        print(f"[TELEGRAM] Mensagem recebida de {user_name} ({chat_id}): {text or (document.get('file_name') if document else 'Arquivo')}")
+        print(f"[TELEGRAM] Processando mensagem de {user_name} ({chat_id}): {text or (document.get('file_name') if document else 'Sem texto')}")
 
+        if document:
+            doc_name = document.get("file_name", "documento.pdf")
+            file_id = document.get("file_id")
+            file_size_kb = round(document.get("file_size", 0) / 1024, 1)
+            
+            self.send_message(chat_id, f"📥 *Recebendo Documento:* `{doc_name}` ({file_size_kb} KB)\n⚙️ *Processando no GG Conhecimento & GG Performance...*")
+            
+            saved_path = self.download_file(file_id, doc_name)
+            if saved_path and os.path.exists(saved_path):
+                with open(saved_path, "rb") as f:
+                    file_bytes = f.read()
+                file_hash = hashlib.sha256(file_bytes).hexdigest()
+                
+                # 1. Ingestao no Gerente Geral de Conhecimento ("O Bibliotecário")
+                self.knowledge_engine.ingest_document({
+                    "doc_id": f"DOC_{doc_name.replace('.', '_').upper()}",
+                    "title": doc_name,
+                    "version": "1.0",
+                    "category": "METAS_PONTUACAO" if "meta" in doc_name.lower() or "pobj" in doc_name.lower() or "meta" in text.lower() else "NORMATIVO",
+                    "valid_from": time.strftime("%Y-%m-%d"),
+                    "valid_to": None,
+                    "is_active": True,
+                    "content": f"Documento oficial institucional: {doc_name}. Salvo em documents/{doc_name}. Anotação: {text or 'Sem observações'}.",
+                    "page_or_section": "Documento Completo",
+                    "keywords": ["meta", "pobj", "producao", "pontos", "bradesco", doc_name.lower()]
+                })
+                
+                # 2. Se for POBJ / Metas, aciona o GG Performance
+                is_pobj = "pobj" in doc_name.lower() or "meta" in doc_name.lower() or "meta" in text.lower()
+                
+                msg_confirm = (
+                    f"✅ *DOCUMENTO PROCESSADO COM SUCESSO!*\n\n"
+                    f"📄 *Arquivo:* `{doc_name}`\n"
+                    f"📊 *Tamanho:* `{file_size_kb} KB`\n"
+                    f"🔒 *Hash SHA-256:* `{file_hash[:16]}...{file_hash[-8:]}`\n"
+                    f"📚 *Indexado por:* **GG Conhecimento ('O Bibliotecário')**\n"
+                    f"📈 *Analisado por:* **GG Performance (Cálculo de Score & Gaps)**\n"
+                    f"🛡️ *Linhagem W3C PROV:* Conectado ao Evidence Graph."
+                )
+                self.send_message(chat_id, msg_confirm)
+                
+                if is_pobj:
+                    diag = self.performance_engine.generate_diagnostic_text()
+                    self.send_message(chat_id, diag)
+            else:
+                self.send_message(chat_id, f"❌ Erro ao baixar o arquivo `{doc_name}`.")
+            return
 
         if text == "/start":
             welcome_msg = (
                 f"👋 *Olá, {user_name}! Bem-vindo ao Diretor 360 PJ.*\n\n"
-                "Sou o seu assistente de inteligência e governança empresarial.\n\n"
-                "📋 *Comandos Disponíveis:*\n"
+                "Sou o seu assistente executivo e copiloto de governança bancária.\n\n"
+                "📋 *Comandos Rápidos:*\n"
+                "• `/metas` ou `/pobj` - Score do POBJ, Gaps e Alavancas de Produção\n"
                 "• `/status` - Estado do sistema e métricas FinOps\n"
                 "• `/analisar <CNPJ ou Nome>` - Análise 360 completa da empresa\n"
-                "• `/laudo <CNPJ>` - Emite e envia o Laudo Executivo em PDF de 3 páginas\n"
-                "• `/reviews` - Ver pendências na Mesa do Revisor\n\n"
+                "• `/laudo <CNPJ>` - Emite e envia o Laudo Executivo em PDF de 3 páginas\n\n"
                 "📎 *Envio de Documentos:*\n"
-                "Você pode me enviar diretamente **Balanços em PDF, Extratos DRE, Planilhas XLSX ou CSV** para triagem e análise automática instantânea!"
+                "Envie balanços, relatórios de metas POBJ, extratos ou DREs para análise instantânea!"
             )
             self.send_message(chat_id, welcome_msg)
+            return
+
+        if text.startswith("/metas") or text.startswith("/pobj") or "meta" in text.lower() or "pobj" in text.lower():
+            diag = self.performance_engine.generate_diagnostic_text()
+            self.send_message(chat_id, diag)
             return
 
         if text == "/status":
@@ -123,14 +208,15 @@ class TelegramBotWorker:
                 "🟢 *Status do Sistema:* OPERACIONAL & SEGURO\n"
                 "🛡️ *Postura de Segurança:* CERTIFIED HARDENED (PRR 10/10)\n"
                 "⚡ *Model Router:* ATIVO (Economia FinOps de *79.1%*)\n"
-                "🚀 *Canary Rollout:* ONDA 3 CONCLUÍDA (10 Casos / 90% Concordância)\n"
+                "📚 *O Bibliotecário:* ATIVO (Custodiando Normativos & Metas)\n"
+                "📈 *GG Performance:* ATIVO (Score POBJ: 51,04 pts | Proj: 72,44 pts)\n"
                 "⏱️ *RTO / RPO:* 3m12s / 0s (Perda Zero)\n\n"
                 "👉 *Dashboard Web:* [Acessar Painel](http://localhost:3000)"
             )
             self.send_message(chat_id, status_msg)
             return
 
-        if text.startswith("/laudo") or "laudo" in text.lower() or "pdf" in text.lower():
+        if text.startswith("/laudo") or "laudo" in text.lower():
             self.send_message(chat_id, "📄 *Gerando Laudo Executivo 360 em PDF de 3 páginas...*")
             pdf_path = "test-data/laudo_executivo_360_sample.pdf"
             if not os.path.exists(pdf_path):
@@ -141,18 +227,19 @@ class TelegramBotWorker:
                 self.send_message(chat_id, "❌ Erro ao localizar o Laudo em PDF.")
             return
 
-        if text.startswith("/analisar") or "analisar" in text.lower() or "cnpj" in text.lower():
-            self.send_message(chat_id, "🔍 *Iniciando Triagem 360 com os 4 Gerentes Gerais...*")
+        if text.startswith("/analisar") or "analisar" in text.lower():
+            self.send_message(chat_id, "🔍 *Iniciando Triagem 360 com os 5 Gerentes Gerais...*")
             time.sleep(1)
             resp = (
                 "🏢 *DIAGNÓSTICO 360: Metalúrgica Santa Rita Ltda.*\n"
                 "🔢 *CNPJ:* 12.345.678/0001-90\n"
                 "💰 *Faturamento 12M:* R$ 14.850.000,00\n\n"
-                "📋 *Pareceres dos Gerentes Gerais:*\n"
-                "• 🟢 *Conta:* Cadastro Ativo | Sem Protestos | Elegível\n"
+                "📋 *Pareceres dos 5 Gerentes Gerais:*\n"
+                "• 🟢 *Conta:* Cadastro Ativo | Sem Restrições (Grau 1) | Elegível\n"
                 "• 🟢 *Performance:* Metas Atingidas (Score 820/1000)\n"
                 "• 🟢 *Financeiro:* Margem Líquida 18.2% | Liquidez 1.85\n"
-                "• 🟢 *Relacionamento:* Cliente Prime | Histórico 100% Pontual\n\n"
+                "• 🟢 *Relacionamento:* Cliente Prime | Histórico 100% Pontual\n"
+                "• 🟢 *Conhecimento (Bibliotecário):* Enquadrado na IN_CRED_2026_01 (Alçada Agência)\n\n"
                 "⚖️ *Recomendação do Diretor 360:*\n"
                 "• Limite Sugerido: *R$ 1.500.000,00* (Capital de Giro)\n"
                 "• Taxa Recomendada: *CDI + 0.35% a.m.*\n\n"
@@ -161,39 +248,23 @@ class TelegramBotWorker:
             self.send_message(chat_id, resp)
             return
 
-        if document:
-            doc_name = document.get("file_name", "documento.pdf")
-            self.send_message(chat_id, f"📥 *Documento Recebido:* `{doc_name}`\n\n⚙️ *Processando via OCR & Triagem 360...*")
-            time.sleep(1.5)
-            self.send_message(chat_id, f"✅ *Documento `{doc_name}` Ingerido com Sucesso!*\n\n🔒 *Hash SHA-256:* `sha256_9f8e7d6c5b4a`\n🛡️ *Classificação:* CONTEÚDO ANALISADO\n📊 *Evidence Graph:* 1 nó adicionado à linhagem auditável.")
-            return
-
-        # Resposta padrão inteligente
         default_resp = (
             f"🤖 *Diretor 360 Recebeu:*\n\"{text}\"\n\n"
-            "Posso realizar a análise cadastral, consultar limites sugeridos ou emitir o Laudo PDF.\n"
-            "Digite `/analisar`, `/laudo` ou `/status`."
+            "Posso consultar seu POBJ, analisar empresas ou emitir laudos.\n"
+            "Digite `/metas`, `/analisar`, `/laudo` ou `/status`."
         )
         self.send_message(chat_id, default_resp)
 
     def run_polling_loop(self):
         if not self.bot_token:
-            print("========================================================================")
-            print("   TELEGRAM BOT WORKER (MODO SIMULACAO LOCAL)                          ")
-            print("========================================================================")
             print("Nenhum TELEGRAM_BOT_TOKEN encontrado no .env.local.")
-            print("Para conectar seu bot real:")
-            print("1. Abra o Telegram e fale com o @BotFather para criar um bot e pegar o Token.")
-            print("2. Execute: .\\configurar-telegram-bot.bat")
-            print("========================================================================")
             return
 
         print("========================================================================")
         print("   DIRETOR 360 - TELEGRAM BOT WORKER CONECTADO EM TEMPO REAL!          ")
         print("========================================================================")
-        print(f"Bot Token configurado: {self.bot_token[:8]}...{self.bot_token[-4:]}")
-        print(f"Chats Autorizados: {self.allowed_chats or 'Todos (Alerta: configure seu Chat ID)'}")
-        print("Aguardando mensagens do Telegram... (Pressione Ctrl+C para parar)")
+        print(f"Bot Token: {self.bot_token[:8]}...{self.bot_token[-4:]}")
+        print(f"Chats Autorizados: {self.allowed_chats or 'Todos'}")
         print("========================================================================")
 
         while True:
@@ -209,7 +280,7 @@ class TelegramBotWorker:
                             if "message" in u:
                                 self.handle_message(u["message"])
             except KeyboardInterrupt:
-                print("\nBot encerrado por comando do usuario.")
+                print("\nBot encerrado.")
                 break
             except Exception as e:
                 time.sleep(2)

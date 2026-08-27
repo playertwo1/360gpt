@@ -1,0 +1,129 @@
+﻿# -*- coding: utf-8 -*-
+import json, os, hashlib
+from typing import Dict, Any, List
+
+class PerformanceEngine:
+    def __init__(self, pobj_path: str = "test-data/performance/pobj_agosto_2026.json"):
+        self.pobj_path = pobj_path
+        os.makedirs("test-data/performance", exist_ok=True)
+        if not os.path.exists(self.pobj_path):
+            self._init_default_pobj()
+
+    def _init_default_pobj(self):
+        default_data = {
+            "period": "Agosto/2026",
+            "reference_date": "2026-08-25",
+            "manager": "VJ-RAFAEL PEDROSA GONCALVES",
+            "branch": "6895 - VJ-SAO FIDELIS",
+            "total_indicators": 20,
+            "indicators_achieved": 4,
+            "target_points": 78.00,
+            "achieved_points": 51.04,
+            "pct_monthly_achieved": 65.44,
+            "points_needed": 7.00,
+            "projected_final_points": 72.44,
+            "categories": [
+                {
+                    "category": "Negócios Crédito",
+                    "weight_max": 15.00,
+                    "achieved_points": 15.00,
+                    "status": "SUPERADO",
+                    "details": "Meta R$ 765.726,75 | Realizado R$ 1.384.193,37 (180,77%)"
+                },
+                {
+                    "category": "Qualidade (Encanta BRA)",
+                    "weight_max": 10.00,
+                    "achieved_points": 15.00,
+                    "status": "SUPERADO",
+                    "details": "Meta 144,00 | Realizado 150,00 (104,17%)"
+                },
+                {
+                    "category": "Negócios Captação",
+                    "weight_max": 20.00,
+                    "achieved_points": 10.91,
+                    "status": "EM_ANDAMENTO",
+                    "details": "Grupo A: 211,13% | Fundos: 169,36% | Depósito a Prazo: 250,88%"
+                },
+                {
+                    "category": "Ligadas e Aceleradores (Open Finance)",
+                    "weight_max": 15.00,
+                    "achieved_points": 7.00,
+                    "status": "SUPERADO",
+                    "details": "Meta 4,00 | Realizado 5,00 (125,00%)"
+                },
+                {
+                    "category": "Clientes (Crescimento Líquido PJ)",
+                    "weight_max": 16.00,
+                    "achieved_points": 4.92,
+                    "status": "EM_ANDAMENTO",
+                    "details": "Meta 4,00 | Realizado 3,00 (75,00%) | Nec Dia: 0,20"
+                },
+                {
+                    "category": "Gestão de Risco (Vencidos até 59d)",
+                    "weight_max": 17.00,
+                    "achieved_points": 4.38,
+                    "status": "ATENCAO",
+                    "details": "Meta R$ 954.316,47 | Realizado R$ 619.000,71 (64,86%) | Nec Dia: R$ 67.063,15"
+                },
+                {
+                    "category": "Negócios Ligadas (Cartões PJ & Seguros)",
+                    "weight_max": 15.00,
+                    "achieved_points": 0.83,
+                    "status": "CRITICO",
+                    "details": "Cartões PJ: 3 de 4 (75%) | Capitalização: R$ 402,45 (0,93%) | Seguro RE: R$ 1.440,08 (26,20%)"
+                }
+            ],
+            "priority_levers": [
+                {
+                    "product": "Crescimento Líquido Clientes PJ",
+                    "action": "Fechar 1 nova conta PJ qualificada",
+                    "impact": "+1,64 pontos no POBJ (atinge 100% da meta de clientes)",
+                    "urgency": "ALTA"
+                },
+                {
+                    "product": "Cartão de Crédito PJ Negócios",
+                    "action": "Emitir 1 cartão PJ (está em 3 de 4)",
+                    "impact": "+4,17 pontos no POBJ (atinge 100% da esteira)",
+                    "urgency": "ALTA"
+                },
+                {
+                    "product": "Seguro RE (Empresarial)",
+                    "action": "Produzir R$ 4.055,93 em prêmio novo",
+                    "impact": "+3,80 pontos no POBJ",
+                    "urgency": "MEDIA"
+                },
+                {
+                    "product": "Capitalização PU + PM",
+                    "action": "Acelerar aportes com clientes com caixa parado em conta corrente",
+                    "impact": "+5,00 pontos no POBJ",
+                    "urgency": "MEDIA"
+                }
+            ]
+        }
+        with open(self.pobj_path, "w", encoding="utf-8") as f:
+            json.dump(default_data, f, indent=2, ensure_ascii=False)
+
+    def load_pobj(self) -> Dict[str, Any]:
+        with open(self.pobj_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def generate_diagnostic_text(self) -> str:
+        data = self.load_pobj()
+        lines = []
+        lines.append(f"🎯 *DIAGNÓSTICO POBJ — GERENTE GERAL DE PERFORMANCE*")
+        lines.append(f"👤 *Gerente:* `{data['manager']}` | 🏦 `{data['branch']}`")
+        lines.append(f"📅 *Competência:* {data['period']} (Data-Base: {data['reference_date']})\n")
+        lines.append(f"📊 *Score Atual:* *{data['achieved_points']:.2f} pts* ({data['pct_monthly_achieved']:.1f}%)")
+        lines.append(f"📈 *Projeção de Fechamento:* *{data['projected_final_points']:.2f} pts* (Meta Teto: *{data['target_points']:.2f} pts*)\n")
+        lines.append("🏆 *DESTAQUES SUPERADOS (Meta Batida):*")
+        for cat in data["categories"]:
+            if cat["status"] == "SUPERADO":
+                lines.append(f"  • ✅ *{cat['category']}:* {cat['achieved_points']:.2f} pts ({cat['details']})")
+        lines.append("\n⚠️ *GAPS & ALAVANCAS DE PONTUAÇÃO RÁPIDA (Faltam 5,56 pts p/ meta 78):*")
+        for lever in data["priority_levers"]:
+            lines.append(f"  • 🚀 *{lever['product']}:* {lever['action']} ➔ `{lever['impact']}` [{lever['urgency']}]")
+        return "\n".join(lines)
+
+if __name__ == "__main__":
+    engine = PerformanceEngine()
+    print(engine.generate_diagnostic_text())

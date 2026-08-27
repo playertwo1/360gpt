@@ -182,5 +182,45 @@
     ],
     "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
     "recorded_at": "2026-08-26T22:23:14.342479"
+  },
+  {
+    "doc_id": "DOC_POBJ2608_PDF",
+    "title": "POBJ2608.pdf",
+    "version": "1.0",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-26",
+    "valid_to": null,
+    "is_active": true,
+    "content": "Documento oficial institucional: POBJ2608.pdf. Arquivo salvo com sucesso em documents/POBJ2608.pdf. Anotacoes do gestor: Sem observacoes adicionais.",
+    "page_or_section": "Documento Completo",
+    "keywords": [
+      "meta",
+      "metas",
+      "producao",
+      "pontos",
+      "banco",
+      "pobj2608.pdf"
+    ],
+    "sha256_hash": "90f140f1ba54bda593450724a9214352f273b25788f6eb1822440e27f60ce703",
+    "recorded_at": "2026-08-26T22:33:27.149440"
+  },
+  {
+    "doc_id": "IN_CRED_2026_02_CONFLITO",
+    "title": "Instrucao Normativa Conflitante de Alçada",
+    "version": "1.1",
+    "category": "NORMATIVO",
+    "valid_from": "2026-08-01",
+    "valid_to": null,
+    "is_active": true,
+    "supersedes": null,
+    "content": "Art. 4º: O limite de alçada local da agência para Capital de Giro é de R$ 800.000,00.",
+    "page_or_section": "Artigo 4º, Página 1",
+    "keywords": [
+      "alcada",
+      "capital de giro",
+      "limite"
+    ],
+    "sha256_hash": "3d5d16a0b57de46d55d3e2c094065c9880c9c8ae211066d6eaa32fef9b23a550",
+    "recorded_at": "2026-08-26T22:40:39.867347"
   }
 ]
