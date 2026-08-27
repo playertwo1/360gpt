@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
   "version": "3.1.0-confianca",
-  "last_updated": "2026-08-26T21:52:30-03:00",
+  "last_updated": "2026-08-26T22:00:03-03:00",
   "last_active_assistant": "ChatGPT Codex (OpenAI)",
   "next_recommended_assistant": "ChatGPT Codex (OpenAI) ou Antigravity (Google)",
   "current_mission": "AUDITORIA_RETROSPECTIVA_COMPLETA_FASES_0_A_7",
@@ -38,6 +38,6 @@
   },
   "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
   "launcher_command": ".\\iniciar-diretor-360.bat",
-  "last_commit": "64da137",
-  "last_backup": "backup-auditoria-retrospectiva-20260826-215343.zip"
+  "last_commit": "b78e81b",
+  "last_backup": "backup-post-h9-hardening-20260826-220003.zip"
 }
