@@ -8,20 +8,21 @@ pricing_table_usd_per_1m_tokens:
     output: 0.000000
     latency_ms_p95: 5
   flash_lite:
-    model_id: "gemini-2.0-flash-lite"
+    model_id: "gemini-3.5-flash-lite"
     input: 0.075
     output: 0.300
     latency_ms_p95: 450
   flash:
-    model_id: "gemini-2.0-flash"
+    model_id: "gemini-3.7-flash"
     input: 0.150
     output: 0.600
     latency_ms_p95: 950
   pro:
-    model_id: "gemini-2.5-pro"
+    model_id: "gemini-3.1-pro-preview"
     input: 1.250
     output: 5.000
     latency_ms_p95: 2400
+
   human_review:
     handler: "rafael_mesa_revisor"
     cost: 0.000

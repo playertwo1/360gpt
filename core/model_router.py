@@ -20,10 +20,11 @@ class ModelRouter:
     
     PRICING = {
         "deterministic": {"input": 0.0, "output": 0.0, "model_id": "code_engine"},
-        "flash_lite": {"input": 0.075 / 1_000_000, "output": 0.300 / 1_000_000, "model_id": "gemini-2.0-flash-lite"},
-        "flash": {"input": 0.150 / 1_000_000, "output": 0.600 / 1_000_000, "model_id": "gemini-2.0-flash"},
-        "pro": {"input": 1.250 / 1_000_000, "output": 5.000 / 1_000_000, "model_id": "gemini-2.5-pro"},
+        "flash_lite": {"input": 0.075 / 1_000_000, "output": 0.300 / 1_000_000, "model_id": "gemini-3.5-flash-lite"},
+        "flash": {"input": 0.150 / 1_000_000, "output": 0.600 / 1_000_000, "model_id": "gemini-3.7-flash"},
+        "pro": {"input": 1.250 / 1_000_000, "output": 5.000 / 1_000_000, "model_id": "gemini-3.1-pro-preview"},
         "human_review": {"input": 0.0, "output": 0.0, "model_id": "rafael_mesa_revisor"}
+
     }
     
     DETERMINISTIC_TASKS = {
