@@ -78,13 +78,29 @@ class TelegramBotWorker:
         text = message.get("text", "").strip()
         document = message.get("document")
         
-        # Validacao de chat permitido
-        if self.allowed_chats and str(chat_id) not in self.allowed_chats:
-            self.send_message(chat_id, "⛔ *Acesso Não Autorizado*\n\nEste bot é restrito ao Diretor 360 e revisor humano autorizado.")
-            print(f"[BLOQUEIO] Chat ID {chat_id} tentou acessar sem autorizacao.")
+        # Auto-pareamento seguro no primeiro uso
+        if not self.allowed_chats:
+            self.allowed_chats.append(str(chat_id))
+            print(f"[PAREAMENTO] Chat ID de Rafael ({chat_id}) pareado com sucesso e salvo em .env.local!")
+            # Salvar no .env.local
+            try:
+                env_path = ".env.local"
+                lines = []
+                if os.path.exists(env_path):
+                    with open(env_path, "r", encoding="utf-8") as f:
+                        lines = [l for l in f if not l.startswith("TELEGRAM_ALLOWED_CHAT_IDS=")]
+                lines.append(f"TELEGRAM_ALLOWED_CHAT_IDS={chat_id}\n")
+                with open(env_path, "w", encoding="utf-8") as f:
+                    f.writelines(lines)
+            except Exception as e:
+                print(f"[ERRO] Falha ao persistir Chat ID: {e}")
+        elif str(chat_id) not in self.allowed_chats:
+            self.send_message(chat_id, "⛔ *Acesso Não Autorizado*\n\nEste bot é restrito ao Diretor 360 e ao revisor humano autorizado (Rafael).")
+            print(f"[BLOQUEIO] Chat ID {chat_id} tentou acessar sem autorização.")
             return
 
         print(f"[TELEGRAM] Mensagem recebida de {user_name} ({chat_id}): {text or (document.get('file_name') if document else 'Arquivo')}")
+
 
         if text == "/start":
             welcome_msg = (
