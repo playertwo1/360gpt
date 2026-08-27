@@ -13,6 +13,8 @@
 - Relacionamento passou a exigir finalidade, consentimento, linha do tempo, incertezas e aprovação humana.
 - Rafael permanece como autoridade final; runtime novo e dados reais permanecem sem liberação automática.
 - Adicionados seis exemplos sintéticos canônicos e testes para piso próximo, teto superado, defasagem, GDAD parcial, atribuição desconhecida e compromisso vencido.
+- Criado contrato Performance–Conta mediado pelo Motor 360; a fase inicial trabalha no nível da meta e proíbe empresa, conta ou origem por ação.
+- Criado gate formal da Etapa B, pendente apenas de aprovação explícita de Rafael.
 
 
 ### v2.0 — AGENTS do Diretor Geral 360 consolidado

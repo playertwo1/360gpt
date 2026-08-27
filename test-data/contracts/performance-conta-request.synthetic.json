@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "perf-conta-synthetic-001",
+  "requested_by": "GERENTE_GERAL_PERFORMANCE",
+  "mediated_by": "MOTOR_CONSOLIDACAO_360",
+  "provider": "GERENTE_GERAL_CONTA",
+  "operating_phase": "GOAL_LEVEL_INITIAL",
+  "reference_month": "2026-08",
+  "performance_need": {
+    "indicator_id": "produto_piso_proximo",
+    "threshold_position": "NEAR_MINIMUM",
+    "desired_outcome": "Superar o piso sem inventar cliente ou oportunidade.",
+    "urgency": "TODAY"
+  },
+  "account_data_status": "NOT_AVAILABLE",
+  "eligibility_requirements": [
+    "Não sugerir empresa antes do cadastro de contas estar disponível.",
+    "Não inferir elegibilidade sem evidência de Conta."
+  ]
+}

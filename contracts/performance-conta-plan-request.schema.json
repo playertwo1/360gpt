@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visao360.local/contracts/performance-conta-plan-request.schema.json",
+  "title": "Pedido de suporte Conta para plano de Performance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_id", "requested_by", "mediated_by", "provider", "operating_phase", "reference_month", "performance_need", "account_data_status"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "requested_by": { "const": "GERENTE_GERAL_PERFORMANCE" },
+    "mediated_by": { "const": "MOTOR_CONSOLIDACAO_360" },
+    "provider": { "const": "GERENTE_GERAL_CONTA" },
+    "operating_phase": { "enum": ["GOAL_LEVEL_INITIAL", "ACCOUNT_LEVEL_FUTURE"] },
+    "reference_month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
+    "performance_need": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["indicator_id", "threshold_position", "desired_outcome", "urgency"],
+      "properties": {
+        "indicator_id": { "type": "string", "minLength": 1 },
+        "threshold_position": { "enum": ["BELOW_MINIMUM", "NEAR_MINIMUM", "BETWEEN_MINIMUM_AND_TARGET", "NEAR_TARGET", "BETWEEN_TARGET_AND_CAP"] },
+        "desired_outcome": { "type": "string", "minLength": 1 },
+        "urgency": { "enum": ["TODAY", "THIS_WEEK", "THIS_MONTH", "STRATEGIC"] }
+      }
+    },
+    "account_data_status": { "enum": ["NOT_AVAILABLE", "PARTIAL", "AVAILABLE"] },
+    "eligibility_requirements": { "type": "array", "items": { "type": "string" } }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "operating_phase": { "const": "GOAL_LEVEL_INITIAL" } } },
+      "then": { "properties": { "account_data_status": { "const": "NOT_AVAILABLE" } } }
+    }
+  ]
+}
