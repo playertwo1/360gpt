@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.14] - 2026-08-28
+
+### Changed
+- C1 concluído documentalmente com Rafael como responsável técnico interino e autoridade de concessão/revogação de acessos.
+- Retenção definida em 24 meses para dados detalhados, até 90 dias para backups e prazo indeterminado somente para agregados não identificáveis.
+- Transferência formal para TI/Segurança instituída como requisito antes do ambiente institucional.
+
+### Security
+- A autorização documental não ativa fonte real; cadastro, validação e gate técnico continuam obrigatórios antes da primeira conexão.
+
 ## [3.2.13] - 2026-08-28
 
 ### Changed

@@ -500,18 +500,18 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P4:** jornada sintética completa, determinística nas regras conhecidas e auditável.
 
-### P5 — Segurança, LGPD e autorização operacional documental — EM ANDAMENTO
+### P5 — Segurança, LGPD e autorização operacional documental — CONCLUÍDO
 
-- [~] Registrar finalidade e escopo permitido — finalidade Performance/POBJ, acesso por e-mail/convite e planilha POBJ limitada a meta, realizado e período registrados; CPF e campos pessoais desnecessários proibidos.
-- [~] Identificar responsável de negócio e responsável técnico — Rafael registrado como responsável de negócio e autoridade inicial; responsável técnico operacional pendente.
-- [~] Definir retenção, descarte e mascaramento — retenção indefinida solicitada, mas aguarda critério documentado de minimização, revisão e descarte.
+- [x] Registrar finalidade e escopo permitido — finalidade Performance/POBJ, acesso por e-mail/convite e planilha POBJ limitada a meta, realizado e período registrados; CPF e campos pessoais desnecessários proibidos.
+- [x] Identificar responsável de negócio e responsável técnico — Rafael é responsável de negócio e técnico interino; transferência formal para TI/Segurança antes do ambiente institucional.
+- [x] Definir retenção, descarte e mascaramento — detalhados por 24 meses, backups por até 90 dias e agregados não identificáveis por prazo indeterminado.
 - [x] Validar isolamento por usuário e tenant.
 - [x] Validar allowlists e gestão de segredos.
 - [x] Executar testes de prompt injection, exfiltração e fronteira de privilégios.
 - [x] Testar kill switches.
 - [x] Criar modelo de registro de autorização por operação.
 
-**Dependência humana:** Rafael confirma finalidade, responsáveis, escopo e retenção. Esta fase não conecta nenhuma fonte real.
+**Decisão humana concluída:** Rafael confirmou finalidade, acessos, responsáveis, escopo e retenção em 28/08/2026. Esta fase não conecta nenhuma fonte real; a fonte concreta ainda exige cadastro, validação e gate técnico.
 
 **Evidência:** `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
 
@@ -544,7 +544,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 - [ ] Gates P0–P7 concluídos.
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
-- [ ] Registro de autorização operacional preenchido.
+- [x] Registro de autorização operacional preenchido.
 - [x] Gate Shadow aprovado por Rafael em 2026-08-28.
 - [ ] Primeiro canary autorizado por Rafael.
 
