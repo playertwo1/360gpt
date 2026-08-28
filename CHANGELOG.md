@@ -446,6 +446,12 @@
 - Runtime dos especialistas permanece `INACTIVE`; classificação ambígua gera revisão manual.
 - Testes de seleção, visão completa e fallback aprovados.
 
+## 2026-08-27 — Marco D2: envelope de Shadow
+
+- Criado envelope de execução baseline/candidata com roteamento determinístico e fallback seguro.
+- Sanitização de PII, hashes e bloqueio de mutação de Estado 360 e efeitos externos mantidos por contrato.
+- Testes de divergência e classificação ambígua aprovados.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.

@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco D1 — roteamento determinístico do Diretor criado, com exclusões auditáveis e limite de quatro domínios.  
+**Último marco concluído:** Marco D2 — envelope de execução baseline/candidata com sanitização e isolamento de efeitos criado e testado.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Marco D2 — implementar envelope de handoff e execução paralela baseline/candidata, mantendo o runtime em `OFFLINE_EVAL`.
+**Próximo passo exato:** Marco D3 — validar handoffs e telemetria de divergências em uma suíte sintética completa antes do gate de Shadow.
 
 ---
 
