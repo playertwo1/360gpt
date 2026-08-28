@@ -547,3 +547,9 @@
 - Dashboard principal restaurado ao conteúdo anterior à inclusão do painel Shadow.
 - Métricas, alertas e progresso da janela movidos para a aba independente `/shadow`.
 - Link discreto para a nova aba mantido na navegação executiva.
+## 2026-08-28 — Restauração da experiência Stitch/POBJ
+
+- Recuperada a sequência construída entre 16:41 e 17:29 de 27/08: interface mobile AMOLED, importação segura, extração, revisão e aprovação individual do POBJ.
+- Restauradas priorização de gaps, próximas ações e integração do site/Telegram com a fila única do n8n.
+- Métricas Shadow preservadas fora da experiência principal, acessíveis pela aba `Mais`.
+- Criado ponto de retorno Git `backup/pre-stitch-restore-20260828-0012` antes da restauração.

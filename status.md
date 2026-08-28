@@ -14,7 +14,7 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Marco E4e — monitoramento Shadow isolado em aba própria, preservando a Visão Executiva original.  
+**Último marco concluído:** interface mobile AMOLED/Stitch e fluxo POBJ unificado restaurados; monitoramento Shadow preservado em aba própria.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** concluir as 24 medições horárias, consolidar a janela e emitir o parecer do gate antes de qualquer promoção adicional.
 
