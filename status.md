@@ -15,9 +15,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** A1 Onda 1 do GG Performance: 3/3 cálculos sintéticos válidos, zero mutações e zero efeitos externos; revisão humana pendente.  
+**Último marco concluído:** A1 Onda 2 do GG Performance: 5/5 cálculos sintéticos válidos, zero mutações e zero efeitos externos; revisão humana pendente.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Rafael revisar a Onda 1 em `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md` e autorizar ou rejeitar a Onda 2; C1 permanece necessário somente antes de dados reais.
+**Próximo passo exato:** Rafael revisar a Onda 2 em `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md` e autorizar ou rejeitar a Onda 3; C1 permanece necessário somente antes de dados reais.
 
 ---
 

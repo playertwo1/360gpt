@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.2.17] - 2026-08-28
+
+### Added
+- Onda 2 do canary sintético do GG Performance, com cinco casos POBJ determinísticos e relatório de revisão humana.
+
+### Changed
+- Executor de canary passou a suportar ondas 1 e 2 sem fabricar decisões humanas.
+
+### Security
+- A Onda 2 manteve zero mutações de estado e zero efeitos externos; dados reais continuam desconectados.
+
 ## [3.2.16] - 2026-08-28
 
 ### Changed

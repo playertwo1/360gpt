@@ -560,9 +560,9 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 
 ### A1 — Canary sintético individual
 
-- [~] Executar 1–3 casos e revisar todos manualmente — Onda 1 executada com 3/3 cálculos válidos; revisão de Rafael pendente. Evidência: `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md`.
+- [x] Executar 1–3 casos e revisar todos manualmente — Onda 1 aprovada por Rafael; 3/3 cálculos válidos. Evidência: `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md`.
 - [ ] Corrigir divergências antes da expansão.
-- [ ] Executar 5 casos e medir overrides, custo e latência.
+- [~] Executar 5 casos e medir overrides, custo e latência — Onda 2 executada com 5/5 cálculos válidos, zero efeitos externos; revisão de Rafael pendente. Evidência: `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md`.
 - [ ] Executar 10 casos e confirmar SLOs e evidências.
 - [ ] Registrar decisão de promoção ou retorno.
 
