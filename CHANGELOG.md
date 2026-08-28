@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.2.18] - 2026-08-28
+
+### Added
+- Onda 3 do canary sintético do GG Performance, com dez casos POBJ determinísticos e telemetria de custo/latência.
+
+### Changed
+- Executor de canary passou a suportar três ondas supervisionadas (3, 5 e 10 casos).
+
+### Security
+- Nenhuma decisão ou override humano foi fabricado; custo foi zero por ausência de chamadas de modelo e efeitos externos permaneceram bloqueados.
+
 ## [3.2.17] - 2026-08-28
 
 ### Added
