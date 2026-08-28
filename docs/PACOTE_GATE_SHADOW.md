@@ -1,6 +1,6 @@
 # Pacote do Gate Shadow
 
-**Estado:** PREPARADO — aguarda 24 observações sintéticas.  
+**Estado:** APROVADO POR RAFAEL EM 2026-08-28 — escopo do próximo canary ainda requer seleção explícita.  
 **Escopo:** `shadow-e1-synthetic`; não autoriza dados reais, `ACTIVE` ou efeitos externos.
 
 ## Evidências obrigatórias
@@ -22,9 +22,12 @@
 
 ## Decisão de Rafael
 
+- [x] Aprovar o Gate Shadow técnico, com base na janela consolidada de 24/24 medições.
 - [ ] Aprovar somente o canary do GG Performance.
 - [ ] Rejeitar e manter todos os gerentes `INACTIVE`.
 - [ ] Solicitar correção ou nova janela Shadow.
+
+**Registro da decisão:** Rafael aprovou o Gate Shadow nesta conversa em 2026-08-28. A aprovação confirma a qualidade da janela sintética e não escolhe, por si só, o gerente/capacidade do primeiro canary.
 
 ## Resultado permitido após aprovação
 

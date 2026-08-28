@@ -388,7 +388,7 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 - [x] Confirmar zero mutações de Estado 360.
 - [x] Confirmar zero efeitos externos.
 - [x] Gerar o parecer técnico do Gate Shadow em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
-- [ ] Submeter o Gate Shadow à aprovação de Rafael.
+- [x] Submeter o Gate Shadow à aprovação de Rafael em 2026-08-28.
 
 ### Proibições durante a janela
 
@@ -540,12 +540,12 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P7:** canary pronto, mas não executado antes do Gate geral.
 
-### P8 — Gate geral de prontidão — PRÉ-VERIFICADO; AGUARDA GATE SHADOW E DECISÕES HUMANAS
+### P8 — Gate geral de prontidão — PARCIALMENTE APROVADO; AGUARDA DECISÕES HUMANAS REMANESCENTES
 
 - [ ] Gates P0–P7 concluídos.
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
 - [ ] Registro de autorização operacional preenchido.
-- [ ] Gate Shadow aprovado por Rafael.
+- [x] Gate Shadow aprovado por Rafael em 2026-08-28.
 - [ ] Primeiro canary autorizado por Rafael.
 
 **Resultados permitidos:** `READY_FOR_CANARY | ADJUSTMENTS_REQUIRED | BLOCKED`.

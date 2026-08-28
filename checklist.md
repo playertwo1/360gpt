@@ -197,9 +197,9 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ### Shadow isolado
 
-- [~] Completar 24 medições automáticas; referência na aprovação: 16/24.
-- [ ] Após 24/24, consolidar a janela e emitir o parecer.
-- [ ] Submeter o Gate Shadow a Rafael.
+- [x] Completar 24 medições automáticas: 24/24 persistidas no monitor remoto.
+- [x] Após 24/24, consolidar a janela e emitir o parecer: `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
+- [x] Submeter o Gate Shadow a Rafael: aprovado em 28/08/2026.
 - [x] Manter `SYNTHETIC_ONLY`, zero efeitos externos e proibição de alterações na trilha durante a janela.
 
 ### Preparação independente do Shadow

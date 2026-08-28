@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.10] - 2026-08-28
+
+### Changed
+- Gate Shadow aprovado explicitamente por Rafael após a consolidação da janela sintética íntegra.
+- P8 avançado para estado parcialmente aprovado, mantendo C1 e a escolha do primeiro canary como decisões humanas obrigatórias.
+
+### Security
+- A aprovação não conectou fontes reais, não promoveu agentes para `ACTIVE` e não liberou efeitos externos.
+
 ## [3.2.9] - 2026-08-28
 
 ### Added

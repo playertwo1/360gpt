@@ -16,7 +16,7 @@
 
 **Último marco concluído:** janela Shadow sintética consolidada no monitor remoto: 24/24 medições, 480/480 casos, 100% de conclusão, zero divergências, mutações, efeitos externos e lacunas.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Rafael revisar e aprovar explicitamente o Gate Shadow com base em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`; isso não libera dados reais, agentes `ACTIVE` ou efeitos externos.
+**Próximo passo exato:** preencher a autorização operacional C1 e selecionar explicitamente o primeiro canary; recomendação registrada: GG Performance em dados sintéticos e somente leitura supervisionada.
 
 ---
 
