@@ -578,3 +578,15 @@
 
 ### Security
 - Notificação de interrupção limitada a HARD BLOCKERS reais e realizada apenas por mecanismo seguro, sem credenciais no repositório.
+
+## [3.1.2] - 2026-08-28
+
+### Added
+- Matriz auditável de fontes, regras, limites e rollback dos quatro Gerentes Gerais.
+- Modelo de registro para autorização de dados reais, mantido sem preenchimento e sem conexão de fonte.
+
+### Changed
+- A2–A4 do roadmap concluídos com validação sintética, controles de rollback, auditoria, SLA e FinOps.
+
+### Security
+- Dados reais, agentes `ACTIVE` e efeitos externos continuam bloqueados.

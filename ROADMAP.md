@@ -373,9 +373,9 @@ O Shadow continua coletando medições em paralelo; as demais frentes podem avan
 
 ## Trilha A — Quatro Gerentes Gerais
 - [x] A1 — Versão, escopo, especialistas e `runtime: INACTIVE` documentados.
-- [ ] A2 — Revisar contratos, fontes autorizadas, regras e limites de cada domínio.
-- [ ] A3 — Executar testes individuais e integrados com dados sintéticos.
-- [ ] A4 — Confirmar kill switch, rollback, orçamento e auditoria por gerente.
+- [x] A2 — Revisar contratos, fontes autorizadas, regras e limites de cada domínio.
+- [x] A3 — Executar testes individuais e integrados com dados sintéticos.
+- [x] A4 — Confirmar kill switch, rollback, orçamento e auditoria por gerente.
 
 ## Trilha B — Canary supervisionado
 - [ ] B1 — Executar 1–3 casos sintéticos.
@@ -406,6 +406,8 @@ O Shadow continua coletando medições em paralelo; as demais frentes podem avan
 Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fila, evidências e métricas; testar backup, restauração e rollback; preparar documentação de autorização; corrigir avisos de lint e redundâncias sem alterar regras de negócio.
 
 - [x] Governança de execução autônoma formalizada no `AGENTS.md` v2.1, com `PROJECT_STATE.md` e `CHANGELOG.md` sincronizados.
+- [x] Matriz de controles dos quatro Gerentes Gerais criada e validada com a bateria geral e telemetria FinOps.
+- [x] Modelo de registro de autorização para dados reais preparado, sem fonte real conectada.
 
 ## Regra de ativação
 
