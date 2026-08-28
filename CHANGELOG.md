@@ -462,6 +462,12 @@
 - Executados os 20 casos canônicos em envelope Shadow com contexto saneado.
 - Cobertura: 20/20 execuções concluídas, equivalência sintética de 100% e zero mutações/efeitos externos.
 
+## 2026-08-27 — Marco E2: fallback e rollback
+
+- Fallback determinístico para baseline implementado quando a candidata falha.
+- Bloqueio de mutação de Estado 360 e efeitos externos validado nos caminhos de sucesso e erro.
+- Gate formal de promoção para Shadow criado em `governance/SHADOW_RELEASE_GATE.md`.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
