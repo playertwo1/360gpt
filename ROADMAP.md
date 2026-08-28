@@ -502,7 +502,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 ### P5 — Segurança, LGPD e autorização operacional documental — EM ANDAMENTO
 
-- [~] Registrar finalidade e escopo permitido — finalidade Performance/POBJ e acesso por e-mail/convite registrados; fonte e campos mínimos pendentes.
+- [~] Registrar finalidade e escopo permitido — finalidade Performance/POBJ, acesso por e-mail/convite e planilha POBJ limitada a meta, realizado e período registrados; CPF e campos pessoais desnecessários proibidos.
 - [~] Identificar responsável de negócio e responsável técnico — Rafael registrado como responsável de negócio e autoridade inicial; responsável técnico operacional pendente.
 - [~] Definir retenção, descarte e mascaramento — retenção indefinida solicitada, mas aguarda critério documentado de minimização, revisão e descarte.
 - [x] Validar isolamento por usuário e tenant.

@@ -9,7 +9,7 @@
 |---|---|
 | Operação e finalidade | Acompanhar e analisar metas POBJ |
 | Domínio e capacidade | GG Performance; `PERFORMANCE_SCORING_STATE` e parecer consultivo em leitura controlada |
-| Fonte e campos mínimos | Pendente — nenhuma fonte real pode ser conectada antes de definir origem e somente os campos necessários |
+| Fonte e campos mínimos | Planilha POBJ autorizada; somente meta, realizado e período. CPF, telefone, e-mail, documentos pessoais e demais campos não necessários são proibidos. |
 | Tenant e público autorizado | Usuários autorizados por e-mail ou convite, com autenticação e auditoria |
 | Período de vigência | Indeterminado, até revogação expressa de Rafael; revisão periódica recomendada |
 | Retenção e descarte | Retenção indefinida solicitada por Rafael; **não operacional até registrar critério de minimização, necessidade e descarte/revisão** |
@@ -22,9 +22,8 @@
 
 ## Pendências antes de dados reais
 
-1. Registrar a fonte autorizada e os campos mínimos necessários para POBJ.
-2. Converter a retenção indefinida solicitada em critério documentado de necessidade, revisão e descarte, compatível com minimização.
-3. Designar responsável técnico operacional/data steward quando a fonte real for conectada.
+1. Converter a retenção indefinida solicitada em critério documentado de necessidade, revisão e descarte, compatível com minimização.
+2. Designar responsável técnico operacional/data steward quando a fonte real for conectada.
 
 Enquanto estas pendências existirem, o canary permanece exclusivamente sintético e nenhuma consulta de dado real é permitida.
 

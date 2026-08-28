@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.13] - 2026-08-28
+
+### Changed
+- C1 passou a autorizar a planilha POBJ, limitada aos campos meta, realizado e período.
+
+### Security
+- CPF e demais dados pessoais não necessários foram explicitamente proibidos para esta finalidade.
+
 ## [3.2.12] - 2026-08-28
 
 ### Changed
