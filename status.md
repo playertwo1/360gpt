@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco E2 — fallback para baseline e rollback em falha da candidata validados.  
+**Último marco concluído:** Marco E3 — Gate de Shadow aprovado para execução exclusivamente sintética.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Marco E3 — completar as três pendências do `governance/SHADOW_RELEASE_GATE.md` e registrar a aprovação formal de Rafael.
+**Próximo passo exato:** executar o Shadow sintético de 24 horas e revisar sua telemetria antes de qualquer escopo adicional.
 
 ---
 

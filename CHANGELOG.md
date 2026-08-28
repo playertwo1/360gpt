@@ -468,6 +468,12 @@
 - Bloqueio de mutação de Estado 360 e efeitos externos validado nos caminhos de sucesso e erro.
 - Gate formal de promoção para Shadow criado em `governance/SHADOW_RELEASE_GATE.md`.
 
+## 2026-08-27 — Marco E3: gate aprovado para Shadow sintético
+
+- Escopo aprovado: 20 casos sintéticos, janela inicial de 24 horas, SLO de conclusão de 99%.
+- Limiares de pausa definidos para divergência acima de 10% ou qualquer efeito proibido.
+- Backup do gate criado e verificado nas duas cópias do Google Drive.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.

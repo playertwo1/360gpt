@@ -1,7 +1,7 @@
 # Gate de promoção para SHADOW
 
 **Versão:** 1.0.0  
-**Estado:** READY_FOR_OWNER_APPROVAL  
+**Estado:** APPROVED_FOR_SYNTHETIC_SHADOW  
 **Escopo:** motores determinísticos POBJ, freshness, GDAD e compromissos  
 **Efeitos permitidos:** nenhum; Estado 360, Dashboard, respostas e ações permanecem inalterados.
 
@@ -15,9 +15,13 @@
 - [x] Fallback para baseline em falha da candidata validado.
 - [x] 14/14 testes gerais aprovados.
 - [x] Runtime dos novos especialistas permanece `INACTIVE`.
-- [ ] Escopo de tráfego saneado e autorizado definido por Rafael.
-- [ ] Janela de observação, SLOs e limiares de pausa definidos.
-- [ ] Backup/restauração do ambiente de execução confirmados.
+- [x] Escopo definido por Rafael: somente os 20 casos sintéticos canônicos, sem dados reais.
+- [x] Janela inicial de observação: 24 horas; SLO de conclusão ≥99%; pausa se divergência >10% ou qualquer efeito proibido.
+- [x] Backup verificável criado em `backup-shadow-gate-20260827-000001.zip`, íntegro nas duas cópias do Google Drive e contendo os artefatos do gate.
+
+## Aprovação
+
+Rafael autorizou o avanço marco a marco nesta conversa em 27/08/2026. A autorização aplica-se exclusivamente ao Shadow sintético descrito acima; não autoriza dados reais, respostas externas ou ativação `ACTIVE`.
 
 ## Critérios de saída
 
