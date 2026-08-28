@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Etapa B validada; motores POBJ/freshness e contratos dos quatro domínios passaram na bateria completa.  
+**Último marco concluído:** Marco C1 — baseline dos motores POBJ/freshness e contratos dos quatro domínios validado com 14/14 testes.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** implementar a integração isolada dos motores determinísticos ao fluxo de Performance, mantendo especialistas novos inativos até nova avaliação e promoção explícita.
+**Próximo passo exato:** Marco C2 — implementar e testar os motores GDAD e compromissos/datas, mantendo especialistas novos inativos até nova avaliação e promoção explícita.
 
 ---
 

@@ -422,6 +422,12 @@
 - Corrigida a resolução de caminhos nos testes direcionais para execução nativa no Windows.
 - Bateria completa atualizada e aprovada com 14/14 testes.
 
+## 2026-08-27 — Marco C1: baseline dos motores
+
+- Validada a linha de base dos motores POBJ e freshness, incluindo piso, teto, ranking, pendências e watermark.
+- Confirmada a coerência dos contratos direcionais e da integração inicial Performance–Conta.
+- Bateria completa permaneceu aprovada com 14/14 testes; especialistas novos continuam inativos.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
