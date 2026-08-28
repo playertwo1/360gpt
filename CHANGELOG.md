@@ -480,6 +480,12 @@
 - Primeira medição: 20/20 concluídos, equivalência de 100%, zero mutações e zero efeitos externos.
 - Bateria geral mantida em 14/14 testes aprovados.
 
+## 2026-08-27 — Marco E4b: executor periódico
+
+- Criado `scripts/run-shadow-observation.mjs` para executar os 20 casos e persistir telemetria horária.
+- Executor encerra com alerta quando conclusão fica abaixo de 99%, divergência supera 10% ou ocorre efeito proibido.
+- Arquivos de observação foram mantidos fora do Git por serem evidências operacionais geradas.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
