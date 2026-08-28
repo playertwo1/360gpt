@@ -119,6 +119,11 @@ Melhorias de governança permanecem no backlog:
 - Mesa do Revisor agora apresenta integridade da linhagem, resolução, revisor e justificativa.
 - Deploy concluído com sucesso em `https://visao-360-diretor.fael360092.chatgpt.site`.
 
+### Atualização 28/08/2026 — Readiness operacional
+- Gate de release executado e certificado como `PASS`.
+- Contratos, políticas, carga, concorrência, ingestão multimodal e adaptador Telegram validados.
+- Sistema declarado pronto para produção assistida, permanecendo sujeito ao Gate Shadow e à ativação gradual.
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
