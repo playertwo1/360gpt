@@ -108,6 +108,12 @@ Melhorias de governança permanecem no backlog:
 - Estado sintético: `state-d879b167-bab5-48f2-a5eb-d19d3a27fd6c`, versão 2.
 - Efeitos externos permanecem proibidos (`external_effects_allowed: false`).
 
+### Atualização 28/08/2026 — Publicação da Mesa do Revisor
+- Origem do Sites sincronizada no repositório hospedado até o commit `e8a6529`.
+- Versão 28 salva e publicada com sucesso.
+- URL pública: `https://visao-360-diretor.fael360092.chatgpt.site`.
+- Correção de erros de carregamento da linhagem agora está disponível na Mesa do Revisor.
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
