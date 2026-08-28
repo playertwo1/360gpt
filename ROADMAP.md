@@ -409,6 +409,7 @@ Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fil
 - [x] Matriz de controles dos quatro Gerentes Gerais criada e validada com a bateria geral e telemetria FinOps.
 - [x] Modelo de registro de autorização para dados reais preparado, sem fonte real conectada.
 - [x] Exercício isolado de restauração PostgreSQL implementado e aprovado dentro do RTO de 15 minutos.
+- [x] Teste local do Evidence Graph consolidado, incluindo autenticação, persistência, relações de linhagem e proteção append-only.
 
 ## Próximos passos durante a janela Shadow
 
@@ -416,6 +417,7 @@ Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fil
 - [x] Preparar o canary individual do GG Performance: casos, métricas, limites de pausa, rollback e ondas 1–3, 5 e 10.
 - [ ] Completar o registro de autorização de dados reais com finalidade, responsáveis, retenção, LGPD e escopo, sem conectar fonte.
 - [x] Eliminar avisos de lint e ampliar testes de restauração/rollback sem alterar regras de negócio.
+- [x] Padronizar o teste do Evidence Graph em PowerShell 7, eliminando divergência de codificação do PowerShell legado.
 
 ## Regra de ativação
 

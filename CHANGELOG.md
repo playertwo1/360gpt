@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.1.6] - 2026-08-28
+
+### Fixed
+- Consolidado o teste local do Evidence Graph com cálculo canônico de hash, proteção contra acesso anônimo e verificação append-only.
+- Padronizada a execução em PowerShell 7 (`pwsh`) para impedir divergências de codificação do Windows PowerShell legado.
+
+### Security
+- Mantidos dados exclusivamente sintéticos, sem efeitos externos, durante a validação.
+
 ## Não publicado — reconciliação arquitetural e contratos por domínio
 
 - Criado manifesto central verificável para Diretor, quatro Gerentes Gerais e 21 especialistas.
