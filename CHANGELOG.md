@@ -533,3 +533,5 @@
 - O coletor rejeita campos extras, dados fora de `SYNTHETIC_ONLY`, métricas inconsistentes e payloads acima do limite.
 - Dashboard passou a apresentar progresso da janela, equivalência, divergência e efeitos proibidos usando a fonte persistida.
 - Executor local mantém operação sem upload quando o segredo não está configurado e nunca imprime o segredo.
+- Executor periódico carrega a configuração local ignorada pelo Git, permitindo que a automação horária persista as medições sem expor o segredo.
+- Versão hospedada publicada, acesso do endereço alinhado às integrações protegidas e primeira medição agregada persistida com HTTP 201.

@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco E4d — persistência saneada da telemetria Shadow e painel de acompanhamento implementados localmente.  
+**Último marco concluído:** Marco E4d — persistência saneada da telemetria Shadow publicada e primeira medição gravada com sucesso.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** publicar a migração e a versão do site, configurar o segredo do coletor e concluir as 24 medições antes do parecer do gate.
+**Próximo passo exato:** concluir as 24 medições horárias, consolidar a janela e emitir o parecer do gate antes de qualquer promoção adicional.
 
 ---
 

@@ -1,7 +1,11 @@
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { executeShadowPair } from '../engines/orchestration/shadow-envelope.mjs';
 import { aggregateShadowTelemetry } from '../engines/shadow/shadow-telemetry.mjs';
 import { shadowUploadPayload } from '../engines/shadow/telemetry-record.mjs';
+
+const localEnv = new URL('../.env.local', import.meta.url);
+if (existsSync(localEnv)) process.loadEnvFile(fileURLToPath(localEnv));
 
 const casesDir = new URL('../test-data/evals/cases/', import.meta.url);
 const outputDir = new URL('../test-data/shadow/observations/', import.meta.url);
