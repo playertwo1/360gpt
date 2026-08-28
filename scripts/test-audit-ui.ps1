@@ -12,7 +12,7 @@ Write-Host "=== TESTE DE AUDITORIA & EVIDENCE GRAPH 360 (MARCO 13B) ===" -Foregr
 Write-Host "`n1. Testando protecao contra chamadas anonimas (/api/audit/state/latest)..." -NoNewline
 try {
   $unauthUri = "$BaseUrl/api/audit/state/latest?tenant_id=$TenantId" + "&subject_ref=$SubjectRef"
-  $unauthResponse = Invoke-WebRequest -Uri $unauthUri -Method Get -SkipHttpErrorCheck
+  $unauthResponse = Invoke-WebRequest -UseBasicParsing -Uri $unauthUri -Method Get -ErrorAction Stop
   if ($unauthResponse.StatusCode -eq 401) {
     Write-Host " [OK - 401 Unauthorized retornado]" -ForegroundColor Green
   } else {
@@ -31,7 +31,7 @@ $authHeaders = @{
 }
 
 $authUri = "$BaseUrl/api/audit/state/latest?tenant_id=$TenantId" + "&subject_ref=$SubjectRef"
-$stateAudit = Invoke-RestMethod -Uri $authUri -Method Get -Headers $authHeaders -SkipHttpErrorCheck
+$stateAudit = Invoke-RestMethod -Uri $authUri -Method Get -Headers $authHeaders
 
 if ($stateAudit.ok -eq $true -and $stateAudit.evidence_graph -ne $null) {
   Write-Host " [OK]" -ForegroundColor Green
@@ -51,7 +51,7 @@ if ($stateAudit.ok -eq $true -and $stateAudit.evidence_graph -ne $null) {
 # 3. Testar rota de auditoria de reviews
 Write-Host "`n3. Testando consulta de auditoria de revisoes..." -NoNewline
 $reviewsUri = "$BaseUrl/api/reviews?tenant_id=$TenantId" + "&status=OPEN"
-$reviews = Invoke-RestMethod -Uri $reviewsUri -Method Get -Headers $authHeaders -SkipHttpErrorCheck
+$reviews = Invoke-RestMethod -Uri $reviewsUri -Method Get -Headers $authHeaders
 if ($reviews.ok -eq $true) {
   Write-Host " [OK - Fila consultada com sucesso]" -ForegroundColor Green
 } else {
