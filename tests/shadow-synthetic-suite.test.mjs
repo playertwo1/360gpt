@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { executeShadowPair } from '../engines/orchestration/shadow-envelope.mjs';
 import { aggregateShadowTelemetry } from '../engines/shadow/shadow-telemetry.mjs';
 

@@ -599,3 +599,11 @@
 
 ### Security
 - Gate Shadow não libera dados reais ou efeitos externos; canary permanece supervisionado e bloqueado até aprovação explícita.
+
+## [3.1.4] - 2026-08-28
+
+### Fixed
+- Removidos avisos de lint no Dashboard e na suíte Shadow sem alterar comportamento funcional.
+
+### Changed
+- Build de produção revalidado com sucesso.
