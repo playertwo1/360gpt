@@ -15,11 +15,11 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Interface de revisão A1 criada em `/canary`: 10 cálculos sintéticos do GG Performance, decisão auditável e sem alteração do painel atual; publicação hospedada pendente.
+**Último marco concluído:** Interface de revisão A1 publicada em `/canary`: 10 cálculos sintéticos do GG Performance, decisão auditável e sem alteração do painel atual.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Com autorização explícita de Rafael, publicar a versão v3.2.20, aplicar a migração D1 e usar `/canary` para aprovar ou solicitar ajuste em A1; C1 permanece necessário somente antes de dados reais.
-**Checkpoint local:** `HEAD` — interface de revisão Canary Performance pronta; ainda não publicada.
+**Próximo passo exato:** Rafael usar `/canary` para aprovar ou solicitar ajuste em A1; C1 permanece necessário somente antes de dados reais.
+**Checkpoint local:** `HEAD` — interface de revisão Canary Performance publicada na versão 30.
 
 ---
 

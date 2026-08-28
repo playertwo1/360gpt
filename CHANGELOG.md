@@ -11,6 +11,9 @@
 - A interface aceita apenas os resultados sintéticos fixos no servidor; não recebe casos, fontes ou campos pelo navegador.
 - Aprovar A1 não conecta POBJ real, não promove agentes e não permite efeitos externos.
 
+### Changed
+- Versão 30 publicada em `https://visao-360-diretor.fael360092.chatgpt.site`, com a migração D1 da revisão Canary incluída.
+
 ## [3.2.19] - 2026-08-28
 
 ### Fixed
