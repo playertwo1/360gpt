@@ -158,6 +158,14 @@ export default function ReviewConsole() {
                       ))}
                     </div>
                   </div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Integridade da linhagem</h3>
+                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800">{auditData.evidence_graph?.lineage_status ?? 'UNKNOWN'}</span>
+                    </div>
+                    {auditData.resolution ? <p className="mt-3 text-slate-600"><strong>Resolução:</strong> {auditData.resolution.decision} · revisor {auditData.resolution.reviewer_id}</p> : <p className="mt-3 text-slate-500">Nenhuma resolução humana registrada para esta revisão.</p>}
+                    {auditData.resolution?.rationale ? <p className="mt-2 text-slate-600"><strong>Justificativa:</strong> {auditData.resolution.rationale}</p> : null}
+                  </div>
                 </>
               ) : null}
             </div>
