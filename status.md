@@ -124,6 +124,12 @@ Melhorias de governança permanecem no backlog:
 - Contratos, políticas, carga, concorrência, ingestão multimodal e adaptador Telegram validados.
 - Sistema declarado pronto para produção assistida, permanecendo sujeito ao Gate Shadow e à ativação gradual.
 
+### Atualização 28/08/2026 — Medição Shadow 11:10 UTC
+- Observação `shadow-observation-20260828T111012Z` registrada com 20/20 casos concluídos.
+- Janela acumulada: 10/24 observações; 200/200 casos; conclusão 100%; divergência 0%.
+- Mutações de Estado 360: 0; efeitos externos: 0; `pause_required: false`.
+- Restam 14 medições para fechar a janela; Shadow permanece `SYNTHETIC_ONLY`.
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
