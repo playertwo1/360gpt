@@ -415,16 +415,18 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P0:** todos os documentos representam o mesmo estado comprovado por código, testes e Git.
 
-### P1 — Base técnica e bateria de regressão
+### P1 — Base técnica e bateria de regressão — CONCLUÍDO
 
-- [ ] Executar os 14 testes gerais.
-- [ ] Executar lint e build de produção.
-- [ ] Validar contratos JSON Schema Draft 2020-12.
-- [ ] Validar ponte autenticada, idempotência, fila, retries, lease e DLQ.
-- [ ] Validar Estado 360 persistido e Evidence Graph append-only.
-- [ ] Validar Central de Revisão.
-- [ ] Validar backup e restauração isolada.
-- [ ] Criar relatório único de regressão.
+- [x] Executar os 14 testes gerais.
+- [x] Executar lint e build de produção.
+- [x] Validar contratos JSON Schema Draft 2020-12.
+- [x] Validar ponte autenticada, idempotência, fila, retries, lease e DLQ.
+- [x] Validar Estado 360 persistido e Evidence Graph append-only.
+- [x] Validar Central de Revisão.
+- [x] Validar backup e restauração isolada.
+- [x] Criar relatório único de regressão.
+
+**Evidência:** `docs/audits/REGRESSAO_P1_2026-08-28.md`.
 
 **Gate P1:** todas as validações aplicáveis aprovadas com dados sintéticos e zero efeitos externos.
 

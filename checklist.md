@@ -205,8 +205,8 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 ### Preparação independente do Shadow
 
 - [x] **P0:** reconciliar checklist, roadmap, estado real, versões e evidências. Evidência: `docs/audits/RECONCILIACAO_P0_2026-08-28.md`.
-- [~] **P1:** executar regressão completa e produzir relatório único.
-- [ ] **P2:** fechar motores determinísticos dos quatro domínios.
+- [x] **P1:** executar regressão completa e produzir relatório único. Evidência: `docs/audits/REGRESSAO_P1_2026-08-28.md`.
+- [~] **P2:** fechar motores determinísticos dos quatro domínios.
 - [ ] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`.
 - [ ] **P4:** validar a orquestração completa com dados sintéticos.
 - [ ] **P5:** completar segurança, LGPD e autorização documental, sem conectar fontes reais.

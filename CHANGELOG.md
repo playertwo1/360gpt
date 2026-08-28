@@ -20,6 +20,17 @@
 - RTO/RPO passaram a ser tratados como medições dependentes do ambiente-alvo.
 - Fase 8 distinguida entre provisionamento pronto (M8.1) e VPS 24h ainda planejado (M8.2).
 
+## [3.2.2] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/REGRESSAO_P1_2026-08-28.md` com a bateria geral, lint, build e validações da base técnica.
+
+### Changed
+- P1 concluído com 14/14 testes gerais aprovados, lint sem erros e build de produção aprovado.
+
+### Security
+- A regressão permaneceu sintética; nenhum agente foi promovido e nenhum efeito externo foi liberado.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed

@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.1
+Version: 3.2.2
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P0 concluído; Shadow em 16 de 24 medições na aprovação da reconciliação
-Current task: P1 — regressão completa, lint, build e relatório único, sem alterar a trilha Shadow
+Current milestone: P1 concluído; Shadow isolado em 16 de 24 medições no último registro
+Current task: P2 — fechar motores determinísticos dos quatro domínios, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: P0 concluído; checklist, roadmap, status, código, testes e evidências reconciliados
-Next task: Executar P1 e produzir o relatório único de regressão
+Last completed: P1 aprovado; 14/14 testes, lint, build e base técnica validados
+Next task: Executar P2.1–P2.4 nos motores determinísticos de Performance, Financeiro, Relacionamento e Conta
 
-Last validation: PASS — relatório P0 e consistência documental verificados; alteração somente documental
+Last validation: PASS — 14/14 testes gerais, lint e build; relatório `docs/audits/REGRESSAO_P1_2026-08-28.md`
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 11:35
+Last update: 2026-08-28 12:10
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P1 pela regressão completa. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P2 nos motores determinísticos. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
