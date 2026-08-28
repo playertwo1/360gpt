@@ -542,3 +542,8 @@
 - API de telemetria passou a devolver a saúde agregada da janela após leitura e escrita.
 - Dashboard passou a exibir medições restantes, próxima coleta, lacunas e alertas.
 - Parecer automático é gerado ao completar a janela ou quando houver pausa obrigatória; Rafael permanece como decisor do gate.
+## 2026-08-28 — Ajuste visual: métricas Shadow em aba própria
+
+- Dashboard principal restaurado ao conteúdo anterior à inclusão do painel Shadow.
+- Métricas, alertas e progresso da janela movidos para a aba independente `/shadow`.
+- Link discreto para a nova aba mantido na navegação executiva.

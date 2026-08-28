@@ -53,19 +53,6 @@ type FinopsMetrics = {
   };
 };
 
-type ShadowObservation = {
-  release_id: string; observed_at: string; duration_ms: number; total_cases: number; completed_cases: number; errors: number;
-  equivalence_rate: number; divergence_rate: number; state_mutation_count: number; external_effect_count: number;
-  pause_required: boolean; data_scope: 'SYNTHETIC_ONLY';
-};
-type ShadowMonitor = {
-  target_observations: number; observations: number; remaining_observations: number; window_complete: boolean;
-  latest_observed_at: string | null; next_measurement_due_at: string | null; stale: boolean;
-  gaps: { after: string; before: string; interval_minutes: number }[]; completion_rate: number | null;
-  divergence_rate: number | null; pause_required: boolean; healthy: boolean; alerts: string[];
-};
-type ShadowMetrics = { ok: boolean; read_only?: boolean; count?: number; monitor?: ShadowMonitor; observations?: ShadowObservation[]; error?: string };
-
 const domainMeta: Record<string, { title: string; icon: string; role: string; specialists: string[]; keyMetric: string; metricValue: string }> = {
   conta: {
     title: 'Gerente Geral de Conta',
@@ -113,14 +100,6 @@ function formatDate(isoString?: string) {
   }
 }
 
-function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return <div className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5">
-    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
-    <p className="mt-2 text-3xl font-black text-violet-900">{value}</p>
-    <p className="mt-1 text-xs font-medium text-slate-500">{detail}</p>
-  </div>;
-}
-
 export default function Home() {
   const [model, setModel] = useState<ReadModel | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,7 +110,6 @@ export default function Home() {
   const [graphLoading, setGraphLoading] = useState(false);
   const [graphTab, setGraphTab] = useState<'graph' | 'nodes' | 'audit'>('graph');
   const [finops, setFinops] = useState<FinopsMetrics | null>(null);
-  const [shadow, setShadow] = useState<ShadowMetrics | null>(null);
 
   const openEvidenceGraph = useCallback(async () => {
     setGraphModalOpen(true);
@@ -152,18 +130,16 @@ export default function Home() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [stateResponse, reviewResponse, finopsResponse, shadowResponse] = await Promise.all([
+      const [stateResponse, reviewResponse, finopsResponse] = await Promise.all([
         fetch('/api/state/latest?tenant_id=tenant-demo&subject_ref=cust-demo-001', { cache: 'no-store' }),
         fetch('/api/reviews?tenant_id=tenant-demo&status=OPEN', { cache: 'no-store' }),
         fetch('/api/metrics/finops?tenant_id=tenant-demo', { cache: 'no-store' }),
-        fetch('/api/metrics/shadow', { cache: 'no-store' }),
       ]);
       setModel((await stateResponse.json()) as ReadModel);
       setReviewModel((await reviewResponse.json()) as ReviewReadModel);
       if (finopsResponse.ok) {
         setFinops((await finopsResponse.json()) as FinopsMetrics);
       }
-      if (shadowResponse.ok) setShadow((await shadowResponse.json()) as ShadowMetrics);
     } catch {
       setModel({ available: false, error: 'hosted_read_model_unavailable' });
     } finally {
@@ -182,9 +158,6 @@ export default function Home() {
   const domains = snapshot?.domain_status ?? [];
   const ready = model?.overall_status === 'READY';
   const reviews = reviewModel?.reviews ?? [];
-  const shadowObservations = shadow?.observations ?? [];
-  const latestShadow = shadowObservations[0];
-  const shadowMonitor = shadow?.monitor;
 
   return (
     <main className="min-h-screen bg-[#f1f5f9] text-[#0f172a]">
@@ -210,9 +183,9 @@ export default function Home() {
           <a href="#finops" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5 transition-colors">
             <span className="text-amber-400">⚡</span> FinOps & Unit Economics
           </a>
-          <a href="#shadow" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5 transition-colors">
-            <span className="text-violet-400">◉</span> Shadow sintético ({shadowObservations.length}/24)
-          </a>
+          <Link href="/shadow" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5 transition-colors">
+            <span className="text-violet-400">◉</span> Métricas Shadow
+          </Link>
           <a href="#evidencias" className="flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-white/5 transition-colors">
             <span className="text-indigo-400">▤</span> Achados & Evidências
           </a>
@@ -430,30 +403,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
-
-          <section id="shadow" className="rounded-3xl border border-violet-200/80 bg-white p-6 md:p-8 shadow-sm space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[.16em] text-violet-500">Gate Shadow · somente dados sintéticos</p>
-                <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900">Observação segura da versão candidata</h2>
-              </div>
-              <span className={`rounded-full border px-3 py-1 text-xs font-black ${latestShadow?.pause_required ? 'border-rose-300 bg-rose-100 text-rose-800' : latestShadow ? 'border-emerald-300 bg-emerald-100 text-emerald-800' : 'border-slate-300 bg-slate-100 text-slate-600'}`}>
-                {latestShadow?.pause_required ? 'PAUSA OBRIGATÓRIA' : latestShadow ? 'OBSERVAÇÃO SAUDÁVEL' : 'SEM MEDIÇÕES PERSISTIDAS'}
-              </span>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Medições da janela" value={`${shadowMonitor?.observations ?? shadowObservations.length} / ${shadowMonitor?.target_observations ?? 24}`} detail={`${shadowMonitor?.remaining_observations ?? Math.max(0, 24 - shadowObservations.length)} medição(ões) restante(s)`} />
-              <MetricCard label="Equivalência mais recente" value={latestShadow ? `${(latestShadow.equivalence_rate * 100).toFixed(1)}%` : '—'} detail={latestShadow ? `${latestShadow.completed_cases}/${latestShadow.total_cases} casos concluídos` : 'Aguardando telemetria'} />
-              <MetricCard label="Divergência agregada" value={shadowMonitor?.divergence_rate !== null && shadowMonitor?.divergence_rate !== undefined ? `${(shadowMonitor.divergence_rate * 100).toFixed(1)}%` : '—'} detail="Limite de pausa: acima de 10%" />
-              <MetricCard label="Lacunas / alertas" value={`${shadowMonitor?.gaps.length ?? 0} / ${shadowMonitor?.alerts.length ?? 0}`} detail={shadowMonitor?.stale ? 'Medição atrasada' : 'Coleta dentro do prazo'} />
-            </div>
-            {shadowMonitor?.alerts.length ? <div className={`rounded-2xl border p-4 text-sm font-bold ${shadowMonitor.pause_required ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-amber-300 bg-amber-50 text-amber-900'}`}>
-              Alertas automáticos: {shadowMonitor.alerts.join(', ')}
-            </div> : null}
-            <p className="text-xs text-slate-500">
-              {latestShadow ? `Última medição: ${formatDate(latestShadow.observed_at)} · próxima prevista: ${formatDate(shadowMonitor?.next_measurement_due_at ?? undefined)} · release ${latestShadow.release_id}.` : 'A API aceita apenas métricas agregadas saneadas; conteúdo dos casos, CNPJ e dados reais são rejeitados.'}
-            </p>
           </section>
 
           {/* Central de Revisão Human-in-the-Loop */}
