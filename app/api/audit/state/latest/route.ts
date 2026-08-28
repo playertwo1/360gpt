@@ -36,10 +36,10 @@ export async function GET(request: Request) {
   const audit = await env.DB.prepare(`
     SELECT id, actor, action, entity_type, entity_id, details_json, created_at
     FROM audit_log
-    WHERE tenant_id = ? AND (entity_id = ? OR details_json LIKE ?)
+    WHERE entity_id = ? OR details_json LIKE ?
     ORDER BY created_at ASC
     LIMIT 100
-  `).bind(tenantId, latestState.state_id, `%${latestState.state_id}%`).all<AuditRow>();
+  `).bind(latestState.state_id, `%${latestState.state_id}%`).all<AuditRow>();
 
   const nodeResult = await env.DB.prepare(`
     WITH RECURSIVE connected(node_id, depth) AS (
