@@ -10,7 +10,7 @@ Last completed: A1 Onda 2 — 5/5 cálculos Performance válidos, zero mutaçõe
 Next task: Rafael revisar a Onda 2 e autorizar ou rejeitar a Onda 3; a fonte real permanece desconectada até cadastro, validação e gate técnico próprio
 
 Last validation: PASS — A1 Onda 2: 5/5, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: será atualizado no checkpoint da Onda 2
+Last commit: 922da91 (Onda 2 sintética supervisionada do GG Performance)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
