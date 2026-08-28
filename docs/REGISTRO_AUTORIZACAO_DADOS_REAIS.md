@@ -3,6 +3,7 @@
 **Estado:** AUTORIZAÇÃO DOCUMENTAL APROVADA — nenhuma fonte real conectada ou consultada.
 
 **Propriedade do projeto:** Diretor 360 é projeto privado de Rafael. Rafael é o proprietário e responsável técnico permanente. Qualquer regra institucional aplicável limita somente o uso de uma fonte de dados institucional, sem transferir a propriedade, a administração ou a responsabilidade técnica do projeto.
+**Autoridade sobre fontes:** Rafael decide, caso a caso, se uma fonte pode ser utilizada e quais campos podem ou não ser armazenados. Nenhuma fonte, campo novo ou ampliação de retenção é autorizada por inferência.
 **Regra:** preencher e aprovar este registro antes de C1; o preenchimento não promove agentes para `ACTIVE`.
 
 ## Registro obrigatório por operação
@@ -29,6 +30,7 @@
 3. Agregados somente podem permanecer por prazo indeterminado quando não permitirem identificação ou reidentificação.
 4. Se Rafael decidir delegar suporte técnico, a delegação deve registrar escopo, prazo, privilégios e revogação; a propriedade do projeto permanece com Rafael.
 5. A fonte concreta ainda deve ser cadastrada e validada tecnicamente antes da primeira conexão; esta autorização documental não ativa a fonte.
+6. Cada autorização de fonte deve registrar a decisão de Rafael, finalidade, campos permitidos, campos proibidos e prazo de retenção aplicável.
 
 Enquanto a fonte concreta não for cadastrada, validada e ativada por gate próprio, o canary permanece exclusivamente sintético e nenhuma consulta de dado real é permitida.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.16] - 2026-08-28
+
+### Changed
+- Rafael formalizado como autoridade exclusiva para aprovar cada fonte, definir campos permitidos/proibidos e autorizar qualquer ampliação de retenção.
+
+### Security
+- Fontes, campos ou prazos não podem ser ampliados por inferência; cada autorização deve ser registrada antes do uso.
+
 ## [3.2.15] - 2026-08-28
 
 ### Changed
