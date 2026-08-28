@@ -1,7 +1,7 @@
 # Gate de promoção para SHADOW
 
 **Versão:** 1.0.0  
-**Estado:** APPROVED_FOR_SYNTHETIC_SHADOW  
+**Estado:** OBSERVING_SYNTHETIC_SHADOW  
 **Escopo:** motores determinísticos POBJ, freshness, GDAD e compromissos  
 **Efeitos permitidos:** nenhum; Estado 360, Dashboard, respostas e ações permanecem inalterados.
 
@@ -22,6 +22,12 @@
 ## Aprovação
 
 Rafael autorizou o avanço marco a marco nesta conversa em 27/08/2026. A autorização aplica-se exclusivamente ao Shadow sintético descrito acima; não autoriza dados reais, respostas externas ou ativação `ACTIVE`.
+
+## Janela em execução
+
+- Início registrado: 27/08/2026 22:52:04 (America/Sao_Paulo).
+- Primeira medição: 20/20 casos concluídos, equivalência de 100%, zero mutações e zero efeitos externos.
+- Revisão da janela: após 24 horas, ou antes somente se houver alerta de divergência/segurança.
 
 ## Critérios de saída
 

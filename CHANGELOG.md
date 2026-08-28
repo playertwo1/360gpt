@@ -474,6 +474,12 @@
 - Limiares de pausa definidos para divergência acima de 10% ou qualquer efeito proibido.
 - Backup do gate criado e verificado nas duas cópias do Google Drive.
 
+## 2026-08-27 — Marco E4: início da observação Shadow
+
+- Janela sintética de 24 horas iniciada com escopo restrito aos 20 casos canônicos.
+- Primeira medição: 20/20 concluídos, equivalência de 100%, zero mutações e zero efeitos externos.
+- Bateria geral mantida em 14/14 testes aprovados.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
