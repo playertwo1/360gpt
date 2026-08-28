@@ -457,6 +457,11 @@
 - Criado agregador de telemetria para equivalência, divergência, erros e contagem de efeitos proibidos.
 - Suíte sintética de 20 comparações validou taxa de equivalência e ausência de mutação/efeito externo.
 
+## 2026-08-27 — Marco E1: homologação sintética
+
+- Executados os 20 casos canônicos em envelope Shadow com contexto saneado.
+- Cobertura: 20/20 execuções concluídas, equivalência sintética de 100% e zero mutações/efeitos externos.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
