@@ -470,14 +470,16 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P2:** cálculos reproduzíveis e testes sintéticos aprovados por domínio.
 
-### P3 — Contratos dos quatro Gerentes Gerais
+### P3 — Contratos dos quatro Gerentes Gerais — CONCLUÍDO
 
-- [ ] Validar entradas e respostas de Conta, Performance, Financeiro e Relacionamento.
-- [ ] Confirmar máximo de quatro especialistas por domínio.
-- [ ] Validar dependências entre gerentes e proibição de chamadas laterais.
-- [ ] Confirmar que especialistas não produzem efeitos externos.
-- [ ] Validar o parecer executivo padronizado.
-- [ ] Confirmar versão, escopo, fontes, limites, rollback e `runtime: INACTIVE` de cada gerente.
+- [x] Validar entradas e respostas de Conta, Performance, Financeiro e Relacionamento.
+- [x] Confirmar máximo de quatro especialistas por domínio.
+- [x] Validar dependências entre gerentes e proibição de chamadas laterais.
+- [x] Confirmar que especialistas não produzem efeitos externos.
+- [x] Validar o parecer executivo padronizado.
+- [x] Confirmar versão, escopo, fontes, limites, rollback e `runtime: INACTIVE` de cada gerente.
+
+**Evidência:** `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
 
 **Gate P3:** cada gerente possui contrato e evidência de teste sem promoção de runtime.
 

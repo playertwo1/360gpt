@@ -1,0 +1,2 @@
+# Dependências dos testes Python do Diretor 360
+PyYAML==6.0.3

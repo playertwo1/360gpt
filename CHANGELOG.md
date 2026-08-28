@@ -42,6 +42,15 @@
 ### Security
 - Nenhuma regra foi inventada para preencher lacunas normativas; casos sem evidência permanecem `UNDETERMINED` ou aguardam revisão.
 
+## [3.2.4] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
+- `requirements-dev.txt` com `PyYAML==6.0.3` para o teste Python de lifecycle.
+
+### Changed
+- P3 concluído: contratos, lifecycle, roteamento, limites e runtime `INACTIVE` dos quatro Gerentes Gerais validados.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed

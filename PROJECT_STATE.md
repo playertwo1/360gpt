@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.3
+Version: 3.2.4
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P2 em andamento; base determinística validada e Shadow isolado em 16 de 24 medições no último registro
-Current task: P2 — documentar insumos normativos das curvas POBJ e política de ausência de contato, sem alterar a trilha Shadow
+Current milestone: P3 concluído; Shadow isolado em 16 de 24 medições no último registro
+Current task: P4 — validar a jornada completa de orquestração com dados sintéticos, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: P2 base validada; POBJ, freshness, GDAD, compromissos e comportamento dos domínios aprovados
-Next task: Obter ou registrar critérios normativos faltantes antes de implementar curvas de exceção ou ausência de contato
+Last completed: P3 aprovado; contratos, lifecycle, roteamento e limites dos quatro Gerentes Gerais validados
+Next task: Executar P4 e validar contexto, conflitos, Estado 360 e Assessor em jornada sintética
 
-Last validation: PASS — testes P2 de POBJ, GDAD, compromissos, freshness e domínio; relatório `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md`
+Last validation: PASS — testes P3 de contratos, roteamento, Conta e lifecycle; relatório `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 12:35
+Last update: 2026-08-28 13:05
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P2 somente quando houver fonte normativa para curvas POBJ ou política aprovada de ausência de contato. Enquanto isso, avance P3–P7 em tarefas independentes. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P4 na jornada sintética de orquestração. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
