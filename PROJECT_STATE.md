@@ -10,7 +10,7 @@ Last completed: A1 Onda 3 — 10/10 cálculos Performance válidos, custo zero, 
 Next task: Rafael revisar a Onda 3 e aprovar ou solicitar ajuste em A1; a fonte real permanece desconectada até cadastro, validação e gate técnico próprio
 
 Last validation: PASS — A1 Onda 3: 10/10, custo zero, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: será atualizado no checkpoint da Onda 3
+Last commit: c1231b7 (Onda 3 sintética supervisionada do GG Performance)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
