@@ -1,0 +1,19 @@
+schema_version: "1.0.0"
+status: ACTIVE_SHADOW_ONLY
+milestone: A2
+domain: performance
+capability: PERFORMANCE_SCORING_STATE
+runtime_status: SHADOW
+data_scope: SYNTHETIC_ONLY
+source:
+  id: SYNTHETIC_PERFORMANCE_A2_FIXTURE
+  status: ACTIVE
+  real_source_connected: false
+allowed_fields: [meta, realizado, periodo]
+prohibited_fields: [cpf, cnpj, nome, telefone, email, documento_pessoal]
+human_review_required: true
+external_effects: PROHIBITED
+state_mutations: PROHIBITED
+metrics_required: [errors, divergence, latency_ms, cost_usd, review_status]
+pause_conditions: [UNAUTHORIZED_SOURCE, UNAUTHORIZED_FIELD, SCHEMA_ERROR, DIVERGENCE, EXTERNAL_EFFECT, STATE_MUTATION]
+rollback: DISABLE_CAPABILITY

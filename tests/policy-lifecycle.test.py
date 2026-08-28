@@ -13,6 +13,9 @@ assert registry["lifecycle_semantics"]["approved_does_not_imply_active"] is True
 assert routing["execution_policy"]["approved_is_routable"] is False
 assert routing["routes"]["approved_design"]["executable"] is False
 assert routing["routes"]["legacy_synthetic"]["data_scope"] == "SYNTHETIC_ONLY"
+assert routing["routes"]["performance_a2_supervised"]["runtime_status"] == "SHADOW"
+assert routing["routes"]["performance_a2_supervised"]["data_scope"] == "SYNTHETIC_ONLY"
+assert routing["routes"]["performance_a2_supervised"]["external_effects"] == "PROHIBITED"
 assert registry["transversal_capabilities"]["retired_knowledge_manager"]["child_runtime_status"] == "RETIRED"
 
 for domain_name, domain_manifest in manifest["domains"].items():
@@ -25,4 +28,8 @@ for domain_name, domain_manifest in manifest["domains"].items():
     assert registry_ids == manifest_ids
 
 assert sum(len(domain["specialists"]) for domain in registry["domains"].values()) == 21
+performance = registry["domains"]["performance"]["specialists"]["calcular_pontuacao_estado"]
+assert performance["runtime_status"] == "SHADOW"
+assert performance["data_scope"] == "SYNTHETIC_ONLY"
+assert performance["external_effects"] == "PROHIBITED"
 print("policy-lifecycle: manifesto, registro e roteamento reconciliados")

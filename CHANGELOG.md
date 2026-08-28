@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.22] - 2026-08-28
+
+### Changed
+- A2 iniciada com a única capacidade `PERFORMANCE_SCORING_STATE` em `SHADOW` supervisionado.
+
+### Security
+- A2 aceita somente fixtures sintéticas e os campos mínimos `meta`, `realizado` e `periodo`; fonte POBJ real, efeitos externos e mutações de estado de negócio continuam proibidos.
+
 ## [3.2.21] - 2026-08-28
 
 ### Changed

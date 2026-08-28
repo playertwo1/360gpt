@@ -12,6 +12,18 @@ execution_policy:
   maximum_specialists_per_domain: 4
 
 routes:
+  performance_a2_supervised:
+    executable: true
+    runtime_status: SHADOW
+    data_scope: SYNTHETIC_ONLY
+    external_effects: PROHIBITED
+    human_review_required: true
+    rollback: DISABLE_CAPABILITY
+    intent: performance_scoring_state
+    capability: PERFORMANCE_SCORING_STATE
+    allowed_fields: [meta, realizado, periodo]
+    prohibited_sources: [REAL_POBJ_SPREADSHEET, TELEGRAM_DOCUMENT, EXTERNAL_CONNECTOR]
+
   legacy_synthetic:
     executable: true
     data_scope: SYNTHETIC_ONLY

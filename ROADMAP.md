@@ -569,12 +569,12 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 
 ### A2 — Ativação somente leitura supervisionada
 
-- [ ] Promover uma única capacidade de um gerente.
-- [ ] Liberar somente fontes e campos autorizados.
-- [ ] Aplicar minimização, segregação e auditoria de toda leitura.
-- [ ] Manter revisão humana e efeitos externos bloqueados.
-- [ ] Monitorar erros, divergências, custo e latência.
-- [ ] Voltar para `INACTIVE` diante de violação de gate.
+- [x] Promover uma única capacidade de um gerente — `PERFORMANCE_SCORING_STATE` em `SHADOW`; o gerente e todas as outras capacidades permanecem `INACTIVE`.
+- [x] Liberar somente fontes e campos autorizados — fixtures sintéticas, com `meta`, `realizado` e `periodo`; POBJ real permanece desconectado.
+- [x] Aplicar minimização, segregação e auditoria de toda leitura — política A2 versionada e testes específicos aprovados.
+- [x] Manter revisão humana e efeitos externos bloqueados — condições técnicas codificadas; nenhum efeito externo é permitido.
+- [~] Monitorar erros, divergências, custo e latência — baseline técnico aprovado; falta completar janela supervisionada de A2.
+- [~] Voltar para `INACTIVE` diante de violação de gate — kill switch `DISABLE_CAPABILITY` definido; falta executar o teste operacional de rollback.
 
 ### A3 — Expansão por gerente
 
