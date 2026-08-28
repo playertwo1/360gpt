@@ -114,6 +114,11 @@ Melhorias de governança permanecem no backlog:
 - URL pública: `https://visao-360-diretor.fael360092.chatgpt.site`.
 - Correção de erros de carregamento da linhagem agora está disponível na Mesa do Revisor.
 
+### Atualização 28/08/2026 — Integridade da resolução publicada
+- Versão 29 salva e publicada após sincronização da origem hospedada.
+- Mesa do Revisor agora apresenta integridade da linhagem, resolução, revisor e justificativa.
+- Deploy concluído com sucesso em `https://visao-360-diretor.fael360092.chatgpt.site`.
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
