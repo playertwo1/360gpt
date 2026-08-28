@@ -452,6 +452,11 @@
 - Sanitização de PII, hashes e bloqueio de mutação de Estado 360 e efeitos externos mantidos por contrato.
 - Testes de divergência e classificação ambígua aprovados.
 
+## 2026-08-27 — Marco D3: telemetria de Shadow
+
+- Criado agregador de telemetria para equivalência, divergência, erros e contagem de efeitos proibidos.
+- Suíte sintética de 20 comparações validou taxa de equivalência e ausência de mutação/efeito externo.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
