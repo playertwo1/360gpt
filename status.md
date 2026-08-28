@@ -1,6 +1,6 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 26 de agosto de 2026  
+**Data do status:** 27 de agosto de 2026  
 **Versão Atual da Release:** `v3.1.0-confianca`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Telegram ativado em produção e validado de ponta a ponta com texto, comandos e arquivos.  
+**Último marco concluído:** Etapa B validada; motores POBJ/freshness e contratos dos quatro domínios passaram na bateria completa.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** melhorar a interpretação especializada de documentos reais, começando pelo POBJ no Gerente Geral de Performance, sem ampliar os efeitos externos do modo `OFFLINE_EVAL`.
+**Próximo passo exato:** implementar a integração isolada dos motores determinísticos ao fluxo de Performance, mantendo especialistas novos inativos até nova avaliação e promoção explícita.
 
 ---
 
@@ -80,7 +80,13 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ## 4. Próxima Ação Imediata Recomendada
 
-Avançar para a **auditoria retrospectiva**, acompanhando o relatório `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`:
+Avançar para a **Etapa C — implementação isolada dos motores determinísticos**:
+1. Integrar `engines/performance/pobj-engine.mjs` ao adaptador de execução em modo sombra.
+2. Integrar `engines/performance/freshness-engine.mjs` com watermark por indicador.
+3. Comparar saídas com os fixtures sintéticos e registrar métricas de divergência.
+4. Manter runtime dos novos especialistas como `INACTIVE` até gate de promoção.
+
+Melhorias de governança permanecem no backlog:
 1. Separar entrada bruta, predição e gabarito nos Evals L2/L3/L4.
 2. Implementar restauração temporária real para medir RTO/RPO.
 3. Remover `child_process`/filesystem efêmero das rotas hospedadas.

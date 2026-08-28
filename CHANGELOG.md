@@ -416,6 +416,12 @@
 - Teste real comprovou ingestão, armazenamento protegido de PDF, reserva da fila, download pela ponte, processamento no n8n, publicação do Estado 360 e resposta final no Telegram.
 - Fila pendente anterior drenada sem erro; processamento permanece sequencial, em ciclos de aproximadamente um minuto.
 
+## 2026-08-27 — Etapa B e compatibilidade Windows
+
+- Corrigido o teste de contratos de Conta para o formato canônico v2.0 do registro de capacidades e manifesto.
+- Corrigida a resolução de caminhos nos testes direcionais para execução nativa no Windows.
+- Bateria completa atualizada e aprovada com 14/14 testes.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.

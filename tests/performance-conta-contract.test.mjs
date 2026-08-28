@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = fileURLToPath(new URL("..", import.meta.url));
 const read = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative)));
 const request = read("test-data/contracts/performance-conta-request.synthetic.json");
 const response = read("test-data/contracts/performance-conta-response.synthetic.json");

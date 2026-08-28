@@ -11,6 +11,7 @@ const specialists = [
 ];
 
 const registry = readFileSync("policies/capability-registry.yaml", "utf8");
+const manifest = JSON.parse(readFileSync("registries/project-manifest.json", "utf8"));
 const reasonCatalog = readFileSync("policies/reason-codes.yaml", "utf8");
 const manager = readFileSync("domains/conta/GERENTE_GERAL_CONTA.md", "utf8");
 const requestSchema = JSON.parse(
@@ -26,7 +27,11 @@ for (const [id, filename] of specialists) {
   const path = `domains/conta/especialistas/${filename}`;
   assert.ok(existsSync(path), `arquivo ausente: ${path}`);
   assert.ok(readFileSync(path, "utf8").includes(id), `ID ausente em ${path}`);
-  assert.match(registry, new RegExp(`primary_implementation: ${id}\\r?\\n[\\s\\S]{0,180}state: PROPOSED`));
+  assert.match(registry, new RegExp(`\\bid: ${id}\\r?\\n`));
+  const manifestSpecialist = manifest.domains.conta.specialists.find((item) => item.id === id);
+  assert.ok(manifestSpecialist, `especialista ausente no manifesto: ${id}`);
+  assert.equal(manifestSpecialist.design_status, "APPROVED");
+  assert.equal(manifestSpecialist.runtime_status, "INACTIVE");
   assert.ok(requestSchema.properties.specialist_id.enum.includes(id));
 }
 
