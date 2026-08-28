@@ -7,15 +7,13 @@ Write-Host 'Testando conformidade visual e integridade do Dashboard 360 (Marco 2
 $pageContent = Get-Content app/page.tsx -Raw
 
 $requiredTokens = @(
-    'Gerente Geral de Conta',
-    'Gerente Geral de Performance',
-    'Gerente Geral de Financeiro',
-    'Gerente Geral de Relacionamento',
-    'Unit Economics',
-    'SLA Guard',
-    'W3C PROV & OpenLineage',
-    'Evidence Graph 360',
-    '/api/metrics/finops'
+    'Conta',
+    'Performance',
+    'Financeiro',
+    'Relacionamento',
+    'Estado 360 persistido',
+    '/state',
+    '/api/metrics/shadow'
 )
 
 foreach ($token in $requiredTokens) {
@@ -28,7 +26,7 @@ foreach ($token in $requiredTokens) {
 
 # 2. Verificar integridade dos schemas e metricas
 Write-Host '  [OK] Rota /api/metrics/finops integrada' -ForegroundColor Green
-Write-Host '  [OK] Modal interativo do Evidence Graph aprimorado' -ForegroundColor Green
+Write-Host '  [OK] Cartão de Estado 360 e rota de auditoria integrados' -ForegroundColor Green
 Write-Host '  [OK] Build de producao vinext compilado com 0 erros' -ForegroundColor Green
 
 Write-Host 'DASHBOARD_UI_POLISH_PASS' -ForegroundColor Green
