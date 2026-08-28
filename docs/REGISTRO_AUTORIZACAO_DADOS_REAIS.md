@@ -1,6 +1,6 @@
 # Registro de autorização para dados reais
 
-**Estado:** AUTORIZAÇÃO DOCUMENTAL APROVADA — nenhuma fonte real conectada ou consultada.  
+**Estado:** AUTORIZAÇÃO DOCUMENTAL APROVADA — nenhuma fonte real conectada ou consultada.
 **Regra:** preencher e aprovar este registro antes de C1; o preenchimento não promove agentes para `ACTIVE`.
 
 ## Registro obrigatório por operação

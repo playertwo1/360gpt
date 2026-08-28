@@ -10,7 +10,7 @@ Last completed: A1 Onda 1 — 3/3 cálculos Performance válidos, zero mutaçõe
 Next task: Rafael revisar a Onda 1 e autorizar ou rejeitar a Onda 2; a fonte real permanece desconectada até cadastro, validação e gate técnico próprio
 
 Last validation: PASS — A1 Onda 1: 3/3, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: será atualizado no checkpoint da política C1
+Last commit: 05edc4f (política C1 de retenção e responsabilidade técnica)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
