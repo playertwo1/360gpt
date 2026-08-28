@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 28 de agosto de 2026  
-**Versão Atual da Release:** `v3.2.22`
+**Versão Atual da Release:** `v3.2.23`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -18,7 +18,7 @@
 **Último marco concluído:** Entrada A2 do GG Performance: `PERFORMANCE_SCORING_STATE` em `SHADOW` sintético supervisionado; o restante segue inativo.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** completar monitoramento sintético e teste de rollback de A2; C1 permanece necessário antes de qualquer dado real.
+**Próximo passo exato:** completar a janela de monitoramento sintético de A2; rollback já foi testado. C1 permanece necessário antes de qualquer dado real.
 **Checkpoint local:** `HEAD` — uma capacidade em SHADOW; nenhum agente está ACTIVE.
 
 ---

@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.23] - 2026-08-28
+
+### Added
+- Gate de execução A2 e teste de rollback da capacidade Performance em SHADOW.
+
+### Security
+- O gate bloqueia execução com capacidade inativa, fonte fora de escopo, campo não autorizado, mutação de estado ou efeito externo.
+
 ## [3.2.22] - 2026-08-28
 
 ### Changed

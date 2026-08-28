@@ -22,6 +22,8 @@
 - Manifesto e registro de capacidades reconciliados: somente `PERFORMANCE_SCORING_STATE` está em `SHADOW`.
 - Política A2 rejeita fontes reais, documentos Telegram e conectores externos.
 - Testes de manifesto, lifecycle e política A2 aprovados; bateria geral anterior permaneceu 14/14 aprovada.
+- Baseline supervisionado: 10/10 casos, 0 erro, 0% de divergência, custo US$ 0,00, 0,043 ms médio, zero mutação e zero efeito externo.
+- Kill switch testado: execução é bloqueada por `CAPABILITY_INACTIVE`, fonte/campo não autorizado ou tentativa de efeito externo.
 
 ## Saída de A2
 

@@ -573,8 +573,8 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 - [x] Liberar somente fontes e campos autorizados — fixtures sintéticas, com `meta`, `realizado` e `periodo`; POBJ real permanece desconectado.
 - [x] Aplicar minimização, segregação e auditoria de toda leitura — política A2 versionada e testes específicos aprovados.
 - [x] Manter revisão humana e efeitos externos bloqueados — condições técnicas codificadas; nenhum efeito externo é permitido.
-- [~] Monitorar erros, divergências, custo e latência — baseline técnico aprovado; falta completar janela supervisionada de A2.
-- [~] Voltar para `INACTIVE` diante de violação de gate — kill switch `DISABLE_CAPABILITY` definido; falta executar o teste operacional de rollback.
+- [~] Monitorar erros, divergências, custo e latência — baseline A2: 10/10 casos, 0 erro, 0% divergência, US$ 0,00 e 0,043 ms médio; falta completar janela supervisionada de A2.
+- [x] Voltar para `INACTIVE` diante de violação de gate — kill switch testado contra desativação, fonte/campo não autorizado e tentativa de efeito externo.
 
 ### A3 — Expansão por gerente
 
