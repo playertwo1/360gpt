@@ -498,18 +498,20 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P4:** jornada sintética completa, determinística nas regras conhecidas e auditável.
 
-### P5 — Segurança, LGPD e autorização operacional documental
+### P5 — Segurança, LGPD e autorização operacional documental — EM ANDAMENTO
 
-- [ ] Registrar finalidade, escopo permitido e dados proibidos.
-- [ ] Identificar responsável de negócio e responsável técnico.
-- [ ] Definir retenção, descarte e mascaramento.
-- [ ] Validar isolamento por usuário e tenant.
-- [ ] Validar allowlists e gestão de segredos.
-- [ ] Executar testes de prompt injection, exfiltração e fronteira de privilégios.
-- [ ] Testar kill switches.
-- [ ] Criar registro de autorização por operação.
+- [ ] Registrar finalidade, escopo permitido e dados proibidos — aguarda confirmação de Rafael.
+- [ ] Identificar responsável de negócio e responsável técnico — aguarda confirmação de Rafael.
+- [ ] Definir retenção, descarte e mascaramento — aguarda confirmação de Rafael.
+- [x] Validar isolamento por usuário e tenant.
+- [x] Validar allowlists e gestão de segredos.
+- [x] Executar testes de prompt injection, exfiltração e fronteira de privilégios.
+- [x] Testar kill switches.
+- [x] Criar modelo de registro de autorização por operação.
 
 **Dependência humana:** Rafael confirma finalidade, responsáveis, escopo e retenção. Esta fase não conecta nenhuma fonte real.
+
+**Evidência:** `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
 
 ### P6 — Preparação operacional para ativação
 

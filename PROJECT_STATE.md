@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.5
+Version: 3.2.6
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P4 concluído; Shadow isolado em 16 de 24 medições no último registro
-Current task: P5 — completar segurança, LGPD e autorização operacional documental, sem alterar a trilha Shadow
+Current milestone: P5 técnico aprovado; autorização operacional pendente; Shadow isolado em 16 de 24 medições no último registro
+Current task: P6 — fechar prontidão operacional, rollback, restauração e pacote de release, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: P4 aprovado; roteamento, contexto, conflitos, Estado 360 e Assessor validados em jornada sintética
-Next task: Executar P5 técnico e registrar os campos humanos pendentes da autorização operacional
+Last completed: P5 técnico aprovado; segurança, LGPD, DLP, kill switches e modelo de autorização validados
+Next task: Executar P6 e preparar operação recuperável; manter C1 pendente até confirmação humana
 
-Last validation: PASS — workflow OFFLINE_EVAL, operação assistida, roteamento e contrato Conta–Performance; relatório `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`
+Last validation: PASS — `scripts/test-phase6-security-prr.ps1`; relatório `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md`
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 13:35
+Last update: 2026-08-28 14:05
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P5 na validação de segurança, LGPD e autorização documental. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P6 na preparação operacional. A autorização C1 ainda depende de confirmação humana, mas não bloqueia tarefas independentes. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

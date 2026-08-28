@@ -62,6 +62,17 @@
 ### Security
 - Operação assistida permaneceu sintética, sem promoção de agentes e sem efeitos externos.
 
+## [3.2.6] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md`.
+
+### Changed
+- P5 avançado: controles técnicos de segurança e LGPD aprovados; campos da autorização operacional permanecem pendentes de confirmação humana.
+
+### Security
+- Nenhuma fonte real foi conectada e nenhum dado real foi processado.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed
