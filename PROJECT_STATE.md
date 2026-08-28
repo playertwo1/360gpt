@@ -1,16 +1,16 @@
 # PROJECT STATE
 
-Version: 3.1.4
+Version: 3.1.5
 Current phase: Shadow sintético e preparação de ativação gradual
 Current milestone: Janela Shadow — 12 de 24 medições
 Current task: Coletar Shadow; pacote do Gate e canary Performance aguardam conclusão da janela
 Status: IN_PROGRESS
 
-Last completed: Avisos de lint removidos; build de produção aprovado
+Last completed: Exercício isolado de restauração PostgreSQL aprovado em 14,79 segundos
 Next task: Executar a próxima observação Shadow; ao completar 24/24, gerar e revisar o parecer do Gate
 
-Last validation: PASS — npm run lint e npm run build
-Last commit: 25d2219
+Last validation: PASS — test-isolated-postgres-restore.ps1
+Last commit: 96099c6
 
 Blockers:
 - Nenhum bloqueio técnico; Gate Shadow aguarda completar a janela de 24 medições.
@@ -19,7 +19,7 @@ Pending decisions:
 - Aprovação de Rafael para o Gate Shadow após consolidação da janela.
 - Escolha do primeiro Gerente Geral para ativação gradual.
 
-Last update: 2026-08-28 12:45
+Last update: 2026-08-28 13:00
 
 Resume instruction:
 Leia AGENTS.md, ROADMAP.md e CHANGELOG.md recente; execute `node scripts/run-shadow-observation.mjs`, valide a janela acumulada e continue a próxima tarefa elegível sem ativar dados reais ou efeitos externos.

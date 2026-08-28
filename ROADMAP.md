@@ -408,6 +408,7 @@ Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fil
 - [x] Governança de execução autônoma formalizada no `AGENTS.md` v2.1, com `PROJECT_STATE.md` e `CHANGELOG.md` sincronizados.
 - [x] Matriz de controles dos quatro Gerentes Gerais criada e validada com a bateria geral e telemetria FinOps.
 - [x] Modelo de registro de autorização para dados reais preparado, sem fonte real conectada.
+- [x] Exercício isolado de restauração PostgreSQL implementado e aprovado dentro do RTO de 15 minutos.
 
 ## Próximos passos durante a janela Shadow
 

@@ -607,3 +607,11 @@
 
 ### Changed
 - Build de produção revalidado com sucesso.
+
+## [3.1.5] - 2026-08-28
+
+### Added
+- Teste de restauração PostgreSQL em contêiner efêmero, sem gravar dump em disco.
+
+### Security
+- Exercício isolado não escreve no banco de origem e remove automaticamente o contêiner temporário.
