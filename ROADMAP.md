@@ -503,7 +503,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 ### P5 — Segurança, LGPD e autorização operacional documental — CONCLUÍDO
 
 - [x] Registrar finalidade e escopo permitido — finalidade Performance/POBJ, acesso por e-mail/convite e planilha POBJ limitada a meta, realizado e período registrados; CPF e campos pessoais desnecessários proibidos.
-- [x] Identificar responsável de negócio e responsável técnico — Rafael é responsável de negócio e técnico interino; transferência formal para TI/Segurança antes do ambiente institucional.
+- [x] Identificar responsável de negócio e responsável técnico — Rafael é proprietário, responsável de negócio e responsável técnico permanente; qualquer delegação futura será opcional e registrada, sem transferência de propriedade.
 - [x] Definir retenção, descarte e mascaramento — detalhados por 24 meses, backups por até 90 dias e agregados não identificáveis por prazo indeterminado.
 - [x] Validar isolamento por usuário e tenant.
 - [x] Validar allowlists e gestão de segredos.

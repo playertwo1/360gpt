@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.15] - 2026-08-28
+
+### Changed
+- Formalizada a propriedade privada do Diretor 360 por Rafael e sua responsabilidade técnica permanente.
+- Removida a previsão de transferência obrigatória para TI/Segurança; delegação futura passa a ser opcional, explícita e revogável.
+
+### Security
+- Regras institucionais permanecem aplicáveis apenas a fontes de dados institucionais eventualmente autorizadas, sem alterar a propriedade do projeto.
+
 ## [3.2.14] - 2026-08-28
 
 ### Changed

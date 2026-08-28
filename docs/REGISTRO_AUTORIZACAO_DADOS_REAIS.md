@@ -1,6 +1,8 @@
 # Registro de autorização para dados reais
 
 **Estado:** AUTORIZAÇÃO DOCUMENTAL APROVADA — nenhuma fonte real conectada ou consultada.
+
+**Propriedade do projeto:** Diretor 360 é projeto privado de Rafael. Rafael é o proprietário e responsável técnico permanente. Qualquer regra institucional aplicável limita somente o uso de uma fonte de dados institucional, sem transferir a propriedade, a administração ou a responsabilidade técnica do projeto.
 **Regra:** preencher e aprovar este registro antes de C1; o preenchimento não promove agentes para `ACTIVE`.
 
 ## Registro obrigatório por operação
@@ -14,7 +16,7 @@
 | Período de vigência | Indeterminado, até revogação expressa de Rafael |
 | Retenção e descarte | Dados detalhados: 24 meses após o encerramento do período POBJ. Backups: rotação e descarte em até 90 dias. Agregados não identificáveis: prazo indeterminado. Exclusão antecipada por revogação, fim da finalidade ou determinação institucional aplicável. |
 | Responsável de negócio | Rafael |
-| Responsável técnico / data steward | Rafael, em caráter interino durante o piloto. Transferência formal obrigatória para TI/Segurança antes da entrada no ambiente institucional. |
+| Responsável técnico / data steward | Rafael, de forma permanente, como proprietário do projeto. Delegação a terceiro somente por decisão expressa de Rafael, sem transferência automática de propriedade. |
 | Evidência da autorização | Declaração registrada de Rafael em 28/08/2026: autorização institucional vigente para a finalidade descrita |
 | Limites de consulta e classificação LGPD | Somente leitura, mínimo necessário, acesso autenticado/autorizado e auditoria; classificação detalhada depende dos campos da fonte |
 | Efeitos externos | Proibidos |
@@ -25,7 +27,7 @@
 1. Rafael aprova e revoga individualmente os acessos por e-mail ou convite.
 2. A exclusão deve registrar data, escopo, responsável e resultado; backups expiram pela rotação de até 90 dias.
 3. Agregados somente podem permanecer por prazo indeterminado quando não permitirem identificação ou reidentificação.
-4. Antes da migração para ambiente institucional, a responsabilidade técnica deve ser formalmente transferida para TI/Segurança.
+4. Se Rafael decidir delegar suporte técnico, a delegação deve registrar escopo, prazo, privilégios e revogação; a propriedade do projeto permanece com Rafael.
 5. A fonte concreta ainda deve ser cadastrada e validada tecnicamente antes da primeira conexão; esta autorização documental não ativa a fonte.
 
 Enquanto a fonte concreta não for cadastrada, validada e ativada por gate próprio, o canary permanece exclusivamente sintético e nenhuma consulta de dado real é permitida.
