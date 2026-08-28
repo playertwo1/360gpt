@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.19] - 2026-08-28
+
+### Fixed
+- Simulador legado de canary deixou de fabricar decisões, hashes, concordância ou overrides atribuídos a Rafael.
+- Bateria geral passou a identificar corretamente a Fase 7 como simulação sintética.
+
+### Security
+- Decisões humanas agora só podem existir após revisão explícita; validações confirmaram 14/14 testes e lint aprovados.
+
 ## [3.2.18] - 2026-08-28
 
 ### Added

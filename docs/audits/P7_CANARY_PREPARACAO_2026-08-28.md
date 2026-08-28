@@ -10,7 +10,7 @@
 - Protocolo de ondas 1–3, 5 e 10 disponível em `docs/PROTOCOLO_CANARY_SUPERVISIONADO.md`.
 - Pacote específico do GG Performance disponível em `docs/CANARY_GG_PERFORMANCE.md`.
 - Métricas, limites de pausa, rollback para `INACTIVE` e efeitos externos proibidos documentados.
-- A simulação sintética da Fase 7 já foi homologada pela bateria geral.
+- A simulação sintética da Fase 7 já foi homologada pela bateria geral; ela não representa operação real nem cria decisões humanas.
 - Primeiro candidato recomendado: GG Performance; capacidade deve ser escolhida por Rafael.
 
 ## Validação

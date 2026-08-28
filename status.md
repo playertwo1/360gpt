@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 28 de agosto de 2026  
-**Versão Atual da Release:** `v3.2.9`  
+**Versão Atual da Release:** `v3.2.19`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -16,6 +16,7 @@
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
 **Último marco concluído:** A1 Onda 3 do GG Performance: 10/10 cálculos sintéticos válidos, custo zero, zero mutações e zero efeitos externos; revisão humana pendente.  
+**Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** Rafael revisar a Onda 3 em `docs/audits/A1_ONDA3_PERFORMANCE_2026-08-28.md` e aprovar ou solicitar ajuste em A1; C1 permanece necessário somente antes de dados reais.
 

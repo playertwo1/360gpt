@@ -3,13 +3,13 @@
 
 **Versão:** 1.0.0  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Status:** 🟢 HOMOLOGADO & OPERACIONAL  
+**Status:** 🟢 HOMOLOGADO PARA SIMULAÇÃO SINTÉTICA SUPERVISIONADA  
 
 ---
 
 ## 🎯 1. Premissas e Governança
 
-1. **Escopo Autorizado Obrigatório:** Toda empresa inserida na esteira Canary deve possuir autorização formal de tratamento cadastral e financeiro.
+1. **Escopo Autorizado Obrigatório:** enquanto o canary for sintético, só utiliza fixtures. Qualquer caso real exige autorização formal de Rafael para a fonte e seus campos.
 2. **Quatro Olhos & Human-in-the-Loop:** O Diretor 360 e seus Gerentes Gerais analisam, calculam e sugerem. Apenas **Rafael** autoriza a concessão de crédito, formalização ou contato externo.
 3. **Evidence Graph & Laudo PDF:** Todo caso gera um Laudo Executivo em PDF de 3 páginas arquivado com hash SHA-256 antes da decisão final.
 4. **Rastreabilidade de Overrides:** Se Rafael ajustar limites sugeridos ou solicitar novas garantias, o motivo do ajuste é registrado deterministicamente para recalibração de políticas.
@@ -29,9 +29,9 @@
 * **Critério de Saída da Onda:** Roteamento FinOps com economia $> 70\%$ e zero bloqueios falsos.
 
 ### 🔹 Onda 3: Piloto Consolidado (6 a 10 Casos Sintéticos)
-* **Objetivo:** Atingir volume representativo para cálculo de SLA e taxa de override humano.
-* **Volume:** 10 empresas processadas.
-* **Critério de Saída da Onda:** **Human Override Rate $\le 10\%$** (concordância $\ge 90\%$ com as recomendações do Diretor 360).
+* **Objetivo:** validar consistência técnica em volume representativo.
+* **Volume:** 10 fixtures sintéticas processadas.
+* **Critério de Saída da Onda:** cálculos, schemas, custo, latência, evidência e segurança aprovados. Taxa de override/concordância só é calculada depois de decisões humanas reais, nunca por simulação.
 
 ---
 
