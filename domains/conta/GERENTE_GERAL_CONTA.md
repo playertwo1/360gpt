@@ -1,8 +1,9 @@
 # Gerente Geral de Conta
 
 **ID:** `GERENTE_GERAL_CONTA`
-**Versão:** 4.38.0
-**Status:** ESPECIFICAÇÃO DE DOMÍNIO APROVADA — SEIS ESPECIALISTAS CONCLUÍDOS
+**Versão aprovada:** `4.38.0`
+**Status:** ESPECIFICAÇÃO DE DOMÍNIO APROVADA — RUNTIME AINDA NÃO ATIVO
+**Runtime:** `INACTIVE` — promoção para `ACTIVE` exige gate Shadow, revisão humana e autorização explícita de Rafael.
 **Área:** Conta e Carteira PJ
 
 ## Missão

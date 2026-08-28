@@ -111,3 +111,8 @@ Melhorias de governança permanecem no backlog:
 - Teste sintético de segurança da ponte executado; teste autenticado ponta a ponta permanece aguardando o `BRIDGE_SECRET` configurado no ambiente.
 - Bateria geral permanece em 14/14 testes aprovados.
 - Próximas frentes: executar o teste autenticado POBJ, melhorar o painel de fila/evidências, revisar contratos dos quatro Gerentes Gerais e fechar o checklist de ativação gradual.
+
+### Atualização 28/08/2026 — Documentação dos Gerentes Gerais
+- Cabeçalho do GG Conta padronizado com versão aprovada e `runtime: INACTIVE`.
+- Criado `docs/CHECKLIST_ATIVACAO_GERENTES_GERAIS.md` com pré-requisitos, limites e promoção gradual de Conta, Performance, Financeiro e Relacionamento.
+- Nenhum gerente foi promovido para `ACTIVE`; rollback disponível no backup `backup/pre-gg-documentation-20260828-004612`.
