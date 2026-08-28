@@ -361,64 +361,233 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 
 ---
 
-# Trilha de ativação — Shadow em paralelo
+# Plano operacional de preparação e ativação
 
-O Shadow continua coletando medições em paralelo; as demais frentes podem avançar sem esperar o encerramento das 24 horas.
+**Aprovado por Rafael em:** 28 de agosto de 2026
+**Regra de separação:** a Trilha S é exclusivamente observacional. As trilhas P e A não podem modificar scripts, casos, métricas, critérios, registros ou configuração do Shadow enquanto a janela estiver aberta.
 
-## Trilha S — Shadow sintético
-- [ ] S1 — Completar 24 medições horárias, com 20 casos por janela.
-- [ ] S2 — Confirmar conclusão mínima de 99%, divergência máxima de 10%, zero mutações e zero efeitos externos.
-- [ ] S3 — Consolidar `test-data/shadow/observations/` e gerar relatório da janela.
-- [ ] S4 — Submeter o Gate Shadow à aprovação de Rafael.
+---
 
-## Trilha A — Quatro Gerentes Gerais
-- [x] A1 — Versão, escopo, especialistas e `runtime: INACTIVE` documentados.
-- [x] A2 — Revisar contratos, fontes autorizadas, regras e limites de cada domínio.
-- [x] A3 — Executar testes individuais e integrados com dados sintéticos.
-- [x] A4 — Confirmar kill switch, rollback, orçamento e auditoria por gerente.
+## TRILHA S — Shadow sintético isolado
 
-## Trilha B — Canary supervisionado
-- [ ] B1 — Executar 1–3 casos sintéticos.
-- [ ] B2 — Executar 5 casos e medir overrides humanos.
-- [ ] B3 — Executar 10 casos e confirmar SLOs e evidências.
-- [ ] B4 — Registrar decisão de promoção individual.
+### S1 — Observação automática
 
-## Trilha C — Dados reais em leitura controlada
-- [ ] C1 — Registrar autorização, finalidade, escopo, retenção e responsáveis.
-- [ ] C2 — Ativar somente leitura, com minimização, segregação por tenant e auditoria.
-- [ ] C3 — Validar qualidade, atualidade, proveniência e lacunas.
-- [ ] C4 — Manter recomendações e alterações sob revisão humana.
+- [~] Completar 24 medições horárias; estado registrado na aprovação deste plano: 16/24.
+- [x] Manter 20 casos sintéticos por medição.
+- [x] Manter escopo `SYNTHETIC_ONLY` e efeitos externos proibidos.
+- [ ] Aguardar as medições restantes sem executar medições adicionais manualmente.
 
-## Trilha D — Ativação gradual
-- [ ] D1 — Promover um gerente por vez para `ACTIVE`.
-- [ ] D2 — Operar com limites de capacidade, custo, escopo e kill switch.
-- [ ] D3 — Monitorar divergência, overrides, incidentes, latência e orçamento.
-- [ ] D4 — Expandir somente após janela estável e aprovação explícita.
+### S2 — Consolidação somente após 24/24
 
-## Trilha E — Efeitos externos (última etapa)
-- [ ] E1 — Definir catálogo de ações permitidas e pré-requisitos.
-- [ ] E2 — Exigir autorização humana específica por ação, alvo, canal e validade.
-- [ ] E3 — Testar retry, idempotência, auditoria e rollback.
-- [ ] E4 — Liberar efeitos externos de forma limitada e reversível.
+- [ ] Consolidar `test-data/shadow/observations/`.
+- [ ] Verificar lacunas e intervalos horários.
+- [ ] Confirmar conclusão mínima de 99%.
+- [ ] Confirmar divergência máxima de 10%.
+- [ ] Confirmar zero mutações de Estado 360.
+- [ ] Confirmar zero efeitos externos.
+- [ ] Gerar o parecer técnico do Gate Shadow.
+- [ ] Submeter o Gate Shadow à aprovação de Rafael.
 
-## Trabalho paralelo permitido durante o Shadow
+### Proibições durante a janela
 
-Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fila, evidências e métricas; testar backup, restauração e rollback; preparar documentação de autorização; corrigir avisos de lint e redundâncias sem alterar regras de negócio.
+- Não modificar scripts, fixtures, métricas ou critérios do Shadow.
+- Não antecipar, repetir ou preencher artificialmente medições.
+- Não promover agentes com base em resultado parcial.
+- Não ativar dados reais ou efeitos externos.
 
-- [x] Governança de execução autônoma formalizada no `AGENTS.md` v2.1, com `PROJECT_STATE.md` e `CHANGELOG.md` sincronizados.
-- [x] Matriz de controles dos quatro Gerentes Gerais criada e validada com a bateria geral e telemetria FinOps.
-- [x] Modelo de registro de autorização para dados reais preparado, sem fonte real conectada.
-- [x] Exercício isolado de restauração PostgreSQL implementado e aprovado dentro do RTO de 15 minutos.
-- [x] Teste local do Evidence Graph consolidado, incluindo autenticação, persistência, relações de linhagem e proteção append-only.
+---
 
-## Próximos passos durante a janela Shadow
+## TRILHA P — Preparação independente para ativação
 
-- [x] Preparar o pacote do Gate Shadow: checklist, relatório consolidado, critérios e evidências para aprovação de Rafael.
-- [x] Preparar o canary individual do GG Performance: casos, métricas, limites de pausa, rollback e ondas 1–3, 5 e 10.
-- [ ] Completar o registro de autorização de dados reais com finalidade, responsáveis, retenção, LGPD e escopo, sem conectar fonte.
-- [x] Eliminar avisos de lint e ampliar testes de restauração/rollback sem alterar regras de negócio.
-- [x] Padronizar o teste do Evidence Graph em PowerShell 7, eliminando divergência de codificação do PowerShell legado.
+Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentação. Nenhuma tarefa depende de alterar o Shadow.
 
-## Regra de ativação
+### P0 — Reconciliar roadmap, checklist e estado real
 
-Nenhum gerente entra em `ACTIVE` antes do Gate Shadow, Canary supervisionado, autorização aplicável e aprovação explícita de Rafael. Ativar agentes não libera efeitos externos automaticamente.
+- [ ] Comparar cada item do `checklist.md` com código, testes e evidências.
+- [ ] Confirmar quais itens estão realmente homologados.
+- [ ] Corrigir itens marcados como concluídos sem evidência suficiente.
+- [ ] Fechar no roadmap tarefas já comprovadamente concluídas.
+- [ ] Unificar nomenclatura de fases, marcos, lifecycles e versões.
+- [x] Definir `ROADMAP.md` como planejamento oficial e `checklist.md` como aceite operacional.
+- [ ] Sincronizar `PROJECT_STATE.md`, `status.md`, `checklist.md` e `CHANGELOG.md` com o resultado da reconciliação.
+
+**Gate P0:** todos os documentos representam o mesmo estado comprovado por código, testes e Git.
+
+### P1 — Base técnica e bateria de regressão
+
+- [ ] Executar os 14 testes gerais.
+- [ ] Executar lint e build de produção.
+- [ ] Validar contratos JSON Schema Draft 2020-12.
+- [ ] Validar ponte autenticada, idempotência, fila, retries, lease e DLQ.
+- [ ] Validar Estado 360 persistido e Evidence Graph append-only.
+- [ ] Validar Central de Revisão.
+- [ ] Validar backup e restauração isolada.
+- [ ] Criar relatório único de regressão.
+
+**Gate P1:** todas as validações aplicáveis aprovadas com dados sintéticos e zero efeitos externos.
+
+### P2 — Fechar motores determinísticos
+
+#### P2.1 — Performance
+
+- [ ] Inventariar indicadores POBJ suportados.
+- [ ] Confirmar piso, teto, peso, multiplicadores e versões de política.
+- [ ] Versionar as curvas oficiais disponíveis.
+- [ ] Manter exceções sem norma completa como `UNDETERMINED`.
+- [ ] Validar produção oficial, pendente e projetada.
+- [ ] Testar ranking, gaps e prioridades reproduzíveis.
+- [ ] Impedir escolha de empresa sem participação do GG Conta.
+
+#### P2.2 — Financeiro
+
+- [ ] Concluir o motor determinístico do GDAD.
+- [ ] Separar orçamento, realizado, cenário e projeção.
+- [ ] Registrar moeda, período, escala e arredondamento.
+- [ ] Representar ausência como `NOT_AVAILABLE`.
+- [ ] Impedir fabricação de retorno financeiro.
+
+#### P2.3 — Relacionamento
+
+- [ ] Concluir o motor de compromissos e datas.
+- [ ] Definir estados aberto, vencido, concluído e cancelado.
+- [ ] Calcular ausência de contato conforme regra versionada.
+- [ ] Exigir evidência textual para compromissos.
+- [ ] Manter hipóteses separadas de fatos.
+
+#### P2.4 — Conta
+
+- [ ] Validar resolução por identificadores fortes.
+- [ ] Validar elegibilidade específica por ação, produto ou operação.
+- [ ] Testar divergências cadastrais e revisão manual.
+- [ ] Garantir que restrição não produza veto genérico.
+- [ ] Impedir promessa baseada em pré-aprovação.
+
+**Gate P2:** cálculos reproduzíveis e testes sintéticos aprovados por domínio.
+
+### P3 — Contratos dos quatro Gerentes Gerais
+
+- [ ] Validar entradas e respostas de Conta, Performance, Financeiro e Relacionamento.
+- [ ] Confirmar máximo de quatro especialistas por domínio.
+- [ ] Validar dependências entre gerentes e proibição de chamadas laterais.
+- [ ] Confirmar que especialistas não produzem efeitos externos.
+- [ ] Validar o parecer executivo padronizado.
+- [ ] Confirmar versão, escopo, fontes, limites, rollback e `runtime: INACTIVE` de cada gerente.
+
+**Gate P3:** cada gerente possui contrato e evidência de teste sem promoção de runtime.
+
+### P4 — Orquestração Diretor → Gerentes → Motor 360
+
+- [ ] Testar roteamento por intenção e capacidade.
+- [ ] Acionar somente domínios necessários e registrar inclusões e exclusões.
+- [ ] Testar a parceria Conta–Performance.
+- [ ] Validar pacotes de contexto e dependências entre abas.
+- [ ] Validar conflitos entre domínios sem decisão automática.
+- [ ] Confirmar que o Diretor recomenda, mas não executa.
+- [ ] Validar publicação de snapshot imutável no Estado 360.
+- [ ] Validar respostas do Assessor ancoradas no mesmo snapshot.
+
+**Gate P4:** jornada sintética completa, determinística nas regras conhecidas e auditável.
+
+### P5 — Segurança, LGPD e autorização operacional documental
+
+- [ ] Registrar finalidade, escopo permitido e dados proibidos.
+- [ ] Identificar responsável de negócio e responsável técnico.
+- [ ] Definir retenção, descarte e mascaramento.
+- [ ] Validar isolamento por usuário e tenant.
+- [ ] Validar allowlists e gestão de segredos.
+- [ ] Executar testes de prompt injection, exfiltração e fronteira de privilégios.
+- [ ] Testar kill switches.
+- [ ] Criar registro de autorização por operação.
+
+**Dependência humana:** Rafael confirma finalidade, responsáveis, escopo e retenção. Esta fase não conecta nenhuma fonte real.
+
+### P6 — Preparação operacional para ativação
+
+- [ ] Criar checklists de inicialização e encerramento seguro.
+- [ ] Definir monitoramento, SLOs, orçamento e critérios de pausa.
+- [ ] Definir e testar rollback por capacidade, gerente e sistema.
+- [ ] Revalidar restauração do PostgreSQL, n8n, site e ponte.
+- [ ] Preparar pacote de release, manifesto com versões e hashes e backup pré-ativação.
+
+**Gate P6:** operação observável, recuperável e pronta para uma liberação limitada.
+
+### P7 — Preparar canary individual
+
+- [ ] Confirmar com Rafael o primeiro gerente candidato; recomendação atual: GG Performance.
+- [ ] Selecionar uma única capacidade.
+- [ ] Preparar lotes de 1–3, 5 e 10 casos sintéticos.
+- [ ] Definir concordância, override, custo, latência e cobertura de evidências.
+- [ ] Definir pausa automática e rollback para `INACTIVE`.
+- [ ] Confirmar efeitos externos bloqueados.
+
+**Gate P7:** canary pronto, mas não executado antes do Gate geral.
+
+### P8 — Gate geral de prontidão
+
+- [ ] Gates P0–P7 concluídos.
+- [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
+- [ ] Registro de autorização operacional preenchido.
+- [ ] Gate Shadow aprovado por Rafael.
+- [ ] Primeiro canary autorizado por Rafael.
+
+**Resultados permitidos:** `READY_FOR_CANARY | ADJUSTMENTS_REQUIRED | BLOCKED`.
+
+---
+
+## TRILHA A — Ativação gradual do projeto
+
+Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Rafael.
+
+### A1 — Canary sintético individual
+
+- [ ] Executar 1–3 casos e revisar todos manualmente.
+- [ ] Corrigir divergências antes da expansão.
+- [ ] Executar 5 casos e medir overrides, custo e latência.
+- [ ] Executar 10 casos e confirmar SLOs e evidências.
+- [ ] Registrar decisão de promoção ou retorno.
+
+### A2 — Ativação somente leitura supervisionada
+
+- [ ] Promover uma única capacidade de um gerente.
+- [ ] Liberar somente fontes e campos autorizados.
+- [ ] Aplicar minimização, segregação e auditoria de toda leitura.
+- [ ] Manter revisão humana e efeitos externos bloqueados.
+- [ ] Monitorar erros, divergências, custo e latência.
+- [ ] Voltar para `INACTIVE` diante de violação de gate.
+
+### A3 — Expansão por gerente
+
+**Ordem recomendada:** Performance → Conta → Relacionamento → Financeiro.
+
+- [ ] Expandir uma capacidade por vez.
+- [ ] Exigir janela supervisionada estável e evidência completa.
+- [ ] Confirmar ausência de incidente material e rollback testado.
+- [ ] Exigir aprovação explícita de Rafael para cada expansão.
+
+### A4 — Projeto ativo em leitura assistida
+
+- [ ] Quatro gerentes autorizados e estáveis no escopo aprovado.
+- [ ] Diretor integrando pareceres sem substituir Rafael.
+- [ ] Estado 360, Evidence Graph e Dashboard consistentes.
+- [ ] Telegram operando com revisão humana.
+- [ ] Backup, recuperação e auditoria comprovados.
+- [ ] Dados reais limitados à autorização aplicável.
+- [ ] Nenhuma recomendação produz efeito automático.
+
+**Estado-alvo inicial:** `ACTIVE_READ_ONLY_SUPERVISED`.
+
+### A5 — Efeitos externos: etapa futura e separada
+
+- [ ] Criar catálogo fechado de ações e canais permitidos.
+- [ ] Exigir autorização específica por ação, alvo, canal e validade.
+- [ ] Testar idempotência, retry, auditoria e rollback.
+- [ ] Começar por ação interna reversível.
+- [ ] Expandir somente mediante novo gate e aprovação explícita.
+
+## Ordem de execução vigente
+
+Enquanto o Shadow permanece isolado: `P0 → P1 → P2 → P3 → P4 → P5 documental → P6 → P7`.
+
+Após 24/24: `S2 → aprovação do Gate Shadow → P8 → A1 → A2 → A3 → A4`.
+
+Nenhum gerente entra em `ACTIVE`, nenhuma fonte real é conectada e nenhum efeito externo é liberado antes dos respectivos gates e da aprovação explícita de Rafael.

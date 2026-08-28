@@ -1,6 +1,6 @@
 # 📋 CHECKLIST OPERACIONAL DIRETOR 360 — ANTIGRAVITY & CODEX
 
-**Versão:** 3.1.0  
+**Versão:** 3.2.0
 **Data:** 26 de agosto de 2026  
 **Documento Canônico de Execução Compartilhada:** Antigravity (Google) $\leftrightarrow$ ChatGPT Codex (OpenAI)  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
@@ -190,3 +190,36 @@
 powershell -File scripts/run-all-hybrid-tests.ps1
 ```
 *Garante 100% de sucesso nos testes fundamentais de H3 a H10.*
+
+---
+
+## Plano operacional aprovado em 28/08/2026
+
+### Shadow isolado
+
+- [~] Completar 24 medições automáticas; referência na aprovação: 16/24.
+- [ ] Após 24/24, consolidar a janela e emitir o parecer.
+- [ ] Submeter o Gate Shadow a Rafael.
+- [x] Manter `SYNTHETIC_ONLY`, zero efeitos externos e proibição de alterações na trilha durante a janela.
+
+### Preparação independente do Shadow
+
+- [~] **P0:** reconciliar checklist, roadmap, estado real, versões e evidências.
+- [ ] **P1:** executar regressão completa e produzir relatório único.
+- [ ] **P2:** fechar motores determinísticos dos quatro domínios.
+- [ ] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`.
+- [ ] **P4:** validar a orquestração completa com dados sintéticos.
+- [ ] **P5:** completar segurança, LGPD e autorização documental, sem conectar fontes reais.
+- [ ] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release.
+- [ ] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral.
+- [ ] **P8:** realizar Gate geral após aprovação do Shadow e das decisões humanas aplicáveis.
+
+### Ativação gradual
+
+- [ ] **A1:** executar canary sintético de 1–3, 5 e 10 casos.
+- [ ] **A2:** ativar uma capacidade em somente leitura supervisionada.
+- [ ] **A3:** expandir uma capacidade e um gerente por vez.
+- [ ] **A4:** alcançar `ACTIVE_READ_ONLY_SUPERVISED`.
+- [ ] **A5:** avaliar efeitos externos em gate futuro e separado.
+
+**Regra:** conclusão parcial do Shadow, aprovação documental ou teste isolado não autoriza promoção para `ACTIVE`.

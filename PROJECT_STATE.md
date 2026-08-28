@@ -1,25 +1,27 @@
 # PROJECT STATE
 
-Version: 3.1.6
-Current phase: Shadow sintético e preparação de ativação gradual
-Current milestone: Janela Shadow — 16 de 24 medições
-Current task: Coletar Shadow; pacote do Gate e canary Performance aguardam conclusão da janela
+Version: 3.2.0
+Current phase: Preparação independente para ativação; Shadow isolado em paralelo
+Current milestone: P0 — reconciliação documental e técnica; Shadow em 16 de 24 medições na aprovação do plano
+Current task: Comparar checklist, roadmap, código, testes e evidências sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: Teste local do Evidence Graph validado em PowerShell 7; linhagem, append-only e bloqueio de acesso anônimo confirmados
-Next task: Executar a próxima observação Shadow; ao completar 24/24, gerar e revisar o parecer do Gate
+Last completed: Novo plano operacional P0–P8 e A1–A5 aprovado por Rafael, com Shadow explicitamente isolado
+Next task: Executar P0 e reconciliar o estado documental com as evidências reais do repositório
 
-Last validation: PASS — pwsh -File scripts/test-evidence-graph.ps1
-Last commit: d92cd8a (checkpoint anterior; a atualização deste estado será incluída no próximo commit)
+Last validation: PASS — estrutura P0–P8/A1–A5 e isolamento Shadow verificados; alteração somente documental
+Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
-- Nenhum bloqueio técnico; Gate Shadow aguarda completar a janela de 24 medições.
+- Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
+- Gate Shadow aguarda 24/24; P5 depende parcialmente da confirmação humana de finalidade, responsáveis, escopo e retenção.
 
 Pending decisions:
 - Aprovação de Rafael para o Gate Shadow após consolidação da janela.
-- Escolha do primeiro Gerente Geral para ativação gradual.
+- Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
+- Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 10:42
+Last update: 2026-08-28 11:20
 
 Resume instruction:
-Leia AGENTS.md, ROADMAP.md e CHANGELOG.md recente; execute `node scripts/run-shadow-observation.mjs`, valide a janela acumulada e continue a próxima tarefa elegível. Use `pwsh` para o teste do Evidence Graph; não ative dados reais ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P0 pela comparação de checklist, código, testes e evidências. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

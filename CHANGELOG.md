@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.0] - 2026-08-28
+
+### Changed
+- Roadmap operacional reorganizado em Trilha S isolada, preparação independente P0–P8 e ativação gradual A1–A5.
+- `checklist.md` atualizado para refletir a nova sequência de aceite até `ACTIVE_READ_ONLY_SUPERVISED`.
+- Shadow separado explicitamente do desenvolvimento, sem alteração de scripts, casos, métricas ou critérios durante a janela.
+
+### Security
+- Mantidos bloqueios para dados reais, promoção de agentes e efeitos externos até os gates e aprovações específicos.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed
