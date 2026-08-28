@@ -38,9 +38,13 @@ export default function ReviewConsole() {
       if (res.ok) {
         const body = (await res.json()) as AuditReviewResponse;
         setAuditData(body);
+      } else {
+        setAuditData(null);
+        setMessage(`Não foi possível carregar a linhagem da revisão (HTTP ${res.status}).`);
       }
     } catch {
-      // Fallback
+      setAuditData(null);
+      setMessage('Não foi possível carregar a linhagem da revisão.');
     } finally {
       setAuditLoading(false);
     }
@@ -167,4 +171,3 @@ export default function ReviewConsole() {
     </main>
   );
 }
-
