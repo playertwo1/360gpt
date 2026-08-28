@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.11] - 2026-08-28
+
+### Added
+- Executor e teste da Onda 1 do canary sintético do GG Performance, com três casos POBJ determinísticos e revisão humana pendente.
+- Relatório `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md`.
+
+### Fixed
+- Protocolo do canary deixou de classificar fixtures sintéticas como casos reais e de pressupor decisões de Rafael.
+
+### Security
+- O executor bloqueia mutações e efeitos externos; decisões humanas permanecem nulas até revisão explícita.
+
 ## [3.2.10] - 2026-08-28
 
 ### Changed
