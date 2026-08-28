@@ -2,7 +2,7 @@
 
 Version: 3.1.6
 Current phase: Shadow sintético e preparação de ativação gradual
-Current milestone: Janela Shadow — 15 de 24 medições
+Current milestone: Janela Shadow — 16 de 24 medições
 Current task: Coletar Shadow; pacote do Gate e canary Performance aguardam conclusão da janela
 Status: IN_PROGRESS
 
@@ -19,7 +19,7 @@ Pending decisions:
 - Aprovação de Rafael para o Gate Shadow após consolidação da janela.
 - Escolha do primeiro Gerente Geral para ativação gradual.
 
-Last update: 2026-08-28 09:51
+Last update: 2026-08-28 10:42
 
 Resume instruction:
 Leia AGENTS.md, ROADMAP.md e CHANGELOG.md recente; execute `node scripts/run-shadow-observation.mjs`, valide a janela acumulada e continue a próxima tarefa elegível. Use `pwsh` para o teste do Evidence Graph; não ative dados reais ou efeitos externos.
