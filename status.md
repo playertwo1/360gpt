@@ -142,3 +142,4 @@ Melhorias de governança permanecem no backlog:
 - Criada a rota `/state`, acessível pelo cartão da tela inicial.
 - Tela apresenta status, versão, horários, identificador, hash, Evidence Graph e trilha de auditoria em modo somente leitura.
 - Build aprovado e lint sem erros; drill-down publicado no site na versão 25 após confirmação explícita.
+- Correção de navegação publicada na versão 26: cartão usa carregamento direto e o clique foi validado até `/state` no ambiente publicado.
