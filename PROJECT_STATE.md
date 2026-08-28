@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.7
+Version: 3.2.8
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P7 preparado; Shadow isolado em 17 de 24 medições no último registro
-Current task: Aguardar Gate Shadow; P8 e A1 dependem de 24/24 e aprovação explícita
+Current milestone: P8 pré-verificado; Shadow isolado em 17 de 24 medições no último registro
+Current task: Aguardar 24/24 para consolidar S2/S3/S4 e submeter o Gate Shadow
 Status: IN_PROGRESS
 
-Last completed: P6 aprovado e P7 preparado; prontidão, rollback, carga e canary sintético documentados
-Next task: Após 24/24, consolidar Gate Shadow; em paralelo, manter C1 e escolha da capacidade do canary pendentes
+Last completed: P8 pré-verificado; dependências e bloqueios legítimos documentados
+Next task: Após 24/24, consolidar o parecer Shadow e solicitar aprovação do Gate; manter C1 e capacidade do canary pendentes
 
-Last validation: PASS — release readiness, rollback/cloud, carga, lint, build e canary sintético; relatórios P6/P7
+Last validation: PASS — pré-verificação P8; relatórios P6/P7 e dependências documentadas
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 15:47
+Last update: 2026-08-28 16:10
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde a janela Shadow e, após 24/24, execute S2/P8. Não execute o canary antes do Gate; não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde a janela Shadow e, após 24/24, execute S2/S3/S4. Não execute o canary antes do Gate; não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

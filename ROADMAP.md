@@ -538,7 +538,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P7:** canary pronto, mas não executado antes do Gate geral.
 
-### P8 — Gate geral de prontidão — AGUARDA GATE SHADOW E DECISÕES HUMANAS
+### P8 — Gate geral de prontidão — PRÉ-VERIFICADO; AGUARDA GATE SHADOW E DECISÕES HUMANAS
 
 - [ ] Gates P0–P7 concluídos.
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
@@ -547,6 +547,8 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 - [ ] Primeiro canary autorizado por Rafael.
 
 **Resultados permitidos:** `READY_FOR_CANARY | ADJUSTMENTS_REQUIRED | BLOCKED`.
+
+**Pré-verificação:** `docs/audits/P8_PRE_GATE_READINESS_2026-08-28.md` — estado atual `NOT_READY` por dependências legítimas, não por falha técnica.
 
 ---
 

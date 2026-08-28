@@ -84,6 +84,14 @@
 ### Security
 - Execução do canary, promoção de agentes, dados reais e efeitos externos permanecem bloqueados até o Gate Shadow e aprovação explícita.
 
+## [3.2.8] - 2026-08-28
+
+### Added
+- Pré-verificação `docs/audits/P8_PRE_GATE_READINESS_2026-08-28.md`, com dependências e critérios para o Gate geral.
+
+### Changed
+- P8 marcado como pré-verificado, permanecendo `NOT_READY` até 24/24 Shadow e decisões humanas obrigatórias.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed
