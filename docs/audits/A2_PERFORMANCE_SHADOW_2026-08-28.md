@@ -1,8 +1,8 @@
 # A2 — Performance em leitura supervisionada
 
-**Data:** 2026-08-28  
-**Autorização:** Rafael autorizou o início de A2 nesta conversa.  
-**Capacidade única:** `PERFORMANCE_SCORING_STATE`.  
+**Data:** 2026-08-28
+**Autorização:** Rafael autorizou o início de A2 nesta conversa.
+**Capacidade única:** `PERFORMANCE_SCORING_STATE`.
 **Runtime:** `SHADOW`; o Gerente Geral de Performance e todas as demais capacidades permanecem `INACTIVE`.
 
 ## Escopo efetivo
