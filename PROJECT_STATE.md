@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.0
+Version: 3.2.1
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P0 — reconciliação documental e técnica; Shadow em 16 de 24 medições na aprovação do plano
-Current task: Comparar checklist, roadmap, código, testes e evidências sem alterar a trilha Shadow
+Current milestone: P0 concluído; Shadow em 16 de 24 medições na aprovação da reconciliação
+Current task: P1 — regressão completa, lint, build e relatório único, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: Novo plano operacional P0–P8 e A1–A5 aprovado por Rafael, com Shadow explicitamente isolado
-Next task: Executar P0 e reconciliar o estado documental com as evidências reais do repositório
+Last completed: P0 concluído; checklist, roadmap, status, código, testes e evidências reconciliados
+Next task: Executar P1 e produzir o relatório único de regressão
 
-Last validation: PASS — estrutura P0–P8/A1–A5 e isolamento Shadow verificados; alteração somente documental
+Last validation: PASS — relatório P0 e consistência documental verificados; alteração somente documental
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 11:20
+Last update: 2026-08-28 11:35
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P0 pela comparação de checklist, código, testes e evidências. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P1 pela regressão completa. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

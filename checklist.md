@@ -69,7 +69,7 @@
   *Homologado por:* Antigravity / Codex | *Data:* 26/08/2026
 
 - [x] **M1.5 — Backup Transacional & Recuperação RTO/RPO**  
-  *Evidência:* `scripts/backup-database.ps1`, 10 workflows n8n, backups no Google Drive, RTO 3m12s / RPO 0s.  
+  *Evidência:* `scripts/backup-database.ps1`, 10 workflows n8n, backups no Google Drive e restauração isolada aprovada. RTO/RPO operacionais devem ser medidos no ambiente-alvo; não são valores fixos do teste documental.
   *Teste:* `powershell -File scripts/test-h9-backup-recovery.ps1` (PASS).  
   *Homologado por:* Antigravity / Codex | *Data:* 26/08/2026
 
@@ -204,8 +204,8 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ### Preparação independente do Shadow
 
-- [~] **P0:** reconciliar checklist, roadmap, estado real, versões e evidências.
-- [ ] **P1:** executar regressão completa e produzir relatório único.
+- [x] **P0:** reconciliar checklist, roadmap, estado real, versões e evidências. Evidência: `docs/audits/RECONCILIACAO_P0_2026-08-28.md`.
+- [~] **P1:** executar regressão completa e produzir relatório único.
 - [ ] **P2:** fechar motores determinísticos dos quatro domínios.
 - [ ] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`.
 - [ ] **P4:** validar a orquestração completa com dados sintéticos.

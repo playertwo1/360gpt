@@ -6,7 +6,7 @@
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente, com minimização, rastreabilidade, revisão humana e gates operacionais obrigatórios.  
+**Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
@@ -16,7 +16,7 @@
 
 **Último marco concluído:** interface mobile AMOLED/Stitch e fluxo POBJ unificado restaurados; monitoramento Shadow preservado em aba própria.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** concluir as 24 medições horárias, consolidar a janela e emitir o parecer do gate antes de qualquer promoção adicional.
+**Próximo passo exato:** executar P1 (regressão completa, lint, build e relatório único) enquanto a janela Shadow permanece isolada; depois concluir as 24 medições e emitir o parecer do Gate.
 
 ---
 
@@ -32,7 +32,7 @@
 | **Fase 5** | **LLMOps & FinOps (Model Router)** | **100%** | 🟢 HOMOLOGADA | Model Router 5 tiers, Economia FinOps de 79.1% comprovada (`core/model_router.py`) |
 | **Fase 6** | **Security, LGPD & Readiness** | **100%** | 🟢 HOMOLOGADA | Red Teaming (5/5 bloqueados), DLP/LGPD ativo, PRR Checklist 10/10 gates aprovados |
 | **Fase 7** | **Simulação Canary Supervisionada** | **100%** | 🟡 SIMULAÇÃO HOMOLOGADA | 10 casos sintéticos; não constitui operação real (`core/canary_monitor.py`) |
-| **Fase 8** | **Escala & Alta Disponibilidade** | **100%** | 🟢 PRONTO P/ ATIVAR | Script VPS pronto (`provision-vps-server.sh`), Caddy HTTPS, ativação sob demanda |
+| **Fase 8** | **Escala & Alta Disponibilidade** | **M8.1 concluído** | 🟡 PREPARADO SOB DEMANDA | Script VPS pronto (`provision-vps-server.sh`), Caddy HTTPS; ativação 24h M8.2 permanece planejada |
 
 
 ---

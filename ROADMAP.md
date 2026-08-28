@@ -11,7 +11,7 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
 
 > **Premissa de Segurança Vigente:**  
-> A autorização para uso de dados reais está em `UNRESOLVED` porque os documentos do projeto divergem. Até reconciliação formal, os novos agentes operam sem runtime e toda homologação permanece em `OFFLINE_EVAL`.
+> Existe autorização institucional para dados reais, mas cada uso operacional depende de finalidade, escopo, minimização, auditoria e gate específico. Nenhuma fonte real está conectada; os novos agentes permanecem sem runtime e a homologação continua em `OFFLINE_EVAL`.
 
 ---
 
@@ -401,15 +401,17 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 
 Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentação. Nenhuma tarefa depende de alterar o Shadow.
 
-### P0 — Reconciliar roadmap, checklist e estado real
+### P0 — Reconciliar roadmap, checklist e estado real — CONCLUÍDO
 
-- [ ] Comparar cada item do `checklist.md` com código, testes e evidências.
-- [ ] Confirmar quais itens estão realmente homologados.
-- [ ] Corrigir itens marcados como concluídos sem evidência suficiente.
-- [ ] Fechar no roadmap tarefas já comprovadamente concluídas.
-- [ ] Unificar nomenclatura de fases, marcos, lifecycles e versões.
+- [x] Comparar cada item do `checklist.md` com código, testes e evidências.
+- [x] Confirmar quais itens estão realmente homologados.
+- [x] Corrigir itens marcados como concluídos sem evidência suficiente.
+- [x] Fechar no roadmap tarefas já comprovadamente concluídas.
+- [x] Unificar nomenclatura de fases, marcos, lifecycles e versões.
 - [x] Definir `ROADMAP.md` como planejamento oficial e `checklist.md` como aceite operacional.
-- [ ] Sincronizar `PROJECT_STATE.md`, `status.md`, `checklist.md` e `CHANGELOG.md` com o resultado da reconciliação.
+- [x] Sincronizar `PROJECT_STATE.md`, `status.md`, `checklist.md` e `CHANGELOG.md` com o resultado da reconciliação.
+
+**Evidência:** `docs/audits/RECONCILIACAO_P0_2026-08-28.md`.
 
 **Gate P0:** todos os documentos representam o mesmo estado comprovado por código, testes e Git.
 

@@ -10,6 +10,16 @@
 ### Security
 - Mantidos bloqueios para dados reais, promoção de agentes e efeitos externos até os gates e aprovações específicos.
 
+## [3.2.1] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/RECONCILIACAO_P0_2026-08-28.md` com confronto entre checklist, roadmap, código, testes e estado do Git.
+
+### Changed
+- P0 concluído com documentação sincronizada e autorização institucional descrita sem conectar fontes reais.
+- RTO/RPO passaram a ser tratados como medições dependentes do ambiente-alvo.
+- Fase 8 distinguida entre provisionamento pronto (M8.1) e VPS 24h ainda planejado (M8.2).
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed
