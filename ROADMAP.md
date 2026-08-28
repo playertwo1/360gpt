@@ -377,7 +377,7 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 - [x] Manter escopo `SYNTHETIC_ONLY` e efeitos externos proibidos.
 - [ ] Aguardar as medições restantes sem executar medições adicionais manualmente.
 
-**Bloqueio registrado em 2026-08-28 18:53 BRT:** a medição local agendada concluiu 20/20 casos com métricas saudáveis, porém o upload ao monitor remoto falhou com `status: 0`. A janela não pode ser contabilizada como concluída nem avançar para S2 até a persistência remota voltar a funcionar e a lacuna ser tratada sem alterar o escopo, scripts, fixtures, métricas ou critérios do Shadow.
+**Ocorrência registrada em 2026-08-28 18:53 BRT:** a medição local agendada concluiu 20/20 casos com métricas saudáveis, porém o upload ao monitor remoto falhou com `status: 0`. Diagnóstico de conectividade posterior confirmou que o endpoint HTTPS está alcançável e responde `401` sem credencial, comportamento esperado. Aguardar a próxima medição automática para recuperar a persistência; não executar replay manual, nem alterar escopo, scripts, fixtures, métricas ou critérios do Shadow.
 
 ### S2 — Consolidação somente após 24/24
 
