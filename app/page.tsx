@@ -58,7 +58,13 @@ type ShadowObservation = {
   equivalence_rate: number; divergence_rate: number; state_mutation_count: number; external_effect_count: number;
   pause_required: boolean; data_scope: 'SYNTHETIC_ONLY';
 };
-type ShadowMetrics = { ok: boolean; read_only?: boolean; count?: number; observations?: ShadowObservation[]; error?: string };
+type ShadowMonitor = {
+  target_observations: number; observations: number; remaining_observations: number; window_complete: boolean;
+  latest_observed_at: string | null; next_measurement_due_at: string | null; stale: boolean;
+  gaps: { after: string; before: string; interval_minutes: number }[]; completion_rate: number | null;
+  divergence_rate: number | null; pause_required: boolean; healthy: boolean; alerts: string[];
+};
+type ShadowMetrics = { ok: boolean; read_only?: boolean; count?: number; monitor?: ShadowMonitor; observations?: ShadowObservation[]; error?: string };
 
 const domainMeta: Record<string, { title: string; icon: string; role: string; specialists: string[]; keyMetric: string; metricValue: string }> = {
   conta: {
@@ -178,6 +184,7 @@ export default function Home() {
   const reviews = reviewModel?.reviews ?? [];
   const shadowObservations = shadow?.observations ?? [];
   const latestShadow = shadowObservations[0];
+  const shadowMonitor = shadow?.monitor;
 
   return (
     <main className="min-h-screen bg-[#f1f5f9] text-[#0f172a]">
@@ -436,13 +443,16 @@ export default function Home() {
               </span>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Medições da janela" value={`${shadowObservations.length} / 24`} detail="Uma execução sintética por hora" />
+              <MetricCard label="Medições da janela" value={`${shadowMonitor?.observations ?? shadowObservations.length} / ${shadowMonitor?.target_observations ?? 24}`} detail={`${shadowMonitor?.remaining_observations ?? Math.max(0, 24 - shadowObservations.length)} medição(ões) restante(s)`} />
               <MetricCard label="Equivalência mais recente" value={latestShadow ? `${(latestShadow.equivalence_rate * 100).toFixed(1)}%` : '—'} detail={latestShadow ? `${latestShadow.completed_cases}/${latestShadow.total_cases} casos concluídos` : 'Aguardando telemetria'} />
-              <MetricCard label="Divergência" value={latestShadow ? `${(latestShadow.divergence_rate * 100).toFixed(1)}%` : '—'} detail="Limite de pausa: acima de 10%" />
-              <MetricCard label="Efeitos proibidos" value={latestShadow ? String(latestShadow.state_mutation_count + latestShadow.external_effect_count) : '—'} detail="Mutação de estado + efeito externo" />
+              <MetricCard label="Divergência agregada" value={shadowMonitor?.divergence_rate !== null && shadowMonitor?.divergence_rate !== undefined ? `${(shadowMonitor.divergence_rate * 100).toFixed(1)}%` : '—'} detail="Limite de pausa: acima de 10%" />
+              <MetricCard label="Lacunas / alertas" value={`${shadowMonitor?.gaps.length ?? 0} / ${shadowMonitor?.alerts.length ?? 0}`} detail={shadowMonitor?.stale ? 'Medição atrasada' : 'Coleta dentro do prazo'} />
             </div>
+            {shadowMonitor?.alerts.length ? <div className={`rounded-2xl border p-4 text-sm font-bold ${shadowMonitor.pause_required ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-amber-300 bg-amber-50 text-amber-900'}`}>
+              Alertas automáticos: {shadowMonitor.alerts.join(', ')}
+            </div> : null}
             <p className="text-xs text-slate-500">
-              {latestShadow ? `Última medição: ${formatDate(latestShadow.observed_at)} · release ${latestShadow.release_id}.` : 'A API aceita apenas métricas agregadas saneadas; conteúdo dos casos, CNPJ e dados reais são rejeitados.'}
+              {latestShadow ? `Última medição: ${formatDate(latestShadow.observed_at)} · próxima prevista: ${formatDate(shadowMonitor?.next_measurement_due_at ?? undefined)} · release ${latestShadow.release_id}.` : 'A API aceita apenas métricas agregadas saneadas; conteúdo dos casos, CNPJ e dados reais são rejeitados.'}
             </p>
           </section>
 

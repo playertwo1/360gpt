@@ -535,3 +535,10 @@
 - Executor local mantém operação sem upload quando o segredo não está configurado e nunca imprime o segredo.
 - Executor periódico carrega a configuração local ignorada pelo Git, permitindo que a automação horária persista as medições sem expor o segredo.
 - Versão hospedada publicada, acesso do endereço alinhado às integrações protegidas e primeira medição agregada persistida com HTTP 201.
+## 2026-08-28 — Marco E4e: monitoramento ativo da janela Shadow
+
+- Registrada no status a autorização institucional existente para dados reais, sem ampliar automaticamente o escopo operacional do gate sintético.
+- Criado monitor de 24 medições com detecção de atraso, lacunas horárias, quebra de SLO, divergência e efeitos proibidos.
+- API de telemetria passou a devolver a saúde agregada da janela após leitura e escrita.
+- Dashboard passou a exibir medições restantes, próxima coleta, lacunas e alertas.
+- Parecer automático é gerado ao completar a janela ou quando houver pausa obrigatória; Rafael permanece como decisor do gate.

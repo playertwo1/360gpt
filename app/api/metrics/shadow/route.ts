@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { requireDashboardReader, isDenied } from '../../reviews/shared';
 import { sanitizeShadowObservation } from '../../../../engines/shadow/telemetry-record.mjs';
+import { monitorShadowWindow } from '../../../../engines/shadow/shadow-monitor.mjs';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -20,7 +21,7 @@ export async function GET() {
     state_mutation_count: row.state_mutation_count, external_effect_count: row.external_effect_count,
     pause_required: Boolean(row.pause_required), data_scope: row.data_scope,
   }));
-  return NextResponse.json({ ok: true, read_only: true, count: observations.length, observations }, { headers: { 'Cache-Control': 'private, no-store' } });
+  return NextResponse.json({ ok: true, read_only: true, count: observations.length, monitor: monitorShadowWindow(observations), observations }, { headers: { 'Cache-Control': 'private, no-store' } });
 }
 
 export async function POST(request: Request) {
@@ -38,7 +39,10 @@ export async function POST(request: Request) {
       .bind(id, observation.releaseId, observation.observedAt, observation.durationMs, observation.totalCases, observation.completedCases,
         observation.errors, observation.equivalenceRateBps, observation.divergenceRateBps, observation.stateMutationCount,
         observation.externalEffectCount, observation.pauseRequired ? 1 : 0, observation.dataScope, Date.now()).run();
-    return NextResponse.json({ ok: true, inserted: (result.meta.changes ?? 0) === 1, observation_id: id }, { status: (result.meta.changes ?? 0) === 1 ? 201 : 200 });
+    const recent = await env.DB.prepare(`SELECT observed_at, total_cases, completed_cases, errors, divergence_rate_bps,
+      state_mutation_count, external_effect_count, pause_required FROM shadow_observations ORDER BY observed_at DESC LIMIT 24`).all<Record<string, number>>();
+    const monitor = monitorShadowWindow(recent.results.map((row) => ({ ...row, observed_at: new Date(row.observed_at).toISOString(), divergence_rate: row.divergence_rate_bps / 10_000 })));
+    return NextResponse.json({ ok: true, inserted: (result.meta.changes ?? 0) === 1, observation_id: id, monitor }, { status: (result.meta.changes ?? 0) === 1 ? 201 : 200 });
   } catch (error) {
     const code = error instanceof Error ? error.message : 'invalid_shadow_observation';
     return NextResponse.json({ ok: false, error: code.toLowerCase() }, { status: 400 });

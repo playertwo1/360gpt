@@ -6,12 +6,13 @@
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
+**Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente, com minimização, rastreabilidade, revisão humana e gates operacionais obrigatórios.  
 **Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
-> **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
+> **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
 **Último marco concluído:** Marco E4d — persistência saneada da telemetria Shadow publicada e primeira medição gravada com sucesso.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
@@ -91,4 +92,4 @@ Melhorias de governança permanecem no backlog:
 2. Implementar restauração temporária real para medir RTO/RPO.
 3. Remover `child_process`/filesystem efêmero das rotas hospedadas.
 4. Corrigir métricas estáticas e o drill-down de evidências do Dashboard.
-5. Formalizar autorização institucional antes de qualquer dado real.
+5. Registrar, por operação, finalidade, escopo e evidência da autorização institucional já existente antes de processar dados reais.

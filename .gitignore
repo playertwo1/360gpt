@@ -44,5 +44,6 @@ next-env.d.ts
 /.local/
 /work/
 /test-data/shadow/observations/
+/test-data/shadow/reports/
 /Visao-360-projeto.zip
 *.zip

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { executeShadowPair } from '../engines/orchestration/shadow-envelope.mjs';
 import { aggregateShadowTelemetry } from '../engines/shadow/shadow-telemetry.mjs';
 import { shadowUploadPayload } from '../engines/shadow/telemetry-record.mjs';
+import { renderShadowGateReport } from '../engines/shadow/shadow-monitor.mjs';
 
 const localEnv = new URL('../.env.local', import.meta.url);
 if (existsSync(localEnv)) process.loadEnvFile(fileURLToPath(localEnv));
@@ -38,8 +39,9 @@ const stamp = finishedAt.toISOString().replaceAll(':', '').replaceAll('-', '').r
 const output = new URL(`shadow-observation-${stamp}.json`, outputDir);
 writeFileSync(output, `${JSON.stringify(record, null, 2)}\n`, 'utf8');
 const upload = await uploadSanitizedTelemetry(record);
+if (upload.monitor?.window_complete || upload.monitor?.pause_required) writeAutomaticReport(upload.monitor);
 console.log(JSON.stringify({ output: output.pathname, upload, ...record }));
-if (pauseRequired) process.exitCode = 2;
+if (pauseRequired || (upload.attempted && !upload.ok) || upload.monitor?.pause_required) process.exitCode = 2;
 
 async function uploadSanitizedTelemetry(observation) {
   const endpoint = process.env.SHADOW_TELEMETRY_URL?.trim();
@@ -48,8 +50,14 @@ async function uploadSanitizedTelemetry(observation) {
   try {
     const response = await fetch(endpoint, { method: 'POST', headers: { authorization: `Bearer ${secret}`, 'content-type': 'application/json' }, body: JSON.stringify(shadowUploadPayload(observation)), signal: AbortSignal.timeout(15_000) });
     const body = await response.json().catch(() => ({}));
-    return { attempted: true, ok: response.ok, status: response.status, inserted: body.inserted === true };
+    return { attempted: true, ok: response.ok, status: response.status, inserted: body.inserted === true, monitor: body.monitor };
   } catch {
     return { attempted: true, ok: false, status: 0 };
   }
+}
+
+function writeAutomaticReport(monitor) {
+  const reportDir = new URL('../test-data/shadow/reports/', import.meta.url);
+  mkdirSync(reportDir, { recursive: true });
+  writeFileSync(new URL('shadow-gate-latest.md', reportDir), renderShadowGateReport(monitor), 'utf8');
 }
