@@ -13,7 +13,7 @@ $requiredTokens = @(
     'Relacionamento',
     'Estado 360 persistido',
     '/state',
-    '/api/metrics/shadow'
+    '/shadow'
 )
 
 foreach ($token in $requiredTokens) {
