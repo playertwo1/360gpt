@@ -2,7 +2,7 @@
 
 Version: 3.2.7
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P7 preparado; Shadow isolado em 16 de 24 medições no último registro
+Current milestone: P7 preparado; Shadow isolado em 17 de 24 medições no último registro
 Current task: Aguardar Gate Shadow; P8 e A1 dependem de 24/24 e aprovação explícita
 Status: IN_PROGRESS
 
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 15:05
+Last update: 2026-08-28 15:47
 
 Resume instruction:
 Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde a janela Shadow e, após 24/24, execute S2/P8. Não execute o canary antes do Gate; não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
