@@ -143,3 +143,4 @@ Melhorias de governança permanecem no backlog:
 - Tela apresenta status, versão, horários, identificador, hash, Evidence Graph e trilha de auditoria em modo somente leitura.
 - Build aprovado e lint sem erros; drill-down publicado no site na versão 25 após confirmação explícita.
 - Correção de navegação publicada na versão 26: cartão usa carregamento direto e o clique foi validado até `/state` no ambiente publicado.
+- Correção da API de auditoria publicada na versão 27: removido filtro por coluna inexistente em `audit_log`; tela validada com Estado `READY`, linhagem `COMPLETE` e evento `state_published`.
