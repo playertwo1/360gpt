@@ -10,7 +10,7 @@ Last completed: Gate Shadow aprovado por Rafael após 24/24 medições sintétic
 Next task: Preencher C1 (finalidade, escopo, responsáveis e retenção) e confirmar o primeiro canary; recomendação preparada: GG Performance
 
 Last validation: PASS — Gate Shadow aprovado: 24/24, 480/480 casos, 100%, zero divergências, mutações, efeitos externos e lacunas
-Last commit: será atualizado no checkpoint da aprovação do Gate
+Last commit: ebe6c1b (aprovação de Rafael para o Gate Shadow)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
