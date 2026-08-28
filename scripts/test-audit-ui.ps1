@@ -26,8 +26,10 @@ try {
 # 2. Testar chamada autenticada
 Write-Host "`n2. Testando chamada autenticada com conta autorizada do piloto..." -NoNewline
 $authHeaders = @{
-  'ChatGPT-User-Email' = 'fael@live.de'
-  'ChatGPT-User-Id' = 'user-fael-piloto'
+  'oai-authenticated-user-email' = 'fael@live.de'
+  'oai-authenticated-user-id' = 'user-fael-piloto'
+  'oai-authenticated-user-full-name' = 'Rafael%20Pedrosa'
+  'oai-authenticated-user-full-name-encoding' = 'percent-encoded-utf-8'
 }
 
 $authUri = "$BaseUrl/api/audit/state/latest?tenant_id=$TenantId" + "&subject_ref=$SubjectRef"
