@@ -116,3 +116,10 @@ Melhorias de governança permanecem no backlog:
 - Cabeçalho do GG Conta padronizado com versão aprovada e `runtime: INACTIVE`.
 - Criado `docs/CHECKLIST_ATIVACAO_GERENTES_GERAIS.md` com pré-requisitos, limites e promoção gradual de Conta, Performance, Financeiro e Relacionamento.
 - Nenhum gerente foi promovido para `ACTIVE`; rollback disponível no backup `backup/pre-gg-documentation-20260828-004612`.
+
+### Atualização 28/08/2026 — Ponte hospedada autenticada
+- Teste `scripts/test-hybrid-bridge.ps1` aprovado com segredo compartilhado configurado.
+- Chamada sem autenticação rejeitada com HTTP 401.
+- Evento sintético criado com HTTP 201 e deduplicação confirmada.
+- `external_effects_allowed: false`; nenhum efeito externo foi autorizado.
+- Job sintético de evidência: `synthetic-run-h3-1787909382-2402`.
