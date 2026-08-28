@@ -94,6 +94,13 @@ Melhorias de governança permanecem no backlog:
 4. Corrigir métricas estáticas e o drill-down de evidências do Dashboard.
 5. Registrar, por operação, finalidade, escopo e evidência da autorização institucional já existente antes de processar dados reais.
 
+### Atualização 28/08/2026 — Bateria geral após correção do Dashboard
+- Suíte `scripts/run-all-hybrid-tests.ps1` executada com sucesso: 14/14 testes aprovados.
+- Teste visual `scripts/test-dashboard-ui-polish.ps1` alinhado à interface atual e aprovado (`DASHBOARD_UI_POLISH_PASS`).
+- Validação agora cobre o link `/shadow` no Dashboard, sem confundir a rota da aba com uma API inexistente na tela inicial.
+- Correção versionada no commit `c5ba3e8` e enviada ao branch `main`.
+- Arquivos locais gerados não versionados permanecem preservados.
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
