@@ -590,3 +590,12 @@
 
 ### Security
 - Dados reais, agentes `ACTIVE` e efeitos externos continuam bloqueados.
+
+## [3.1.3] - 2026-08-28
+
+### Added
+- Pacote de evidências e decisão para o Gate Shadow.
+- Protocolo individual de canary do GG Performance, com ondas, métricas, pausa e rollback.
+
+### Security
+- Gate Shadow não libera dados reais ou efeitos externos; canary permanece supervisionado e bloqueado até aprovação explícita.

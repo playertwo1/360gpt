@@ -409,6 +409,13 @@ Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fil
 - [x] Matriz de controles dos quatro Gerentes Gerais criada e validada com a bateria geral e telemetria FinOps.
 - [x] Modelo de registro de autorização para dados reais preparado, sem fonte real conectada.
 
+## Próximos passos durante a janela Shadow
+
+- [x] Preparar o pacote do Gate Shadow: checklist, relatório consolidado, critérios e evidências para aprovação de Rafael.
+- [x] Preparar o canary individual do GG Performance: casos, métricas, limites de pausa, rollback e ondas 1–3, 5 e 10.
+- [ ] Completar o registro de autorização de dados reais com finalidade, responsáveis, retenção, LGPD e escopo, sem conectar fonte.
+- [ ] Eliminar avisos de lint e ampliar testes de restauração/rollback sem alterar regras de negócio.
+
 ## Regra de ativação
 
 Nenhum gerente entra em `ACTIVE` antes do Gate Shadow, Canary supervisionado, autorização aplicável e aprovação explícita de Rafael. Ativar agentes não libera efeitos externos automaticamente.
