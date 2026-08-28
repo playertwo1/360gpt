@@ -428,6 +428,12 @@
 - Confirmada a coerência dos contratos direcionais e da integração inicial Performance–Conta.
 - Bateria completa permaneceu aprovada com 14/14 testes; especialistas novos continuam inativos.
 
+## 2026-08-27 — Marco C2a: motores determinísticos iniciais
+
+- Criado `engines/finance/gdad-engine.mjs` para totais, variação, atingimento e atribuição conservadora.
+- Criado `engines/relationship/commitments-engine.mjs` para prazos, vencimento e preservação de compromissos abertos.
+- Adicionados testes sintéticos com valores inválidos, atribuição desconhecida e compromisso vencido.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.

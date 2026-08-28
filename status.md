@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco C1 — baseline dos motores POBJ/freshness e contratos dos quatro domínios validado com 14/14 testes.  
+**Último marco concluído:** Marco C2a — motores determinísticos iniciais de GDAD e compromissos implementados e testados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Marco C2 — implementar e testar os motores GDAD e compromissos/datas, mantendo especialistas novos inativos até nova avaliação e promoção explícita.
+**Próximo passo exato:** Marco C2b — integrar GDAD, compromissos e datas aos contratos/handoffs de Performance e Relacionamento, mantendo especialistas novos inativos.
 
 ---
 

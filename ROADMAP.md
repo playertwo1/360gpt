@@ -75,8 +75,8 @@
 - [x] Criar política inicial de calibração por indicador/fonte, ainda proibida para ativação.
 - [x] Adicionar comparação preferencial com watermark esperado da fonte.
 - [ ] Observar ao menos um mês completo, validar OCR e homologar perfis de cadência com Rafael.
-- [ ] Motor GDAD para orçamento, realizado, variação, concentração e atribuição.
-- [ ] Motor de compromissos, datas e vencimentos.
+- [x] Motor GDAD inicial para orçamento, realizado, variação e atribuição desconhecida; concentração permanece no adaptador financeiro.
+- [x] Motor inicial de compromissos, datas e vencimentos, mantendo vencido como aberto.
 - [ ] Curvas oficiais de pontos versionadas a partir do manual vigente.
 - [ ] Motor determinístico do GDAD.
 - [ ] Motor de datas, compromissos e ausência de contato.
