@@ -105,3 +105,9 @@ Melhorias de governança permanecem no backlog:
 - Mutações de Estado 360: 0; efeitos externos: 0; `pause_required: false`.
 - Janela acumulada: 2/24 observações; 40/40 casos concluídos; janela ainda não consolidada.
 - Shadow permanece restrito a dados sintéticos e nenhum agente foi promovido para `ACTIVE`.
+
+### Atualização 28/08/2026 — Plano de avanço operacional
+- Gate de aprovação POBJ implementado e homologado: a ponte não reserva POBJ antes de `local_reviewed`.
+- Teste sintético de segurança da ponte executado; teste autenticado ponta a ponta permanece aguardando o `BRIDGE_SECRET` configurado no ambiente.
+- Bateria geral permanece em 14/14 testes aprovados.
+- Próximas frentes: executar o teste autenticado POBJ, melhorar o painel de fila/evidências, revisar contratos dos quatro Gerentes Gerais e fechar o checklist de ativação gradual.
