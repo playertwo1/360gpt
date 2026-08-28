@@ -10,7 +10,7 @@ Last completed: A1 Onda 1 — 3/3 cálculos Performance válidos, zero mutaçõe
 Next task: Rafael revisar a Onda 1 e autorizar ou rejeitar a Onda 2; C1 tem finalidade, fonte/campos mínimos e responsável de negócio registrados, mas aguarda retenção minimizada e responsável técnico para qualquer uso futuro de dados reais
 
 Last validation: PASS — A1 Onda 1: 3/3, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: será atualizado no checkpoint da definição de fonte e campos C1
+Last commit: 7e1db84 (fonte e campos mínimos POBJ registrados em C1)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
