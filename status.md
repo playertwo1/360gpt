@@ -99,3 +99,9 @@ Melhorias de governança permanecem no backlog:
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
 - Bateria executada: 14/14 testes aprovados.
 - Próximo passo: publicar esta correção e executar um teste POBJ sintético ponta a ponta (upload → revisão → claim → complete → painel).
+
+### Atualização 28/08/2026 — Medição Shadow 03:35 UTC
+- Medição `shadow-e1-synthetic` concluída: 20/20 casos, conclusão 100%, divergência 0%.
+- Mutações de Estado 360: 0; efeitos externos: 0; `pause_required: false`.
+- Janela acumulada: 2/24 observações; 40/40 casos concluídos; janela ainda não consolidada.
+- Shadow permanece restrito a dados sintéticos e nenhum agente foi promovido para `ACTIVE`.
