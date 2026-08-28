@@ -131,3 +131,9 @@ Melhorias de governança permanecem no backlog:
 - Estado 360 persistido: `state-4663c691-6806-4b49-94e3-d7b70faed2f1`, versão 1, status `READY`.
 - Persistência confirmada diretamente no D1; `external_effects_allowed: false`.
 - Adicionado `scripts/test-hosted-bridge-cycle.mjs`, restrito a jobs de origem sintética.
+
+### Atualização 28/08/2026 — Estado 360 no painel
+- Adicionado cartão na tela inicial para consultar o Estado 360 sintético persistido.
+- O cartão mostra disponibilidade, status, versão, horário, resumo e identificador do estado.
+- Build de produção aprovado e lint sem erros; permanecem três avisos legados não bloqueantes.
+- Publicação hospedada aguarda confirmação explícita porque o site possui acesso compartilhado/público.
