@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.12] - 2026-08-28
+
+### Changed
+- Registro C1 recebeu a finalidade de acompanhar/analisar POBJ pelo GG Performance, público autenticado por e-mail/convite, responsável de negócio e declaração institucional de Rafael.
+
+### Security
+- Fonte/campos mínimos, responsável técnico e política de retenção compatível com minimização permanecem requisitos obrigatórios antes de qualquer conexão com dados reais.
+
 ## [3.2.11] - 2026-08-28
 
 ### Added
