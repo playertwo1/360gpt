@@ -10,7 +10,7 @@ Last completed: A1 Onda 1 — 3/3 cálculos Performance válidos, zero mutaçõe
 Next task: Rafael revisar a Onda 1 e autorizar ou rejeitar a Onda 2; C1 tem finalidade e responsável registrados, mas aguarda fonte/campos, retenção minimizada e responsável técnico para qualquer uso futuro de dados reais
 
 Last validation: PASS — A1 Onda 1: 3/3, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: 1056306 (Onda 1 sintética supervisionada do GG Performance)
+Last commit: cac43f8 (escopo registrado da autorização operacional C1)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
