@@ -485,6 +485,7 @@
 - Criado `scripts/run-shadow-observation.mjs` para executar os 20 casos e persistir telemetria horária.
 - Executor encerra com alerta quando conclusão fica abaixo de 99%, divergência supera 10% ou ocorre efeito proibido.
 - Arquivos de observação foram mantidos fora do Git por serem evidências operacionais geradas.
+- Automação horária `Shadow sintético 24h` ativada por 24 execuções na tarefa atual.
 
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 

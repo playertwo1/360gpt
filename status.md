@@ -13,7 +13,7 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco E4b — executor periódico do Shadow criado e primeira medição persistida sem alerta.  
+**Último marco concluído:** Marco E4b — executor periódico criado e automação horária de 24 execuções ativada sem alerta inicial.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** executar medições horárias durante a janela de 24 horas e consolidar o relatório final antes de qualquer escopo adicional.
 
