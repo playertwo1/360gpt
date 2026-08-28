@@ -10,7 +10,7 @@ Last completed: S1/S2 — 24/24 medições Shadow persistidas, consolidadas e ap
 Next task: Obter aprovação explícita de Rafael para o Gate Shadow; manter C1 e a autorização do primeiro canary pendentes
 
 Last validation: PASS — janela Shadow 24/24: 480/480 casos, 100%, zero divergências, mutações, efeitos externos e lacunas
-Last commit: será atualizado no checkpoint desta consolidação
+Last commit: ea574c2 (consolidação da evidência técnica do Gate Shadow)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
