@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.2.9] - 2026-08-28
+
+### Added
+- Parecer técnico consolidado do Gate Shadow em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
+
+### Changed
+- Janela Shadow sintética consolidada após 24/24 medições persistidas no monitor remoto.
+
+### Security
+- Confirmados 480/480 casos concluídos, zero divergências, zero mutações de estado e zero efeitos externos; o runtime permanece sem dados reais, agentes `ACTIVE` ou efeitos externos.
+
 ## [3.2.0] - 2026-08-28
 
 ### Changed

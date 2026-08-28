@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 27 de agosto de 2026  
-**Versão Atual da Release:** `v3.1.0-confianca`  
+**Data do status:** 28 de agosto de 2026  
+**Versão Atual da Release:** `v3.2.9`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -14,9 +14,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** interface mobile AMOLED/Stitch e fluxo POBJ unificado restaurados; monitoramento Shadow preservado em aba própria.  
+**Último marco concluído:** janela Shadow sintética consolidada no monitor remoto: 24/24 medições, 480/480 casos, 100% de conclusão, zero divergências, mutações, efeitos externos e lacunas.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar P1 (regressão completa, lint, build e relatório único) enquanto a janela Shadow permanece isolada; depois concluir as 24 medições e emitir o parecer do Gate.
+**Próximo passo exato:** Rafael revisar e aprovar explicitamente o Gate Shadow com base em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`; isso não libera dados reais, agentes `ACTIVE` ou efeitos externos.
 
 ---
 

@@ -370,24 +370,24 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 
 ## TRILHA S — Shadow sintético isolado
 
-### S1 — Observação automática
+### S1 — Observação automática — CONCLUÍDO
 
-- [~] Completar 24 medições horárias; estado registrado na aprovação deste plano: 16/24.
+- [x] Completar 24 medições horárias no monitor remoto: 24/24.
 - [x] Manter 20 casos sintéticos por medição.
 - [x] Manter escopo `SYNTHETIC_ONLY` e efeitos externos proibidos.
-- [ ] Aguardar as medições restantes sem executar medições adicionais manualmente.
+- [x] Aguardar as medições restantes sem executar medições adicionais manualmente.
 
 **Ocorrência registrada em 2026-08-28 18:53 BRT:** a medição local agendada concluiu 20/20 casos com métricas saudáveis, porém o upload ao monitor remoto falhou com `status: 0`. Diagnóstico de conectividade posterior confirmou que o endpoint HTTPS está alcançável e responde `401` sem credencial, comportamento esperado. Aguardar a próxima medição automática para recuperar a persistência; não executar replay manual, nem alterar escopo, scripts, fixtures, métricas ou critérios do Shadow.
 
-### S2 — Consolidação somente após 24/24
+### S2 — Consolidação somente após 24/24 — CONCLUÍDO
 
-- [ ] Consolidar `test-data/shadow/observations/`.
-- [ ] Verificar lacunas e intervalos horários.
-- [ ] Confirmar conclusão mínima de 99%.
-- [ ] Confirmar divergência máxima de 10%.
-- [ ] Confirmar zero mutações de Estado 360.
-- [ ] Confirmar zero efeitos externos.
-- [ ] Gerar o parecer técnico do Gate Shadow.
+- [x] Consolidar `test-data/shadow/observations/`.
+- [x] Verificar lacunas e intervalos horários.
+- [x] Confirmar conclusão mínima de 99%.
+- [x] Confirmar divergência máxima de 10%.
+- [x] Confirmar zero mutações de Estado 360.
+- [x] Confirmar zero efeitos externos.
+- [x] Gerar o parecer técnico do Gate Shadow em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
 - [ ] Submeter o Gate Shadow à aprovação de Rafael.
 
 ### Proibições durante a janela
