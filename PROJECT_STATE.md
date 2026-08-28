@@ -10,14 +10,14 @@ Last completed: A1 Onda 1 — 3/3 cálculos Performance válidos, zero mutaçõe
 Next task: Rafael revisar a Onda 1 e autorizar ou rejeitar a Onda 2; C1 segue pendente exclusivamente para qualquer uso futuro de dados reais
 
 Last validation: PASS — A1 Onda 1: 3/3, zero erros de schema, mutações e efeitos externos; lint aprovado
-Last commit: será atualizado no checkpoint da Onda 1
+Last commit: 1056306 (Onda 1 sintética supervisionada do GG Performance)
 
 Blockers:
 - Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
 - P5 depende parcialmente da confirmação humana de finalidade, responsáveis, escopo e retenção.
 
 Pending decisions:
-- Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
+- Revisão de Rafael dos três resultados da Onda 1 e autorização ou rejeição da Onda 2.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
 Last update: 2026-08-28 19:10
