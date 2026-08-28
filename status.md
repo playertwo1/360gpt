@@ -136,4 +136,4 @@ Melhorias de governança permanecem no backlog:
 - Adicionado cartão na tela inicial para consultar o Estado 360 sintético persistido.
 - O cartão mostra disponibilidade, status, versão, horário, resumo e identificador do estado.
 - Build de produção aprovado e lint sem erros; permanecem três avisos legados não bloqueantes.
-- Publicação hospedada aguarda confirmação explícita porque o site possui acesso compartilhado/público.
+- Publicação hospedada concluída na versão 24 após confirmação explícita; cartão do Estado 360 disponível no site público existente.
