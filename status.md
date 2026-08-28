@@ -93,3 +93,9 @@ Melhorias de governança permanecem no backlog:
 3. Remover `child_process`/filesystem efêmero das rotas hospedadas.
 4. Corrigir métricas estáticas e o drill-down de evidências do Dashboard.
 5. Registrar, por operação, finalidade, escopo e evidência da autorização institucional já existente antes de processar dados reais.
+
+### Atualização 28/08/2026 — Gate POBJ antes da ponte
+- Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
+- Teste H3 ampliado para validar essa proteção de aprovação humana.
+- Bateria executada: 14/14 testes aprovados.
+- Próximo passo: publicar esta correção e executar um teste POBJ sintético ponta a ponta (upload → revisão → claim → complete → painel).

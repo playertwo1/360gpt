@@ -42,6 +42,9 @@ foreach ($route in $routes) {
     if ($rContent -notmatch 'requireBridge' -or $rContent -notmatch 'lease_token') {
         throw "Rota $route sem validacao de segredo ou lease_token!"
     }
+    if ($route -like '*claim*' -and $rContent -notmatch "d\.source <> 'pobj_mobile' OR d\.status = 'local_reviewed'") {
+        throw 'Claim sem gate de aprovacao local para POBJ!'
+    }
     Write-Host "  [OK] Rota $route validada com autenticacao Bearer e lease de lock." -ForegroundColor Green
 
 }
