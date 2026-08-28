@@ -358,3 +358,53 @@ Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade op
 10. **Progressive Delivery:** Novas capacidades são liberadas gradualmente em fases controladas.
 11. **Rollback Transacional:** Todo componente crítico possui procedimento de retorno rápido e seguro.
 12. **Dados Reais no Escopo Autorizado:** Toda operação real segue estritamente a autorização institucional vigente.
+
+---
+
+# Trilha de ativação — Shadow em paralelo
+
+O Shadow continua coletando medições em paralelo; as demais frentes podem avançar sem esperar o encerramento das 24 horas.
+
+## Trilha S — Shadow sintético
+- [ ] S1 — Completar 24 medições horárias, com 20 casos por janela.
+- [ ] S2 — Confirmar conclusão mínima de 99%, divergência máxima de 10%, zero mutações e zero efeitos externos.
+- [ ] S3 — Consolidar `test-data/shadow/observations/` e gerar relatório da janela.
+- [ ] S4 — Submeter o Gate Shadow à aprovação de Rafael.
+
+## Trilha A — Quatro Gerentes Gerais
+- [x] A1 — Versão, escopo, especialistas e `runtime: INACTIVE` documentados.
+- [ ] A2 — Revisar contratos, fontes autorizadas, regras e limites de cada domínio.
+- [ ] A3 — Executar testes individuais e integrados com dados sintéticos.
+- [ ] A4 — Confirmar kill switch, rollback, orçamento e auditoria por gerente.
+
+## Trilha B — Canary supervisionado
+- [ ] B1 — Executar 1–3 casos sintéticos.
+- [ ] B2 — Executar 5 casos e medir overrides humanos.
+- [ ] B3 — Executar 10 casos e confirmar SLOs e evidências.
+- [ ] B4 — Registrar decisão de promoção individual.
+
+## Trilha C — Dados reais em leitura controlada
+- [ ] C1 — Registrar autorização, finalidade, escopo, retenção e responsáveis.
+- [ ] C2 — Ativar somente leitura, com minimização, segregação por tenant e auditoria.
+- [ ] C3 — Validar qualidade, atualidade, proveniência e lacunas.
+- [ ] C4 — Manter recomendações e alterações sob revisão humana.
+
+## Trilha D — Ativação gradual
+- [ ] D1 — Promover um gerente por vez para `ACTIVE`.
+- [ ] D2 — Operar com limites de capacidade, custo, escopo e kill switch.
+- [ ] D3 — Monitorar divergência, overrides, incidentes, latência e orçamento.
+- [ ] D4 — Expandir somente após janela estável e aprovação explícita.
+
+## Trilha E — Efeitos externos (última etapa)
+- [ ] E1 — Definir catálogo de ações permitidas e pré-requisitos.
+- [ ] E2 — Exigir autorização humana específica por ação, alvo, canal e validade.
+- [ ] E3 — Testar retry, idempotência, auditoria e rollback.
+- [ ] E4 — Liberar efeitos externos de forma limitada e reversível.
+
+## Trabalho paralelo permitido durante o Shadow
+
+Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fila, evidências e métricas; testar backup, restauração e rollback; preparar documentação de autorização; corrigir avisos de lint e redundâncias sem alterar regras de negócio.
+
+## Regra de ativação
+
+Nenhum gerente entra em `ACTIVE` antes do Gate Shadow, Canary supervisionado, autorização aplicável e aprovação explícita de Rafael. Ativar agentes não libera efeitos externos automaticamente.
