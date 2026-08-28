@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.21] - 2026-08-28
+
+### Changed
+- A1 do GG Performance homologado após aprovação explícita de Rafael na interface `/canary` para os dez casos sintéticos.
+
+### Security
+- A aprovação registrada em D1 preserva `SYNTHETIC_ONLY`; não houve promoção de agente, conexão de fonte real, mutação de estado nem efeito externo.
+
 ## [3.2.20] - 2026-08-28
 
 ### Added

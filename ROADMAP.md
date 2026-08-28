@@ -561,11 +561,11 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 ### A1 — Canary sintético individual
 
 - [x] Executar 1–3 casos e revisar todos manualmente — Onda 1 aprovada por Rafael; 3/3 cálculos válidos. Evidência: `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md`.
-- [ ] Corrigir divergências antes da expansão.
-- [~] Executar 5 casos e medir overrides, custo e latência — Onda 2 executada com 5/5 cálculos válidos, zero efeitos externos; revisão de Rafael pendente. Evidência: `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md`.
-- [~] Executar 10 casos e confirmar SLOs e evidências — Onda 3 executada com 10/10 cálculos válidos, custo zero e zero efeitos externos; revisão de Rafael e métrica de override pendentes. Evidência: `docs/audits/A1_ONDA3_PERFORMANCE_2026-08-28.md`.
-- [x] Disponibilizar revisão A1 no site sem alterar o painel existente — rota `/canary`, dados exclusivamente sintéticos, decisão auditável e imutável; publicação hospedada e decisão humana ainda pendentes.
-- [ ] Registrar decisão de promoção ou retorno.
+- [x] Corrigir divergências antes da expansão — nenhuma divergência identificada nas três ondas sintéticas.
+- [x] Executar 5 casos e medir overrides, custo e latência — Onda 2 aprovada por Rafael; 5/5 cálculos válidos, zero efeitos externos. Evidência: `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md`.
+- [x] Executar 10 casos e confirmar SLOs e evidências — Onda 3 aprovada por Rafael pela aba `/canary`; 10/10 cálculos válidos, custo zero, zero mutações e zero efeitos externos. Evidência: `docs/audits/A1_ONDA3_PERFORMANCE_2026-08-28.md` e registro D1 imutável.
+- [x] Disponibilizar revisão A1 no site sem alterar o painel existente — rota `/canary` publicada, dados exclusivamente sintéticos e decisão auditável imutável registrada por Rafael.
+- [x] Registrar decisão de retorno ou avanço — A1 aprovado para encerrar a homologação sintética; A2 continua exigindo autorização explícita e não promoveu nenhuma capacidade.
 
 ### A2 — Ativação somente leitura supervisionada
 

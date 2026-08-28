@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.20
+Version: 3.2.21
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: A1 Onda 3 — GG Performance executado em canary sintético supervisionado
-Current task: Aguardar a revisão de Rafael dos dez casos da Onda 3 pela aba publicada `/canary`
+Current milestone: A1 — Canary sintético individual do GG Performance homologado
+Current task: Aguardar autorização explícita de Rafael para iniciar A2 em modo somente leitura supervisionada
 Status: WAITING_APPROVAL
 
-Last completed: Interface auditável da revisão A1 implementada para os dez casos sintéticos do GG Performance
-Next task: Rafael revisa os casos em `/canary` e aprova ou solicita ajuste em A1; somente então registrar decisão de promoção ou retorno
+Last completed: A1 aprovado por Rafael na interface `/canary`: 10/10 casos sintéticos revisados e registro D1 imutável
+Next task: Decidir se autoriza A2; nenhum agente ou fonte real pode ser promovido antes dos gates próprios
 
-Last validation: PASS — contrato da interface Canary, lint, build e publicação da versão 30 aprovados
+Last validation: PASS — aprovação A1 verificada diretamente no D1: 10 casos, escopo sintético, status APPROVED
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -17,9 +17,9 @@ Blockers:
 - Nenhum bloqueio documental em P5; conexão de fonte real continua bloqueada por cadastro, validação e gate técnico próprios.
 
 Pending decisions:
-- Revisão de Rafael dos dez resultados da Onda 3 pela aba `/canary` e aprovação ou solicitação de ajuste em A1.
+- Autorizar ou manter bloqueado o início de A2 (leitura supervisionada, sem efeitos externos).
 
-Last update: 2026-08-28 19:56
+Last update: 2026-08-28 20:02
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde a decisão humana registrada em `/canary` antes de concluir A1. Não conecte dados reais, promova agentes ou permita efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; A1 está homologado. Aguarde autorização explícita de Rafael antes de iniciar A2. Não conecte dados reais, promova agentes ou permita efeitos externos.
