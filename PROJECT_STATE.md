@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.4
+Version: 3.2.5
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P3 concluído; Shadow isolado em 16 de 24 medições no último registro
-Current task: P4 — validar a jornada completa de orquestração com dados sintéticos, sem alterar a trilha Shadow
+Current milestone: P4 concluído; Shadow isolado em 16 de 24 medições no último registro
+Current task: P5 — completar segurança, LGPD e autorização operacional documental, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: P3 aprovado; contratos, lifecycle, roteamento e limites dos quatro Gerentes Gerais validados
-Next task: Executar P4 e validar contexto, conflitos, Estado 360 e Assessor em jornada sintética
+Last completed: P4 aprovado; roteamento, contexto, conflitos, Estado 360 e Assessor validados em jornada sintética
+Next task: Executar P5 técnico e registrar os campos humanos pendentes da autorização operacional
 
-Last validation: PASS — testes P3 de contratos, roteamento, Conta e lifecycle; relatório `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`
+Last validation: PASS — workflow OFFLINE_EVAL, operação assistida, roteamento e contrato Conta–Performance; relatório `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 13:05
+Last update: 2026-08-28 13:35
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P4 na jornada sintética de orquestração. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P5 na validação de segurança, LGPD e autorização documental. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

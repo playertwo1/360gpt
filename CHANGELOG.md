@@ -51,6 +51,17 @@
 ### Changed
 - P3 concluído: contratos, lifecycle, roteamento, limites e runtime `INACTIVE` dos quatro Gerentes Gerais validados.
 
+## [3.2.5] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/P4_ORQUESTRACAO_2026-08-28.md` com validação da jornada integrada e operação assistida sintética.
+
+### Changed
+- P4 concluído: roteamento, contexto, dependências, conflitos, Estado 360 e Assessor validados.
+
+### Security
+- Operação assistida permaneceu sintética, sem promoção de agentes e sem efeitos externos.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed

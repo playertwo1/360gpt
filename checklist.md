@@ -208,8 +208,8 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 - [x] **P1:** executar regressão completa e produzir relatório único. Evidência: `docs/audits/REGRESSAO_P1_2026-08-28.md`.
 - [~] **P2:** fechar motores determinísticos dos quatro domínios. Base validada; pendentes curvas oficiais POBJ e política de ausência de contato.
 - [x] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`. Evidência: `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
-- [~] **P4:** validar a orquestração completa com dados sintéticos.
-- [ ] **P5:** completar segurança, LGPD e autorização documental, sem conectar fontes reais.
+- [x] **P4:** validar a orquestração completa com dados sintéticos. Evidência: `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`.
+- [~] **P5:** completar segurança, LGPD e autorização documental, sem conectar fontes reais.
 - [ ] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release.
 - [ ] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral.
 - [ ] **P8:** realizar Gate geral após aprovação do Shadow e das decisões humanas aplicáveis.

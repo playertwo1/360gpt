@@ -483,16 +483,18 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P3:** cada gerente possui contrato e evidência de teste sem promoção de runtime.
 
-### P4 — Orquestração Diretor → Gerentes → Motor 360
+### P4 — Orquestração Diretor → Gerentes → Motor 360 — CONCLUÍDO
 
-- [ ] Testar roteamento por intenção e capacidade.
-- [ ] Acionar somente domínios necessários e registrar inclusões e exclusões.
-- [ ] Testar a parceria Conta–Performance.
-- [ ] Validar pacotes de contexto e dependências entre abas.
-- [ ] Validar conflitos entre domínios sem decisão automática.
-- [ ] Confirmar que o Diretor recomenda, mas não executa.
-- [ ] Validar publicação de snapshot imutável no Estado 360.
-- [ ] Validar respostas do Assessor ancoradas no mesmo snapshot.
+- [x] Testar roteamento por intenção e capacidade.
+- [x] Acionar somente domínios necessários e registrar inclusões e exclusões.
+- [x] Testar a parceria Conta–Performance.
+- [x] Validar pacotes de contexto e dependências entre abas.
+- [x] Validar conflitos entre domínios sem decisão automática.
+- [x] Confirmar que o Diretor recomenda, mas não executa.
+- [x] Validar publicação de snapshot imutável no Estado 360.
+- [x] Validar respostas do Assessor ancoradas no mesmo snapshot.
+
+**Evidência:** `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`.
 
 **Gate P4:** jornada sintética completa, determinística nas regras conhecidas e auditável.
 
