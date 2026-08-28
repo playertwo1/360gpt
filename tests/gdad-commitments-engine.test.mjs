@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { calculateGdadLine, summarizeGdad } from '../engines/finance/gdad-engine.mjs';
 import { assessCommitment } from '../engines/relationship/commitments-engine.mjs';
+import { buildFinancialSpecialistResponse } from '../engines/finance/financial-specialist-adapter.mjs';
 
 const line = calculateGdadLine({ line_id: 'servicos', budget: 100, actual: 80, source_ref: 'g dada:1' });
 assert.equal(line.variance, -20);
@@ -20,4 +21,7 @@ const overdue = assessCommitment({ due_at: '2026-08-01T00:00:00Z', responsible: 
 assert.equal(overdue.status, 'OVERDUE_OPEN');
 assert.equal(assessCommitment({ due_at: '2026-08-01', responsible: 'RAFAEL' }).status, 'INCOMPLETE');
 assert.equal(assessCommitment({ due_at: '2026-08-01', responsible: 'RAFAEL', evidence_ref: 'msg:2', status: 'COMPLETED' }).status, 'COMPLETED');
+const response = buildFinancialSpecialistResponse({ request_id: 'req-1', specialist_id: 'FINANCIAL_CALCULATION_STATE', base_date: '2026-08-27', line_items: [{ line_id: 'a', budget: 100, actual: 80, unit: 'BRL', source_ref: 'g:1' }] });
+assert.equal(response.variance_analysis[0].status, 'BELOW_BUDGET');
+assert.equal(response.decision_authority, 'RAFAEL');
 console.log('gdad-commitments-engine: totais, atribuição e vencimento seguro validados');
