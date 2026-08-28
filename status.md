@@ -20,6 +20,7 @@
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** completar a janela de monitoramento sintético de A2; rollback já foi testado. C1 permanece necessário antes de qualquer dado real.
 **Checkpoint local:** `HEAD` — uma capacidade em SHADOW; nenhum agente está ACTIVE.
+**Monitoramento A2:** medição 1/3 aprovada; as próximas medições sintéticas serão acompanhadas automaticamente antes de qualquer avaliação de A3.
 
 ---
 
