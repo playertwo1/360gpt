@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.24
-Current phase: A2 homologado; Shadow geral isolado em paralelo
-Current milestone: A2 — leitura supervisionada sintética do GG Performance homologada
-Current task: Aguardar autorização explícita de Rafael para avaliar A3
-Status: WAITING_APPROVAL
+Version: 3.2.25
+Current phase: A3 — primeira expansão de Performance em SHADOW sintético
+Current milestone: PERFORMANCE_GAP_SCENARIOS em supervisão inicial
+Current task: Completar janela supervisionada da primeira expansão A3
+Status: IN_PROGRESS
 
-Last completed: A2 homologado: três medições consecutivas aprovadas e kill switch validado
-Next task: Rafael decide se autoriza a avaliação de A3; não promover outra capacidade antes de autorização explícita
+Last completed: `PERFORMANCE_GAP_SCENARIOS` implementado, testado e promovido isoladamente para SHADOW sintético
+Next task: Registrar duas observações A3 do motor de gaps; não promover outra capacidade até nova autorização explícita
 
-Last validation: PASS — janela A2 3/3: 30/30 casos, 0 erro, 0% divergência, custo zero, zero mutações/efeitos; kill switch aprovado
+Last validation: PASS — medição A3 1/3: 10/10 casos, zero erro, divergência, custo, mutação e efeito externo
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -17,9 +17,9 @@ Blockers:
 - Nenhum bloqueio documental em P5; conexão de fonte real continua bloqueada por cadastro, validação e gate técnico próprios.
 
 Pending decisions:
-- Autorizar ou manter bloqueada a avaliação de A3 (expansão por gerente, uma capacidade por vez).
+- Após a janela desta capacidade, autorizar ou manter bloqueada qualquer expansão adicional em A3.
 
-Last update: 2026-08-28 20:31
+Last update: 2026-08-28 20:40
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; A2 está homologado. Aguarde autorização explícita de Rafael antes de avaliar A3. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; complete a janela A3 apenas para `PERFORMANCE_GAP_SCENARIOS`. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.

@@ -21,9 +21,8 @@ assert.ok(domains.every((domain) => domain.manager.design_status === "APPROVED")
 assert.ok(domains.every((domain) => domain.manager.runtime_status === "INACTIVE"));
 assert.ok(specialists.every((specialist) => specialist.design_status === "APPROVED"));
 const shadowSpecialists = specialists.filter((specialist) => specialist.runtime_status === "SHADOW");
-assert.equal(shadowSpecialists.length, 1);
-assert.equal(shadowSpecialists[0].id, "PERFORMANCE_SCORING_STATE");
-assert.equal(shadowSpecialists[0].implementation_status, "IMPLEMENTED");
+assert.deepEqual(shadowSpecialists.map((specialist) => specialist.id).sort(), ["PERFORMANCE_GAP_SCENARIOS", "PERFORMANCE_SCORING_STATE"]);
+assert.ok(shadowSpecialists.every((specialist) => specialist.implementation_status === "IMPLEMENTED"));
 assert.ok(specialists.every((specialist) => ["INACTIVE", "SHADOW"].includes(specialist.runtime_status)));
 assert.ok(specialists.every((specialist) => specialist.runtime_status !== "ACTIVE"));
 assert.equal(new Set(allIds).size, allIds.length, "Existem IDs duplicados");

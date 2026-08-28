@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.25] - 2026-08-28
+
+### Added
+- Motor determinístico de gaps e cenários da Performance, em SHADOW sintético supervisionado.
+
+### Security
+- O motor só calcula estados e distâncias; não altera dados nem permite efeitos externos.
+
 ## [3.2.24] - 2026-08-28
 
 ### Changed

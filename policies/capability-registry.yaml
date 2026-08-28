@@ -63,6 +63,13 @@ domains:
       analisar_gaps_cenarios:
         id: PERFORMANCE_GAP_SCENARIOS
         version: "1.1.0-approved-design"
+        implementation_status: IMPLEMENTED
+        runtime_status: SHADOW
+        data_scope: SYNTHETIC_ONLY
+        permitted_fields: [meta, realizado, periodo]
+        external_effects: PROHIBITED
+        human_review_required: true
+        rollback: DISABLE_CAPABILITY
       construir_plano_executavel:
         id: PERFORMANCE_EXECUTABILITY_PLAN
         version: "1.1.0-approved-design"

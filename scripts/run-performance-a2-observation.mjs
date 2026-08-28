@@ -1,6 +1,5 @@
 import { performance } from 'node:perf_hooks';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { evaluateIndicator } from '../engines/performance/pobj-engine.mjs';
 import { authorizeA2ShadowRun } from '../engines/performance/a2-shadow-gate.mjs';
 

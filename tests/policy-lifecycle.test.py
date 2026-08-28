@@ -16,6 +16,8 @@ assert routing["routes"]["legacy_synthetic"]["data_scope"] == "SYNTHETIC_ONLY"
 assert routing["routes"]["performance_a2_supervised"]["runtime_status"] == "SHADOW"
 assert routing["routes"]["performance_a2_supervised"]["data_scope"] == "SYNTHETIC_ONLY"
 assert routing["routes"]["performance_a2_supervised"]["external_effects"] == "PROHIBITED"
+assert routing["routes"]["performance_a3_gap_supervised"]["runtime_status"] == "SHADOW"
+assert routing["routes"]["performance_a3_gap_supervised"]["data_scope"] == "SYNTHETIC_ONLY"
 assert registry["transversal_capabilities"]["retired_knowledge_manager"]["child_runtime_status"] == "RETIRED"
 
 for domain_name, domain_manifest in manifest["domains"].items():
@@ -32,4 +34,7 @@ performance = registry["domains"]["performance"]["specialists"]["calcular_pontua
 assert performance["runtime_status"] == "SHADOW"
 assert performance["data_scope"] == "SYNTHETIC_ONLY"
 assert performance["external_effects"] == "PROHIBITED"
+gap = registry["domains"]["performance"]["specialists"]["analisar_gaps_cenarios"]
+assert gap["runtime_status"] == "SHADOW"
+assert gap["data_scope"] == "SYNTHETIC_ONLY"
 print("policy-lifecycle: manifesto, registro e roteamento reconciliados")
