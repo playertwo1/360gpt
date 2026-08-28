@@ -526,3 +526,10 @@
 - Erros de lint nos endpoints corrigidos; build e compilação Python validados.
 - Registradas limitações que permanecem: avaliações L2–L4 com risco de leakage, canário e recuperação ainda simulados, rotas com dependência de runtime Node, métricas do Dashboard estáticas e necessidade de evidência formal para dados reais.
 - Ambiente mantido em `OFFLINE_EVAL`; nenhuma integração externa ou dado real foi ativado.
+## 2026-08-27 — Marco E4d: persistência saneada da telemetria Shadow
+
+- Criada tabela D1 idempotente para métricas agregadas de observações sintéticas, sem conteúdo dos casos ou identificadores de clientes.
+- Criada API protegida por segredo para escrita e por usuário autorizado para leitura.
+- O coletor rejeita campos extras, dados fora de `SYNTHETIC_ONLY`, métricas inconsistentes e payloads acima do limite.
+- Dashboard passou a apresentar progresso da janela, equivalência, divergência e efeitos proibidos usando a fonte persistida.
+- Executor local mantém operação sem upload quando o segredo não está configurado e nunca imprime o segredo.

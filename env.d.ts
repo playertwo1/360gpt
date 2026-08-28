@@ -8,5 +8,6 @@ declare namespace Cloudflare {
     TELEGRAM_INGEST_ENABLED?: string;
     TELEGRAM_SEND_ACK_ENABLED?: string;
     VISAO360_N8N_URL?: string;
+    SHADOW_TELEMETRY_SECRET?: string;
   }
 }

@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco E4c — consolidador de observações e runbook de incidente/rollback implementados e testados.  
+**Último marco concluído:** Marco E4d — persistência saneada da telemetria Shadow e painel de acompanhamento implementados localmente.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar medições horárias durante a janela de 24 horas e consolidar o relatório final antes de qualquer escopo adicional.
+**Próximo passo exato:** publicar a migração e a versão do site, configurar o segredo do coletor e concluir as 24 medições antes do parecer do gate.
 
 ---
 
@@ -80,11 +80,11 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ## 4. Próxima Ação Imediata Recomendada
 
-Avançar para a **Etapa C — implementação isolada dos motores determinísticos**:
-1. Integrar `engines/performance/pobj-engine.mjs` ao adaptador de execução em modo sombra.
-2. Integrar `engines/performance/freshness-engine.mjs` com watermark por indicador.
-3. Comparar saídas com os fixtures sintéticos e registrar métricas de divergência.
-4. Manter runtime dos novos especialistas como `INACTIVE` até gate de promoção.
+Concluir a **observação Shadow sintética**:
+1. Publicar a tabela append-only de observações agregadas no D1.
+2. Configurar o segredo compartilhado do coletor sem versioná-lo.
+3. Persistir as medições horárias restantes e acompanhar o painel.
+4. Consolidar as 24 medições e submeter o resultado ao gate; manter agentes fora de `ACTIVE`.
 
 Melhorias de governança permanecem no backlog:
 1. Separar entrada bruta, predição e gabarito nos Evals L2/L3/L4.

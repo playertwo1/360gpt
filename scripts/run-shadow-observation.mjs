@@ -1,6 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { executeShadowPair } from '../engines/orchestration/shadow-envelope.mjs';
 import { aggregateShadowTelemetry } from '../engines/shadow/shadow-telemetry.mjs';
+import { shadowUploadPayload } from '../engines/shadow/telemetry-record.mjs';
 
 const casesDir = new URL('../test-data/evals/cases/', import.meta.url);
 const outputDir = new URL('../test-data/shadow/observations/', import.meta.url);
@@ -32,5 +33,19 @@ const record = {
 const stamp = finishedAt.toISOString().replaceAll(':', '').replaceAll('-', '').replace(/\.\d{3}Z$/, 'Z');
 const output = new URL(`shadow-observation-${stamp}.json`, outputDir);
 writeFileSync(output, `${JSON.stringify(record, null, 2)}\n`, 'utf8');
-console.log(JSON.stringify({ output: output.pathname, ...record }));
+const upload = await uploadSanitizedTelemetry(record);
+console.log(JSON.stringify({ output: output.pathname, upload, ...record }));
 if (pauseRequired) process.exitCode = 2;
+
+async function uploadSanitizedTelemetry(observation) {
+  const endpoint = process.env.SHADOW_TELEMETRY_URL?.trim();
+  const secret = process.env.SHADOW_TELEMETRY_SECRET?.trim();
+  if (!endpoint || !secret) return { attempted: false, reason: 'not_configured' };
+  try {
+    const response = await fetch(endpoint, { method: 'POST', headers: { authorization: `Bearer ${secret}`, 'content-type': 'application/json' }, body: JSON.stringify(shadowUploadPayload(observation)), signal: AbortSignal.timeout(15_000) });
+    const body = await response.json().catch(() => ({}));
+    return { attempted: true, ok: response.ok, status: response.status, inserted: body.inserted === true };
+  } catch {
+    return { attempted: true, ok: false, status: 0 };
+  }
+}

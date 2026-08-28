@@ -157,3 +157,23 @@ export const auditLog = sqliteTable('audit_log', {
   entityType: text('entity_type').notNull(), entityId: text('entity_id').notNull(), detailsJson: text('details_json').notNull().default('{}'),
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 }, (table) => [index('idx_audit_owner_created').on(table.ownerId, table.createdAt)]);
+
+export const shadowObservations = sqliteTable('shadow_observations', {
+  id: text('id').primaryKey(),
+  releaseId: text('release_id').notNull(),
+  observedAt: integer('observed_at', { mode: 'timestamp_ms' }).notNull(),
+  durationMs: integer('duration_ms').notNull(),
+  totalCases: integer('total_cases').notNull(),
+  completedCases: integer('completed_cases').notNull(),
+  errors: integer('errors').notNull(),
+  equivalenceRateBps: integer('equivalence_rate_bps').notNull(),
+  divergenceRateBps: integer('divergence_rate_bps').notNull(),
+  stateMutationCount: integer('state_mutation_count').notNull(),
+  externalEffectCount: integer('external_effect_count').notNull(),
+  pauseRequired: integer('pause_required', { mode: 'boolean' }).notNull(),
+  dataScope: text('data_scope').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_shadow_observations_release_time').on(table.releaseId, table.observedAt),
+  index('idx_shadow_observations_release_time').on(table.releaseId, table.observedAt),
+]);

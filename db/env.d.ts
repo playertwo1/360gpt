@@ -12,5 +12,6 @@ declare namespace Cloudflare {
     TELEGRAM_RATE_LIMIT_PER_MINUTE?: string;
     BRIDGE_ENABLED?: string;
     BRIDGE_SHARED_SECRET?: string;
+    SHADOW_TELEMETRY_SECRET?: string;
   }
 }
