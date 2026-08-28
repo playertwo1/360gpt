@@ -101,6 +101,13 @@ Melhorias de governança permanecem no backlog:
 - Correção versionada no commit `c5ba3e8` e enviada ao branch `main`.
 - Arquivos locais gerados não versionados permanecem preservados.
 
+### Atualização 28/08/2026 — Ciclo POBJ/ponte sintético
+- Teste `scripts/test-hosted-bridge-cycle.mjs` executado com sucesso.
+- Fluxo `enqueue → claim → complete → persistência` concluído; conclusão duplicada ignorada corretamente.
+- Job: `synthetic-run-h3-cycle-1787914140294-8627`.
+- Estado sintético: `state-d879b167-bab5-48f2-a5eb-d19d3a27fd6c`, versão 2.
+- Efeitos externos permanecem proibidos (`external_effects_allowed: false`).
+
 ### Atualização 28/08/2026 — Gate POBJ antes da ponte
 - Corrigido o claim da ponte WF-09: documentos pobj_mobile só podem ser processados após local_reviewed.
 - Teste H3 ampliado para validar essa proteção de aprovação humana.
