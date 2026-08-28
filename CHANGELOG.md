@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.24] - 2026-08-28
+
+### Changed
+- A2 homologado após três medições consecutivas do `PERFORMANCE_SCORING_STATE` em SHADOW sintético.
+
+### Security
+- As 30 execuções mantiveram zero erros, divergências, custo, mutações de estado e efeitos externos; A3 continua bloqueada por autorização explícita.
+
 ## [3.2.23] - 2026-08-28
 
 ### Added

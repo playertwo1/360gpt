@@ -27,4 +27,6 @@
 
 ## Saída de A2
 
-A2 só poderá ser encerrada após janela supervisionada estável, métricas de erro, divergência, custo e latência registradas, revisão humana preservada e teste de rollback. Nenhuma condição deste documento autoriza A3, dados reais ou efeitos externos.
+A2 foi homologado após três medições consecutivas aprovadas: 30/30 casos, zero erro, zero divergência, custo zero, zero mutação e zero efeito externo. A revisão humana e o kill switch permaneceram preservados.
+
+Nenhuma condição deste documento autoriza A3, dados reais ou efeitos externos. A3 exige nova autorização explícita de Rafael.

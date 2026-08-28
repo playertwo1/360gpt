@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.23
-Current phase: A2 — leitura supervisionada sintética; Shadow geral isolado em paralelo
-Current milestone: PERFORMANCE_SCORING_STATE em SHADOW supervisionado
-Current task: Registrar três medições sintéticas consecutivas da janela A2
-Status: IN_PROGRESS
+Version: 3.2.24
+Current phase: A2 homologado; Shadow geral isolado em paralelo
+Current milestone: A2 — leitura supervisionada sintética do GG Performance homologada
+Current task: Aguardar autorização explícita de Rafael para avaliar A3
+Status: WAITING_APPROVAL
 
-Last completed: Entrada de A2 autorizada; uma única capacidade Performance promovida para SHADOW sintético, somente leitura e revisão humana
-Next task: Após três medições A2 dentro dos limites, consolidar resultado; A3 continua bloqueada até estabilidade comprovada e nova autorização explícita
+Last completed: A2 homologado: três medições consecutivas aprovadas e kill switch validado
+Next task: Rafael decide se autoriza a avaliação de A3; não promover outra capacidade antes de autorização explícita
 
-Last validation: PASS — medição A2 1/3: 10/10 casos, 0 erro, 0% divergência, custo zero, zero mutações/efeitos; kill switch aprovado
+Last validation: PASS — janela A2 3/3: 30/30 casos, 0 erro, 0% divergência, custo zero, zero mutações/efeitos; kill switch aprovado
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -17,9 +17,9 @@ Blockers:
 - Nenhum bloqueio documental em P5; conexão de fonte real continua bloqueada por cadastro, validação e gate técnico próprios.
 
 Pending decisions:
-- Nenhuma decisão pendente para A2; A3 exigirá nova autorização explícita após os critérios de saída.
+- Autorizar ou manter bloqueada a avaliação de A3 (expansão por gerente, uma capacidade por vez).
 
-Last update: 2026-08-28 20:25
+Last update: 2026-08-28 20:31
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; execute e consolide três medições sintéticas consecutivas da janela A2. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; A2 está homologado. Aguarde autorização explícita de Rafael antes de avaliar A3. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.

@@ -573,7 +573,7 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 - [x] Liberar somente fontes e campos autorizados — fixtures sintéticas, com `meta`, `realizado` e `periodo`; POBJ real permanece desconectado.
 - [x] Aplicar minimização, segregação e auditoria de toda leitura — política A2 versionada e testes específicos aprovados.
 - [x] Manter revisão humana e efeitos externos bloqueados — condições técnicas codificadas; nenhum efeito externo é permitido.
-- [~] Monitorar erros, divergências, custo e latência — baseline A2: 10/10 casos, 0 erro, 0% divergência, US$ 0,00 e 0,043 ms médio; janela exige três medições sintéticas consecutivas com os mesmos limites antes de avaliar saída.
+- [x] Monitorar erros, divergências, custo e latência — janela A2 3/3 aprovada: 30/30 casos, 0 erro, 0% divergência, custo US$ 0,00, zero mutações e zero efeitos externos.
 - [x] Voltar para `INACTIVE` diante de violação de gate — kill switch testado contra desativação, fonte/campo não autorizado e tentativa de efeito externo.
 
 ### A3 — Expansão por gerente
