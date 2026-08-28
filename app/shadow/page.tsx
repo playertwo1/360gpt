@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 type Observation = { release_id: string; observed_at: string; total_cases: number; completed_cases: number; equivalence_rate: number; pause_required: boolean };
@@ -23,7 +22,7 @@ export default function ShadowMetricsPage() {
     <header className="border-b border-slate-200 bg-[#0b1727] px-6 py-5 text-white md:px-10">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
         <div><p className="text-xs font-black uppercase tracking-[.18em] text-violet-300">Diretor 360</p><h1 className="mt-1 text-2xl font-black">Métricas Shadow</h1></div>
-        <nav className="flex gap-2"><Link href="/" className="rounded-xl border border-white/15 px-4 py-2 text-sm font-bold">Visão Executiva</Link><Link href="/reviews" className="rounded-xl border border-white/15 px-4 py-2 text-sm font-bold">Mesa do Revisor</Link></nav>
+        <nav className="flex gap-2"><a href="/" className="rounded-xl border border-white/15 px-4 py-2 text-sm font-bold">Visão Executiva</a><a href="/reviews" className="rounded-xl border border-white/15 px-4 py-2 text-sm font-bold">Mesa do Revisor</a></nav>
       </div>
     </header>
     <section className="mx-auto max-w-7xl space-y-6 p-6 md:p-10">

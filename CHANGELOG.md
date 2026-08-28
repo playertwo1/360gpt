@@ -553,3 +553,7 @@
 - Restauradas priorização de gaps, próximas ações e integração do site/Telegram com a fila única do n8n.
 - Métricas Shadow preservadas fora da experiência principal, acessíveis pela aba `Mais`.
 - Criado ponto de retorno Git `backup/pre-stitch-restore-20260828-0012` antes da restauração.
+## 2026-08-28 — Correção da navegação para Métricas Shadow
+
+- Substituída a transição interna pela navegação completa nas rotas protegidas.
+- Corrigido o retorno silencioso à página inicial ao abrir `/shadow`.
