@@ -137,3 +137,8 @@ Melhorias de governança permanecem no backlog:
 - O cartão mostra disponibilidade, status, versão, horário, resumo e identificador do estado.
 - Build de produção aprovado e lint sem erros; permanecem três avisos legados não bloqueantes.
 - Publicação hospedada concluída na versão 24 após confirmação explícita; cartão do Estado 360 disponível no site público existente.
+
+### Atualização 28/08/2026 — Drill-down do Estado 360
+- Criada a rota `/state`, acessível pelo cartão da tela inicial.
+- Tela apresenta status, versão, horários, identificador, hash, Evidence Graph e trilha de auditoria em modo somente leitura.
+- Build aprovado e lint sem erros; publicação pública desta etapa aguarda confirmação explícita.
