@@ -1801,6 +1801,20 @@ Cada alteração futura neste documento deve criar nova versão, novo nome de ar
 
 ## Execução autônoma, estado e histórico do projeto
 
+### Especificação completa de controle
+
+Os arquivos obrigatórios são `ROADMAP.md` (planejamento), `PROJECT_STATE.md` (estado e retomada), `CHANGELOG.md` (histórico) e `AGENTS.md` (regras). Devem permanecer sincronizados.
+
+`PROJECT_STATE.md` deve existir e conter versão, fase, marco, tarefa, status, última tarefa concluída, próxima tarefa, última validação e resultado, último commit, bloqueios, decisões pendentes, timestamp e instrução objetiva de retomada. Deve ser atualizado antes de encerrar qualquer execução e validado contra o roadmap e o estado real do Git; nunca deve ser aceito cegamente.
+
+`CHANGELOG.md` registra toda alteração relevante em SemVer, com data e seções Added, Changed, Fixed e Security quando aplicável. Antes de concluir um marco, confirme que ele está atualizado.
+
+Após qualquer tarefa: validar; corrigir problemas corrigíveis; confirmar aceite; atualizar `ROADMAP.md`, `PROJECT_STATE.md` e `CHANGELOG.md` quando relevante; fazer checkpoint; identificar a próxima tarefa e continuar automaticamente. Ao retomar, ler os quatro arquivos, verificar Git e alterações não commitadas e reconciliar o estado declarado com o real.
+
+Só interromper por HARD BLOCKER real: credencial ou permissão externa indisponível, decisão de produto, conflito irresolvível, operação destrutiva irreversível, dependência externa indisponível ou intervenção humana inequívoca. Erros de código, build, lint, testes e configuração exigem diagnóstico, correção e nova tentativa. Se persistir bloqueio, registrar estado, roadmap e changelog, preservar o trabalho e tentar notificar `fael@live.de` com `[360] Codex interrompido — intervenção necessária`, sem armazenar credenciais; falha no envio também deve ser registrada.
+
+A conclusão não encerra a execução: seguir `ROADMAP → validar → PROJECT_STATE → CHANGELOG → commit/checkpoint → próxima tarefa`. Encerrar somente sem tarefas seguras executáveis, deixando instrução clara de retomada.
+
 Durante toda a execução, os arquivos `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md` formam o conjunto obrigatório de controle. Ao concluir qualquer tarefa, validar, atualizar o roadmap e o estado, registrar alterações relevantes no changelog e criar checkpoint quando permitido.
 
 Antes de retomar, ler estes arquivos, verificar Git e comparar o estado declarado com o repositório real. Erros de código, build, lint e testes devem ser diagnosticados e corrigidos antes de serem tratados como bloqueio. Só interromper por credencial, permissão, decisão, dependência externa ou intervenção humana inequivocamente necessária; nesse caso registrar o bloqueio e usar o mecanismo seguro de notificação disponível, sem armazenar segredos.
