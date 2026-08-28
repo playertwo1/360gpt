@@ -123,3 +123,11 @@ Melhorias de governança permanecem no backlog:
 - Evento sintético criado com HTTP 201 e deduplicação confirmada.
 - `external_effects_allowed: false`; nenhum efeito externo foi autorizado.
 - Job sintético de evidência: `synthetic-run-h3-1787909382-2402`.
+
+### Atualização 28/08/2026 — Ciclo completo da ponte
+- Fluxo sintético `enqueue → claim → complete → persistência` aprovado no ambiente hospedado.
+- Job: `synthetic-run-h3-cycle-1787909631037-4268`.
+- Conclusão idempotente confirmada; repetição retornou `duplicate: true`.
+- Estado 360 persistido: `state-4663c691-6806-4b49-94e3-d7b70faed2f1`, versão 1, status `READY`.
+- Persistência confirmada diretamente no D1; `external_effects_allowed: false`.
+- Adicionado `scripts/test-hosted-bridge-cycle.mjs`, restrito a jobs de origem sintética.
