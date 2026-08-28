@@ -13,9 +13,9 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** nenhuma evidência institucional foi arquivada neste repositório; manter dados reais bloqueados até o Gate formal de Segurança, Compliance e LGPD.
 
-**Último marco concluído:** Marco C2a — motores determinísticos iniciais de GDAD e compromissos implementados e testados.  
+**Último marco concluído:** Marco C2b — GDAD conectado ao contrato Financeiro e comparador Shadow seguro criado.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Marco C2b — integrar GDAD, compromissos e datas aos contratos/handoffs de Performance e Relacionamento, mantendo especialistas novos inativos.
+**Próximo passo exato:** Marco D1 — definir o adaptador de orquestração Diretor–Gerentes para executar a baseline e a candidata em paralelo, sem mutação de estado.
 
 ---
 

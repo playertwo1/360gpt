@@ -434,6 +434,12 @@
 - Criado `engines/relationship/commitments-engine.mjs` para prazos, vencimento e preservação de compromissos abertos.
 - Adicionados testes sintéticos com valores inválidos, atribuição desconhecida e compromisso vencido.
 
+## 2026-08-27 — Marco C2b: contrato e base de Shadow
+
+- Conectado o GDAD ao contrato de resposta do especialista Financeiro.
+- Criado comparador Shadow com sanitização de PII, hashes de baseline/candidata e bloqueio explícito de mutação e efeitos externos.
+- Testes do adaptador financeiro e do comparador Shadow aprovados.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
