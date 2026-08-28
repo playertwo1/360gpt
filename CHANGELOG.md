@@ -487,6 +487,12 @@
 - Arquivos de observação foram mantidos fora do Git por serem evidências operacionais geradas.
 - Automação horária `Shadow sintético 24h` ativada por 24 execuções na tarefa atual.
 
+## 2026-08-27 — Marco E4c: consolidação e resposta a incidentes
+
+- Criado consolidador de medições com taxas agregadas e decisão automática de pausa.
+- Criado `runbooks/SHADOW_INCIDENT_ROLLBACK.md` com acionadores, investigação e retomada controlada.
+- Primeira consolidação permaneceu saudável: 20/20 casos, zero erros, divergências ou efeitos.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
