@@ -141,4 +141,4 @@ Melhorias de governança permanecem no backlog:
 ### Atualização 28/08/2026 — Drill-down do Estado 360
 - Criada a rota `/state`, acessível pelo cartão da tela inicial.
 - Tela apresenta status, versão, horários, identificador, hash, Evidence Graph e trilha de auditoria em modo somente leitura.
-- Build aprovado e lint sem erros; publicação pública desta etapa aguarda confirmação explícita.
+- Build aprovado e lint sem erros; drill-down publicado no site na versão 25 após confirmação explícita.
