@@ -1798,3 +1798,11 @@ Cada alteração futura neste documento deve criar nova versão, novo nome de ar
 - Executar restauração completa, teste de perda regional/dependência e exercício de retorno sem duplicidade.
 - Materializar RACI, processo de mudanças, ADRs, manifesto de release, checklist de prontidão e pacote de evidências.
 - Automatizar validação de links, versões, hashes, schemas, policies, registries e drift entre documentação e implantação.
+
+## Execução autônoma, estado e histórico do projeto
+
+Durante toda a execução, os arquivos `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md` formam o conjunto obrigatório de controle. Ao concluir qualquer tarefa, validar, atualizar o roadmap e o estado, registrar alterações relevantes no changelog e criar checkpoint quando permitido.
+
+Antes de retomar, ler estes arquivos, verificar Git e comparar o estado declarado com o repositório real. Erros de código, build, lint e testes devem ser diagnosticados e corrigidos antes de serem tratados como bloqueio. Só interromper por credencial, permissão, decisão, dependência externa ou intervenção humana inequivocamente necessária; nesse caso registrar o bloqueio e usar o mecanismo seguro de notificação disponível, sem armazenar segredos.
+
+`PROJECT_STATE.md` deve sempre conter versão, fase, marco, tarefa, status, última validação, último commit, bloqueios, decisões pendentes, timestamp e instrução objetiva de retomada. Nenhuma tarefa pode ser marcada como concluída sem critérios de aceite e validações aplicáveis satisfeitos. A conclusão de uma tarefa não encerra a execução: identificar e iniciar a próxima tarefa segura do `ROADMAP.md`.

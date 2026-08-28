@@ -557,3 +557,15 @@
 
 - Substituída a transição interna pela navegação completa nas rotas protegidas.
 - Corrigido o retorno silencioso à página inicial ao abrir `/shadow`.
+
+## [3.1.0] - 2026-08-28
+
+### Added
+- `PROJECT_STATE.md` como ponto único de retomada operacional.
+- Regras de execução autônoma, continuidade e bloqueios no `AGENTS.md`.
+
+### Changed
+- Formalizada a sincronização obrigatória entre `ROADMAP.md`, `PROJECT_STATE.md` e `CHANGELOG.md`.
+
+### Security
+- Mantida a exigência de não versionar segredos e de interromper apenas para bloqueios que exigem intervenção humana.
