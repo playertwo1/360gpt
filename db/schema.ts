@@ -177,3 +177,32 @@ export const shadowObservations = sqliteTable('shadow_observations', {
   uniqueIndex('uq_shadow_observations_release_time').on(table.releaseId, table.observedAt),
   index('idx_shadow_observations_release_time').on(table.releaseId, table.observedAt),
 ]);
+
+export const canaryReviewRuns = sqliteTable('canary_review_runs', {
+  id: text('id').primaryKey(),
+  tenantId: text('tenant_id').notNull(),
+  domain: text('domain').notNull(),
+  capability: text('capability').notNull(),
+  dataScope: text('data_scope').notNull(),
+  caseCount: integer('case_count').notNull(),
+  status: text('status').notNull().default('PENDING_REVIEW'),
+  payloadJson: text('payload_json').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  index('idx_canary_review_runs_tenant_status').on(table.tenantId, table.status),
+]);
+
+export const canaryReviewDecisions = sqliteTable('canary_review_decisions', {
+  id: text('id').primaryKey(),
+  runId: text('run_id').notNull().references(() => canaryReviewRuns.id),
+  tenantId: text('tenant_id').notNull(),
+  decision: text('decision').notNull(),
+  reviewerId: text('reviewer_id').notNull(),
+  reviewerEmail: text('reviewer_email').notNull(),
+  rationale: text('rationale').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_canary_review_decisions_run').on(table.runId),
+  index('idx_canary_review_decisions_tenant_created').on(table.tenantId, table.createdAt),
+]);

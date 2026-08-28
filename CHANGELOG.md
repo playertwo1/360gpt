@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.2.20] - 2026-08-28
+
+### Added
+- Aba `/canary` para Rafael revisar os dez casos da Onda 3 do GG Performance diretamente no site, sem alterar o painel principal.
+- Persistência D1 para a rodada sintética e para uma decisão humana imutável, com identidade do revisor, justificativa e trilha em `audit_log`.
+- Migração Drizzle `0007_moaning_starbolt.sql` e teste de contrato da interface Canary.
+
+### Security
+- A interface aceita apenas os resultados sintéticos fixos no servidor; não recebe casos, fontes ou campos pelo navegador.
+- Aprovar A1 não conecta POBJ real, não promove agentes e não permite efeitos externos.
+
 ## [3.2.19] - 2026-08-28
 
 ### Fixed

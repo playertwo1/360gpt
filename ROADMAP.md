@@ -564,6 +564,7 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 - [ ] Corrigir divergências antes da expansão.
 - [~] Executar 5 casos e medir overrides, custo e latência — Onda 2 executada com 5/5 cálculos válidos, zero efeitos externos; revisão de Rafael pendente. Evidência: `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md`.
 - [~] Executar 10 casos e confirmar SLOs e evidências — Onda 3 executada com 10/10 cálculos válidos, custo zero e zero efeitos externos; revisão de Rafael e métrica de override pendentes. Evidência: `docs/audits/A1_ONDA3_PERFORMANCE_2026-08-28.md`.
+- [x] Disponibilizar revisão A1 no site sem alterar o painel existente — rota `/canary`, dados exclusivamente sintéticos, decisão auditável e imutável; publicação hospedada e decisão humana ainda pendentes.
 - [ ] Registrar decisão de promoção ou retorno.
 
 ### A2 — Ativação somente leitura supervisionada
