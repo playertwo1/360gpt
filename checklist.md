@@ -210,8 +210,8 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 - [x] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`. Evidência: `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
 - [x] **P4:** validar a orquestração completa com dados sintéticos. Evidência: `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`.
 - [~] **P5:** controles técnicos aprovados; finalidade, escopo, responsáveis, retenção e evidência da autorização ainda aguardam confirmação humana. Evidência: `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md`.
-- [ ] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release.
-- [ ] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral.
+- [x] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release. Evidência: `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md`.
+- [x] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral. Evidência: `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
 - [ ] **P8:** realizar Gate geral após aprovação do Shadow e das decisões humanas aplicáveis.
 
 ### Ativação gradual

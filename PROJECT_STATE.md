@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.6
+Version: 3.2.7
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P5 técnico aprovado; autorização operacional pendente; Shadow isolado em 16 de 24 medições no último registro
-Current task: P6 — fechar prontidão operacional, rollback, restauração e pacote de release, sem alterar a trilha Shadow
+Current milestone: P7 preparado; Shadow isolado em 16 de 24 medições no último registro
+Current task: Aguardar Gate Shadow; P8 e A1 dependem de 24/24 e aprovação explícita
 Status: IN_PROGRESS
 
-Last completed: P5 técnico aprovado; segurança, LGPD, DLP, kill switches e modelo de autorização validados
-Next task: Executar P6 e preparar operação recuperável; manter C1 pendente até confirmação humana
+Last completed: P6 aprovado e P7 preparado; prontidão, rollback, carga e canary sintético documentados
+Next task: Após 24/24, consolidar Gate Shadow; em paralelo, manter C1 e escolha da capacidade do canary pendentes
 
-Last validation: PASS — `scripts/test-phase6-security-prr.ps1`; relatório `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md`
+Last validation: PASS — release readiness, rollback/cloud, carga, lint, build e canary sintético; relatórios P6/P7
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 14:05
+Last update: 2026-08-28 15:05
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P6 na preparação operacional. A autorização C1 ainda depende de confirmação humana, mas não bloqueia tarefas independentes. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde a janela Shadow e, após 24/24, execute S2/P8. Não execute o canary antes do Gate; não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

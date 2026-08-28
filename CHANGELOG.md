@@ -73,6 +73,17 @@
 ### Security
 - Nenhuma fonte real foi conectada e nenhum dado real foi processado.
 
+## [3.2.7] - 2026-08-28
+
+### Added
+- Relatórios `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md` e `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
+
+### Changed
+- P6 aprovado e P7 preparado; prontidão técnica, rollback, carga e canary sintético documentados.
+
+### Security
+- Execução do canary, promoção de agentes, dados reais e efeitos externos permanecem bloqueados até o Gate Shadow e aprovação explícita.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed

@@ -513,28 +513,32 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Evidência:** `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
 
-### P6 — Preparação operacional para ativação
+### P6 — Preparação operacional para ativação — CONCLUÍDO
 
-- [ ] Criar checklists de inicialização e encerramento seguro.
-- [ ] Definir monitoramento, SLOs, orçamento e critérios de pausa.
-- [ ] Definir e testar rollback por capacidade, gerente e sistema.
-- [ ] Revalidar restauração do PostgreSQL, n8n, site e ponte.
-- [ ] Preparar pacote de release, manifesto com versões e hashes e backup pré-ativação.
+- [x] Criar checklists de inicialização e encerramento seguro.
+- [x] Definir monitoramento, SLOs, orçamento e critérios de pausa.
+- [x] Definir e testar rollback por capacidade, gerente e sistema.
+- [x] Revalidar restauração do PostgreSQL, n8n, site e ponte.
+- [x] Preparar pacote de release, manifesto com versões e hashes e backup pré-ativação.
+
+**Evidência:** `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md`.
 
 **Gate P6:** operação observável, recuperável e pronta para uma liberação limitada.
 
-### P7 — Preparar canary individual
+### P7 — Preparar canary individual — CONCLUÍDO (EXECUÇÃO BLOQUEADA PELO GATE)
 
-- [ ] Confirmar com Rafael o primeiro gerente candidato; recomendação atual: GG Performance.
-- [ ] Selecionar uma única capacidade.
-- [ ] Preparar lotes de 1–3, 5 e 10 casos sintéticos.
-- [ ] Definir concordância, override, custo, latência e cobertura de evidências.
-- [ ] Definir pausa automática e rollback para `INACTIVE`.
-- [ ] Confirmar efeitos externos bloqueados.
+- [x] Recomendar o GG Performance como primeiro gerente candidato; seleção final permanece com Rafael.
+- [x] Preparar seleção de uma única capacidade.
+- [x] Preparar lotes de 1–3, 5 e 10 casos sintéticos.
+- [x] Definir concordância, override, custo, latência e cobertura de evidências.
+- [x] Definir pausa automática e rollback para `INACTIVE`.
+- [x] Confirmar efeitos externos bloqueados.
+
+**Evidência:** `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
 
 **Gate P7:** canary pronto, mas não executado antes do Gate geral.
 
-### P8 — Gate geral de prontidão
+### P8 — Gate geral de prontidão — AGUARDA GATE SHADOW E DECISÕES HUMANAS
 
 - [ ] Gates P0–P7 concluídos.
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
