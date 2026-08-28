@@ -405,6 +405,8 @@ O Shadow continua coletando medições em paralelo; as demais frentes podem avan
 
 Revisar contratos dos quatro gerentes; executar testes sintéticos; melhorar fila, evidências e métricas; testar backup, restauração e rollback; preparar documentação de autorização; corrigir avisos de lint e redundâncias sem alterar regras de negócio.
 
+- [x] Governança de execução autônoma formalizada no `AGENTS.md` v2.1, com `PROJECT_STATE.md` e `CHANGELOG.md` sincronizados.
+
 ## Regra de ativação
 
 Nenhum gerente entra em `ACTIVE` antes do Gate Shadow, Canary supervisionado, autorização aplicável e aprovação explícita de Rafael. Ativar agentes não libera efeitos externos automaticamente.

@@ -569,3 +569,12 @@
 
 ### Security
 - Mantida a exigência de não versionar segredos e de interromper apenas para bloqueios que exigem intervenção humana.
+
+## [3.1.1] - 2026-08-28
+
+### Changed
+- `AGENTS.md` avançado para v2.1 com a especificação integral de execução autônoma, sincronização, retomada e continuidade.
+- `ROADMAP.md`, `PROJECT_STATE.md` e `CHANGELOG.md` formalizados como controles sincronizados obrigatórios.
+
+### Security
+- Notificação de interrupção limitada a HARD BLOCKERS reais e realizada apenas por mecanismo seguro, sem credenciais no repositório.
