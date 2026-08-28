@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.2
+Version: 3.2.3
 Current phase: Preparação independente para ativação; Shadow isolado em paralelo
-Current milestone: P1 concluído; Shadow isolado em 16 de 24 medições no último registro
-Current task: P2 — fechar motores determinísticos dos quatro domínios, sem alterar a trilha Shadow
+Current milestone: P2 em andamento; base determinística validada e Shadow isolado em 16 de 24 medições no último registro
+Current task: P2 — documentar insumos normativos das curvas POBJ e política de ausência de contato, sem alterar a trilha Shadow
 Status: IN_PROGRESS
 
-Last completed: P1 aprovado; 14/14 testes, lint, build e base técnica validados
-Next task: Executar P2.1–P2.4 nos motores determinísticos de Performance, Financeiro, Relacionamento e Conta
+Last completed: P2 base validada; POBJ, freshness, GDAD, compromissos e comportamento dos domínios aprovados
+Next task: Obter ou registrar critérios normativos faltantes antes de implementar curvas de exceção ou ausência de contato
 
-Last validation: PASS — 14/14 testes gerais, lint e build; relatório `docs/audits/REGRESSAO_P1_2026-08-28.md`
+Last validation: PASS — testes P2 de POBJ, GDAD, compromissos, freshness e domínio; relatório `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md`
 Last commit: ec32f61 (checkpoint anterior à aprovação do novo roadmap)
 
 Blockers:
@@ -21,7 +21,7 @@ Pending decisions:
 - Confirmação do primeiro Gerente Geral para o canary; recomendação atual: Performance.
 - Finalidade, responsáveis, escopo e retenção da autorização operacional.
 
-Last update: 2026-08-28 12:10
+Last update: 2026-08-28 12:35
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P2 nos motores determinísticos. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; continue P2 somente quando houver fonte normativa para curvas POBJ ou política aprovada de ausência de contato. Enquanto isso, avance P3–P7 em tarefas independentes. Não altere scripts, casos, métricas, critérios ou configuração do Shadow; não ative dados reais, agentes ou efeitos externos.

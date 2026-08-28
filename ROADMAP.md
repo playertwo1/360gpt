@@ -430,41 +430,43 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P1:** todas as validações aplicáveis aprovadas com dados sintéticos e zero efeitos externos.
 
-### P2 — Fechar motores determinísticos
+### P2 — Fechar motores determinísticos — EM ANDAMENTO
 
 #### P2.1 — Performance
 
-- [ ] Inventariar indicadores POBJ suportados.
-- [ ] Confirmar piso, teto, peso, multiplicadores e versões de política.
-- [ ] Versionar as curvas oficiais disponíveis.
+- [x] Inventariar indicadores POBJ suportados.
+- [x] Confirmar piso, teto, peso, multiplicadores e versões de política.
+- [ ] Versionar as curvas oficiais disponíveis após receber evidência normativa.
 - [ ] Manter exceções sem norma completa como `UNDETERMINED`.
-- [ ] Validar produção oficial, pendente e projetada.
-- [ ] Testar ranking, gaps e prioridades reproduzíveis.
-- [ ] Impedir escolha de empresa sem participação do GG Conta.
+- [x] Validar produção oficial, pendente e projetada.
+- [x] Testar ranking, gaps e prioridades reproduzíveis.
+- [x] Impedir escolha de empresa sem participação do GG Conta.
 
 #### P2.2 — Financeiro
 
-- [ ] Concluir o motor determinístico do GDAD.
-- [ ] Separar orçamento, realizado, cenário e projeção.
-- [ ] Registrar moeda, período, escala e arredondamento.
-- [ ] Representar ausência como `NOT_AVAILABLE`.
-- [ ] Impedir fabricação de retorno financeiro.
+- [x] Concluir o motor determinístico do GDAD.
+- [x] Separar orçamento, realizado, cenário e projeção.
+- [x] Registrar moeda, período, escala e arredondamento.
+- [x] Representar ausência como `NOT_AVAILABLE`.
+- [x] Impedir fabricação de retorno financeiro.
 
 #### P2.3 — Relacionamento
 
-- [ ] Concluir o motor de compromissos e datas.
-- [ ] Definir estados aberto, vencido, concluído e cancelado.
+- [x] Concluir o motor de compromissos e datas.
+- [x] Definir estados aberto, vencido, concluído e cancelado.
 - [ ] Calcular ausência de contato conforme regra versionada.
-- [ ] Exigir evidência textual para compromissos.
-- [ ] Manter hipóteses separadas de fatos.
+- [x] Exigir evidência textual para compromissos.
+- [x] Manter hipóteses separadas de fatos.
 
 #### P2.4 — Conta
 
-- [ ] Validar resolução por identificadores fortes.
-- [ ] Validar elegibilidade específica por ação, produto ou operação.
-- [ ] Testar divergências cadastrais e revisão manual.
-- [ ] Garantir que restrição não produza veto genérico.
-- [ ] Impedir promessa baseada em pré-aprovação.
+- [x] Validar resolução por identificadores fortes.
+- [x] Validar elegibilidade específica por ação, produto ou operação.
+- [x] Testar divergências cadastrais e revisão manual.
+- [x] Garantir que restrição não produza veto genérico.
+- [x] Impedir promessa baseada em pré-aprovação.
+
+**Evidência:** `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md`.
 
 **Gate P2:** cálculos reproduzíveis e testes sintéticos aprovados por domínio.
 

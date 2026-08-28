@@ -31,6 +31,17 @@
 ### Security
 - A regressão permaneceu sintética; nenhum agente foi promovido e nenhum efeito externo foi liberado.
 
+## [3.2.3] - 2026-08-28
+
+### Added
+- Relatório `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md` com auditoria e testes dos motores POBJ, freshness, GDAD, compromissos e domínio.
+
+### Changed
+- P2 avançado com a base determinística comprovada; curvas normativas ausentes e política de ausência de contato permanecem explicitamente abertas.
+
+### Security
+- Nenhuma regra foi inventada para preencher lacunas normativas; casos sem evidência permanecem `UNDETERMINED` ou aguardam revisão.
+
 ## [3.1.6] - 2026-08-28
 
 ### Fixed
