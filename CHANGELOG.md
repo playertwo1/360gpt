@@ -440,6 +440,12 @@
 - Criado comparador Shadow com sanitização de PII, hashes de baseline/candidata e bloqueio explícito de mutação e efeitos externos.
 - Testes do adaptador financeiro e do comparador Shadow aprovados.
 
+## 2026-08-27 — Marco D1: roteamento do Diretor
+
+- Criado roteador determinístico com seleção por finalidade, exclusões explícitas e limite de quatro domínios.
+- Runtime dos especialistas permanece `INACTIVE`; classificação ambígua gera revisão manual.
+- Testes de seleção, visão completa e fallback aprovados.
+
 ## 2026-08-26 — Base canônica dos Gerentes Gerais
 
 - Formalizadas quatro áreas de acompanhamento: Conta, Performance, Financeiro e Relacionamento.
