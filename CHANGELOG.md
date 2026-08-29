@@ -3,12 +3,16 @@
 ## [Unreleased]
 
 ### Added
+- Contrato Draft 2020-12 dos estados públicos do processamento assíncrono e teste automatizado do gate R1.
+- Protocolo persistente, consulta periódica de status no site e deduplicação de arquivos entre site e Telegram.
 - Diretor IA de MVP com Gemini Structured Output para interpretar documentos e devolver indicadores, pontuação, domínios e pareceres em JSON validável.
 - Preenchimento automático do painel POBJ com meta, realizado e pontuação extraídos pela IA.
 - Aprendizado governado por exemplos das últimas correções aprovadas por Rafael.
 - Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
+- Upload do site e entrada do Telegram agora somente validam, armazenam e enfileiram; OCR, parsing e IA saíram integralmente da requisição de recebimento.
+- Confirmação do Telegram passou a informar `RECEBIDO` e protocolo, sem afirmar que Gerentes Gerais processaram o arquivo antes da execução real.
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
 - Publicada a versão hospedada 32 e simplificado o formulário para exigir somente a seleção do arquivo.
 - Configurado `gemini-3.5-flash-lite` como modelo principal do ambiente hospedado após o modelo maior apresentar congestionamento 503; modelos maiores permanecem como fallback.

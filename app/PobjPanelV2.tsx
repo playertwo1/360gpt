@@ -18,8 +18,15 @@ type Approved = {
 };
 type Item = {
   id: string;
+  protocol: string;
+  jobId?: string;
   name: string;
   status: string;
+  documentStatus?: string;
+  jobStatus?: string;
+  processingState?: "RECEIVED" | "PROCESSING" | "AWAITING_RETRY" | "READY_FOR_REVIEW" | "COMPLETED" | "ERROR";
+  attempts?: number;
+  errorCode?: string;
   competence: string;
   baseDate: string;
   official: boolean;
@@ -49,12 +56,15 @@ export default function PobjPanelV2() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [review, setReview] = useState<Item | null>(null);
   const [current, setCurrent] = useState("");
   const [target, setTarget] = useState("1000");
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   useEffect(() => {
     reload();
+    const timer = window.setInterval(reload, 5000);
+    return () => window.clearInterval(timer);
   }, []);
   function reload() {
     fetch("/api/pobj/import")
@@ -67,6 +77,7 @@ export default function PobjPanelV2() {
     if (!file) return;
     setBusy(true);
     setError("");
+    setNotice("");
     const body = new FormData();
     body.set("file", file);
     try {
@@ -76,10 +87,9 @@ export default function PobjPanelV2() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-      setItems((list) => [data.import, ...list]);
+      setItems((list) => [data.import, ...list.filter((item) => item.id !== data.import.id)]);
       if (data.import.aiAnalysis) openReview(data.import);
-      else if (data.import.aiStatus === "queued_async_rebuild") setError("Arquivo recebido e preservado. O processamento assíncrono está em reconstrução; não reenvie o arquivo.");
-      else setError("O Diretor IA não concluiu a leitura. O arquivo foi preservado; não é necessário reenviá-lo.");
+      else setNotice(`${data.duplicate ? "Arquivo já recebido" : "Arquivo recebido"}. Protocolo: ${data.protocol}. O processamento seguirá em segundo plano; não reenvie.`);
       setFile(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (reason) {
@@ -138,7 +148,7 @@ export default function PobjPanelV2() {
         </small>
         <h2 className="mt-2 text-2xl font-semibold">Atualizar POBJ</h2>
         <p className="mt-2 text-sm text-[#b9bbc5]">
-          Apenas envie o arquivo. O Diretor IA identifica período, indicadores e Gerentes Gerais envolvidos para sua revisão.
+          Apenas envie o arquivo. Ele será guardado imediatamente e receberá um protocolo; a leitura ocorrerá em segundo plano.
         </p>
         <form onSubmit={upload} className="mt-5 space-y-3">
           <input
@@ -163,11 +173,12 @@ export default function PobjPanelV2() {
             </span>
           </label>
           {error && <p className="text-sm text-[#ffb4ab]">{error}</p>}
+          {notice && <p className="rounded-[16px] bg-[#183426] p-3 text-sm text-[#8ff0b7]">{notice}</p>}
           <button
             disabled={!file || busy}
             className="h-14 w-full rounded-full bg-[#568dff] font-bold text-[#071d48] disabled:opacity-40"
           >
-            {busy ? "Processando…" : "Enviar e analisar"}
+            {busy ? "Recebendo…" : "Enviar arquivo"}
           </button>
         </form>
       </section>
@@ -207,7 +218,7 @@ export default function PobjPanelV2() {
             {items.map((item) => (
               <button
                 key={item.id}
-                onClick={() => item.aiAnalysis || item.approved ? openReview(item) : setError("Este envio está preservado e ainda aguarda o processador assíncrono. Não reenvie o arquivo.")}
+                onClick={() => item.aiAnalysis || item.approved ? openReview(item) : setNotice(`Protocolo: ${item.protocol}. Status: ${statusLabel(item.processingState)}. Não reenvie o arquivo.`)}
                 className="flex w-full items-center justify-between rounded-[20px] bg-[#1d1d1f] p-4 text-left"
               >
                 <span className="min-w-0">
@@ -216,13 +227,14 @@ export default function PobjPanelV2() {
                     {item.competence}
                     {item.totalPages ? ` · ${item.totalPages} pág.` : ""}
                   </small>
+                  <small className="block truncate text-[#747783]">Protocolo: {item.protocol}</small>
                 </span>
                 <small
                   className={
                     item.official ? "text-[#55eca0]" : "text-[#ffd983]"
                   }
                 >
-                  {item.status === "processed" ? "CONCLUÍDO" : item.status === "local_reviewed" ? "REVISADO" : item.aiStatus === "completed" || item.status === "ai_review_ready" ? "IA PRONTA" : item.aiStatus === "queued_async_rebuild" ? "RECEBIDO" : item.aiStatus?.startsWith("director_ai_") ? "FALHA IA" : "AGUARDANDO IA"}
+                  {statusLabel(item.processingState)}
                 </small>
               </button>
             ))}
@@ -379,6 +391,16 @@ function Field({
       {children}
     </label>
   );
+}
+function statusLabel(state?: Item["processingState"]) {
+  return {
+    RECEIVED: "RECEBIDO",
+    PROCESSING: "PROCESSANDO",
+    AWAITING_RETRY: "NOVA TENTATIVA",
+    READY_FOR_REVIEW: "PRONTO PARA REVISÃO",
+    COMPLETED: "CONCLUÍDO",
+    ERROR: "ERRO",
+  }[state ?? "RECEIVED"];
 }
 function Status({ value }: { value: Analysis["status"] }) {
   const style =

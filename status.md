@@ -15,10 +15,10 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** R0 aprovado com backup verificável, restauração isolada, baseline honesto e bloqueio padrão do processamento síncrono.
+**Último marco concluído:** R1 aprovado localmente com intake assíncrono único no site e Telegram, protocolo, deduplicação entre canais, estados explícitos e polling.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar R1; retirar extração pesada do upload e formalizar estados persistentes, sem pedir novo envio.
+**Próximo passo exato:** executar R2; ampliar a ponte para reservar e baixar documentos pendentes com lease e worker durável, sem pedir novo envio.
 **Checkpoint R0:** `59890aa`; versão hospedada 34 e environment revision 16 com IA síncrona desativada.
 
 ---

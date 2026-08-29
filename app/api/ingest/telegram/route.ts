@@ -95,36 +95,54 @@ export async function POST(request: Request) {
   const receivedAt = Date.now();
   const reservation = await reserveUpdate(updateId, chatId, String(message.message_id), documentId, receivedAt);
   if (!reservation.claimed) {
-    return NextResponse.json({ ok: true, duplicate: true, updateId, status: reservation.status });
+    return NextResponse.json({ ok: true, duplicate: true, protocol: documentId, documentId, updateId, status: reservation.status });
   }
 
   let storageKey: string | null = null;
   let contentHash: string | null = null;
+  let canonicalDocumentId = documentId;
+  let duplicateByHash = false;
   try {
     if (document) {
       if (!env.TELEGRAM_BOT_TOKEN) throw new IngestError('bot_not_configured');
       const file = await downloadTelegramFile(document);
       validateFileContent(file.bytes, document.mime_type?.toLowerCase() ?? '');
       contentHash = `sha256:${await sha256Hex(file.bytes)}`;
-      storageKey = `telegram/${chatId}/${updateId}/${safeFileName(document.file_name ?? 'documento')}`;
-      await env.FILES.put(storageKey, file.bytes, {
-        httpMetadata: { contentType: document.mime_type ?? 'application/octet-stream' },
-        customMetadata: { telegramFileUniqueId: document.file_unique_id, sha256: contentHash, contentTrust: 'UNTRUSTED' },
-      });
+      const existing = await env.DB.prepare(`SELECT id FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile', 'telegram') ORDER BY received_at DESC LIMIT 1`)
+        .bind(ownerId, contentHash).first<{ id: string }>();
+      if (existing) {
+        canonicalDocumentId = existing.id;
+        duplicateByHash = true;
+      } else {
+        storageKey = `telegram/${chatId}/${updateId}/${safeFileName(document.file_name ?? 'documento')}`;
+        await env.FILES.put(storageKey, file.bytes, {
+          httpMetadata: { contentType: document.mime_type ?? 'application/octet-stream' },
+          customMetadata: { telegramFileUniqueId: document.file_unique_id, sha256: contentHash, contentTrust: 'UNTRUSTED', ingestionMode: 'ASYNC_QUEUE' },
+        });
+      }
     }
 
     const runId = `telegram-run-${chatId}-${updateId}`;
     const auditId = `telegram-audit-${chatId}-${updateId}`;
-    await env.DB.batch([
-      env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?)`)
-        .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
-      env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary, available_at) VALUES (?, ?, 'diretor', 'QUEUED', ?, ?)`)
-        .bind(runId, documentId, text || document?.file_name || 'Nova entrada', receivedAt),
-      env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'ingested', 'document', ?, ?, ?)`)
-        .bind(auditId, ownerId, `telegram:${message.from?.id ?? 'unknown'}`, documentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, contentTrust: 'UNTRUSTED', externalEffectsAllowed: false }), receivedAt),
-      env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`)
-        .bind(Date.now(), updateId),
-    ]);
+    if (duplicateByHash) {
+      await env.DB.batch([
+        env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'duplicate_ingest_ignored', 'document', ?, ?, ?)`)
+          .bind(auditId, ownerId, `telegram:${message.from?.id ?? 'unknown'}`, canonicalDocumentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, channel: 'telegram', externalEffectsAllowed: false }), receivedAt),
+        env.DB.prepare(`UPDATE telegram_updates SET document_id = ?, status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`)
+          .bind(canonicalDocumentId, Date.now(), updateId),
+      ]);
+    } else {
+      await env.DB.batch([
+        env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?)`)
+          .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
+        env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary, available_at) VALUES (?, ?, 'diretor', 'QUEUED', ?, ?)`)
+          .bind(runId, documentId, text || document?.file_name || 'Nova entrada', receivedAt),
+        env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'ingested_and_enqueued', 'document', ?, ?, ?)`)
+          .bind(auditId, ownerId, `telegram:${message.from?.id ?? 'unknown'}`, documentId, JSON.stringify({ updateId: update.update_id, messageId: message.message_id, contentHash, contentTrust: 'UNTRUSTED', externalEffectsAllowed: false }), receivedAt),
+        env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`)
+          .bind(Date.now(), updateId),
+      ]);
+    }
 
     let ackSent = false;
     if (Boolean(env.TELEGRAM_BOT_TOKEN)) {
@@ -144,10 +162,14 @@ export async function POST(request: Request) {
         await sendTelegramMessage(message.chat.id, getWelcomeMessage(userName));
         ackSent = true;
       } else if (document) {
-        const docConfirm = `✅ *DOCUMENTO RECEBIDO COM SUCESSO!*
+        const docConfirm = `✅ *DOCUMENTO RECEBIDO E ENFILEIRADO!*
 
 ` +
           `📄 *Arquivo:* \`${document.file_name ?? 'documento'}\`
+` +
+          `🧾 *Protocolo:* \`${canonicalDocumentId}\`
+` +
+          `📥 *Status:* \`RECEBIDO\`
 ` +
           `📊 *Tamanho:* \`${Math.round((document.file_size ?? 0) / 1024)} KB\`
 ` +
@@ -156,11 +178,8 @@ export async function POST(request: Request) {
           `🛡️ *Linhagem W3C PROV:* Registrado no Evidence Graph.
 
 ` +
-          `⚙️ *Processando no GG Performance & GG Conta...*`;
+          `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Não reenvie o arquivo.`;
         await sendTelegramMessage(message.chat.id, docConfirm);
-        if (lowerText.includes('pobj') || (document.file_name && document.file_name.toLowerCase().includes('pobj'))) {
-          await sendTelegramMessage(message.chat.id, getPobjDiagnostic());
-        }
         ackSent = true;
       } else if (env.TELEGRAM_SEND_ACK_ENABLED === 'true') {
         await sendTelegramMessage(message.chat.id, `Recebido com segurança pelo Diretor 360. Protocolo: ${documentId}
@@ -168,7 +187,7 @@ Digite /hoje para ver suas prioridades do dia!`);
         ackSent = true;
       }
     }
-    return NextResponse.json({ ok: true, documentId, updateId, status: 'queued', ackSent }, { status: 202 });
+    return NextResponse.json({ ok: true, duplicate: duplicateByHash, protocol: canonicalDocumentId, documentId: canonicalDocumentId, jobId: duplicateByHash ? null : runId, updateId, status: 'RECEIVED', ackSent }, { status: duplicateByHash ? 200 : 202 });
   } catch (error) {
     const errorCode = error instanceof IngestError ? error.code : 'ingest_failed';
     const retryable = !(error instanceof IngestError) || error.retryable;

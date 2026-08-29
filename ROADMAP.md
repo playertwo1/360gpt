@@ -10,9 +10,9 @@ Ordem de entrega do primeiro corte ponta a ponta:
 
 `R0 baseline → R1 ingestão assíncrona → R2 ponte/worker → R3 extração real → R4 Diretor → R5 Performance → R7 Estado/Dashboard → R8 revisão → R9 Telegram`.
 
-R0 concluído e documentado em [`docs/baselines/R0_BASELINE_2026-08-29.md`](docs/baselines/R0_BASELINE_2026-08-29.md).
+R0 concluído e documentado em [`docs/baselines/R0_BASELINE_2026-08-29.md`](docs/baselines/R0_BASELINE_2026-08-29.md). R1 concluído localmente com intake assíncrono único, protocolo, deduplicação entre canais, estados formais e polling no site.
 
-Próximo passo oficial: executar R1. Nenhum novo teste manual de upload será solicitado antes de R1–R3 estarem implementados e validados localmente com os arquivos já autorizados.
+Próximo passo oficial: executar R2. Nenhum novo teste manual de upload será solicitado antes de R2–R3 estarem implementados e validados localmente com os arquivos já autorizados.
 
 ---
 

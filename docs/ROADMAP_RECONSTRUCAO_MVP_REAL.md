@@ -69,16 +69,16 @@ O n8n transporta, agenda e observa. O worker lê documentos. Os motores calculam
 
 **Gate R0:** APROVADO. Evidência: [`baselines/R0_BASELINE_2026-08-29.md`](baselines/R0_BASELINE_2026-08-29.md).
 
-### R1 — Ingestão assíncrona única
+### R1 — Ingestão assíncrona única — CONCLUÍDO
 
-- [ ] Alterar site e Telegram para apenas validar, armazenar e enfileirar.
-- [ ] Responder ao usuário em poucos segundos com `document_id` e protocolo.
-- [ ] Unificar deduplicação por hash e origem.
-- [ ] Criar estados explícitos do documento e do job.
-- [ ] Exibir status no site por consulta periódica, sem manter requisição aberta.
+- [x] Alterar site e Telegram para apenas validar, armazenar e enfileirar.
+- [x] Responder ao usuário em poucos segundos com `document_id` e protocolo.
+- [x] Unificar deduplicação por proprietário, hash e canais de origem.
+- [x] Criar estados explícitos do documento e do job.
+- [x] Exibir status no site por consulta periódica, sem manter requisição aberta.
 
 **Teste real:** enviar um PDF pelo site e confirmar armazenamento e fila sem chamada de IA.  
-**Gate R1:** upload concluído mesmo que Gemini, n8n ou Docker estejam temporariamente indisponíveis.
+**Gate R1:** APROVADO localmente. O intake não importa nem chama IA/OCR/n8n, persiste no R2/D1 e cria job `QUEUED`; lint, build e `scripts/test-r1-async-intake.ps1` passaram. Publicação e um novo upload real não são necessários para iniciar R2.
 
 ### R2 — Ponte local e worker durável
 
@@ -206,6 +206,6 @@ R6 pode evoluir em paralelo após R5, mas nenhum domínio será marcado como ope
 
 ## 5. Próximo passo exato
 
-Executar R1: transformar o endpoint de upload em ingestão rápida completa, remover também a extração pesada da requisição e formalizar estados persistentes de documento e job.
+Executar R2: ampliar a ponte para reservar documentos pendentes, baixar o original com lease e acionar um worker local durável.
 
 Não solicitar novo envio de arquivo a Rafael até R1, R2 e R3 estarem implementados e testados localmente com uma cópia autorizada já disponível na máquina.

@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.4.0-r0
+Version: 3.4.0-r1
 Current phase: Reconstrução do MVP real assíncrono
-Current milestone: R1 — Ingestão assíncrona única
-Current task: Remover extração pesada da requisição e formalizar estados persistentes
+Current milestone: R2 — Ponte local e worker durável
+Current task: Permitir reserva e download protegido de documentos pendentes pelo worker local
 Status: IN_PROGRESS
 
-Last completed: R0 aprovado com backup verificável, restauração isolada do n8n, baseline honesto, conjunto de aceite e kill switch do caminho síncrono
-Next task: Executar R1 sem pedir novo upload a Rafael
+Last completed: R1 aprovado localmente com intake rápido no site/Telegram, protocolo, deduplicação entre canais, estados formais e polling de cinco segundos
+Next task: Executar R2 usando arquivos já autorizados, sem pedir novo upload a Rafael
 
-Last validation: PASS — backup SHA-256 conferido em duas cópias, restauração de 11 workflows, lint, build, H3_BRIDGE_AUDIT_PASS e versão hospedada 34 publicada com environment revision 16
+Last validation: PASS — `scripts/test-r1-async-intake.ps1`, lint e build
 Last commit: 59890aab6d26979fb15009221722835aff610fc9
 
 Blockers:
@@ -18,7 +18,7 @@ Blockers:
 Pending decisions:
 - Nenhuma para R0–R5; efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 06:05
+Last update: 2026-08-29 07:05
 
 Resume instruction:
-Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R1; retire a extração da requisição, formalize estados e valide localmente sem solicitar upload ao usuário.
+Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R2; ajuste claim/file/lease e implemente o worker local durável sem solicitar upload ao usuário.
