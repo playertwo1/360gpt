@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.37] - 2026-08-29
+
+### Added
+- Registro DRAFT da reconciliação das três planilhas POBJ de agosto, com fonte principal, hashes e métricas coincidentes.
+
+### Security
+- Fonte real permanece `INACTIVE`; escopo limitado a `meta`, `realizado` e `periodo`, sem efeitos externos.
+
 ## [3.2.36] - 2026-08-29
 
 ### Changed

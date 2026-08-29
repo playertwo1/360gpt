@@ -1,0 +1,16 @@
+{
+  "registry_id": "POBJ_AUGUST_2026_RECONCILIATION",
+  "version": "1.0.0",
+  "status": "DRAFT",
+  "purpose": "Reconciliação local antes de qualquer ativação da fonte POBJ real",
+  "period": "2026-08",
+  "base_date": "2026-08-14",
+  "field_scope": ["meta", "realizado", "periodo"],
+  "primary_source": {"artifact":"Indicadores_POBJ_Agosto_2026_Rafael_Pedrosa.xlsx","role":"PRIMARY","sha256":"7bff0891f30a802f44c3296503a6976a077e89766b34ff4db2b81463115fbc18","sheets":["Resumo","Indicadores","Fonte","Leia-me"]},
+  "reconciliation_sources": [
+    {"artifact":"Indicadores_POBJ_Agosto2026.xlsx","role":"CHECK","sha256":"8466d1d645478ef4ce5b5de657c6638a87be1706b473b6697f650d5b5ad62f3"},
+    {"artifact":"029c9216.xlsx","role":"CHECK","sha256":"1561ba9073570dfe9f4553258d5ccf376527579de38b6ac095d86c76423a5eef"}
+  ],
+  "reconciliation_result":{"indicator_count":20,"achieved_count":4,"current_points":51.15,"possible_points":78.0,"attainment_percent":65.58,"accelerator_points":7.0,"final_points":72.58,"material_divergence":false},
+  "activation":{"runtime_status":"INACTIVE","requires_human_review":true,"real_source_connected":false,"external_effects_allowed":false}
+}
