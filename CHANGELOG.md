@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.26] - 2026-08-28
+
+### Changed
+- Primeira expansão A3 homologada: `PERFORMANCE_GAP_SCENARIOS` completou três medições sintéticas consecutivas aprovadas.
+
+### Security
+- As 30 execuções preservaram escopo sintético, zero erro, divergência, custo, mutação e efeito externo; próxima expansão requer nova autorização.
+
 ## [3.2.25] - 2026-08-28
 
 ### Added

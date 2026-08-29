@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.25
-Current phase: A3 — primeira expansão de Performance em SHADOW sintético
-Current milestone: PERFORMANCE_GAP_SCENARIOS em supervisão inicial
-Current task: Completar janela supervisionada da primeira expansão A3
-Status: IN_PROGRESS
+Version: 3.2.26
+Current phase: A3 — primeira expansão de Performance homologada
+Current milestone: PERFORMANCE_GAP_SCENARIOS homologado em SHADOW sintético
+Current task: Aguardar autorização explícita de Rafael para nova expansão A3
+Status: WAITING_APPROVAL
 
-Last completed: `PERFORMANCE_GAP_SCENARIOS` implementado, testado e promovido isoladamente para SHADOW sintético
-Next task: Registrar duas observações A3 do motor de gaps; não promover outra capacidade até nova autorização explícita
+Last completed: `PERFORMANCE_GAP_SCENARIOS` homologado: janela 3/3 aprovada e sem incidentes
+Next task: Rafael decide se autoriza nova expansão A3; não promover outra capacidade até autorização explícita
 
-Last validation: PASS — medição A3 1/3: 10/10 casos, zero erro, divergência, custo, mutação e efeito externo
+Last validation: PASS — janela A3 3/3: 30/30 casos, zero erro, divergência, custo, mutação e efeito externo
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -17,9 +17,9 @@ Blockers:
 - Nenhum bloqueio documental em P5; conexão de fonte real continua bloqueada por cadastro, validação e gate técnico próprios.
 
 Pending decisions:
-- Após a janela desta capacidade, autorizar ou manter bloqueada qualquer expansão adicional em A3.
+- Autorizar ou manter bloqueada qualquer expansão adicional em A3.
 
-Last update: 2026-08-28 20:40
+Last update: 2026-08-28 20:59
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; complete a janela A3 apenas para `PERFORMANCE_GAP_SCENARIOS`. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde autorização explícita de Rafael antes de expandir A3. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.

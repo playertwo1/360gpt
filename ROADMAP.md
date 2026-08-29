@@ -581,7 +581,7 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 **Ordem recomendada:** Performance → Conta → Relacionamento → Financeiro.
 
 - [~] Expandir uma capacidade por vez — Rafael autorizou a primeira expansão: `PERFORMANCE_GAP_SCENARIOS` em `SHADOW` sintético; nenhuma outra capacidade foi adicionada.
-- [~] Exigir janela supervisionada estável e evidência completa — medição A3 1/3 aprovada; janela específica em curso.
+- [x] Exigir janela supervisionada estável e evidência completa — janela A3 desta capacidade 3/3 aprovada: 30/30 casos, zero erro, divergência, custo, mutação e efeito externo.
 - [x] Confirmar ausência de incidente material e rollback testado — A2 encerrou sem incidente e o kill switch bloqueia fonte, campo, efeito ou capacidade inativa.
 - [x] Exigir aprovação explícita de Rafael para cada expansão — autorização de Rafael registrada nesta conversa exclusivamente para a primeira expansão A3.
 
