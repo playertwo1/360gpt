@@ -1,3 +1,19 @@
+# Roadmap Oficial — Diretor 360
+
+## Reconstrução do MVP real — PLANEJADA
+
+O roteiro canônico para substituir o processamento síncrono e chegar ao primeiro arquivo real processado pelo Telegram está em:
+
+[`docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md`](docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md)
+
+Ordem de entrega do primeiro corte ponta a ponta:
+
+`R0 baseline → R1 ingestão assíncrona → R2 ponte/worker → R3 extração real → R4 Diretor → R5 Performance → R7 Estado/Dashboard → R8 revisão → R9 Telegram`.
+
+Próximo passo oficial: executar R0 e R1. Nenhum novo teste manual de upload será solicitado antes de R1–R3 estarem implementados e validados localmente com os arquivos já autorizados.
+
+---
+
 # 🔍 DOSSIÊ DE AUDITORIA INDEPENDENTE PELO CHATGPT CODEX
 
 ## MVP operacional orientado pelo uso — EM ANDAMENTO

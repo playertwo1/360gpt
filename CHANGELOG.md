@@ -6,11 +6,13 @@
 - Diretor IA de MVP com Gemini Structured Output para interpretar documentos e devolver indicadores, pontuação, domínios e pareceres em JSON validável.
 - Preenchimento automático do painel POBJ com meta, realizado e pontuação extraídos pela IA.
 - Aprendizado governado por exemplos das últimas correções aprovadas por Rafael.
+- Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
 - Publicada a versão hospedada 32 e simplificado o formulário para exigir somente a seleção do arquivo.
 - Configurado `gemini-3.5-flash-lite` como modelo principal do ambiente hospedado após o modelo maior apresentar congestionamento 503; modelos maiores permanecem como fallback.
+- Suspensos novos testes manuais do processamento síncrono; a próxima implementação oficial passa a ser upload rápido com fila persistente e processamento local assíncrono.
 
 ### Fixed
 - Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.
