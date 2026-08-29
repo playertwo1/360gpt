@@ -35,8 +35,8 @@ export async function POST(request: Request) {
   const competence = String(form.get('competence') ?? '').trim();
   const baseDate = String(form.get('baseDate') ?? '').trim();
   if (!(file instanceof File)) return invalid('file_required');
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(competence)) return invalid('invalid_competence');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(baseDate) || Number.isNaN(Date.parse(`${baseDate}T00:00:00Z`))) return invalid('invalid_base_date');
+  if (competence && !/^\d{4}-(0[1-9]|1[0-2])$/.test(competence)) return invalid('invalid_competence');
+  if (baseDate && (!/^\d{4}-\d{2}-\d{2}$/.test(baseDate) || Number.isNaN(Date.parse(`${baseDate}T00:00:00Z`)))) return invalid('invalid_base_date');
   if (!file.size || file.size > MAX_FILE_BYTES) return NextResponse.json({ ok: false, error: 'invalid_file_size' }, { status: 413 });
 
   const mime = file.type.toLowerCase();
@@ -53,27 +53,30 @@ export async function POST(request: Request) {
   const runId = `pobj-run-${crypto.randomUUID()}`;
   const storageKey = `pobj/${access.userId}/${new Date(now).toISOString().slice(0, 10)}/${id}.${extension}`;
   const extraction = await extractContent(bytes, mime);
-  const metadata = { competence, baseDate, size: file.size, reviewRequired: true, official: false, ...extraction };
+  const inferred = inferPeriod(extraction.previewLines);
+  const resolvedCompetence = competence || inferred.competence || 'UNKNOWN';
+  const resolvedBaseDate = baseDate || inferred.baseDate || 'UNKNOWN';
+  const metadata = { competence: resolvedCompetence, baseDate: resolvedBaseDate, inferredPeriod: !competence || !baseDate, size: file.size, reviewRequired: true, official: false, ...extraction };
 
   await env.FILES.put(storageKey, bytes, {
     httpMetadata: { contentType: mime },
-    customMetadata: { sha256: hash, competence, baseDate, contentTrust: 'UNTRUSTED' },
+    customMetadata: { sha256: hash, competence: resolvedCompetence, baseDate: resolvedBaseDate, contentTrust: 'UNTRUSTED' },
   });
   try {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
         VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, 'received', ?)`).bind(id, access.userId, id, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), now),
       env.DB.prepare(`INSERT INTO agent_runs (id, document_id, agent_role, status, input_summary, attempt_count, available_at)
-        VALUES (?, ?, 'diretor', 'QUEUED', ?, 0, ?)`).bind(runId, id, `POBJ ${competence} recebido pelo site; processar via ponte n8n e encaminhar ao Gerente de Performance.`, now),
+        VALUES (?, ?, 'diretor', 'QUEUED', ?, 0, ?)`).bind(runId, id, `POBJ ${resolvedCompetence} recebido pelo site; processar via ponte n8n e encaminhar ao Gerente de Performance.`, now),
       env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
-        VALUES (?, ?, ?, 'ingested_and_enqueued', 'agent_run', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, runId, JSON.stringify({ documentId:id, channel:'site', competence, baseDate, hash, contentTrust:'UNTRUSTED', externalEffectsAllowed:false }), now),
+        VALUES (?, ?, ?, 'ingested_and_enqueued', 'agent_run', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, runId, JSON.stringify({ documentId:id, channel:'site', competence:resolvedCompetence, baseDate:resolvedBaseDate, hash, contentTrust:'UNTRUSTED', externalEffectsAllowed:false }), now),
     ]);
   } catch (error) {
     await env.FILES.delete(storageKey);
     throw error;
   }
 
-  return NextResponse.json({ ok: true, queued: true, jobId: runId, import: { id, name: safeName(file.name), mime, hash, competence, baseDate, size: file.size, status: 'received', receivedAt: new Date(now).toISOString(), official: false, pipeline: 'n8n', ...extraction } }, { status: 202 });
+  return NextResponse.json({ ok: true, queued: true, jobId: runId, import: { id, name: safeName(file.name), mime, hash, competence: resolvedCompetence, baseDate: resolvedBaseDate, size: file.size, status: 'received', receivedAt: new Date(now).toISOString(), official: false, pipeline: 'n8n', ...extraction } }, { status: 202 });
 }
 
 type ImportRow = { id: string; original_name: string | null; mime_type: string | null; content_hash: string | null; raw_text: string | null; status: string; received_at: number };
@@ -161,3 +164,12 @@ function detectValue(line: string): Pick<IndicatorSuggestion, 'value' | 'unit'> 
 }
 function parsePtNumber(value: string) { const normalized = value.includes(',') ? value.replace(/\./g, '').replace(',', '.') : value; const number = Number(normalized); return Number.isFinite(number) ? number : null; }
 function formatDetectedValue(value: number, unit: IndicatorSuggestion['unit']) { if (unit === 'percent') return `${value}%`; if (unit === 'points') return `${value} pts`; if (unit === 'currency') return `R$ ${value.toLocaleString('pt-BR')}`; return String(value); }
+function inferPeriod(lines: string[]) {
+  const text = lines.join(' ');
+  const month = /(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)[\s\/]*(20\d{2})/i.exec(text);
+  const months: Record<string,string> = {janeiro:'01',fevereiro:'02','marco':'03',abril:'04',maio:'05',junho:'06',julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  const competence = month ? `${month[2]}-${months[month[1].toLowerCase()] ?? '00'}` : undefined;
+  const date = /(\d{1,2})[\/-](\d{1,2})[\/-](20\d{2})/.exec(text);
+  const baseDate = date ? `${date[3]}-${date[2].padStart(2,'0')}-${date[1].padStart(2,'0')}` : undefined;
+  return { competence, baseDate };
+}

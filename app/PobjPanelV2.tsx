@@ -143,8 +143,7 @@ export default function PobjPanelV2() {
           <div className="grid grid-cols-2 gap-3">
             <Field label="Competência">
               <input
-                required
-                type="month"
+                  type="month"
                 value={competence}
                 onChange={(e) => setCompetence(e.target.value)}
                 className="field [color-scheme:dark]"
@@ -152,8 +151,7 @@ export default function PobjPanelV2() {
             </Field>
             <Field label="Data-base">
               <input
-                required
-                type="date"
+                  type="date"
                 value={baseDate}
                 onChange={(e) => setBaseDate(e.target.value)}
                 className="field [color-scheme:dark]"
@@ -183,7 +181,7 @@ export default function PobjPanelV2() {
           </label>
           {error && <p className="text-sm text-[#ffb4ab]">{error}</p>}
           <button
-            disabled={!file || !competence || !baseDate || busy}
+            disabled={!file || busy}
             className="h-14 w-full rounded-full bg-[#568dff] font-bold text-[#071d48] disabled:opacity-40"
           >
             {busy ? "Processando…" : "Enviar e analisar"}

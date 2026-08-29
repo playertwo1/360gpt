@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.39] - 2026-08-29
+
+### Changed
+- Simplificado o envio POBJ para exigir somente o arquivo; competência e data-base são inferidas automaticamente quando presentes.
+- Mantida revisão humana obrigatória quando a inferência não for possível.
+
 ## [3.2.38] - 2026-08-29
 
 ### Changed
