@@ -1,0 +1,39 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://360.internal/contracts/domain-handoff.schema.json",
+  "title": "DomainHandoffPacket",
+  "type": "object",
+  "required": [
+    "handoff_id",
+    "correlation_id",
+    "source_domain",
+    "target_domain",
+    "created_at",
+    "specialists_invoked",
+    "context_payload",
+    "governance"
+  ],
+  "properties": {
+    "handoff_id": { "type": "string", "pattern": "^HND_[a-zA-Z0-9_]+$" },
+    "correlation_id": { "type": "string" },
+    "source_domain": { "type": "string", "enum": ["DIRETOR", "CONTA", "PERFORMANCE", "FINANCEIRO", "RELACIONAMENTO"] },
+    "target_domain": { "type": "string", "enum": ["DIRETOR", "CONTA", "PERFORMANCE", "FINANCEIRO", "RELACIONAMENTO"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "specialists_invoked": {
+      "type": "array",
+      "maxItems": 4,
+      "items": { "type": "string" }
+    },
+    "context_payload": { "type": "object" },
+    "governance": {
+      "type": "object",
+      "required": ["max_specialists_limit", "lateral_calls_allowed", "requires_human_approval"],
+      "properties": {
+        "max_specialists_limit": { "type": "integer", "const": 4 },
+        "lateral_calls_allowed": { "type": "boolean", "const": false },
+        "requires_human_approval": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

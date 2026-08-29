@@ -1,9 +1,9 @@
-﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4/A5 + C1 + P2 (18 Testes)
+﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4/A5 + C1 + P2 + Etapa D (19 Testes)
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (TODAS AS FASES + P2/P8)  ' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (TODAS AS FASES + ETAPA D) ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -24,7 +24,8 @@ $tests = @(
     @{ Name = 'Fase A4 - Leitura Assistida Supervisionada'; Script = 'scripts/test-phase-a4-read-only.ps1' },
     @{ Name = 'Fase A5 - Efeitos Externos Autorizados'; Script = 'scripts/test-phase-a5-external-effects.ps1' },
     @{ Name = 'Fase C1 - Ingestao Carteira PJ & Plano Diario'; Script = 'scripts/test-phase-c1-daily-plan.ps1' },
-    @{ Name = 'Fase P2 - Motores Deterministicos dos 4 Dominios'; Script = 'scripts/test-phase-p2-engines.ps1' }
+    @{ Name = 'Fase P2 - Motores Deterministicos dos 4 Dominios'; Script = 'scripts/test-phase-p2-engines.ps1' },
+    @{ Name = 'Etapa D - Orquestracao Diretor-Gerentes Gerais'; Script = 'scripts/test-phase-d-orchestration.ps1' }
 )
 
 $passed = 0
@@ -55,7 +56,7 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
-Write-Host '   (Marcos P2 e P8: Motores e Prontidão Geral Certificados)' -ForegroundColor Yellow
+Write-Host '   (Etapa D: Orquestracao Multiagente e Handoffs de Dominio Certificados)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 

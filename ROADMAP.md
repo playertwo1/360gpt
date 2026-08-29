@@ -72,7 +72,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 | A | Reconciliar arquitetura e lifecycles | CONCLUÍDA | Manifesto, 4 gerentes, 21 especialistas, registro e roteamento coerentes |
 | B | Contratos, exemplos e testes por domínio | CONCLUÍDA | Gate homologado por Rafael em 27/08/2026 |
 | C | Motores determinísticos | EM ANDAMENTO | POBJ, GDAD, estados e datas calculados sem depender de LLM |
-| D | Orquestração Diretor–Gerentes | PLANEJADA | Abas, handoffs, memória governada, agenda e no máximo 4 especialistas por domínio |
+| D | Orquestração Diretor–Gerentes | IMPLEMENTADA (AUDITORIA PENDENTE) | Handoffs de domínio, max 4 especialistas e detecção de conflitos (`scripts/test-phase-d-orchestration.ps1` PASS) |
 | E | Homologação sintética e shadow | BLOQUEADA POR B–D | Evals aprovados, evidência completa, telemetria e rollback testado |
 | F | Ativação controlada | BLOQUEADA | Autorização de dados resolvida, revisão humana e promoção explícita de lifecycle |
 | G | Evolução do site | ADIADA | Decisão futura de Rafael |
