@@ -212,7 +212,7 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 - [x] **P5:** controles técnicos e autorização documental aprovados; fonte concreta continua desconectada e exige gate técnico próprio. Evidências: `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
 - [x] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release. Evidência: `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md`.
 - [x] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral. Evidência: `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
-- [x] **P8:** Gate geral de prontidão aprovado com certificação de todos os gates precursores. Evidência: `docs/audits/P8_GATE_READINESS_2026-08-28.md`.
+- [v] **P8:** Gate geral de prontidão submetido para despacho de Rafael (10/10 precursores técnicos prontos; aguardando assinatura humana). Evidência: `docs/audits/P8_GATE_READINESS_2026-08-28.md`.
 
 ### Ativação gradual
 
