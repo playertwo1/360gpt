@@ -10,7 +10,7 @@ Last completed: WF-11 criado, validado e importado no n8n local; roadmap n8n N0�
 Next task: Adicionar document-worker stub à rede interna Docker e provar claim, download e resultado pelo WF-11
 
 Last validation: PASS — `scripts/test-wf11-n8n-master.ps1`, importação do WF-11, lint e build
-Last commit: 53fd59360c2f3f9ee78713e0c79289380b5376ac
+Last commit: 33d5738561b04e6fd2df9a569d3add7886d852ba
 
 Blockers:
 - none
