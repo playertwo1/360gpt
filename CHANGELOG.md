@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.29] - 2026-08-29
+
+### Fixed
+- Protegida a rota `/api/evidence-graph` com autenticação e autorização do painel.
+- Corrigida a referência da bateria de testes no handoff para 23 testes.
+
+### Changed
+- Artefatos Python compilados deixaram de ser versionados via `.gitignore`.
+
 ## [3.2.28] - 2026-08-29
 
 ### Changed
