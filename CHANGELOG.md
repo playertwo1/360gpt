@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.2.30] - 2026-08-29
+
+### Changed
+- P2.3 atualizado para refletir as faixas versionadas de ausência de contato (0–30, 31–60, 61–90 e >90 dias), já cobertas pelos testes determinísticos.
+
 ## [3.2.29] - 2026-08-29
 
 ### Fixed

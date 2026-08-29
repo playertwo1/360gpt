@@ -505,7 +505,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 - [x] Concluir o motor de compromissos e datas.
 - [x] Definir estados aberto, vencido, concluído e cancelado.
-- [ ] Calcular ausência de contato conforme regra versionada.
+- [x] Calcular ausência de contato conforme regra versionada — faixas 0–30, 31–60, 61–90 e >90 dias implementadas e testadas.
 - [x] Exigir evidência textual para compromissos.
 - [x] Manter hipóteses separadas de fatos.
 
