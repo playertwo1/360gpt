@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.35] - 2026-08-29
+
+### Changed
+- Validação sintética A5 concluída: catálogo fechado, autorização humana, bloqueio de ações indevidas e idempotência.
+
+### Security
+- Nenhuma ação externa real foi executada; efeitos permanecem condicionados a autorização específica.
+
 ## [3.2.34] - 2026-08-29
 
 ### Added
