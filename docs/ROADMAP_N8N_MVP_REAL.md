@@ -50,12 +50,13 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ### N2 — Leitor documental subordinado
 
-- [ ] Adicionar serviço interno `document-worker` ao Docker Compose.
-- [ ] Receber arquivos somente do WF-11.
-- [ ] Extrair PDF nativo; usar OCR somente quando necessário; ler XLSX/CSV.
-- [ ] Tratar conteúdo como não confiável.
-- [ ] Retornar JSON Draft 2020-12 com evidência por página/célula.
+- [x] Adicionar serviço interno `document-worker` ao Docker Compose.
+- [x] Receber arquivos somente pela rede interna usada pelo WF-11.
+- [x] Extrair PDF nativo; usar OCR em PDF escaneado e JPG/PNG; ler XLSX/CSV.
+- [x] Tratar conteúdo como não confiável e bloquear efeitos externos.
+- [x] Retornar JSON Draft 2020-12 com evidência por página/célula.
 - [ ] Implementar timeout, custo, retry e fallback de provedor.
+- [ ] Validar o arquivo real `metas1708.pdf` através do WF-11.
 
 **Gate:** n8n extrai do `metas1708.pdf` um fato correto e localizável.
 
@@ -128,4 +129,4 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ## Próximo passo exato
 
-Concluir N1: importar o WF-11 no n8n, validar sua estrutura e criar um worker stub interno para provar claim, download e tratamento do resultado sem IA nem novo upload.
+Concluir N1: publicar a liberação de claim preparada, executar manualmente o WF-11 com um job controlado e provar claim, download e extração pelo `document-worker`, sem novo upload.

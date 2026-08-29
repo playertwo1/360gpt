@@ -87,6 +87,33 @@ services:
       - frontend
       - data
 
+  document-worker:
+    build:
+      context: ./services/document-worker
+    restart: unless-stopped
+    environment:
+      DOCUMENT_MAX_BYTES: 20971520
+      DOCUMENT_MAX_PDF_PAGES: 80
+      DOCUMENT_MAX_TEXT_CHARS: 200000
+      DOCUMENT_OCR_LANGUAGE: por+eng
+    expose:
+      - "8787"
+    read_only: true
+    tmpfs:
+      - /tmp:size=268435456,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - frontend
+
 volumes:
   postgres_data:
   n8n_data:

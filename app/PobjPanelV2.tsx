@@ -156,7 +156,7 @@ export default function PobjPanelV2() {
             id="pobj-v2-file"
             className="sr-only"
             type="file"
-            accept=".pdf,.csv,.xlsx,.xls"
+            accept=".pdf,.csv,.xlsx,.xls,.jpg,.jpeg,.png"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           />
           <label
@@ -168,7 +168,7 @@ export default function PobjPanelV2() {
               <small className="text-[#aeb1bd]">
                 {file
                   ? `${(file.size / 1024 / 1024).toFixed(2)} MB`
-                  : "PDF, CSV, XLSX ou XLS"}
+                  : "PDF, JPG, PNG, CSV, XLSX ou XLS"}
               </small>
             </span>
           </label>

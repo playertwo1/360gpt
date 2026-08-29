@@ -13,6 +13,8 @@ const ALLOWED_MIME_TYPES = new Set([
   'application/vnd.ms-excel',
   'text/csv',
   'application/json',
+  'image/jpeg',
+  'image/png',
 ]);
 
 export const runtime = 'edge';
@@ -419,6 +421,7 @@ function allowedFileName(name: string, mime: string) {
   const expected: Record<string, string[]> = {
     'application/pdf': ['pdf'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['xlsx'],
     'application/vnd.ms-excel': ['xls'], 'text/csv': ['csv'], 'application/json': ['json'],
+    'image/jpeg': ['jpg', 'jpeg'], 'image/png': ['png'],
   };
   return Boolean(name) && (expected[mime] ?? []).includes(extension);
 }
@@ -432,6 +435,8 @@ function validateFileContent(value: ArrayBuffer, mime: string) {
   if (mime === 'application/pdf') valid = startsWith([0x25, 0x50, 0x44, 0x46, 0x2d]);
   else if (mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') valid = startsWith([0x50, 0x4b, 0x03, 0x04]);
   else if (mime === 'application/vnd.ms-excel') valid = startsWith([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]);
+  else if (mime === 'image/jpeg') valid = startsWith([0xff, 0xd8, 0xff]);
+  else if (mime === 'image/png') valid = startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
   else if (mime === 'application/json') {
     try { JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); } catch { valid = false; }
   } else if (mime === 'text/csv') valid = !bytes.slice(0, Math.min(bytes.length, 8192)).includes(0);

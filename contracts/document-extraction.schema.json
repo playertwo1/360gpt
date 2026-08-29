@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diretor360.local/contracts/document-extraction.schema.json",
+  "title": "Diretor 360 Document Extraction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ok", "schema_version", "worker_version", "job_id", "duration_ms", "security", "extraction"],
+  "properties": {
+    "ok": { "const": true },
+    "schema_version": { "const": "1.0.0" },
+    "worker_version": { "type": "string" },
+    "job_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "security": {
+      "type": "object",
+      "required": ["content_trust", "instructions_in_document_ignored", "external_effects_allowed"],
+      "properties": {
+        "content_trust": { "const": "UNTRUSTED" },
+        "instructions_in_document_ignored": { "const": true },
+        "external_effects_allowed": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_type", "mime_type", "file_name", "content_hash", "text", "extraction_method", "evidence", "warnings"],
+      "properties": {
+        "document_type": { "enum": ["PDF", "IMAGE", "CSV", "XLSX"] },
+        "mime_type": { "type": "string" },
+        "file_name": { "type": "string" },
+        "content_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "text": { "type": "string" },
+        "page_count": { "type": ["integer", "null"], "minimum": 1 },
+        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["locator", "text", "extraction_method"],
+            "properties": {
+              "locator": { "type": "string" },
+              "text": { "type": "string" },
+              "extraction_method": { "type": "string" },
+              "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

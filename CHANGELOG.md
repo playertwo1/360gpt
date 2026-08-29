@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- Serviço interno `document-worker` em Docker com FastAPI, PyMuPDF, Tesseract OCR em português/inglês, Pillow e OpenPyXL.
+- Extração híbrida de PDF nativo/escaneado, OCR de JPG/PNG e leitura estruturada de CSV/XLSX com evidências localizáveis.
+- Contrato Draft 2020-12 `document-extraction` e testes reais de endpoint multipart, OCR e PDF nativo.
 - Roadmap canônico N0–N9 com o n8n como espinha dorsal operacional do Diretor 360.
 - WF-11, controlador mestre do MVP, com claim/lease, download protegido, worker subordinado, validação, conclusão e retry.
 - Teste estrutural automatizado do WF-11 e importação pelo script oficial.
@@ -14,6 +17,7 @@
 - Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
+- Intake do site e do Telegram ampliado para aceitar JPG/JPEG e PNG com validação de assinatura.
 - Ponte de claim preparada para reservar documentos recebidos de site e Telegram sem exigir pré-revisão local do POBJ.
 - Contrato de bridge ampliado com estados de retry/falha, lease e metadados do documento.
 - Upload do site e entrada do Telegram agora somente validam, armazenam e enfileiram; OCR, parsing e IA saíram integralmente da requisição de recebimento.
