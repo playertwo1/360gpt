@@ -1,9 +1,9 @@
-﻿# Master Test Runner - Homologacao Completa H3 a H10 (4 Gerentes Gerais)
+﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4 e A5
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (4 GERENTES GERAIS)       ' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (4 DOMINIOS + A4/A5)      ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -20,7 +20,9 @@ $tests = @(
     @{ Name = 'Fase 4 - Decision Intelligence & Laudo PDF'; Script = 'scripts/test-phase4-decision-pdf.ps1' },
     @{ Name = 'Fase 5 - LLMOps & FinOps Model Router'; Script = 'scripts/test-phase5-finops-router.ps1' },
     @{ Name = 'Fase 6 - Security, LGPD & PRR'; Script = 'scripts/test-phase6-security-prr.ps1' },
-    @{ Name = 'Fase 7 - Simulacao Sintetica Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' }
+    @{ Name = 'Fase 7 - Simulacao Sintetica Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' },
+    @{ Name = 'Fase A4 - Leitura Assistida Supervisionada'; Script = 'scripts/test-phase-a4-read-only.ps1' },
+    @{ Name = 'Fase A5 - Efeitos Externos Autorizados'; Script = 'scripts/test-phase-a5-external-effects.ps1' }
 )
 
 $passed = 0
@@ -51,7 +53,7 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
-Write-Host '   (Conhecimento: Desenvolvimento paralisado para o futuro sem definicao)' -ForegroundColor Yellow
+Write-Host '   (A4: Leitura Assistida Ativa | A5: Efeitos Externos Autorizados)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 

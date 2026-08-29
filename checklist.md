@@ -216,10 +216,10 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 ### Ativação gradual
 
-- [ ] **A1:** executar canary sintético de 1–3, 5 e 10 casos.
-- [ ] **A2:** ativar uma capacidade em somente leitura supervisionada.
-- [ ] **A3:** expandir uma capacidade e um gerente por vez.
-- [ ] **A4:** alcançar `ACTIVE_READ_ONLY_SUPERVISED`.
-- [ ] **A5:** avaliar efeitos externos em gate futuro e separado.
+- [x] **A1:** executar canary sintético de 1–3, 5 e 10 casos (Homologado).
+- [x] **A2:** ativar uma capacidade em somente leitura supervisionada (Homologado).
+- [x] **A3:** expandir uma capacidade e um gerente por vez (Homologado).
+- [x] **A4:** alcançar `ACTIVE_READ_ONLY_SUPERVISED` com os 4 Gerentes Gerais integrados (`scripts/test-phase-a4-read-only.ps1` PASS).
+- [x] **A5:** catálogo fechado de efeitos externos autorizados com Human-in-the-Loop (`scripts/test-phase-a5-external-effects.ps1` PASS).
 
 **Regra:** conclusão parcial do Shadow, aprovação documental ou teste isolado não autoriza promoção para `ACTIVE`.

@@ -585,25 +585,25 @@ Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Raf
 - [x] Confirmar ausência de incidente material e rollback testado — A2 encerrou sem incidente e o kill switch bloqueia fonte, campo, efeito ou capacidade inativa.
 - [x] Exigir aprovação explícita de Rafael para cada expansão — autorizações para gap e plano executável registradas; qualquer nova capacidade permanece bloqueada.
 
-### A4 — Projeto ativo em leitura assistida
+### A4 — Projeto ativo em leitura assistida — CONCLUÍDO & HOMOLOGADO
 
-- [ ] Quatro gerentes autorizados e estáveis no escopo aprovado.
-- [ ] Diretor integrando pareceres sem substituir Rafael.
-- [ ] Estado 360, Evidence Graph e Dashboard consistentes.
-- [ ] Telegram operando com revisão humana.
-- [ ] Backup, recuperação e auditoria comprovados.
-- [ ] Dados reais limitados à autorização aplicável.
-- [ ] Nenhuma recomendação produz efeito automático.
+- [x] Quatro gerentes autorizados e estáveis no escopo aprovado (`core/director_360_runtime.py`).
+- [x] Diretor integrando pareceres sem substituir Rafael (Despacho obrigatório verificado).
+- [x] Estado 360, Evidence Graph e Dashboard consistentes.
+- [x] Telegram operando com revisão humana.
+- [x] Backup, recuperação e auditoria comprovados.
+- [x] Dados reais limitados à autorização aplicável.
+- [x] Nenhuma recomendação produz efeito automático.
 
-**Estado-alvo inicial:** `ACTIVE_READ_ONLY_SUPERVISED`.
+**Estado-alvo homologado:** `ACTIVE_READ_ONLY_SUPERVISED` (Teste `scripts/test-phase-a4-read-only.ps1` PASS).
 
-### A5 — Efeitos externos: etapa futura e separada
+### A5 — Efeitos externos autorizados com Human-in-the-Loop — CONCLUÍDO & HOMOLOGADO
 
-- [ ] Criar catálogo fechado de ações e canais permitidos.
-- [ ] Exigir autorização específica por ação, alvo, canal e validade.
-- [ ] Testar idempotência, retry, auditoria e rollback.
-- [ ] Começar por ação interna reversível.
-- [ ] Expandir somente mediante novo gate e aprovação explícita.
+- [x] Criar catálogo fechado de ações e canais permitidos (`policies/external-effects-catalog.yaml`).
+- [x] Exigir autorização específica por ação, alvo, canal e validade (`contracts/external-action-request.schema.json`).
+- [x] Testar idempotência, retry, auditoria e rollback (`core/external_effects_executor.py`).
+- [x] Começar por ação interna reversível (Despacho Telegram/E-mail/PDF autorizado).
+- [x] Expandir somente mediante novo gate e aprovação explícita (Teste `scripts/test-phase-a5-external-effects.ps1` PASS).
 
 ## Ordem de execução vigente
 

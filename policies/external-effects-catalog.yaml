@@ -1,0 +1,44 @@
+﻿schema_version: "1.0.0"
+catalog_status: ACTIVE
+governance:
+  human_in_the_loop_mandatory: true
+  authority: rafael
+  default_action_policy: DENY_ALL_UNLISTED
+  unauthorized_action_fallback: MANUAL_REVIEW_REQUIRED
+
+allowed_actions:
+  DISPATCH_TELEGRAM_REPORT:
+    description: "Envio de laudo executivo, diagnóstico POBJ ou alerta para o Telegram de Rafael"
+    channel: TELEGRAM
+    target_allowlist: ["5281600644"]
+    reversible: true
+    requires_explicit_approval: true
+    max_payload_size_mb: 20
+    idempotency_ttl_seconds: 86400
+
+  DISPATCH_EMAIL_REPORT:
+    description: "Envio de resumo executivo ou relatório de auditoria para o e-mail de Rafael"
+    channel: SMTP
+    target_allowlist: ["fael@live.de", "rafa.pedrosa1@gmail.com"]
+    reversible: true
+    requires_explicit_approval: true
+    idempotency_ttl_seconds: 86400
+
+  EXPORT_LAUDO_PDF:
+    description: "Geração e exportação de Laudo Executivo 360 em PDF de 3 páginas"
+    channel: LOCAL_FILE
+    target_allowlist: ["test-data/laudo_executivo_360_sample.pdf", "documents/"]
+    reversible: true
+    requires_explicit_approval: false
+    idempotency_ttl_seconds: 3600
+
+prohibited_actions:
+  AUTOMATIC_CREDIT_APPROVAL:
+    status: STRICTLY_PROHIBITED
+    reason: "Aprovação de crédito é prerrogativa institucional e decisão humana exclusiva."
+  DATABASE_PRODUCTION_MUTATION:
+    status: STRICTLY_PROHIBITED
+    reason: "Agentes operam em leitura assistida; mutações são restritas a transações humanas autorizadas."
+  UNSOLICITED_CLIENT_CONTACT:
+    status: STRICTLY_PROHIBITED
+    reason: "Contatos externos exigem validação e despacho de Rafael."

@@ -1,0 +1,62 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contracts/external-action-request.schema.json",
+  "title": "ExternalActionRequest",
+  "type": "object",
+  "required": [
+    "action_id",
+    "action_type",
+    "channel",
+    "target",
+    "payload",
+    "human_authorized",
+    "authorized_by",
+    "idempotency_key",
+    "timestamp"
+  ],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "pattern": "^ACT_[A-Z0-9_-]+$"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "DISPATCH_TELEGRAM_REPORT",
+        "DISPATCH_EMAIL_REPORT",
+        "EXPORT_LAUDO_PDF"
+      ]
+    },
+    "channel": {
+      "type": "string",
+      "enum": ["TELEGRAM", "SMTP", "LOCAL_FILE"]
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object"
+    },
+    "human_authorized": {
+      "type": "boolean"
+    },
+    "authorized_by": {
+      "type": "string",
+      "enum": ["rafael", "system_internal"]
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 16
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false
+}

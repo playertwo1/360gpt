@@ -1,0 +1,196 @@
+
+============================================================
+ READINESS GATE â€” HOMOLOGACAO DE RELEASE v1.0.0 (MARCO 15)   
+============================================================
+
+1. Validando presenca e integridade dos contratos JSON Schema...
+   [OK] Contrato presente: contracts/backpressure.schema.json
+   [OK] Contrato presente: contracts/evidence-graph.schema.json
+   [OK] Contrato presente: contracts/handoff.schema.json
+   [OK] Contrato presente: contracts/manual-review.schema.json
+   [OK] Contrato presente: contracts/release-manifest.schema.json
+   [OK] Contrato presente: contracts/review-resolution.schema.json
+   [OK] Contrato presente: contracts/routing-decision.schema.json
+   [OK] Contrato presente: contracts/state-360.schema.json
+
+2. Validando politicas de governanca YAML...
+   [OK] Politica presente: policies/backpressure.yaml
+   [OK] Politica presente: policies/capability-registry.yaml
+   [OK] Politica presente: policies/evidence-graph.yaml
+   [OK] Politica presente: policies/freshness.yaml
+   [OK] Politica presente: policies/reason-codes.yaml
+   [OK] Politica presente: policies/review-sla.yaml
+   [OK] Politica presente: policies/routing.yaml
+
+3. Validando manifesto de release e pacote de conformidade...
+   [OK] Manifesto e pacote de conformidade auditados.
+
+4. Executando bateria de carga e concorrencia (test-load-concurrency.ps1)...
+============================================================
+ TESTES DE CARGA, CONCORRENCIA E RESILIENCIA (MARCO 14)     
+============================================================
+
+1. Executando rajada de 20 requisicoes simultaneas com mesma chave canonica...
+   - Tempo total da rajada: 6879 ms
+   - Requisicoes aceitas: 20 / 20
+   - Deduplicacoes idempotentes identificadas: 0 / 20
+   [OK - Idempotencia sob contencao paralela validada com sucesso]
+
+2. Executando rajada paralela de 20 clientes distintos...
+   - Tempo total: 4695 ms
+   - Clientes processados com sucesso: 20 / 20
+   [OK - Processamento paralelo multi-cliente validado]
+
+3. Executando 15 consultas simultaneas no Evidence Graph e Auditoria...
+   - Executando consultas concorrentes de linhagem diretamente no PostgreSQL...
+   - Tempo total das 15 consultas: 5984 ms
+   - Consultas de linhagem respondidas com sucesso: 15 / 15
+   [OK - Evidence Graph e Auditoria altamente resilientes sob leitura concorrente]
+
+============================================================
+ TODOS OS TESTES DE CARGA E CONCORRENCIA HOMOLOGADOS (100%) 
+============================================================
+
+5. Executando testes de ingestao multi-formato (send-test-inputs.ps1)...
+
+
+Test          : texto
+Accepted      : True
+Status        : DUPLICATE_IGNORED
+Files         : 0
+CorrelationId : 6be33e7d-25fe-43d3-9706-1850f0e9861a
+InputHash     : sha256:14f71465f3e75692d3a988330c411b35c07c3abec04bc2c3fa53ba8a1ece63a2
+
+
+
+
+
+Test          : pdf
+Accepted      : True
+Status        : DUPLICATE_IGNORED
+Files         : 1
+FileHash      : cf9244b5a8f25fc3354530ddcebc77ee07b2290317e94bc66d55af00685109d6
+CorrelationId : 7569132b-9bc6-476c-9e30-13966a225e9d
+
+
+
+
+
+Test          : xlsx
+Accepted      : True
+Status        : DUPLICATE_IGNORED
+Files         : 1
+FileHash      : b6b7aea91974cf5a5ecb6487f5c1664471878dcc31da82590a4f73c00239f3a3
+CorrelationId : 4f0b1f73-8dc4-46ff-94c6-78db5bcade78
+
+
+
+
+
+Test          : json
+Accepted      : True
+Status        : DUPLICATE_IGNORED
+Files         : 1
+FileHash      : b2563eb8c82c5d39b8ad5cb23bfb9d1904a2d59372883c8e89dac39b8be9af66
+CorrelationId : 661473cb-0be8-4409-92d0-bd55bdc37980
+
+
+
+
+6. Executando testes do adaptador Telegram (test-telegram-adapter.ps1)...
+
+Fixture                           UpdateId First     Repeated          Files State
+-------                           -------- -----     --------          ----- -----
+telegram-update-text.json        526091690 SUCCEEDED DUPLICATE_IGNORED     0 READY
+telegram-update-document.json    256466421 SUCCEEDED DUPLICATE_IGNORED     1 READY
+telegram-update-spreadsheet.json 361259029 SUCCEEDED DUPLICATE_IGNORED     1 READY
+
+
+Adaptador Telegram simulado aprovado sem conexÃ£o externa.
+
+7. Validando triggers append-only no PostgreSQL...
+   [OK] Triggers anti-mutacao ativos e protegendo o Evidence Graph.
+
+8. Executando linter e build de producao...
+
+> sites-project@0.1.0 lint
+> eslint . --ignore-pattern dist --ignore-pattern .next
+
+
+C:\Users\fael\Documents\Codex\2026-08-24\vamos-criar-um-progama-360-de\app\page.tsx
+  13:146  warning  'official' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  38:10   warning  'PobjPanel' is defined but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\fael\Documents\Codex\2026-08-24\vamos-criar-um-progama-360-de\tests\shadow-synthetic-suite.test.mjs
+  3:10  warning  'join' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 3 problems (0 errors, 3 warnings)
+
+
+> sites-project@0.1.0 build
+> vinext build
+
+
+  vinext build  (Vite 8.0.13)
+
+[1/5] analyze client references...
+[2Ktransforming...✓ 252 modules transformed.
+rendering chunks...
+✓ built in 2.41s
+[2/5] analyze server references...
+[2Ktransforming...✓ 130 modules transformed.
+rendering chunks...
+✓ built in 183ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 250 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 1.17s
+[4/5] build client environment...
+[2Ktransforming...✓ 137 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 491ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 134 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 336ms
+[0m
+  Route (app)
+  ┌ ? /                            
+  ├ λ /api/audit/reviews/:id       
+  ├ λ /api/audit/state/latest      
+  ├ λ /api/bridge/claim            
+  ├ λ /api/bridge/complete         
+  ├ λ /api/bridge/fail             
+  ├ λ /api/bridge/file             
+  ├ λ /api/bridge/synthetic-enqueue
+  ├ λ /api/canary                  
+  ├ λ /api/ingest/telegram         
+  ├ λ /api/metrics/finops          
+  ├ λ /api/metrics/shadow          
+  ├ λ /api/pobj/import             
+  ├ λ /api/pobj/import/:id         
+  ├ λ /api/reports/laudo-pdf       
+  ├ λ /api/reviews                 
+  ├ λ /api/reviews/:id             
+  ├ λ /api/reviews/:id/resolve     
+  ├ λ /api/state/latest            
+  ├ ? /reviews                     
+  ├ ? /shadow                      
+  └ ? /state                       
+
+  λ API  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+
+============================================================
+ READINESS GATE CERTIFICADO: PASS (HOMOLOGACAO COMPLETA)    
+ SISTEMA DIRETOR 360 PRONTO PARA PRODUCAO ASSISTIDA         
+============================================================

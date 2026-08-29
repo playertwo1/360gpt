@@ -1,14 +1,14 @@
-﻿{
+{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.1.0-confianca",
-  "last_updated": "2026-08-27T08:00:00-03:00",
+  "version": "3.3.0-a4-a5-homologado",
+  "last_updated": "2026-08-28T21:40:00-03:00",
   "last_active_assistant": "Antigravity (Google)",
   "next_recommended_assistant": "Antigravity (Google) ou ChatGPT Codex (OpenAI)",
-  "current_mission": "CONSOLIDACAO_4_GERENTES_GERAIS_E_DESATIVACAO_CONHECIMENTO",
-  "current_mission_goal": "Operacao focada em 4 Gerentes Gerais de negocio (Conta, Performance, Financeiro e Relacionamento). Modulo de Conhecimento paralisado para o futuro sem definicao.",
+  "current_mission": "A4_A5_HOMOLOGADO",
+  "current_mission_goal": "Fase A4 (Leitura Assistida Supervisionada) e Fase A5 (Efeitos Externos Autorizados) 100% implementadas e homologadas.",
   "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - 4 Gerentes Gerais)",
-  "current_phase": "4 Gerentes Gerais Ativos (Conta, Performance, Financeiro, Relacionamento)",
+  "current_phase": "A4 (Leitura Assistida) e A5 (Efeitos Externos com Human-in-the-Loop) Homologados",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
@@ -17,7 +17,9 @@
     "Fase 5 (LLMOps & FinOps)",
     "Fase 6 (Security, LGPD & PRR)",
     "Fase 7 (Operação Real Canary)",
-    "Fase 4-GGs (Especialização Profunda de Conta, Performance, Financeiro e Relacionamento)"
+    "Fase 4-GGs (Especialização Profunda de Conta, Performance, Financeiro e Relacionamento)",
+    "Fase A4 (Leitura Assistida Supervisionada - ACTIVE_READ_ONLY_SUPERVISED)",
+    "Fase A5 (Efeitos Externos Autorizados & Catálogo Fechado)"
   ],
   "postponed_phases": [
     "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)",
