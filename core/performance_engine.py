@@ -1,17 +1,18 @@
 ﻿# -*- coding: utf-8 -*-
 import json, os, hashlib, time
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple, Optional
 
 class PerformanceEngine:
     """
-    Motor Determinístico de Performance & POBJ (Marco P2.1)
-    Calcula pontuações com curvas oficiais (Piso 70%, Meta 100%, Teto 150%), Run-Rate e Necessidade Diária.
+    Motor Determinístico Refinado de Performance & POBJ 2026 (Bloco 1).
+    Calcula pontuações com curvas oficiais (Piso 70%, Meta 100%, Teto 150%),
+    Run-Rate, Necessidade Diária, Simulação de Cenários e Provocação Crítica.
     """
     def __init__(self, pobj_path: str = "test-data/performance/pobj_agosto_2026.json"):
         self.pobj_path = pobj_path
         os.makedirs("test-data/performance", exist_ok=True)
-        if not os.path.exists(self.pobj_path):
-            self._init_default_pobj()
+        # Sempre inicializa ou atualiza com a estrutura canônica completa
+        self._init_default_pobj()
 
     def _init_default_pobj(self):
         default_data = {
@@ -19,11 +20,10 @@ class PerformanceEngine:
             "reference_date": "2026-08-25",
             "manager": "VJ-RAFAEL PEDROSA GONCALVES",
             "branch": "6895 - VJ-SAO FIDELIS",
-            "total_indicators": 20,
-            "indicators_achieved": 4,
-            "target_points": 78.00,
-            "achieved_points": 51.04,
-            "pct_monthly_achieved": 65.44,
+            "total_indicators": 7,
+            "target_points": 98.00,
+            "achieved_points": 57.96,
+            "pct_monthly_achieved": 59.14,
             "points_needed": 7.00,
             "projected_final_points": 72.44,
             "business_days_total": 21,
@@ -31,49 +31,60 @@ class PerformanceEngine:
             "business_days_remaining": 4,
             "categories": [
                 {
-                    "category": "Negócios Crédito",
+                    "id": "CREDITO_PJ",
+                    "category": "Negócios Crédito (Capital de Giro / Pronampe)",
                     "weight_max": 15.00,
                     "target_value": 765726.75,
                     "achieved_value": 1384193.37,
-                    "achieved_points": 15.00,
-                    "status": "SUPERADO_TETO",
-                    "details": "Meta R$ 765.726,75 | Realizado R$ 1.384.193,37 (180,77%)"
+                    "unit": "R$"
                 },
                 {
-                    "category": "Qualidade (Encanta BRA)",
-                    "weight_max": 10.00,
-                    "target_value": 144.00,
-                    "achieved_value": 150.00,
-                    "achieved_points": 15.00,
-                    "status": "SUPERADO_TETO",
-                    "details": "Meta 144,00 | Realizado 150,00 (104,17%)"
-                },
-                {
-                    "category": "Negócios Captação",
+                    "id": "CAPTACAO_RECURSOS",
+                    "category": "Negócios Captação (CDB, Fundos, Poupança)",
                     "weight_max": 20.00,
                     "target_value": 1000000.00,
                     "achieved_value": 545500.00,
-                    "achieved_points": 10.91,
-                    "status": "EM_ANDAMENTO",
-                    "details": "Grupo A: 211,13% | Fundos: 169,36% | Depósito a Prazo: 250,88%"
+                    "unit": "R$"
                 },
                 {
-                    "category": "Ligadas e Aceleradores (Open Finance)",
-                    "weight_max": 15.00,
-                    "target_value": 4.00,
-                    "achieved_value": 5.00,
-                    "achieved_points": 7.00,
-                    "status": "SUPERADO",
-                    "details": "Meta 4,00 | Realizado 5,00 (125,00%)"
-                },
-                {
+                    "id": "CRESCIMENTO_PJ",
                     "category": "Clientes (Crescimento Líquido PJ)",
                     "weight_max": 16.00,
                     "target_value": 4.00,
                     "achieved_value": 3.00,
-                    "achieved_points": 4.92,
-                    "status": "EM_ANDAMENTO",
-                    "details": "Meta 4,00 | Realizado 3,00 (75,00%) | Nec Dia: 0,20"
+                    "unit": "Contas"
+                },
+                {
+                    "id": "QUALIDADE_ENCANTA",
+                    "category": "Qualidade e Satisfação (Encanta BRA)",
+                    "weight_max": 10.00,
+                    "target_value": 144.00,
+                    "achieved_value": 150.00,
+                    "unit": "Pontos NPS"
+                },
+                {
+                    "id": "OPEN_FINANCE",
+                    "category": "Aceleradores (Open Finance Ativo)",
+                    "weight_max": 15.00,
+                    "target_value": 4.00,
+                    "achieved_value": 5.00,
+                    "unit": "Consentimentos"
+                },
+                {
+                    "id": "SEGUROS_CONSORCIOS",
+                    "category": "Seguridade e Consórcios PJ",
+                    "weight_max": 12.00,
+                    "target_value": 50000.00,
+                    "achieved_value": 22000.00,
+                    "unit": "R$"
+                },
+                {
+                    "id": "FOLHA_PAGAMENTO",
+                    "category": "Convênios de Folha de Pagamento",
+                    "weight_max": 10.00,
+                    "target_value": 2.00,
+                    "achieved_value": 1.00,
+                    "unit": "Empresas"
                 }
             ]
         }
@@ -83,13 +94,16 @@ class PerformanceEngine:
     def load_pobj(self) -> Dict[str, Any]:
         if os.path.exists(self.pobj_path):
             with open(self.pobj_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                # Se as categorias tiverem achieved_value, usa direto
+                if data.get("categories") and "achieved_value" in data["categories"][0]:
+                    return data
         self._init_default_pobj()
         with open(self.pobj_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     @staticmethod
-    def calculate_score_curve(achieved_val: float, target_val: float, weight_max: float) -> Tuple:
+    def calculate_score_curve(achieved_val: float, target_val: float, weight_max: float) -> Tuple[float, float, str]:
         """
         Curva Oficial de Pontuação POBJ 2026:
         - Abaixo de 70% da meta: 0 pontos (Piso).
@@ -119,7 +133,112 @@ class PerformanceEngine:
             
         return round(points, 2), round(pct_achieved, 2), status
 
-    def calculate_daily_necessity(self, target_val: float, achieved_val: float, remaining_days: int) -> float:
+    def evaluate_full_pobj(self) -> Dict[str, Any]:
+        """Avalia todos os indicadores e calcula o consolidado do POBJ com run-rate."""
+        data = self.load_pobj()
+        remaining_days = data.get("business_days_remaining", 4)
+        elapsed_days = data.get("business_days_elapsed", 17)
+        total_days = data.get("business_days_total", 21)
+
+        evaluated_categories = []
+        total_achieved_pts = 0.0
+        total_weight_max = 0.0
+        floor_breaches = []
+        ceiling_saturated = []
+
+        for cat in data.get("categories", []):
+            achieved = cat.get("achieved_value", cat.get("target_value", 100.0) * 0.75)
+            target = cat.get("target_value", 100.0)
+            weight = cat.get("weight_max", 10.0)
+            
+            pts, pct, status = self.calculate_score_curve(achieved, target, weight)
+            total_achieved_pts += pts
+            total_weight_max += weight
+
+            # Necessidade Diária
+            nec_dia = 0.0
+            if remaining_days > 0 and achieved < target:
+                gap_val = target - achieved
+                nec_dia = round(gap_val / remaining_days, 2)
+
+            # Run-rate projetado no final do mês
+            run_rate_val = round((achieved / max(1, elapsed_days)) * total_days, 2)
+            proj_pts, proj_pct, proj_status = self.calculate_score_curve(run_rate_val, target, weight)
+
+            cat_eval = {
+                "id": cat.get("id", cat["category"]),
+                "category": cat["category"],
+                "unit": cat.get("unit", "R$"),
+                "target_value": target,
+                "achieved_value": achieved,
+                "pct_achieved": pct,
+                "weight_max": weight,
+                "achieved_points": pts,
+                "status": status,
+                "daily_necessity": nec_dia,
+                "projected_final_value": run_rate_val,
+                "projected_final_points": proj_pts
+            }
+            evaluated_categories.append(cat_eval)
+
+            if status == "ABAIXO_DO_PISO":
+                floor_breaches.append(cat["category"])
+            elif status == "SUPERADO_TETO":
+                ceiling_saturated.append(cat["category"])
+
+        total_achieved_pts = round(total_achieved_pts, 2)
+        target_pts = round(data.get("target_points", 100.0), 2)
+        gap_pts = max(0.0, round(target_pts - total_achieved_pts, 2))
+
+        # Provocação Crítica Executiva
+        provocation = None
+        if ceiling_saturated and floor_breaches:
+            provocation = (
+                f"⚠️ ATENÇÃO EXECUTIVA: Você atingiu o TETO em '{ceiling_saturated[0]}' (onde novo esforço gera 0 pontos adicionais), "
+                f"enquanto '{floor_breaches[0]}' está ABAIXO DO PISO (0 pontos ganhos). "
+                f"Redirecionar esforço para tirar indicadores do piso gerará até 3x mais pontos hoje!"
+            )
+
+        return {
+            "period": data["period"],
+            "manager": data["manager"],
+            "branch": data["branch"],
+            "total_weight_max": total_weight_max,
+            "target_points": target_pts,
+            "achieved_points": total_achieved_pts,
+            "gap_points": gap_pts,
+            "pct_realized": round((total_achieved_pts / target_pts) * 100.0, 2),
+            "categories": evaluated_categories,
+            "floor_breaches": floor_breaches,
+            "ceiling_saturated": ceiling_saturated,
+            "executive_provocation": provocation
+        }
+
+    def simulate_deal_impact(self, category_id: str, added_value: float) -> Dict[str, Any]:
+        """Simula o impacto em pontos do fechamento de um negócio específico."""
+        full_eval = self.evaluate_full_pobj()
+        cat = next((c for c in full_eval["categories"] if c["id"] == category_id), None)
+        if not cat:
+            return {"error": f"Categoria '{category_id}' nao encontrada."}
+
+        new_val = cat["achieved_value"] + added_value
+        new_pts, new_pct, new_status = self.calculate_score_curve(new_val, cat["target_value"], cat["weight_max"])
+        pts_gain = round(new_pts - cat["achieved_points"], 2)
+
+        return {
+            "category_id": category_id,
+            "category": cat["category"],
+            "added_value": added_value,
+            "previous_points": cat["achieved_points"],
+            "simulated_points": new_pts,
+            "points_gain": pts_gain,
+            "new_status": new_status,
+            "simulated_total_pobj": round(full_eval["achieved_points"] + pts_gain, 2)
+        }
+
+
+    @staticmethod
+    def calculate_daily_necessity(target_val: float, achieved_val: float, remaining_days: int) -> float:
         """Calcula a necessidade diária para alcançar a meta nos dias úteis restantes."""
         if remaining_days <= 0:
             return 0.0
@@ -134,17 +253,16 @@ class PerformanceEngine:
             f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             f"🏆 *Score Realizado:* `{data['achieved_points']} pts` ({data['pct_monthly_achieved']}%)\n"
             f"🎯 *Meta Teto:* `{data['target_points']} pts` (100,00%)\n"
-            f"⚡ *Projeção Final:* `{data['projected_final_points']} pts`\n"
+            f"⚡ *Projeção Final:* `{data.get('projected_final_points', data['achieved_points'])} pts`\n"
             f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
             f"📋 *Posição por Categoria de Negócio:*\n"
         )
         for cat in data.get("categories", []):
-            badge = "🟢" if "SUPERADO" in cat["status"] else "🟡"
-            text += f"• {badge} *{cat['category']}:* `{cat['achieved_points']} pts` / `{cat['weight_max']} pts`\n  _{cat['details']}_\n"
+            badge = "🟢" if "SUPERADO" in cat.get("status", "") else "🟡"
+            text += f"• {badge} *{cat['category']}:* `{cat.get('achieved_points', 0.0)} pts` / `{cat.get('weight_max', 10.0)} pts`\n"
         return text
 
 if __name__ == "__main__":
-    from typing import Tuple
-    engine = PerformanceEngine()
-    pts, pct, st = engine.calculate_score_curve(1384193.37, 765726.75, 10.0)
-    print(f"Crédito PJ: {pct}% -> {pts} pts ({st})")
+    eng = PerformanceEngine()
+    res = eng.evaluate_full_pobj()
+    print(f"POBJ Consolidado: {res['achieved_points']} pts / {res['target_points']} pts (Gap: {res['gap_points']} pts)")

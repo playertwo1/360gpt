@@ -1,5 +1,56 @@
 [
   {
+    "protocolo": "RECIBO-TEL-20260829_040631-3003F4",
+    "canal_origem": "TELEGRAM",
+    "remetente": "Rafael Pedrosa",
+    "remetente_id": "5281600644",
+    "tipo_conteudo": "PLANILHA_EXCEL",
+    "data_hora_recebimento_utc": "2026-08-29T04:06:31.543249+00:00",
+    "resumo_do_envio": "Planilha de POBJ da Agência 6895",
+    "status_na_esteira": {
+      "etapa_1_recebimento": "✅ CONFIRMADO",
+      "etapa_2_gravacao_imutavel": "✅ GRAVADO_EM_DISCO",
+      "etapa_3_processamento_motor": "✅ PROCESSADO_PELO_MOTOR",
+      "etapa_4_disponibilidade_painel": "✅ DISPONÍVEL_PARA_VISUALIZACAO"
+    },
+    "status_geral": "PROCESSADO_COM_SUCESSO",
+    "mensagem_ao_usuario": "Seu envio 'Planilha de POBJ da Agência 6895' foi recebido via TELEGRAM, gravado com protocolo RECIBO-TEL-20260829_040631-3003F4 e integrado com sucesso ao Estado 360."
+  },
+  {
+    "protocolo": "RECIBO-TEL-20260829_040619-3003F4",
+    "canal_origem": "TELEGRAM",
+    "remetente": "Rafael Pedrosa",
+    "remetente_id": "5281600644",
+    "tipo_conteudo": "PLANILHA_EXCEL",
+    "data_hora_recebimento_utc": "2026-08-29T04:06:19.637919+00:00",
+    "resumo_do_envio": "Planilha de POBJ da Agência 6895",
+    "status_na_esteira": {
+      "etapa_1_recebimento": "✅ CONFIRMADO",
+      "etapa_2_gravacao_imutavel": "✅ GRAVADO_EM_DISCO",
+      "etapa_3_processamento_motor": "✅ PROCESSADO_PELO_MOTOR",
+      "etapa_4_disponibilidade_painel": "✅ DISPONÍVEL_PARA_VISUALIZACAO"
+    },
+    "status_geral": "PROCESSADO_COM_SUCESSO",
+    "mensagem_ao_usuario": "Seu envio 'Planilha de POBJ da Agência 6895' foi recebido via TELEGRAM, gravado com protocolo RECIBO-TEL-20260829_040619-3003F4 e integrado com sucesso ao Estado 360."
+  },
+  {
+    "protocolo": "RECIBO-TEL-20260829_030845-3003F4",
+    "canal_origem": "TELEGRAM",
+    "remetente": "Rafael Pedrosa",
+    "remetente_id": "5281600644",
+    "tipo_conteudo": "PLANILHA_EXCEL",
+    "data_hora_recebimento_utc": "2026-08-29T03:08:45.974311+00:00",
+    "resumo_do_envio": "Planilha de POBJ da Agência 6895",
+    "status_na_esteira": {
+      "etapa_1_recebimento": "✅ CONFIRMADO",
+      "etapa_2_gravacao_imutavel": "✅ GRAVADO_EM_DISCO",
+      "etapa_3_processamento_motor": "✅ PROCESSADO_PELO_MOTOR",
+      "etapa_4_disponibilidade_painel": "✅ DISPONÍVEL_PARA_VISUALIZACAO"
+    },
+    "status_geral": "PROCESSADO_COM_SUCESSO",
+    "mensagem_ao_usuario": "Seu envio 'Planilha de POBJ da Agência 6895' foi recebido via TELEGRAM, gravado com protocolo RECIBO-TEL-20260829_030845-3003F4 e integrado com sucesso ao Estado 360."
+  },
+  {
     "protocolo": "RECIBO-TEL-20260829_021312-3003F4",
     "canal_origem": "TELEGRAM",
     "remetente": "Rafael Pedrosa",

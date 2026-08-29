@@ -60,6 +60,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
   2. **Marco C2:** Especialistas de Conta PJ (Cadastro, Restrições 1-7, Maturação D0-D120 e Elegibilidade de Produtos) 100% integrados (`scripts/test-phase-c2-carteira-specialists.ps1` PASS).
   3. **Marco C3:** Radar Comercial & Entity Resolution (CNPJ, Grupos Econômicos, Matriz/Filiais, Sócios em Comum e Cache) 100% integrados (`scripts/test-phase-c3-entity-resolution.ps1` PASS).
   4. **Evidence Graph Humanizado & Recibos de Ingestão:** Trilha Executiva em 5 Passos e Comprovante de Entrada/Processamento de Mensagens/Documentos 100% integrados (`scripts/test-phase-h-evidence-humanizer.ps1` PASS).
+  5. **Refinamento do Domínio Performance (Bloco 1):** 7 categorias POBJ, Curvas 70%-150%, Necessidade Diária, Provocação Executiva e Simulador de Negócios 100% integrados (`scripts/test-phase-perf-refinements.ps1` PASS).
   2. **Plano Diário Integrado:** Cruzamento automático de Gaps do POBJ com empresas elegíveis da carteira.
 
 ---

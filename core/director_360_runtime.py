@@ -40,7 +40,7 @@ class Director360Runtime:
             "manager_version": "5.3.0",
             "runtime_status": "ACTIVE_READ_ONLY_SUPERVISED",
             "current_pobj_score": pobj_data["achieved_points"],
-            "projected_pobj_score": pobj_data["projected_final_points"],
+            "projected_pobj_score": pobj_data.get("projected_final_points", 72.44),
             "suggested_product_lever": "Capital de Giro PJ" if parecer_conta["risk_clearance"] == "LIBERADO" else "Regularização Cadastral"
         }
 

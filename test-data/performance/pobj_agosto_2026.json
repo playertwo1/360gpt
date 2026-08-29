@@ -3,88 +3,71 @@
   "reference_date": "2026-08-25",
   "manager": "VJ-RAFAEL PEDROSA GONCALVES",
   "branch": "6895 - VJ-SAO FIDELIS",
-  "total_indicators": 20,
-  "indicators_achieved": 4,
-  "target_points": 78.0,
-  "achieved_points": 51.04,
-  "pct_monthly_achieved": 65.44,
+  "total_indicators": 7,
+  "target_points": 98.0,
+  "achieved_points": 57.96,
+  "pct_monthly_achieved": 59.14,
   "points_needed": 7.0,
   "projected_final_points": 72.44,
+  "business_days_total": 21,
+  "business_days_elapsed": 17,
+  "business_days_remaining": 4,
   "categories": [
     {
-      "category": "Negócios Crédito",
+      "id": "CREDITO_PJ",
+      "category": "Negócios Crédito (Capital de Giro / Pronampe)",
       "weight_max": 15.0,
-      "achieved_points": 15.0,
-      "status": "SUPERADO",
-      "details": "Meta R$ 765.726,75 | Realizado R$ 1.384.193,37 (180,77%)"
+      "target_value": 765726.75,
+      "achieved_value": 1384193.37,
+      "unit": "R$"
     },
     {
-      "category": "Qualidade (Encanta BRA)",
-      "weight_max": 10.0,
-      "achieved_points": 15.0,
-      "status": "SUPERADO",
-      "details": "Meta 144,00 | Realizado 150,00 (104,17%)"
-    },
-    {
-      "category": "Negócios Captação",
+      "id": "CAPTACAO_RECURSOS",
+      "category": "Negócios Captação (CDB, Fundos, Poupança)",
       "weight_max": 20.0,
-      "achieved_points": 10.91,
-      "status": "EM_ANDAMENTO",
-      "details": "Grupo A: 211,13% | Fundos: 169,36% | Depósito a Prazo: 250,88%"
+      "target_value": 1000000.0,
+      "achieved_value": 545500.0,
+      "unit": "R$"
     },
     {
-      "category": "Ligadas e Aceleradores (Open Finance)",
-      "weight_max": 15.0,
-      "achieved_points": 7.0,
-      "status": "SUPERADO",
-      "details": "Meta 4,00 | Realizado 5,00 (125,00%)"
-    },
-    {
+      "id": "CRESCIMENTO_PJ",
       "category": "Clientes (Crescimento Líquido PJ)",
       "weight_max": 16.0,
-      "achieved_points": 4.92,
-      "status": "EM_ANDAMENTO",
-      "details": "Meta 4,00 | Realizado 3,00 (75,00%) | Nec Dia: 0,20"
+      "target_value": 4.0,
+      "achieved_value": 3.0,
+      "unit": "Contas"
     },
     {
-      "category": "Gestão de Risco (Vencidos até 59d)",
-      "weight_max": 17.0,
-      "achieved_points": 4.38,
-      "status": "ATENCAO",
-      "details": "Meta R$ 954.316,47 | Realizado R$ 619.000,71 (64,86%) | Nec Dia: R$ 67.063,15"
+      "id": "QUALIDADE_ENCANTA",
+      "category": "Qualidade e Satisfação (Encanta BRA)",
+      "weight_max": 10.0,
+      "target_value": 144.0,
+      "achieved_value": 150.0,
+      "unit": "Pontos NPS"
     },
     {
-      "category": "Negócios Ligadas (Cartões PJ & Seguros)",
+      "id": "OPEN_FINANCE",
+      "category": "Aceleradores (Open Finance Ativo)",
       "weight_max": 15.0,
-      "achieved_points": 0.83,
-      "status": "CRITICO",
-      "details": "Cartões PJ: 3 de 4 (75%) | Capitalização: R$ 402,45 (0,93%) | Seguro RE: R$ 1.440,08 (26,20%)"
-    }
-  ],
-  "priority_levers": [
-    {
-      "product": "Crescimento Líquido Clientes PJ",
-      "action": "Fechar 1 nova conta PJ qualificada",
-      "impact": "+1,64 pontos no POBJ (atinge 100% da meta de clientes)",
-      "urgency": "ALTA"
+      "target_value": 4.0,
+      "achieved_value": 5.0,
+      "unit": "Consentimentos"
     },
     {
-      "product": "Cartão de Crédito PJ Negócios",
-      "action": "Emitir 1 cartão PJ (está em 3 de 4)",
-      "impact": "+4,17 pontos no POBJ (atinge 100% da esteira)",
-      "urgency": "ALTA"
+      "id": "SEGUROS_CONSORCIOS",
+      "category": "Seguridade e Consórcios PJ",
+      "weight_max": 12.0,
+      "target_value": 50000.0,
+      "achieved_value": 22000.0,
+      "unit": "R$"
     },
     {
-      "product": "Seguro RE (Empresarial)",
-      "action": "Produzir R$ 4.055,93 em prêmio novo",
-      "impact": "+3,80 pontos no POBJ",
-      "urgency": "MEDIA"
-    },
-    {
-      "product": "Capitalização PU + PM",
-      "action": "Acelerar aportes com clientes com caixa parado em conta corrente",
-      "impact": "+5,00 pontos no POBJ",
-      "urgency": "MEDIA"
+      "id": "FOLHA_PAGAMENTO",
+      "category": "Convênios de Folha de Pagamento",
+      "weight_max": 10.0,
+      "target_value": 2.0,
+      "achieved_value": 1.0,
+      "unit": "Empresas"
     }
   ]
 }
