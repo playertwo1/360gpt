@@ -1,0 +1,158 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000011",
+  "name": "WF-11 — Diretor 360 — Orquestrador Mestre do MVP",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 1 }] } },
+      "id": "schedule-queue",
+      "name": "01 Verificar fila",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1040, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/claim",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({worker_id: 'n8n-wf11-master'})}}",
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "claim-job",
+      "name": "02 Reservar job com lease",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-800, 120],
+      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const job = $input.first().json;\nif (job?.empty === true) return [];\nif (job?.ok !== true) throw new Error(`CLAIM_${job?.error ?? 'INVALID'}`);\nif (!job.job_id || !job.lease_token || !job.document?.download_path) throw new Error('INVALID_JOB_CONTRACT');\nif (job.security?.external_effects_allowed !== false) throw new Error('EXTERNAL_EFFECTS_NOT_BLOCKED');\nreturn [{json: {...job, orchestration_version: '1.0.0', started_by: 'WF-11'}}];"
+      },
+      "id": "validate-job",
+      "name": "03 Validar contrato e segurança",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-560, 120]
+    },
+    {
+      "parameters": {
+        "url": "={{'https://visao-360-diretor.fael360092.chatgpt.site' + $json.document.download_path}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "X-Bridge-Lease-Token", "value": "={{$json.lease_token}}" }] },
+        "options": { "response": { "response": { "responseFormat": "file", "outputPropertyName": "document" } }, "timeout": 30000 }
+      },
+      "id": "download-file",
+      "name": "04 Baixar original protegido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-320, 120],
+      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://document-worker:8787/v1/process",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "X-Job-Id", "value": "={{$('03 Validar contrato e segurança').item.json.job_id}}" },
+          { "name": "X-Content-Trust", "value": "UNTRUSTED" }
+        ] },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": { "parameters": [
+          { "parameterType": "formData", "name": "metadata", "value": "={{JSON.stringify($('03 Validar contrato e segurança').item.json)}}" },
+          { "parameterType": "formBinaryData", "name": "document", "inputDataFieldName": "document" }
+        ] },
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 180000 }
+      },
+      "id": "document-worker",
+      "name": "05 Leitor documental subordinado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-80, 120]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const result = $input.first().json;\nconst valid = result?.ok === true && result?.schema_version && result?.extraction;\nreturn [{json: {valid, result, job_id: $('03 Validar contrato e segurança').first().json.job_id, lease_token: $('03 Validar contrato e segurança').first().json.lease_token}}];"
+      },
+      "id": "validate-extraction",
+      "name": "06 Validar saída estruturada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [160, 120]
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{$json.valid}}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }], "combinator": "and" }
+      },
+      "id": "if-valid",
+      "name": "07 Extração válida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [400, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/complete",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({job_id: $json.job_id, lease_token: $json.lease_token, result: $json.result})}}",
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "complete-job",
+      "name": "08 Concluir e persistir",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 20],
+      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/fail",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({job_id: $json.job_id, lease_token: $json.lease_token, error_code: 'INVALID_WORKFLOW_RESULT', retryable: true})}}",
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "fail-job",
+      "name": "09 Registrar falha e retry",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 220],
+      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+    }
+  ],
+  "connections": {
+    "01 Verificar fila": { "main": [[{ "node": "02 Reservar job com lease", "type": "main", "index": 0 }]] },
+    "02 Reservar job com lease": { "main": [[{ "node": "03 Validar contrato e segurança", "type": "main", "index": 0 }]] },
+    "03 Validar contrato e segurança": { "main": [[{ "node": "04 Baixar original protegido", "type": "main", "index": 0 }]] },
+    "04 Baixar original protegido": { "main": [[{ "node": "05 Leitor documental subordinado", "type": "main", "index": 0 }]] },
+    "05 Leitor documental subordinado": { "main": [[{ "node": "06 Validar saída estruturada", "type": "main", "index": 0 }]] },
+    "06 Validar saída estruturada": { "main": [[{ "node": "07 Extração válida?", "type": "main", "index": 0 }]] },
+    "07 Extração válida?": { "main": [[{ "node": "08 Concluir e persistir", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "saveExecutionProgress": true },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

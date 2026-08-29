@@ -25,7 +25,9 @@
     "status": {
       "enum": [
         "QUEUED",
-        "CLAIMED",
+        "PROCESSING",
+        "FAILED_RETRYABLE",
+        "FAILED_FINAL",
         "SUCCEEDED",
         "FAILED",
         "DUPLICATE_IGNORED"
@@ -34,6 +36,18 @@
     "attempt_count": {
       "type": "integer",
       "minimum": 0
+    },
+    "lease_token": { "type": ["string", "null"] },
+    "lease_expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "document": {
+      "type": ["object", "null"],
+      "properties": {
+        "file_name": { "type": ["string", "null"] },
+        "mime_type": { "type": ["string", "null"] },
+        "content_hash": { "type": ["string", "null"] },
+        "download_path": { "type": "string" }
+      },
+      "additionalProperties": false
     },
     "security": {
       "type": "object",

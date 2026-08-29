@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- Roadmap canônico N0–N9 com o n8n como espinha dorsal operacional do Diretor 360.
+- WF-11, controlador mestre do MVP, com claim/lease, download protegido, worker subordinado, validação, conclusão e retry.
+- Teste estrutural automatizado do WF-11 e importação pelo script oficial.
 - Contrato Draft 2020-12 dos estados públicos do processamento assíncrono e teste automatizado do gate R1.
 - Protocolo persistente, consulta periódica de status no site e deduplicação de arquivos entre site e Telegram.
 - Diretor IA de MVP com Gemini Structured Output para interpretar documentos e devolver indicadores, pontuação, domínios e pareceres em JSON validável.
@@ -11,6 +14,8 @@
 - Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
+- Ponte de claim preparada para reservar documentos recebidos de site e Telegram sem exigir pré-revisão local do POBJ.
+- Contrato de bridge ampliado com estados de retry/falha, lease e metadados do documento.
 - Upload do site e entrada do Telegram agora somente validam, armazenam e enfileiram; OCR, parsing e IA saíram integralmente da requisição de recebimento.
 - Confirmação do Telegram passou a informar `RECEBIDO` e protocolo, sem afirmar que Gerentes Gerais processaram o arquivo antes da execução real.
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.

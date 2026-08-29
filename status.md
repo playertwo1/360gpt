@@ -15,11 +15,11 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** R1 aprovado localmente com intake assíncrono único no site e Telegram, protocolo, deduplicação entre canais, estados explícitos e polling.
+**Último marco concluído:** controlador mestre WF-11 criado, validado e importado no n8n local, ainda inativo até homologação manual.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar R2; ampliar a ponte para reservar e baixar documentos pendentes com lease e worker durável, sem pedir novo envio.
-**Checkpoint R1:** `34fb034`; versão hospedada 35 publicada com sucesso no endereço oficial e environment revision 16.
+**Próximo passo exato:** concluir N1 criando o document-worker stub interno e testar claim, download e tratamento de resultado pelo WF-11, sem pedir novo envio.
+**Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 
 ---
 

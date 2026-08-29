@@ -1,24 +1,25 @@
 # PROJECT STATE
 
-Version: 3.4.0-r1
+Version: 3.5.0-n1
 Current phase: Reconstrução do MVP real assíncrono
-Current milestone: R2 — Ponte local e worker durável
-Current task: Permitir reserva e download protegido de documentos pendentes pelo worker local
+Current milestone: N1 — Controlador mestre no n8n
+Current task: Criar worker stub interno e validar execução manual do WF-11
 Status: IN_PROGRESS
 
-Last completed: R1 aprovado localmente com intake rápido no site/Telegram, protocolo, deduplicação entre canais, estados formais e polling de cinco segundos
-Next task: Executar R2 usando arquivos já autorizados, sem pedir novo upload a Rafael
+Last completed: WF-11 criado, validado e importado no n8n local; roadmap n8n N0–N9 adotado como fonte canônica
+Next task: Adicionar document-worker stub à rede interna Docker e provar claim, download e resultado pelo WF-11
 
-Last validation: PASS — `scripts/test-r1-async-intake.ps1`, lint e build
-Last commit: 34fb0340d9a7ba243862f4c10f8f0fad96e65e78
+Last validation: PASS — `scripts/test-wf11-n8n-master.ps1`, importação do WF-11, lint e build
+Last commit: 53fd59360c2f3f9ee78713e0c79289380b5376ac
 
 Blockers:
 - none
 
 Pending decisions:
+- Publicar a próxima versão hospedada será necessário para liberar claim de documentos POBJ recebidos; publicação pública exige autorização específica.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 06:08
+Last update: 2026-08-29 06:23
 
 Resume instruction:
-Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R2; ajuste claim/file/lease e implemente o worker local durável sem solicitar upload ao usuário.
+Continue `docs/ROADMAP_N8N_MVP_REAL.md` em N1; crie o worker stub interno e valide manualmente o WF-11 sem solicitar novo upload.

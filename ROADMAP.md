@@ -1,18 +1,18 @@
 # Roadmap Oficial — Diretor 360
 
-## Reconstrução do MVP real — PLANEJADA
+## Reconstrução do MVP real com n8n — EM ANDAMENTO
 
 O roteiro canônico para substituir o processamento síncrono e chegar ao primeiro arquivo real processado pelo Telegram está em:
 
-[`docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md`](docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md)
+[`docs/ROADMAP_N8N_MVP_REAL.md`](docs/ROADMAP_N8N_MVP_REAL.md)
 
 Ordem de entrega do primeiro corte ponta a ponta:
 
-`R0 baseline → R1 ingestão assíncrona → R2 ponte/worker → R3 extração real → R4 Diretor → R5 Performance → R7 Estado/Dashboard → R8 revisão → R9 Telegram`.
+`N0 intake → N1 controlador n8n → N2 leitor → N3 Diretor → N4 Performance → N5 Estado 360 → N6 revisão → N7 Telegram`.
 
 R0 concluído e documentado em [`docs/baselines/R0_BASELINE_2026-08-29.md`](docs/baselines/R0_BASELINE_2026-08-29.md). R1 concluído localmente com intake assíncrono único, protocolo, deduplicação entre canais, estados formais e polling no site.
 
-Próximo passo oficial: executar R2. Nenhum novo teste manual de upload será solicitado antes de R2–R3 estarem implementados e validados localmente com os arquivos já autorizados.
+Próximo passo oficial: concluir N1 com o WF-11 e worker stub. Nenhum novo upload será solicitado antes de N1–N2 serem validados com arquivos já autorizados.
 
 ---
 

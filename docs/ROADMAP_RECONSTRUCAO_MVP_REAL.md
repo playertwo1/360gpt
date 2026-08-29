@@ -1,4 +1,6 @@
-# Roadmap de Reconstrução — Diretor 360 MVP Real
+# Roadmap de Reconstrução — Diretor 360 MVP Real — SUPERADO
+
+> Substituído por [`ROADMAP_N8N_MVP_REAL.md`](ROADMAP_N8N_MVP_REAL.md). O n8n passa a ser a espinha dorsal operacional e a numeração oficial passa a ser N0–N9. Este arquivo permanece como histórico.
 
 **Versão do plano:** 1.0  
 **Data:** 2026-08-29  

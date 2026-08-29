@@ -24,7 +24,7 @@ export async function POST(request: Request) {
           WHERE ar.agent_role = 'diretor' AND ar.attempt_count < ? AND (
             (ar.status IN ('QUEUED','FAILED_RETRYABLE') AND COALESCE(ar.available_at, 0) <= ?) OR
             (ar.status = 'PROCESSING' AND COALESCE(ar.lease_expires_at, 0) < ?)
-          ) AND (d.source <> 'pobj_mobile' OR d.status = 'local_reviewed')
+          ) AND d.status IN ('received', 'ready_for_processing', 'processing')
           ORDER BY d.received_at, ar.id LIMIT 1)`)
         .bind(now, leaseToken, leaseExpiresAt, BRIDGE_MAX_ATTEMPTS, now, now),
       env.DB.prepare(`SELECT ar.id, ar.document_id, ar.attempt_count, ar.lease_token, ar.lease_expires_at,
