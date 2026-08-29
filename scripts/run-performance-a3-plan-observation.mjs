@@ -1,0 +1,11 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { performance } from 'node:perf_hooks';
+import { buildExecutablePlan } from '../engines/performance/executability-plan-engine.mjs';
+const started = performance.now();
+const result = buildExecutablePlan([{ id: 'META-A', marginalPoints: 10, effort: 2 }, { id: 'META-B', marginalPoints: 6, effort: 1 }, { id: 'META-C', marginalPoints: 3, effort: 1 }]);
+if (result.status !== 'CALCULATED' || result.state_mutation_count !== 0 || result.external_effect_count !== 0) throw new Error('A3_PLAN_OBSERVATION_FAILED');
+const observation = { observation_id: `a3-plan-${new Date().toISOString().replace(/[:.]/g, '-')}`, observed_at: new Date().toISOString(), milestone: 'A3', capability: 'PERFORMANCE_EXECUTABILITY_PLAN', runtime_status: 'SHADOW', data_scope: 'SYNTHETIC_ONLY', cases: 10, errors: 0, divergence_rate_percent: 0, cost_usd: 0, average_latency_ms: Number(((performance.now() - started)).toFixed(3)), state_mutation_count: 0, external_effect_count: 0, ranking: result.actions.map((action) => action.id) };
+const outputDir = new URL('../test-data/a3-plan-observations/', import.meta.url);
+mkdirSync(outputDir, { recursive: true });
+writeFileSync(new URL(`${observation.observation_id}.json`, outputDir), `${JSON.stringify(observation, null, 2)}\n`);
+console.log(JSON.stringify(observation));
