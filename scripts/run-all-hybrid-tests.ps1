@@ -1,9 +1,9 @@
-﻿# Master Test Runner - Homologacao Completa (25 Testes)
+﻿# Master Test Runner - Homologacao Completa (26 Testes)
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (25 TESTES AUTOMATIZADOS)' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (26 TESTES AUTOMATIZADOS)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -31,7 +31,8 @@ $tests = @(
     @{ Name = 'Etapa E - Homologacao Sintetica & Evals L1-L4'; Script = 'scripts/test-phase-e-synthetic-evals.ps1' },
     @{ Name = 'Evidence Graph Humanizado & Recibos de Ingestao'; Script = 'scripts/test-phase-h-evidence-humanizer.ps1' },
     @{ Name = 'Refinamento do Domínio Performance & Simulador'; Script = 'scripts/test-phase-perf-refinements.ps1' },
-    @{ Name = 'Pipeline Local PDF -> Dados -> NBA -> Planilha'; Script = 'scripts/test-phase-pdf-pipeline.ps1' }
+    @{ Name = 'Pipeline Local PDF -> Dados -> NBA -> Planilha'; Script = 'scripts/test-phase-pdf-pipeline.ps1' },
+    @{ Name = 'Workflow n8n WF-10 (PDF -> NBA -> Planilha)'; Script = 'scripts/test-phase-n8n-workflow.ps1' }
 )
 
 $passed = 0
@@ -62,7 +63,7 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
-Write-Host '   (Pipeline PDF -> Planilha NBA 100% Certificado e Sem Timeout)        ' -ForegroundColor Yellow
+Write-Host '   (Workflow n8n WF-10 Integrado à Arquitetura 360)                     ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 

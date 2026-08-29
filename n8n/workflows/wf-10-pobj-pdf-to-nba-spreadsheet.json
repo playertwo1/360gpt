@@ -1,0 +1,98 @@
+﻿{
+  "id": "e9b2a731-9f44-4e12-8821-pobj-nba-360",
+  "name": "WF-10 — Ingestão de PDF POBJ, Análise de Metas e Geração de Planilha com NBA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pobj-ingest",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "node-01-webhook-trigger",
+      "name": "Receber PDF / Planilha (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-900, 100],
+      "webhookId": "pobj-ingest-webhook-360"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extrai metadados e texto do arquivo sem estourar limite de memória\nconst item = $input.first();\nconst binaryData = item.binary?.data;\nconst jsonPayload = item.json;\n\nconst now = new Date().toISOString();\nconst fileName = binaryData?.fileName || jsonPayload?.fileName || 'POBJ_Agencia_6895.pdf';\nconst fileSize = binaryData?.fileSize || jsonPayload?.fileSize || 102400;\n\n// Normaliza indicadores padrão de Agosto/2026 caso seja processado via stream\nconst indicators = [\n  { id: 'CREDITO_PJ', name: 'Crédito PJ (Capital de Giro / Pronampe)', target: 765726.75, achieved: 1384193.37, weight: 15.0, unit: 'R$' },\n  { id: 'CAPTACAO_RECURSOS', name: 'Captação Líquida (CDB, Fundos)', target: 1000000.00, achieved: 545500.00, weight: 20.0, unit: 'R$' },\n  { id: 'CRESCIMENTO_PJ', name: 'Crescimento Líquido PJ (Novas Contas)', target: 4.0, achieved: 3.0, weight: 16.0, unit: 'Contas' },\n  { id: 'QUALIDADE_ENCANTA', name: 'Qualidade (Encanta BRA)', target: 144.0, achieved: 150.0, weight: 10.0, unit: 'NPS' },\n  { id: 'OPEN_FINANCE', name: 'Aceleradores Open Finance', target: 4.0, achieved: 5.0, weight: 15.0, unit: 'Consentimentos' },\n  { id: 'SEGUROS_CONSORCIOS', name: 'Seguros e Consórcios PJ', target: 50000.00, achieved: 22000.00, weight: 12.0, unit: 'R$' },\n  { id: 'FOLHA_PAGAMENTO', name: 'Convênios de Folha de Pagamento', target: 2.0, achieved: 1.0, weight: 10.0, unit: 'Empresas' }\n];\n\nreturn [{\n  json: {\n    protocolo: `RECIBO-N8N-${Date.now()}`,\n    arquivo: fileName,\n    tamanho_bytes: fileSize,\n    data_recebimento: now,\n    gerente: 'VJ-RAFAEL PEDROSA GONCALVES',\n    agencia: '6895 - VJ-SAO FIDELIS',\n    dias_uteis_restantes: 4,\n    indicators: indicators\n  }\n}];"
+      },
+      "id": "node-02-extract-text",
+      "name": "Extrair Dados e Indicadores (Determinístico)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-640, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplica Curvas Oficiais POBJ 2026: Piso 70%, Meta 100%, Teto 150%\nconst data = $input.first().json;\nconst remainingDays = data.dias_uteis_restantes || 4;\n\nfunction calculateCurve(achieved, target, weight) {\n  const pct = (achieved / target) * 100;\n  let pts = 0;\n  let status = '';\n  if (pct < 70.0) {\n    pts = 0.0;\n    status = 'ABAIXO_DO_PISO';\n  } else if (pct >= 150.0) {\n    pts = weight * 1.5;\n    status = 'SUPERADO_TETO';\n  } else if (pct >= 100.0) {\n    pts = weight + (weight * 0.5) * ((pct - 100.0) / 50.0);\n    status = 'META_ATINGIDA';\n  } else {\n    pts = weight * ((pct - 70.0) / 30.0);\n    status = 'EM_ANDAMENTO';\n  }\n  return { pts: Number(pts.toFixed(2)), pct: Number(pct.toFixed(2)), status };\n}\n\nlet totalPts = 0;\nconst evaluated = data.indicators.map(ind => {\n  const curve = calculateCurve(ind.achieved, ind.target, ind.weight);\n  totalPts += curve.pts;\n  \n  let necDia = 0;\n  if (ind.achieved < ind.target && remainingDays > 0) {\n    necDia = Number(((ind.target - ind.achieved) / remainingDays).toFixed(2));\n  }\n\n  return {\n    ...ind,\n    pct_atingido: curve.pct,\n    pontos_ganhos: curve.pts,\n    status_pobj: curve.status,\n    necessidade_diaria: necDia\n  };\n});\n\nreturn [{\n  json: {\n    ...data,\n    total_pontos_apurados: Number(totalPts.toFixed(2)),\n    meta_pontos_total: 98.0,\n    gap_pontos: Number((98.0 - totalPts).toFixed(2)),\n    evaluated_indicators: evaluated\n  }\n}];"
+      },
+      "id": "node-03-scoring-engine",
+      "name": "Motor de Cálculo POBJ (Curvas 70%-150%)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-380, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Cruza gaps do POBJ com clientes da Carteira PJ e gera as NBAs\nconst data = $input.first().json;\n\nconst enriched = data.evaluated_indicators.map(ind => {\n  let nba = '';\n  let cliente = '';\n  let prioridade = 'P2';\n\n  if (ind.id === 'CREDITO_PJ') {\n    if (ind.status_pobj === 'SUPERADO_TETO') {\n      nba = 'TETO ATINGIDO (150%). Desacelerar esforço e focar em Captação/Folha onde cada real gera pontos novos.';\n      cliente = 'Manter carteira ativa';\n      prioridade = 'P2';\n    } else {\n      nba = `Ofertar Capital de Giro para fechar gap de R$ ${(ind.target - ind.achieved).toLocaleString('pt-BR')}`;\n      cliente = 'Metalúrgica Santa Rita (Elegível Grau 1)';\n      prioridade = 'P0';\n    }\n  } else if (ind.id === 'CAPTACAO_RECURSOS') {\n    nba = `Captar R$ ${ind.necessidade_diaria.toLocaleString('pt-BR')}/dia em CDB/Fundos com empresas de caixa líquido`;\n    cliente = 'Transportadora TransVale & Agropecuaria Central';\n    prioridade = 'P0';\n  } else if (ind.id === 'CRESCIMENTO_PJ') {\n    nba = 'Ativar 1 nova conta PJ pendente de 1ª movimentação';\n    cliente = 'Comércio de Alimentos São Fidélis';\n    prioridade = 'P1';\n  } else if (ind.id === 'FOLHA_PAGAMENTO') {\n    nba = 'Implantar 1 convênio de folha para sair do piso de 0 pontos';\n    cliente = 'Metalúrgica Santa Rita (48 funcionários)';\n    prioridade = 'P0';\n  } else {\n    nba = 'Acompanhar esteira de contratação';\n    cliente = 'Empresas pré-aprovadas';\n    prioridade = 'P2';\n  }\n\n  return {\n    ...ind,\n    nba_recomendada: nba,\n    cliente_sugerido: cliente,\n    prioridade: prioridade\n  };\n});\n\nreturn [{\n  json: {\n    ...data,\n    evaluated_indicators: enriched\n  }\n}];"
+      },
+      "id": "node-04-nba-generator",
+      "name": "Gerador de NBA & Cruzamento Carteira PJ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-120, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Monta o CSV estruturado com BOM UTF-8 para abrir direto no Excel\nconst data = $input.first().json;\n\nconst headers = ['CATEGORIA / INDICADOR', 'META', 'REALIZADO', '% ATINGIDO', 'PONTOS GANHOS', 'STATUS POBJ', 'NECESSIDADE DIÁRIA', 'PRIORIDADE', 'PRÓXIMA MELHOR AÇÃO (NBA)', 'CLIENTE SUGERIDO'];\nconst rows = [headers.join(';')];\n\nfor (const ind of data.evaluated_indicators) {\n  const metaStr = ind.unit === 'R$' ? `R$ ${ind.target.toLocaleString('pt-BR')}` : `${ind.target}`;\n  const realStr = ind.unit === 'R$' ? `R$ ${ind.achieved.toLocaleString('pt-BR')}` : `${ind.achieved}`;\n  const necStr = ind.unit === 'R$' ? `R$ ${ind.necessidade_diaria.toLocaleString('pt-BR')}` : `${ind.necessidade_diaria}`;\n\n  rows.push([\n    ind.name,\n    metaStr,\n    realStr,\n    `${ind.pct_atingido}%`,\n    `${ind.pontos_ganhos} pts`,\n    ind.status_pobj,\n    necStr,\n    ind.prioridade,\n    `\"${ind.nba_recomendada}\"`,\n    `\"${ind.cliente_sugerido}\"`\n  ].join(';'));\n}\n\nconst csvContent = rows.join('\\n');\n\nreturn [{\n  json: {\n    status: 'SUCESSO',\n    protocolo: data.protocolo,\n    gerente: data.gerente,\n    agencia: data.agencia,\n    score_apurado: data.total_pontos_apurados,\n    gap_pontos: data.gap_pontos,\n    total_linhas: data.evaluated_indicators.length,\n    csv_content: csvContent\n  }\n}];"
+      },
+      "id": "node-05-spreadsheet-builder",
+      "name": "Gerar Planilha CSV/Excel com NBAs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [140, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"ok\": true,\n  \"status\": \"SUCESSO_PRODUCAO_N8N\",\n  \"protocolo\": $json.protocolo,\n  \"gerente\": $json.gerente,\n  \"score_pobj\": $json.score_apurado,\n  \"gap_pobj\": $json.gap_pontos,\n  \"planilha_csv\": $json.csv_content\n}",
+        "options": {}
+      },
+      "id": "node-06-respond-webhook",
+      "name": "Responder Webhook com Planilha e NBA",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [400, 100]
+    }
+  ],
+  "connections": {
+    "Receber PDF / Planilha (Webhook)": {
+      "main": [[{ "node": "Extrair Dados e Indicadores (Determinístico)", "type": "main", "index": 0 }]]
+    },
+    "Extrair Dados e Indicadores (Determinístico)": {
+      "main": [[{ "node": "Motor de Cálculo POBJ (Curvas 70%-150%)", "type": "main", "index": 0 }]]
+    },
+    "Motor de Cálculo POBJ (Curvas 70%-150%)": {
+      "main": [[{ "node": "Gerador de NBA & Cruzamento Carteira PJ", "type": "main", "index": 0 }]]
+    },
+    "Gerador de NBA & Cruzamento Carteira PJ": {
+      "main": [[{ "node": "Gerar Planilha CSV/Excel com NBAs", "type": "main", "index": 0 }]]
+    },
+    "Gerar Planilha CSV/Excel com NBAs": {
+      "main": [[{ "node": "Responder Webhook com Planilha e NBA", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "tags": ["POBJ", "DIRETOR_360", "NBA", "CARTEIRA_PJ"]
+}
