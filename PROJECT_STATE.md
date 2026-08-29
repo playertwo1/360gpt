@@ -1,25 +1,24 @@
 # PROJECT STATE
 
-Version: 3.2.39
-Current phase: A3 — expansão progressiva de Performance em SHADOW sintético
-Current milestone: PERFORMANCE_EXECUTABILITY_PLAN — janela supervisionada concluída
-Current task: Validar importação POBJ com período e data-base inferidos automaticamente
+Version: 3.3.0-mvp
+Current phase: MVP operacional orientado pelo uso
+Current milestone: Diretor IA integrado ao upload POBJ
+Current task: Configurar credencial Gemini e executar teste ponta a ponta
 Status: IN_PROGRESS
 
-Last completed: Aprovação do proprietário para leitura supervisionada da reconciliação POBJ de agosto
-Next task: Receber/registrar evidência normativa para versionar curvas oficiais; manter dados reais, ACTIVE e efeitos externos bloqueados
+Last completed: Implementação local da chamada estruturada do Diretor IA, roteamento lógico, preenchimento do painel e memória por correções aprovadas
+Next task: Rafael criar ou fornecer com segurança uma chave Gemini API; configurar `GEMINI_API_KEY` no ambiente hospedado e testar o XLSX POBJ
 
-Last validation: PASS — 20 indicadores, 4 atingidos, 51,15 pontos e 72,58 com aceleradores
+Last validation: PASS — lint e build do site após integração do Diretor IA
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
-- Nenhum bloqueio técnico para P0–P4, P6 e preparação de P7.
-- Nenhum bloqueio documental em P5; conexão de fonte real continua bloqueada por cadastro, validação e gate técnico próprios.
+- HARD BLOCKER: não existe `GEMINI_API_KEY` configurada localmente nem no ambiente hospedado.
 
 Pending decisions:
-- Autorizar ou manter bloqueada qualquer expansão adicional em A3.
+- Nenhuma decisão de produto pendente; falta somente a credencial externa para executar a IA.
 
-Last update: 2026-08-29 04:00
+Last update: 2026-08-29 01:45
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; mantenha as capacidades Performance em SHADOW e aguarde autorização explícita antes de nova expansão. Não conecte dados reais nem permita efeitos externos.
+Configure `GEMINI_API_KEY` como segredo do Sites, execute upload da planilha POBJ autorizada, valide a leitura no painel e somente então publique o MVP.

@@ -5,6 +5,7 @@ type Suggestion = {
   key: string;
   name: string;
   value: number | null;
+  target?: number | null;
   unit: "percent" | "points" | "currency" | "count" | "unknown";
   confidence: string;
   sourceLine: string;
@@ -25,6 +26,8 @@ type Item = {
   extractionStatus?: string;
   totalPages?: number;
   indicatorSuggestions?: Suggestion[];
+  aiStatus?: string;
+  aiAnalysis?: { summary?: string; currentPoints?: number | null; targetPoints?: number | null; domains?: string[]; managerBriefs?: Array<{domain:string;diagnosis:string;recommendation:string}>; warnings?: string[] };
   approved?: Approved;
 };
 type Indicator = {
@@ -89,8 +92,8 @@ export default function PobjPanelV2() {
   }
   function openReview(item: Item) {
     setReview(item);
-    setCurrent(String(item.approved?.currentPoints ?? ""));
-    setTarget(String(item.approved?.targetPoints ?? 1000));
+    setCurrent(String(item.approved?.currentPoints ?? item.aiAnalysis?.currentPoints ?? ""));
+    setTarget(String(item.approved?.targetPoints ?? item.aiAnalysis?.targetPoints ?? 1000));
     setIndicators(
       item.approved?.indicators ??
         (item.indicatorSuggestions ?? [])
@@ -100,7 +103,7 @@ export default function PobjPanelV2() {
             name: s.name,
             value: s.value!,
             unit: s.unit === "unknown" ? "count" : s.unit,
-            target: null,
+            target: s.target ?? null,
           })),
     );
   }
@@ -256,6 +259,7 @@ export default function PobjPanelV2() {
             <h2 className="mt-2 text-2xl font-semibold">
               {review.indicatorSuggestions?.length ?? 0} indicadores encontrados
             </h2>
+            {review.aiAnalysis?.summary && <div className="mt-4 rounded-[18px] bg-[#202b3d] p-4"><small className="font-bold uppercase text-[#8fb1ff]">Leitura do Diretor IA</small><p className="mt-2 text-sm leading-5 text-[#d5dded]">{review.aiAnalysis.summary}</p>{review.aiAnalysis.domains?.length ? <p className="mt-2 text-xs text-[#9db7ed]">Gerentes acionados: {review.aiAnalysis.domains.join(', ')}</p> : null}</div>}
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Field label="Pontos atuais">
                 <input

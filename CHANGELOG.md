@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Diretor IA de MVP com Gemini Structured Output para interpretar documentos e devolver indicadores, pontuação, domínios e pareceres em JSON validável.
+- Preenchimento automático do painel POBJ com meta, realizado e pontuação extraídos pela IA.
+- Aprendizado governado por exemplos das últimas correções aprovadas por Rafael.
+
+### Changed
+- Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
+
+### Security
+- Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
+- A chave Gemini será armazenada apenas como segredo do ambiente hospedado, nunca no Git.
+
 ## [3.2.39] - 2026-08-29
 
 ### Changed

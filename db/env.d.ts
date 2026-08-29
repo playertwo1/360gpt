@@ -14,5 +14,7 @@ declare namespace Cloudflare {
     BRIDGE_ENABLED?: string;
     BRIDGE_SHARED_SECRET?: string;
     SHADOW_TELEMETRY_SECRET?: string;
+    GEMINI_API_KEY?: string;
+    GEMINI_MODEL?: string;
   }
 }

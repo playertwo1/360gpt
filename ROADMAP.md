@@ -1,4 +1,23 @@
 # 🔍 DOSSIÊ DE AUDITORIA INDEPENDENTE PELO CHATGPT CODEX
+
+## MVP operacional orientado pelo uso — EM ANDAMENTO
+
+Objetivo aprovado por Rafael: colocar o Diretor 360 em uso real pelo caminho mais curto e refinar regras, Gerentes e interface a partir das correções feitas durante o trabalho.
+
+- [x] Preservar upload autenticado, arquivo original, hash, auditoria e armazenamento existentes.
+- [x] Criar chamada única do Diretor IA para interpretar PDF, XLSX e CSV e devolver saída estruturada.
+- [x] Fazer o Diretor selecionar Conta, Performance, Financeiro e/ou Relacionamento conforme o conteúdo.
+- [x] Preencher automaticamente indicadores, metas, realizados e pontuação no painel como rascunho da IA.
+- [x] Reutilizar as últimas correções aprovadas por Rafael como exemplos nas próximas leituras.
+- [x] Manter edição e confirmação humana antes de transformar o rascunho em dado aprovado.
+- [ ] Configurar `GEMINI_API_KEY` como segredo do site hospedado.
+- [ ] Executar o primeiro teste ponta a ponta com a planilha POBJ real já autorizada.
+- [ ] Publicar o MVP após o teste aprovado.
+- [ ] Ligar o chat do Diretor às correções e consultas do Estado 360.
+- [ ] Estender o mesmo fluxo genérico aos demais documentos e Gerentes conforme surgirem casos reais.
+
+**Decisão de simplificação:** no MVP uma única chamada inteligente executa interpretação, roteamento e pareceres dos Gerentes necessários. A separação em múltiplas chamadas/agentes será feita somente quando o uso demonstrar benefício concreto.
+
 > **Data da Sessão:** 28 de agosto de 2026  
 > **Auditor Oficial Designado por Rafael:** ChatGPT Codex (OpenAI)  
 > **Objeto da Auditoria:** Revisão forense, ponto a ponto, de todas as alterações feitas pelo Antigravity na sessão de 28/08/2026 (Commits `c37cd10` até `HEAD`).

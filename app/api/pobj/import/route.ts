@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { extractText, getDocumentProxy } from 'unpdf';
 import { strFromU8, unzipSync } from 'fflate';
 import { isDenied, requireDashboardReader } from '../../reviews/shared';
+import { analyzeWithDirector } from '../../../../lib/director-ai';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -47,16 +48,32 @@ export async function POST(request: Request) {
   if (!contentMatches(bytes, mime)) return invalid('file_content_mismatch');
   const hash = `sha256:${await sha256Hex(bytes)}`;
   const duplicate = await env.DB.prepare(`SELECT id, original_name, mime_type, content_hash, raw_text, status, received_at FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile','telegram') ORDER BY received_at DESC LIMIT 1`).bind(access.userId, hash).first<ImportRow>();
-  if (duplicate) return NextResponse.json({ ok: true, duplicate: true, import: toImport(duplicate) }, { status: 200 });
   const now = Date.now();
   const id = `pobj-${crypto.randomUUID()}`;
   const runId = `pobj-run-${crypto.randomUUID()}`;
   const storageKey = `pobj/${access.userId}/${new Date(now).toISOString().slice(0, 10)}/${id}.${extension}`;
   const extraction = await extractContent(bytes, mime);
+  const learningExamples = await loadLearningExamples(access.userId);
+  let aiStatus = 'not_configured'; let aiAnalysis: Awaited<ReturnType<typeof analyzeWithDirector>> extends { analysis: infer T } ? T | undefined : never;
+  try {
+    const ai = await analyzeWithDirector({ bytes, mime, fileName: file.name, extractedText: extraction.modelText ?? extraction.previewLines.join('\n'), learningExamples });
+    aiStatus = ai.status;
+    if (ai.status === 'completed') aiAnalysis = ai.analysis;
+  } catch (error) { aiStatus = error instanceof Error ? error.message.slice(0, 80) : 'director_ai_failed'; }
+  if (aiAnalysis) extraction.indicatorSuggestions = aiAnalysis.indicators.map((item) => ({ key:item.key, name:item.name, value:item.realizado, target:item.meta, unit:item.unit, confidence:item.confidence >= 0.8 ? 'high' : 'medium', sourceLine:item.evidence }));
   const inferred = inferPeriod(extraction.previewLines);
-  const resolvedCompetence = competence || inferred.competence || 'UNKNOWN';
-  const resolvedBaseDate = baseDate || inferred.baseDate || 'UNKNOWN';
-  const metadata = { competence: resolvedCompetence, baseDate: resolvedBaseDate, inferredPeriod: !competence || !baseDate, size: file.size, reviewRequired: true, official: false, ...extraction };
+  const resolvedCompetence = competence || (aiAnalysis?.competence !== 'UNKNOWN' ? aiAnalysis?.competence : undefined) || inferred.competence || 'UNKNOWN';
+  const resolvedBaseDate = baseDate || (aiAnalysis?.baseDate !== 'UNKNOWN' ? aiAnalysis?.baseDate : undefined) || inferred.baseDate || 'UNKNOWN';
+  const safeExtraction = { extractionStatus: extraction.extractionStatus, totalPages: extraction.totalPages, previewLines: extraction.previewLines, candidateLines: extraction.candidateLines, indicatorSuggestions: extraction.indicatorSuggestions };
+  const metadata = { competence: resolvedCompetence, baseDate: resolvedBaseDate, inferredPeriod: !competence || !baseDate, size: file.size, reviewRequired: true, official: false, aiStatus, aiAnalysis, ...safeExtraction };
+
+  if (duplicate) {
+    let previous: Record<string, unknown> = {}; try { previous = JSON.parse(duplicate.raw_text ?? '{}') as Record<string, unknown>; } catch { /* ignore invalid legacy metadata */ }
+    const updated = JSON.stringify({ ...previous, ...metadata });
+    const nextStatus = aiAnalysis && duplicate.status !== 'processed' ? 'ai_review_ready' : duplicate.status;
+    await env.DB.prepare('UPDATE documents SET raw_text = ?, status = ? WHERE id = ? AND owner_id = ?').bind(updated, nextStatus, duplicate.id, access.userId).run();
+    return NextResponse.json({ ok: true, duplicate: true, import: toImport({ ...duplicate, raw_text: updated, status: nextStatus }) }, { status: 200 });
+  }
 
   await env.FILES.put(storageKey, bytes, {
     httpMetadata: { contentType: mime },
@@ -65,9 +82,9 @@ export async function POST(request: Request) {
   try {
     await env.DB.batch([
       env.DB.prepare(`INSERT INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
-        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, 'received', ?)`).bind(id, access.userId, id, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), now),
+        VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, ?, ?)`).bind(id, access.userId, id, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), aiAnalysis ? 'ai_review_ready' : 'received', now),
       env.DB.prepare(`INSERT INTO agent_runs (id, document_id, agent_role, status, input_summary, attempt_count, available_at)
-        VALUES (?, ?, 'diretor', 'QUEUED', ?, 0, ?)`).bind(runId, id, `POBJ ${resolvedCompetence} recebido pelo site; processar via ponte n8n e encaminhar ao Gerente de Performance.`, now),
+        VALUES (?, ?, 'diretor', ?, ?, 0, ?)`).bind(runId, id, aiAnalysis ? 'SUCCEEDED' : 'QUEUED', aiAnalysis ? `Diretor IA analisou o POBJ e acionou: ${aiAnalysis.domains.join(', ')}.` : `POBJ ${resolvedCompetence} recebido; aguardando configuração do Diretor IA.`, now),
       env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
         VALUES (?, ?, ?, 'ingested_and_enqueued', 'agent_run', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, runId, JSON.stringify({ documentId:id, channel:'site', competence:resolvedCompetence, baseDate:resolvedBaseDate, hash, contentTrust:'UNTRUSTED', externalEffectsAllowed:false }), now),
     ]);
@@ -76,14 +93,18 @@ export async function POST(request: Request) {
     throw error;
   }
 
-  return NextResponse.json({ ok: true, queued: true, jobId: runId, import: { id, name: safeName(file.name), mime, hash, competence: resolvedCompetence, baseDate: resolvedBaseDate, size: file.size, status: 'received', receivedAt: new Date(now).toISOString(), official: false, pipeline: 'n8n', ...extraction } }, { status: 202 });
+  return NextResponse.json({ ok: true, queued: !aiAnalysis, jobId: runId, import: { id, name: safeName(file.name), mime, hash, competence: resolvedCompetence, baseDate: resolvedBaseDate, size: file.size, status: aiAnalysis ? 'ai_review_ready' : 'received', receivedAt: new Date(now).toISOString(), official: false, pipeline: aiAnalysis ? 'director_ai' : 'awaiting_ai', aiStatus, aiAnalysis, ...safeExtraction } }, { status: 202 });
 }
 
 type ImportRow = { id: string; original_name: string | null; mime_type: string | null; content_hash: string | null; raw_text: string | null; status: string; received_at: number };
 function toImport(row: ImportRow) {
   let meta: Record<string, unknown> = {};
   try { meta = JSON.parse(row.raw_text ?? '{}') as Record<string, unknown>; } catch { /* metadata remains empty */ }
-  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', pipeline: row.status === 'processed' ? 'n8n_processed' : 'n8n', extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, indicatorSuggestions: meta.indicatorSuggestions, approved: meta.approved ?? meta.localReview };
+  return { id: row.id, name: row.original_name, mime: row.mime_type, hash: row.content_hash, status: row.status, receivedAt: new Date(row.received_at).toISOString(), competence: meta.competence, baseDate: meta.baseDate, size: meta.size, official: row.status === 'published', pipeline: row.status === 'processed' ? 'n8n_processed' : meta.aiStatus === 'completed' ? 'director_ai' : 'awaiting_ai', aiStatus: meta.aiStatus, aiAnalysis: meta.aiAnalysis, extractionStatus: meta.extractionStatus, totalPages: meta.totalPages, previewLines: meta.previewLines, candidateLines: meta.candidateLines, indicatorSuggestions: meta.indicatorSuggestions, approved: meta.approved ?? meta.localReview };
+}
+async function loadLearningExamples(ownerId: string) {
+  const result = await env.DB.prepare(`SELECT raw_text FROM documents WHERE owner_id = ? AND source = 'pobj_mobile' AND status IN ('local_reviewed','processed') ORDER BY received_at DESC LIMIT 5`).bind(ownerId).all<{ raw_text: string | null }>();
+  return (result.results ?? []).map((row) => { try { const data = JSON.parse(row.raw_text ?? '{}') as { localReview?: unknown }; return data.localReview ? JSON.stringify(data.localReview).slice(0, 4000) : ''; } catch { return ''; } }).filter(Boolean);
 }
 function invalid(error: string) { return NextResponse.json({ ok: false, error }, { status: 400 }); }
 function safeName(value: string) { return value.normalize('NFKC').replace(/[\\/\u0000-\u001f]/g, '_').slice(0, 120); }
@@ -96,9 +117,9 @@ function contentMatches(value: ArrayBuffer, mime: string) {
 }
 async function sha256Hex(value: ArrayBuffer) { const digest = await crypto.subtle.digest('SHA-256', value); return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
 
-type IndicatorSuggestion = { key: string; name: string; value: number | null; unit: 'percent' | 'points' | 'currency' | 'count' | 'unknown'; confidence: 'high' | 'medium'; sourceLine: string };
+type IndicatorSuggestion = { key: string; name: string; value: number | null; target?: number | null; unit: 'percent' | 'points' | 'currency' | 'count' | 'unknown'; confidence: 'high' | 'medium'; sourceLine: string };
 
-async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[]; candidateLines?: string[]; indicatorSuggestions?: IndicatorSuggestion[] }> {
+async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extractionStatus: string; totalPages?: number; previewLines: string[]; candidateLines?: string[]; indicatorSuggestions?: IndicatorSuggestion[]; modelText?: string }> {
   try {
     let content = ''; let totalPages: number | undefined;
     if (mime === 'application/pdf') {
@@ -111,7 +132,7 @@ async function extractContent(bytes: ArrayBuffer, mime: string): Promise<{ extra
     const indicatorSuggestions = identifyIndicators(previewLines);
     const candidateLines = indicatorSuggestions.map((item) => item.sourceLine);
     const reviewLines = [...indicatorSuggestions.map((item) => `★ ${item.name}${item.value === null ? '' : ` · ${formatDetectedValue(item.value, item.unit)}`}: ${item.sourceLine}`), ...previewLines.filter((line) => !candidateLines.includes(line))].slice(0, 60);
-    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines: reviewLines, candidateLines, indicatorSuggestions };
+    return { extractionStatus: previewLines.length ? 'extracted' : 'no_text_found', totalPages, previewLines: reviewLines, candidateLines, indicatorSuggestions, modelText: content };
   } catch { return { extractionStatus: 'extraction_failed', previewLines: [] }; }
 }
 

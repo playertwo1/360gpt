@@ -9,5 +9,7 @@ declare namespace Cloudflare {
     TELEGRAM_SEND_ACK_ENABLED?: string;
     VISAO360_N8N_URL?: string;
     SHADOW_TELEMETRY_SECRET?: string;
+    GEMINI_API_KEY?: string;
+    GEMINI_MODEL?: string;
   }
 }
