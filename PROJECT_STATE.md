@@ -1,24 +1,24 @@
 # PROJECT STATE
 
-Version: 3.3.0-mvp
+Version: 3.3.1-mvp
 Current phase: MVP operacional orientado pelo uso
 Current milestone: Diretor IA integrado ao upload POBJ
-Current task: Configurar credencial Gemini e executar teste ponta a ponta
+Current task: Executar o primeiro teste ponta a ponta do Diretor IA com a planilha POBJ real
 Status: IN_PROGRESS
 
-Last completed: Implementação local da chamada estruturada do Diretor IA, roteamento lógico, preenchimento do painel e memória por correções aprovadas
-Next task: Rafael criar ou fornecer com segurança uma chave Gemini API; configurar `GEMINI_API_KEY` no ambiente hospedado e testar o XLSX POBJ
+Last completed: Credencial Gemini cadastrada como segredo; versão 32 publicada com fallback automático para Gemini 3.5 Flash e correção do buffer de PDF
+Next task: Reenviar no site a planilha `Indicadores_POBJ_Agosto_2026_Rafael_Pedrosa.xlsx`, revisar a saída estruturada e aprovar ou corrigir o rascunho
 
-Last validation: PASS — lint e build do site após integração do Diretor IA
-Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
+Last validation: PASS — lint, build, teste de disponibilidade do Gemini 3.5 Flash e publicação da versão hospedada 32
+Last commit: 4b4299bfc11ab55358ba546d445fe41a54e72d8b
 
 Blockers:
-- HARD BLOCKER: não existe `GEMINI_API_KEY` configurada localmente nem no ambiente hospedado.
+- A planilha enviada antes da versão 32 permaneceu com status `received`; o teste funcional exige um novo envio pelo usuário autenticado no site.
 
 Pending decisions:
-- Nenhuma decisão de produto pendente; falta somente a credencial externa para executar a IA.
+- Aprovar ou corrigir a primeira leitura real apresentada pelo Diretor IA.
 
-Last update: 2026-08-29 01:45
+Last update: 2026-08-29 01:56
 
 Resume instruction:
-Configure `GEMINI_API_KEY` como segredo do Sites, execute upload da planilha POBJ autorizada, valide a leitura no painel e somente então publique o MVP.
+Reenvie a planilha POBJ no site já atualizado, valide a leitura do Diretor IA e registre as correções aprovadas como exemplo governado.

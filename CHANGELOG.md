@@ -9,10 +9,16 @@
 
 ### Changed
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
+- Publicada a versão hospedada 32 e simplificado o formulário para exigir somente a seleção do arquivo.
+
+### Fixed
+- Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.
+- Corrigido o uso de `ArrayBuffer` destacado após a extração de PDFs pelo `unpdf`.
+- Substituídas mensagens residuais do fluxo n8n pela descrição correta do Diretor IA.
 
 ### Security
 - Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
-- A chave Gemini será armazenada apenas como segredo do ambiente hospedado, nunca no Git.
+- A chave Gemini está armazenada apenas como segredo do ambiente hospedado, nunca no Git.
 
 ## [3.2.39] - 2026-08-29
 

@@ -10,9 +10,9 @@ Objetivo aprovado por Rafael: colocar o Diretor 360 em uso real pelo caminho mai
 - [x] Preencher automaticamente indicadores, metas, realizados e pontuação no painel como rascunho da IA.
 - [x] Reutilizar as últimas correções aprovadas por Rafael como exemplos nas próximas leituras.
 - [x] Manter edição e confirmação humana antes de transformar o rascunho em dado aprovado.
-- [ ] Configurar `GEMINI_API_KEY` como segredo do site hospedado.
+- [x] Configurar `GEMINI_API_KEY` como segredo do site hospedado.
 - [ ] Executar o primeiro teste ponta a ponta com a planilha POBJ real já autorizada.
-- [ ] Publicar o MVP após o teste aprovado.
+- [x] Publicar a versão técnica do MVP com fallback automático Gemini 3.7 → 3.5 Flash (versão hospedada 32); homologação funcional depende do reenvio controlado da planilha.
 - [ ] Ligar o chat do Diretor às correções e consultas do Estado 360.
 - [ ] Estender o mesmo fluxo genérico aos demais documentos e Gerentes conforme surgirem casos reais.
 
