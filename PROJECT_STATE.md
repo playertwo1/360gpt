@@ -10,7 +10,7 @@ Last completed: document-worker OCR criado e saudável na rede interna, com PDF 
 Next task: Executar o WF-11 manualmente com arquivo já autorizado e inspecionar a extração
 
 Last validation: PASS — `scripts/test-document-worker.ps1`: saúde, acesso pelo n8n, endpoint multipart, OCR JPG e extração PDF nativa; lint e build
-Last commit: e8e14e1276f212b91a98ec2a37f4a210a70b9518
+Last commit: 9e070c5ed5d62a92a5a93da29dadcb68d7c4f362
 
 Blockers:
 - none
@@ -18,7 +18,7 @@ Blockers:
 Pending decisions:
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 06:29
+Last update: 2026-08-29 06:34
 
 Resume instruction:
 Continue `docs/ROADMAP_N8N_MVP_REAL.md` em N1; valide manualmente o WF-11 com arquivo já autorizado e inspecione a extração do document-worker.

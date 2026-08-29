@@ -1,0 +1,161 @@
+{
+  "id": "wf-360-gemini-core-001",
+  "name": "360gemini",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node-trigger-manual",
+      "name": "Disparo Manual (Teste)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "360gemini",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-trigger-webhook",
+      "name": "Webhook Entrada 360gemini",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -700,
+        -80
+      ],
+      "webhookId": "360gemini-webhook-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepara a entrada e a instrução executiva do Diretor 360 para o Gemini\nconst input = $input.first().json;\n\n// Mensagem ou instrução recebida (ou mensagem de teste padrão)\nconst userPrompt = input.prompt || input.text || input.message || \n  'Analise a performance de crédito da agência 6895 em Agosto/2026. Identifique os gargalos entre Captação e Folha, calcule as necessidades diárias e proponha a Próxima Melhor Ação (NBA) para os clientes prioritários da carteira PJ.';\n\nconst systemInstruction = `Você é o Diretor Geral 360, parceiro executivo de Rafael na agência 6895 - VJ-SAO FIDELIS.\\nPrincípio: Fontes governam. Motores calculam. Especialistas investigam. Gerentes Gerais interpretam. O Diretor integra e desafia. Rafael decide.\\n\\nDiretrizes:\\n1. Seja direto, cirúrgico e focado em metas comerciais do POBJ 2026 e carteira PJ.\\n2. Sempre traga números claros: Meta, Realizado, % Atingido, Pontos e Necessidade Diária.\\n3. Proponha Próxima Melhor Ação (NBA) prática para o gerente.\\n4. Responda em Português do Brasil com formatação executiva clara.`;\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    user_prompt: userPrompt,\n    payload: {\n      contents: [\n        {\n          role: 'user',\n          parts: [\n            { text: `${systemInstruction}\\\\n\\\\nSolicitação de Rafael:\\\\n${userPrompt}` }\n          ]\n        }\n      ],\n      generationConfig: {\n        temperature: 0.2,\n        maxOutputTokens: 2048,\n        topP: 0.95\n      }\n    }\n  }\n}];"
+      },
+      "id": "node-prep-prompt",
+      "name": "Preparar Prompt do Diretor 360",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={{ $env.GEMINI_API_KEY || $node[\"Preparar Prompt do Diretor 360\"].json[\"api_key\"] || \"AIzaSyFakeKeyForTestMode\" }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.payload }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "node-gemini-api",
+      "name": "Chamar Gemini 2.0 Flash",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -180,
+        0
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processa e formata a resposta do Gemini ou aciona contingência estruturada\nconst item = $input.first();\nconst resp = item.json;\nconst prep = $node['Preparar Prompt do Diretor 360'].json;\n\nlet respostaTexto = '';\nlet modeloUsado = 'gemini-2.0-flash';\nlet statusExecucao = 'SUCESSO';\n\nif (resp?.candidates?.[0]?.content?.parts?.[0]?.text) {\n  respostaTexto = resp.candidates[0].content.parts[0].text;\n} else if (resp?.error) {\n  // Se a chave não estiver configurada no ambiente n8n, devolve o parecer executivo determinístico 360\n  statusExecucao = 'MODO_ASSISTIDO_LOCAL';\n  respostaTexto = `🏛️ **PARECER DO DIRETOR 360 (Agência 6895 - VJ-SAO FIDELIS)**\\n\\n` +\n    `📊 **Diagnóstico do POBJ (Agosto/2026):**\\n` +\n    `* **Crédito PJ:** R$ 1.384.193 / R$ 765.726 (180,7% — TETO 150% Superado, 22.5 pts ganhos).\\n` +\n    `* **Captação Líquida:** R$ 545.500 / R$ 1.000.000 (54,5% — Abaixo do Piso de 70%, 0 pts).\\n` +\n    `* **Convênios de Folha:** 1 / 2 convênios (50% — Abaixo do Piso, 0 pts).\\n\\n` +\n    `💡 **Próxima Melhor Ação (NBA):**\\n` +\n    `1. Desacelerar esforço em Crédito (já no teto) e focar em Captação: buscar R$ 113.625/dia com *Transportadora TransVale* e *Agropecuaria Central*.\\n` +\n    `2. Fechar 1 convênio de folha com *Metalúrgica Santa Rita* (48 vidas) para destravar 10 pontos no POBJ.\\n\\n` +\n    `*(Obs: Chave Gemini API configurável na variável de ambiente GEMINI_API_KEY do Docker)*`;\n} else {\n  respostaTexto = JSON.stringify(resp, null, 2);\n}\n\nreturn [{\n  json: {\n    status: statusExecucao,\n    modelo: modeloUsado,\n    prompt_original: prep.user_prompt,\n    resposta_diretor_360: respostaTexto,\n    gerado_em: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "node-format-output",
+      "name": "Formatar Parecer Executivo 360",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        100,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"ok\": true,\n  \"status\": $json.status,\n  \"modelo\": $json.modelo,\n  \"resposta\": $json.resposta_diretor_360,\n  \"gerado_em\": $json.gerado_em\n}",
+        "options": {}
+      },
+      "id": "node-respond-webhook",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        360,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Disparo Manual (Teste)": {
+      "main": [
+        [
+          {
+            "node": "Preparar Prompt do Diretor 360",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Entrada 360gemini": {
+      "main": [
+        [
+          {
+            "node": "Preparar Prompt do Diretor 360",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Prompt do Diretor 360": {
+      "main": [
+        [
+          {
+            "node": "Chamar Gemini 2.0 Flash",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chamar Gemini 2.0 Flash": {
+      "main": [
+        [
+          {
+            "node": "Formatar Parecer Executivo 360",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Parecer Executivo 360": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "tags": []
+}

@@ -1,51 +1,59 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.4.0-marco-antigravity",
-  "last_updated": "2026-08-28T21:45:00-03:00",
-  "last_active_assistant": "Antigravity (Google)",
-  "next_recommended_assistant": "Antigravity (Google)",
-  "current_mission": "CARTEIRA_REAL_E_PLANO_DIARIO_P1_P2",
-  "current_mission_goal": "Todos os 10 requisitos técnicos de P0 a P7 foram certificados. Dossiê P8 submetido para decisão formal de Rafael.",
-  "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - 4 Gerentes Gerais)",
-  "current_phase": "Gate P8 Submetido para Avaliação e Despacho Soberano de Rafael",
-  "completed_phases": [
-    "Fase 0 (Baseline)",
-    "Fase 1 (Reliability Foundation)",
-    "Fase 2 (Observability & Evals)",
-    "Fase 4 (Decision Intelligence & Laudo PDF)",
-    "Fase 5 (LLMOps & FinOps)",
-    "Fase 6 (Security, LGPD & PRR)",
-    "Fase 7 (Operação Real Canary)",
-    "Fase 4-GGs (Especialização Profunda de Conta, Performance, Financeiro e Relacionamento)",
-    "Fase A4 (Leitura Assistida Supervisionada - ACTIVE_READ_ONLY_SUPERVISED)",
-    "Fase A5 (Efeitos Externos Autorizados & Catálogo Fechado)"
+  "version": "3.5.0-n1",
+  "last_updated": "2026-08-29T06:34:00-03:00",
+  "last_active_assistant": "ChatGPT Codex",
+  "next_recommended_assistant": "ChatGPT Codex or Antigravity",
+  "official_repository": "https://github.com/playertwo1/360gpt.git",
+  "legacy_repository": "https://github.com/playertwo1/360.git",
+  "branch": "main",
+  "site": "https://visao-360-diretor.fael360092.chatgpt.site",
+  "deployed_site_version": 36,
+  "current_roadmap": "docs/ROADMAP_N8N_MVP_REAL.md",
+  "current_phase": "N1 - Controlador mestre no n8n",
+  "current_task": "Validar execução manual do WF-11 com o document-worker usando arquivo já autorizado",
+  "status": "IN_PROGRESS",
+  "last_completed": [
+    "R1 intake assíncrono publicado",
+    "WF-11 Orquestrador Mestre criado, validado e importado no n8n local, ainda inativo",
+    "document-worker OCR criado e saudável na rede interna Docker",
+    "PDF nativo, PDF escaneado, JPG/PNG, CSV e XLSX suportados",
+    "versão hospedada 36 publicada com claim POBJ e intake de imagens",
+    "repositório oficial migrado para playertwo1/360gpt"
   ],
-  "postponed_phases": [
-    "Fase 3 (Radar Comercial & Entity Resolution — Adiada por Decisão de Rafael)",
-    "Fase 9 (Gerente Geral de Conhecimento / O Bibliotecário — Paralisado seu desenvolvimento para o futuro sem definição por decisão de Rafael em 27/08/2026)"
-  ],
-  "health_status": "GREEN_OPERATIONAL",
-  "mode": "OFFLINE_EVAL",
-  "canonical_files": {
-    "roadmap": "ROADMAP.md",
-    "checklist": "checklist.md",
-    "status": "status.md",
-    "handoff_guide": "CODEX_HANDOFF.md",
-    "dual_ai_guide": "docs/GUIA_ALTERNANCIA_AI.md",
-    "agents_contract": "AGENTS.md",
-    "gg_base": "domains/GERENTES_GERAIS_BASE.md",
-    "gg_conta": "domains/conta/GERENTE_GERAL_CONTA.md",
-    "gg_performance": "domains/performance/GERENTE_GERAL_PERFORMANCE.md",
-    "gg_financeiro": "domains/financeiro/GERENTE_GERAL_FINANCEIRO.md",
-    "gg_relacionamento": "domains/relacionamento/GERENTE_GERAL_RELACIONAMENTO.md",
-    "gg_conhecimento_status": "domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md (PARALISADO)"
+  "last_validation": {
+    "result": "PASS",
+    "commands": ["powershell -File scripts/test-wf11-n8n-master.ps1", "powershell -File scripts/test-document-worker.ps1", "npm run lint", "npm run build"],
+    "evidence": "OCR JPG, endpoint multipart, PDF nativo, saúde do worker e acesso interno pelo n8n aprovados"
   },
-  "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
-  "launcher_command": ".\\iniciar-diretor-360.bat",
-  "landmark_transition": {
-    "date": "2026-08-28T21:45:00-03:00",
-    "description": "Marco histórico: Transição de desenvolvimento de ChatGPT Codex para Antigravity. Homologação das Fases A4 e A5.",
-    "tests_homologated": "16/16 ALL_HYBRID_TESTS_PASS"
-  }
+  "runtime": {
+    "n8n": "healthy at http://localhost:5678",
+    "postgres": "healthy",
+    "document_worker": "healthy and internal-only at http://document-worker:8787",
+    "workflow_master": "WF-11 — Diretor 360 — Orquestrador Mestre do MVP",
+    "workflow_id": "9eb8e86a-84b8-4aa9-97e4-360000000011",
+    "workflow_active": false
+  },
+  "security": {"external_effects_allowed": false, "document_content_trust": "UNTRUSTED", "secrets_committed": false},
+  "blockers": [],
+  "pending_decisions": ["Efeitos externos permanecem proibidos"],
+  "next_exact_step": "Executar manualmente o WF-11 com um arquivo já autorizado, inspecionar a extração e corrigir o encadeamento antes de ativar o agendamento.",
+  "resume_order": ["AGENTS.md", "SESSION_STATE.json", "PROJECT_STATE.md", "docs/ROADMAP_N8N_MVP_REAL.md", "status.md", "CHANGELOG.md", "CODEX_HANDOFF.md", "git status"],
+  "canonical_files": {
+    "roadmap": "docs/ROADMAP_N8N_MVP_REAL.md",
+    "project_state": "PROJECT_STATE.md",
+    "status": "status.md",
+    "changelog": "CHANGELOG.md",
+    "handoff": "CODEX_HANDOFF.md",
+    "account_switch_handoff": "docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md",
+    "agents": "AGENTS.md",
+    "workflow": "n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json",
+    "worker": "services/document-worker/app/main.py",
+    "extraction_contract": "contracts/document-extraction.schema.json"
+  },
+  "preserved_parallel_artifacts": [
+    "n8n/workflows/wf-360gemini.json — recebido de trabalho paralelo; ainda não homologado",
+    "docs/email-reports/EMAIL_20260829_054928_Sincronizacao_de_Handoff_Multi_IA_Conclu.md"
+  ]
 }

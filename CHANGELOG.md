@@ -17,6 +17,7 @@
 - Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
+- Checkpoint completo para troca de conta, com SESSION_STATE, PROJECT_STATE, handoff, roadmap e status sincronizados.
 - Versão hospedada 36 publicada com liberação de claim para o WF-11 e intake de imagens.
 - Repositório oficial migrado para `playertwo1/360gpt`; `playertwo1/360` preservado como remoto legado.
 - Intake do site e do Telegram ampliado para aceitar JPG/JPEG e PNG com validação de assinatura.
