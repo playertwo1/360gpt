@@ -3,6 +3,11 @@
 export const runtime = 'edge';
 
 export async function GET() {
+  // Evidence Graph is an authenticated, read-only surface.
+  const authModule = await import('../../chatgpt-auth');
+  const user = await authModule.getChatGPTUser();
+  if (!user) return NextResponse.json({ error: 'authentication_required' }, { status: 401 });
+  if (!authModule.isDashboardUserAllowed(user)) return NextResponse.json({ error: 'access_denied' }, { status: 403 });
   const humanizedGraph = {
     estado_id: "STATE_360_LIVE",
     data_geracao: new Date().toISOString(),

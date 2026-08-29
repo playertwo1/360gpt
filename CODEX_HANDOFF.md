@@ -35,7 +35,7 @@ Você deve inspecionar cada item, rodar os testes, validar a aderência estrita 
 - `scripts/test-phase-a5-external-effects.ps1` (Fase A5)
 - `scripts/test-phase-c1-daily-plan.ps1` (Fase C1)
 - `scripts/test-phase-p2-engines.ps1` (Fase P2)
-- `scripts/run-all-hybrid-tests.ps1` (Executa todos os 18 testes automatizados)
+- `scripts/run-all-hybrid-tests.ps1` (Executa a bateria atual de 23 testes automatizados)
 
 ---
 
@@ -53,7 +53,7 @@ Você deve inspecionar cada item, rodar os testes, validar a aderência estrita 
 # 1. Puxar as últimas alterações
 git pull origin main
 
-# 2. Executar a bateria completa de 18 testes
+# 2. Executar a bateria completa de 23 testes
 powershell -File scripts/run-all-hybrid-tests.ps1
 
 # 3. Compilar e publicar o site

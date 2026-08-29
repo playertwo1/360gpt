@@ -51,3 +51,5 @@ next-env.d.ts
 /test-data/a3-plan-observations/
 /Visao-360-projeto.zip
 *.zip
+__pycache__/
+*.py[cod]
