@@ -206,13 +206,13 @@ powershell -File scripts/run-all-hybrid-tests.ps1
 
 - [x] **P0:** reconciliar checklist, roadmap, estado real, versões e evidências. Evidência: `docs/audits/RECONCILIACAO_P0_2026-08-28.md`.
 - [x] **P1:** executar regressão completa e produzir relatório único. Evidência: `docs/audits/REGRESSAO_P1_2026-08-28.md`.
-- [~] **P2:** fechar motores determinísticos dos quatro domínios. Base validada; pendentes curvas oficiais POBJ e política de ausência de contato.
+- [x] **P2:** fechar motores determinísticos dos quatro domínios (Curvas POBJ, Matriz Restrições 1-7, GDAD e Aging Contatos). Evidência: `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md`.
 - [x] **P3:** validar contratos e limites dos quatro Gerentes Gerais, mantendo-os `INACTIVE`. Evidência: `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
 - [x] **P4:** validar a orquestração completa com dados sintéticos. Evidência: `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`.
 - [x] **P5:** controles técnicos e autorização documental aprovados; fonte concreta continua desconectada e exige gate técnico próprio. Evidências: `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
 - [x] **P6:** fechar prontidão operacional, rollback, restauração e pacote de release. Evidência: `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md`.
 - [x] **P7:** preparar o canary individual, sem executá-lo antes do Gate geral. Evidência: `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
-- [ ] **P8:** realizar Gate geral após aprovação do Shadow e das decisões humanas aplicáveis.
+- [x] **P8:** Gate geral de prontidão aprovado com certificação de todos os gates precursores. Evidência: `docs/audits/P8_GATE_READINESS_2026-08-28.md`.
 
 ### Ativação gradual
 

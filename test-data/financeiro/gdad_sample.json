@@ -1,0 +1,31 @@
+{
+  "period": "Agosto/2026",
+  "branch": "6895 - VJ-SAO FIDELIS",
+  "accounts": [
+    {
+      "account_name": "Receita de Intermediação Financeira (Crédito PJ)",
+      "budget_val": 420000.0,
+      "realized_val": 510000.0
+    },
+    {
+      "account_name": "Receita de Prestação de Serviços & Tarifas",
+      "budget_val": 180000.0,
+      "realized_val": 195000.0
+    },
+    {
+      "account_name": "Receita de Cobrança Bancária & Convênios",
+      "budget_val": 75000.0,
+      "realized_val": 82000.0
+    },
+    {
+      "account_name": "Custo de Captação e Funding",
+      "budget_val": 220000.0,
+      "realized_val": 240000.0
+    },
+    {
+      "account_name": "Provisão para Créditos de Liquidação Duvidosa (PCLD)",
+      "budget_val": 65000.0,
+      "realized_val": 48000.0
+    }
+  ]
+}

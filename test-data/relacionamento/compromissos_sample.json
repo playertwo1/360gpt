@@ -1,0 +1,29 @@
+[
+  {
+    "commitment_id": "CMP_001",
+    "cnpj": "12.345.678/0001-90",
+    "company_name": "Metalúrgica Santa Rita Ltda",
+    "title": "Apresentar proposta de renovação de Capital de Giro",
+    "due_date": "2026-08-30",
+    "status": "ABERTO",
+    "responsible": "Rafael Pedrosa"
+  },
+  {
+    "commitment_id": "CMP_002",
+    "cnpj": "98.765.432/0001-10",
+    "company_name": "Agropecuária Vale do Paraíba Ltda",
+    "title": "Visita presencial à fazenda sede",
+    "due_date": "2026-08-20",
+    "status": "VENCIDO",
+    "responsible": "Rafael Pedrosa"
+  },
+  {
+    "commitment_id": "CMP_003",
+    "cnpj": "45.123.890/0001-55",
+    "company_name": "Comércio de Alimentos São Fidélis Eireli",
+    "title": "Coletar balanço patrimonial 2025 assinado",
+    "due_date": "2026-08-15",
+    "status": "CONCLUIDO",
+    "responsible": "Rafael Pedrosa"
+  }
+]

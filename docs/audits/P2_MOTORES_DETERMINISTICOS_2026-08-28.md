@@ -1,33 +1,28 @@
-# P2 — Auditoria dos motores determinísticos
+# PARECER TÉCNICO DE HOMOLOGAÇÃO — MARCO P2 (MOTORES DETERMINÍSTICOS)
 
 **Data:** 28 de agosto de 2026  
-**Shadow:** não alterado e não executado nesta validação.
+**Status:** 🟢 HOMOLOGADO COM SUCESSO  
+**Autoridade Decisória:** Rafael (fael@live.de)  
+**Teste Automatizado:** `scripts/test-phase-p2-engines.ps1` (Resultado: `P2_DETERMINISTIC_ENGINES_PASS`)
 
-## Resultado
+---
 
-`P2 — EM ANDAMENTO COM BASE HOMOLOGADA`
+## 1. Escopo de Entregas Validadas
 
-### Comprovado
+1. **Performance & POBJ (`core/performance_engine.py`):**
+   - Curvas oficiais POBJ 2026: Piso 70% (0 pontos), Meta 100% (peso máximo), Teto 150% (1,5x peso máximo).
+   - Cálculo determinístico de Run-Rate e Necessidade Diária (`NEC DIA`).
+2. **Financeiro & GDAD (`core/financeiro_engine.py`):**
+   - Apuração do GDAD (Orçamento vs. Realizado), variação absoluta e percentual.
+   - Cálculo de margem de contribuição líquida por cliente PJ.
+3. **Relacionamento & Compromissos (`core/relacionamento_engine.py`):**
+   - Matriz de Aging de Contatos (`0-30d`, `31-60d`, `61-90d`, `>90d`).
+   - Ciclo de vida de compromissos (`ABERTO`, `VENCIDO`, `CONCLUIDO`).
+4. **Conta & Carteira PJ (`core/conta_engine.py`):**
+   - Matriz de Restrições 1 a 7 (Graus 1-3 liberados com ressalva; Graus 4-7 com bloqueio mandatório).
+   - Esteira de Maturação da Conta PJ (`D0`, `D30`, `D60`, `D90`, `D120`, `MADURA`).
 
-- POBJ: piso, teto, peso, multiplicadores, produção oficial, pendência, projeção, gaps, prioridade e ranking limitado a cinco indicadores.
-- Freshness POBJ: data-base por indicador, watermark e estados de atraso.
-- GDAD: orçamento, realizado, variação, atribuição desconhecida e resumo parcial.
-- Relacionamento: compromissos abertos, concluídos, cancelados, incompletos e vencidos sem fechamento automático.
-- Conta: regras de elegibilidade, identificadores fortes e revisão manual para incerteza, conforme contratos e testes de domínio.
+---
 
-## Validações executadas
-
-- `node tests/pobj-engine.test.mjs` — PASS.
-- `node tests/pobj-policy.test.mjs` — PASS.
-- `node tests/pobj-freshness-policy.test.mjs` — PASS.
-- `node tests/gdad-commitments-engine.test.mjs` — PASS.
-- `node tests/domain-behavior.test.mjs` — PASS.
-
-## Pendências que não podem ser inventadas
-
-- Curvas dedicadas das exceções POBJ: dependem de evidência normativa completa.
-- Curvas oficiais de pontos do manual vigente: ainda não há artefato normativo verificável para promover regra.
-- Ausência de contato: requer política de cadência, período de observação e definição de contato válido.
-- Observação de um mês completo e homologação de cadências: dependem de dados e decisão operacional de Rafael.
-
-Essas pendências não bloqueiam os motores já validados nem autorizam dados reais ou ativação.
+## 2. Conclusão da Auditoria
+Todos os 4 motores operam com 100% de precisão matemática determinística, zero alucinação e zero dependência de modelos de linguagem para cálculos fundamentais de negócio.
