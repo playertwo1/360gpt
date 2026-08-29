@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 29 de agosto de 2026  
-**Versão Atual da Release:** `v3.3.1-mvp`
+**Versão Atual da Release:** `v3.3.2-mvp`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -15,11 +15,11 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** versão hospedada 32 do MVP publicada com Diretor IA, saída estruturada e fallback Gemini 3.7 → 3.5 Flash.
+**Último marco concluído:** versão hospedada 33 publicada; schema e fallback do Diretor IA corrigidos e extrator simples legado bloqueado em caso de falha.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** reenviar a planilha POBJ no site, revisar a leitura real do Diretor IA e aprovar ou corrigir o rascunho; efeitos externos permanecem proibidos.
-**Checkpoint local:** `4b4299b` — versão 32 publicada; primeiro teste real ainda pendente de reenvio autenticado.
+**Checkpoint local:** `f1ec9e2` — versão 33 publicada; primeiro teste real ainda pendente de reenvio autenticado.
 
 ---
 

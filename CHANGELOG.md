@@ -15,6 +15,9 @@
 - Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.
 - Corrigido o uso de `ArrayBuffer` destacado após a extração de PDFs pelo `unpdf`.
 - Substituídas mensagens residuais do fluxo n8n pela descrição correta do Diretor IA.
+- Adequado o schema nullable ao formato aceito pelo Gemini 3.5 e permitido fallback quando o modelo principal rejeitar o schema com HTTP 400.
+- Impedido que falhas do Diretor IA abram o extrator simples legado; a interface agora distingue `IA PRONTA`, `FALHA IA` e `AGUARDANDO IA`.
+- Adicionados os pareceres individuais dos Gerentes acionados à revisão do documento.
 
 ### Security
 - Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
