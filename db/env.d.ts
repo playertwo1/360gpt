@@ -16,5 +16,6 @@ declare namespace Cloudflare {
     SHADOW_TELEMETRY_SECRET?: string;
     GEMINI_API_KEY?: string;
     GEMINI_MODEL?: string;
+    DIRECTOR_SYNC_AI_ENABLED?: string;
   }
 }

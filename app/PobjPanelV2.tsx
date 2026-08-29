@@ -78,7 +78,8 @@ export default function PobjPanelV2() {
       if (!response.ok) throw new Error(data.error);
       setItems((list) => [data.import, ...list]);
       if (data.import.aiAnalysis) openReview(data.import);
-      else setError("O Diretor IA não concluiu a leitura. O arquivo foi preservado; tente enviá-lo novamente.");
+      else if (data.import.aiStatus === "queued_async_rebuild") setError("Arquivo recebido e preservado. O processamento assíncrono está em reconstrução; não reenvie o arquivo.");
+      else setError("O Diretor IA não concluiu a leitura. O arquivo foi preservado; não é necessário reenviá-lo.");
       setFile(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (reason) {
@@ -206,7 +207,7 @@ export default function PobjPanelV2() {
             {items.map((item) => (
               <button
                 key={item.id}
-                onClick={() => item.aiAnalysis || item.approved ? openReview(item) : setError("Este envio ainda não possui leitura do Diretor IA. Reenvie o arquivo para processá-lo.")}
+                onClick={() => item.aiAnalysis || item.approved ? openReview(item) : setError("Este envio está preservado e ainda aguarda o processador assíncrono. Não reenvie o arquivo.")}
                 className="flex w-full items-center justify-between rounded-[20px] bg-[#1d1d1f] p-4 text-left"
               >
                 <span className="min-w-0">
@@ -221,7 +222,7 @@ export default function PobjPanelV2() {
                     item.official ? "text-[#55eca0]" : "text-[#ffd983]"
                   }
                 >
-                  {item.status === "processed" ? "CONCLUÍDO" : item.status === "local_reviewed" ? "REVISADO" : item.aiStatus === "completed" || item.status === "ai_review_ready" ? "IA PRONTA" : item.aiStatus?.startsWith("director_ai_") ? "FALHA IA" : "AGUARDANDO IA"}
+                  {item.status === "processed" ? "CONCLUÍDO" : item.status === "local_reviewed" ? "REVISADO" : item.aiStatus === "completed" || item.status === "ai_review_ready" ? "IA PRONTA" : item.aiStatus === "queued_async_rebuild" ? "RECEBIDO" : item.aiStatus?.startsWith("director_ai_") ? "FALHA IA" : "AGUARDANDO IA"}
                 </small>
               </button>
             ))}

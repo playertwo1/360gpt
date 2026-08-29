@@ -1,24 +1,24 @@
 # PROJECT STATE
 
-Version: 3.4.0-plan
+Version: 3.4.0-r0
 Current phase: Reconstrução do MVP real assíncrono
-Current milestone: R0 — Baseline honesto e ponto de retorno
-Current task: Criar backup e manifesto antes de remover o processamento síncrono
+Current milestone: R1 — Ingestão assíncrona única
+Current task: Remover extração pesada da requisição e formalizar estados persistentes
 Status: IN_PROGRESS
 
-Last completed: Roadmap de reconstrução do MVP real definido do intake assíncrono até o teste Telegram ponta a ponta
-Next task: Executar R0 e iniciar R1, sem pedir novo upload a Rafael
+Last completed: R0 aprovado com backup verificável, restauração isolada do n8n, baseline honesto, conjunto de aceite e kill switch do caminho síncrono
+Next task: Executar R1 sem pedir novo upload a Rafael
 
-Last validation: PASS — diagnóstico comprovou cancelamento da requisição síncrona após aproximadamente 40 segundos; n8n e ponte locais estão saudáveis
-Last commit: 065bfc2
+Last validation: PASS — backup SHA-256 conferido em duas cópias, restauração de 11 workflows, lint, build e H3_BRIDGE_AUDIT_PASS
+Last commit: HEAD (checkpoint R0)
 
 Blockers:
-- O processamento síncrono `site → Gemini` é inadequado e deve ser desativado antes de novos testes reais.
+- none
 
 Pending decisions:
 - Nenhuma para R0–R5; efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 05:55
+Last update: 2026-08-29 06:05
 
 Resume instruction:
-Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R0; conclua backup e manifesto, depois implemente R1 sem solicitar novo upload ao usuário.
+Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R1; retire a extração da requisição, formalize estados e valide localmente sem solicitar upload ao usuário.

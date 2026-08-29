@@ -46,8 +46,9 @@ export async function POST(request: Request) {
 
   const bytes = await file.arrayBuffer();
   if (!contentMatches(bytes, mime)) return invalid('file_content_mismatch');
-  // unpdf may transfer/detach its input buffer; keep an independent copy for the AI request.
-  const aiBytes = bytes.slice(0);
+  // R0 safety gate: synchronous AI is legacy and remains disabled by default.
+  const synchronousAiEnabled = env.DIRECTOR_SYNC_AI_ENABLED === 'true';
+  const aiBytes = synchronousAiEnabled ? bytes.slice(0) : null;
   const hash = `sha256:${await sha256Hex(bytes)}`;
   const duplicate = await env.DB.prepare(`SELECT id, original_name, mime_type, content_hash, raw_text, status, received_at FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile','telegram') ORDER BY received_at DESC LIMIT 1`).bind(access.userId, hash).first<ImportRow>();
   const now = Date.now();
@@ -55,13 +56,15 @@ export async function POST(request: Request) {
   const runId = `pobj-run-${crypto.randomUUID()}`;
   const storageKey = `pobj/${access.userId}/${new Date(now).toISOString().slice(0, 10)}/${id}.${extension}`;
   const extraction = await extractContent(bytes, mime);
-  const learningExamples = await loadLearningExamples(access.userId);
-  let aiStatus = 'not_configured'; let aiAnalysis: Awaited<ReturnType<typeof analyzeWithDirector>> extends { analysis: infer T } ? T | undefined : never;
-  try {
-    const ai = await analyzeWithDirector({ bytes: aiBytes, mime, fileName: file.name, extractedText: extraction.modelText ?? extraction.previewLines.join('\n'), learningExamples });
-    aiStatus = ai.status;
-    if (ai.status === 'completed') aiAnalysis = ai.analysis;
-  } catch (error) { aiStatus = error instanceof Error ? error.message.slice(0, 80) : 'director_ai_failed'; }
+  let aiStatus = 'queued_async_rebuild'; let aiAnalysis: Awaited<ReturnType<typeof analyzeWithDirector>> extends { analysis: infer T } ? T | undefined : never;
+  if (synchronousAiEnabled && aiBytes) {
+    const learningExamples = await loadLearningExamples(access.userId);
+    try {
+      const ai = await analyzeWithDirector({ bytes: aiBytes, mime, fileName: file.name, extractedText: extraction.modelText ?? extraction.previewLines.join('\n'), learningExamples });
+      aiStatus = ai.status;
+      if (ai.status === 'completed') aiAnalysis = ai.analysis;
+    } catch (error) { aiStatus = error instanceof Error ? error.message.slice(0, 80) : 'director_ai_failed'; }
+  }
   if (aiAnalysis) extraction.indicatorSuggestions = aiAnalysis.indicators.map((item) => ({ key:item.key, name:item.name, value:item.realizado, target:item.meta, unit:item.unit, confidence:item.confidence >= 0.8 ? 'high' : 'medium', sourceLine:item.evidence }));
   const inferred = inferPeriod(extraction.previewLines);
   const resolvedCompetence = competence || (aiAnalysis?.competence !== 'UNKNOWN' ? aiAnalysis?.competence : undefined) || inferred.competence || 'UNKNOWN';
@@ -86,7 +89,7 @@ export async function POST(request: Request) {
       env.DB.prepare(`INSERT INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at)
         VALUES (?, ?, 'pobj_mobile', ?, ?, ?, ?, ?, ?, ?, ?)`).bind(id, access.userId, id, safeName(file.name), mime, storageKey, hash, JSON.stringify(metadata), aiAnalysis ? 'ai_review_ready' : 'received', now),
       env.DB.prepare(`INSERT INTO agent_runs (id, document_id, agent_role, status, input_summary, attempt_count, available_at)
-        VALUES (?, ?, 'diretor', ?, ?, 0, ?)`).bind(runId, id, aiAnalysis ? 'SUCCEEDED' : 'QUEUED', aiAnalysis ? `Diretor IA analisou o POBJ e acionou: ${aiAnalysis.domains.join(', ')}.` : `POBJ ${resolvedCompetence} recebido; aguardando configuração do Diretor IA.`, now),
+        VALUES (?, ?, 'diretor', ?, ?, 0, ?)`).bind(runId, id, aiAnalysis ? 'SUCCEEDED' : 'QUEUED', aiAnalysis ? `Diretor IA analisou o POBJ e acionou: ${aiAnalysis.domains.join(', ')}.` : `Documento ${resolvedCompetence} recebido e preservado para processamento assíncrono.`, now),
       env.DB.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at)
         VALUES (?, ?, ?, 'ingested_and_enqueued', 'agent_run', ?, ?, ?)`).bind(`audit-${crypto.randomUUID()}`, access.userId, `chatgpt:${access.email}`, runId, JSON.stringify({ documentId:id, channel:'site', competence:resolvedCompetence, baseDate:resolvedBaseDate, hash, contentTrust:'UNTRUSTED', externalEffectsAllowed:false }), now),
     ]);

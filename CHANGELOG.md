@@ -25,6 +25,8 @@
 ### Security
 - Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
 - A chave Gemini está armazenada apenas como segredo do ambiente hospedado, nunca no Git.
+- R0 criou backup sem arquivos `.env` ou segredos, verificou duas cópias no Google Drive e restaurou o dump n8n em banco isolado.
+- O caminho síncrono legado passou a exigir `DIRECTOR_SYNC_AI_ENABLED=true`; ausente ou falso, nenhum modelo é chamado durante o upload.
 
 ## [3.2.39] - 2026-08-29
 

@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 29 de agosto de 2026  
-**Versão Atual da Release:** `v3.4.0-plan`
+**Versão Atual da Release:** `v3.4.0-r0`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -15,11 +15,11 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** roadmap de reconstrução do MVP real criado, do intake assíncrono ao arquivo processado ponta a ponta pelo Telegram.
+**Último marco concluído:** R0 aprovado com backup verificável, restauração isolada, baseline honesto e bloqueio padrão do processamento síncrono.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar R0 e R1 do novo roadmap; não pedir novo upload até fila, worker e extração real estarem validados localmente.
-**Checkpoint local:** `065bfc2` — versão hospedada preservada como ponto anterior à reconstrução.
+**Próximo passo exato:** executar R1; retirar extração pesada do upload e formalizar estados persistentes, sem pedir novo envio.
+**Checkpoint local:** `35f79dc` preservado no backup R0; novo checkpoint do gate será criado após publicação do kill switch.
 
 ---
 

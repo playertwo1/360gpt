@@ -60,14 +60,14 @@ O n8n transporta, agenda e observa. O worker lê documentos. Os motores calculam
 
 ## 3. Fases e gates
 
-### R0 — Baseline honesto e ponto de retorno
+### R0 — Baseline honesto e ponto de retorno — CONCLUÍDO
 
-- [ ] Criar backup verificável da versão atual antes da reconstrução.
-- [ ] Registrar commit, versão hospedada, ambiente e workflows ativos.
-- [ ] Marcar o processamento síncrono `site → Gemini` como legado e impedir novos usos.
-- [ ] Criar um conjunto mínimo de documentos reais autorizados para aceite, sem duplicá-los no Git.
+- [x] Criar backup verificável da versão atual antes da reconstrução.
+- [x] Registrar commit, versão hospedada, ambiente e workflows ativos.
+- [x] Marcar o processamento síncrono `site → Gemini` como legado e impedir novos usos.
+- [x] Criar um conjunto mínimo de documentos reais autorizados para aceite, sem duplicá-los no Git.
 
-**Gate R0:** existe ponto de retorno e nenhuma parte simulada é apresentada como funcional.
+**Gate R0:** APROVADO. Evidência: [`baselines/R0_BASELINE_2026-08-29.md`](baselines/R0_BASELINE_2026-08-29.md).
 
 ### R1 — Ingestão assíncrona única
 
@@ -206,7 +206,6 @@ R6 pode evoluir em paralelo após R5, mas nenhum domínio será marcado como ope
 
 ## 5. Próximo passo exato
 
-Executar R0: criar backup e manifesto do estado atual; em seguida iniciar R1 removendo a chamada Gemini do endpoint de upload e transformando-o em ingestão rápida com fila persistente.
+Executar R1: transformar o endpoint de upload em ingestão rápida completa, remover também a extração pesada da requisição e formalizar estados persistentes de documento e job.
 
 Não solicitar novo envio de arquivo a Rafael até R1, R2 e R3 estarem implementados e testados localmente com uma cópia autorizada já disponível na máquina.
-
