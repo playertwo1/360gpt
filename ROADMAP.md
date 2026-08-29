@@ -1,3 +1,39 @@
+# 🔍 DOSSIÊ DE AUDITORIA INDEPENDENTE PELO CHATGPT CODEX
+> **Data da Sessão:** 28 de agosto de 2026  
+> **Auditor Oficial Designado por Rafael:** ChatGPT Codex (OpenAI)  
+> **Objeto da Auditoria:** Revisão forense, ponto a ponto, de todas as alterações feitas pelo Antigravity na sessão de 28/08/2026 (Commits `c37cd10` até `HEAD`).
+
+---
+
+## 🎯 Instruções Estritas para o ChatGPT Codex:
+O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atue como **auditor independente**. O Codex deve inspecionar cada arquivo listado, validar se o código é tecnicamente sólido, se há alucinações e se os testes passam, antes de dar qualquer passo adicional:
+
+### 1. Itens Implementados no Código Local (Sujeitos a Auditoria do Codex):
+1. **Paralisação do Gerente de Conhecimento:**
+   - Conferir se `AGENTS.md`, `domains/GERENTES_GERAIS_BASE.md` e `policies/capability-registry.yaml` refletem a paralisação sem pendências ativas.
+2. **Fase A4 (Leitura Assistida Supervisionada):**
+   - Inspecionar `core/director_360_runtime.py` e rodar `scripts/test-phase-a4-read-only.ps1`.
+3. **Fase A5 (Efeitos Externos Autorizados):**
+   - Inspecionar `core/external_effects_executor.py`, `policies/external-effects-catalog.yaml` e `contracts/external-action-request.schema.json`. Rodar `scripts/test-phase-a5-external-effects.ps1`.
+4. **Marco C1 (Carteira PJ & Plano Diário):**
+   - Inspecionar `core/carteira_pj_engine.py`, `core/daily_action_plan_engine.py` e `test-data/carteira/carteira_pj_sample.json`. Rodar `scripts/test-phase-c1-daily-plan.ps1`.
+5. **Marco P2 (Motores Determinísticos dos 4 Domínios):**
+   - Inspecionar `core/performance_engine.py` (Curvas POBJ 70%-150%, Run-Rate, Nec Dia).
+   - Inspecionar `core/financeiro_engine.py` (GDAD Orçamento vs Realizado, Margem Líquida).
+   - Inspecionar `core/relacionamento_engine.py` (Aging 0-30d, 31-60d, 61-90d, >90d e Compromissos).
+   - Inspecionar `core/conta_engine.py` (Matriz de Restrições 1 a 7 e Ciclo D0-D120).
+   - Rodar `scripts/test-phase-p2-engines.ps1`.
+6. **Bateria Geral:**
+   - Executar `powershell -File scripts/run-all-hybrid-tests.ps1` (18 testes) e auditar os logs.
+
+### 2. Falhas e Não-Conformidades Apontadas por Rafael que o Codex Deve Corrigir:
+1. **Deploy no `chatgpt.site`:**
+   - O Antigravity alterou `app/page.tsx`, `app/api/ingest/telegram/route.ts` e criou `app/gate-p8/page.tsx`. Porém, o site `https://visao-360-diretor.fael360092.chatgpt.site/` NÃO foi atualizado remotamente (pois o deploy só é acionado pelo runtime do Codex). O Codex deve compilar e publicar o site oficial para que Rafael veja as telas online.
+2. **Gate P8:**
+   - O Gate P8 está **PENDENTE DE APROVAÇÃO HUMANA DE RAFAEL**. O Codex não deve tratá-lo como aprovado até que Rafael explicitamente assine o laudo.
+
+---
+
 # ROADMAP DIRETOR 360 — EVOLUÇÃO ORIENTADA À CONFIANÇA
 
 **Base:** Consolidação e Governança do Diretor 360  
