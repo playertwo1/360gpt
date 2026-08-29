@@ -10,6 +10,7 @@
 ### Changed
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
 - Publicada a versão hospedada 32 e simplificado o formulário para exigir somente a seleção do arquivo.
+- Configurado `gemini-3.5-flash-lite` como modelo principal do ambiente hospedado após o modelo maior apresentar congestionamento 503; modelos maiores permanecem como fallback.
 
 ### Fixed
 - Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.
