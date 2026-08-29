@@ -9,8 +9,8 @@ Status: IN_PROGRESS
 Last completed: R0 aprovado com backup verificável, restauração isolada do n8n, baseline honesto, conjunto de aceite e kill switch do caminho síncrono
 Next task: Executar R1 sem pedir novo upload a Rafael
 
-Last validation: PASS — backup SHA-256 conferido em duas cópias, restauração de 11 workflows, lint, build e H3_BRIDGE_AUDIT_PASS
-Last commit: HEAD (checkpoint R0)
+Last validation: PASS — backup SHA-256 conferido em duas cópias, restauração de 11 workflows, lint, build, H3_BRIDGE_AUDIT_PASS e versão hospedada 34 publicada com environment revision 16
+Last commit: 59890aab6d26979fb15009221722835aff610fc9
 
 Blockers:
 - none

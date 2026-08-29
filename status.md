@@ -19,7 +19,7 @@
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** executar R1; retirar extração pesada do upload e formalizar estados persistentes, sem pedir novo envio.
-**Checkpoint local:** `35f79dc` preservado no backup R0; novo checkpoint do gate será criado após publicação do kill switch.
+**Checkpoint R0:** `59890aa`; versão hospedada 34 e environment revision 16 com IA síncrona desativada.
 
 ---
 
