@@ -595,7 +595,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
 - [x] Registro de autorização operacional preenchido.
 - [x] Gate Shadow aprovado por Rafael em 2026-08-28.
-- [ ] Primeiro canary autorizado por Rafael.
+- [x] Primeiro canary autorizado por Rafael em 2026-08-29; execução sintética concluída e revisão humana permanece obrigatória.
 
 **Resultados permitidos:** `READY_FOR_CANARY | ADJUSTMENTS_REQUIRED | BLOCKED`.
 

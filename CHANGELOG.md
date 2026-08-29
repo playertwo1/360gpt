@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.32] - 2026-08-29
+
+### Added
+- Primeiro canary sintético de Performance autorizado e executado: 10 casos, revisão humana pendente em todos.
+
+### Security
+- Canary permaneceu sem mutações de estado e sem efeitos externos.
+
 ## [3.2.31] - 2026-08-29
 
 ### Added
