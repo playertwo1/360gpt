@@ -5,7 +5,7 @@
 **Versão Atual:** `v3.1.0-confianca`  
 **Data de Publicação:** 26 de agosto de 2026  
 **Status do Sistema:** 🟢 100% Homologado (13/13 Testes Certificados)  
-**Repositório GitHub:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Repositório GitHub:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
 
 ---
 

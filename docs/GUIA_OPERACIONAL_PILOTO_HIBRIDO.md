@@ -3,7 +3,7 @@
 
 **Versão da Release:** `v3.0.0-final-hybrid` (100% Homologado)  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360.git`  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git`  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
 ---

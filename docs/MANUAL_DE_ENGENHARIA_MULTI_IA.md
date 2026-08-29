@@ -3,7 +3,7 @@
 
 **Versão da Arquitetura:** `v3.1.0-confianca` (Baseada no `AGENTS.md` v1.11)  
 **Autoridade Decisória do Repositório:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
 **Workspace Primário:** `C:\Users\fael\Documents\Codex\2026-08-24\vamos-criar-um-progama-360-de`  
 **Workspace Secundário (Sync):** `c:\Users\fael\Downloads\A`  
 

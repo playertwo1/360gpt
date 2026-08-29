@@ -78,7 +78,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 **Data:** 26 de agosto de 2026  
 **Objetivo:** Evoluir o Diretor 360 de um conjunto de funcionalidades para uma plataforma decisória confiável, testável, observável, auditável e segura.  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*

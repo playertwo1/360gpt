@@ -8,7 +8,7 @@
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
-**Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`); `360.git` preservado como remoto legado.  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
 > **Princípio Central:**  
@@ -20,7 +20,7 @@
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** preparar/publicar a liberação de claim e intake de JPG/PNG; depois executar o WF-11 manualmente com arquivo já autorizado.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
-**Versão hospedada preparada:** 36, ainda não publicada; inclui claim do WF-11 e suporte a JPG/PNG.
+**Versão hospedada publicada:** 36; inclui claim do WF-11 e suporte a JPG/PNG.
 
 ---
 

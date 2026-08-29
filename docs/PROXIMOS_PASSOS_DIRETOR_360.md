@@ -4,7 +4,7 @@
 **Data:** 26 de agosto de 2026
 **Versão Base:** `v3.0.1-audit-tests` (Piloto Híbrido 100% Homologado)
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)
-**Repositório Oficial:** `https://github.com/playertwo1/360.git`
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git`
 
 ---
 

@@ -3,7 +3,7 @@
 **Data:** 28 de agosto de 2026  
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360.git` (Branch `main`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
 **Último Commit de Sessão:** `HEAD`
 
 ---
