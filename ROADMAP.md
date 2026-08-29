@@ -73,7 +73,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 | B | Contratos, exemplos e testes por domínio | CONCLUÍDA | Gate homologado por Rafael em 27/08/2026 |
 | C | Motores determinísticos | EM ANDAMENTO | POBJ, GDAD, estados e datas calculados sem depender de LLM |
 | D | Orquestração Diretor–Gerentes | IMPLEMENTADA (AUDITORIA PENDENTE) | Handoffs de domínio, max 4 especialistas e detecção de conflitos (`scripts/test-phase-d-orchestration.ps1` PASS) |
-| E | Homologação sintética e shadow | BLOQUEADA POR B–D | Evals aprovados, evidência completa, telemetria e rollback testado |
+| E | Homologação sintética e shadow | CONCLUÍDA NO SINTÉTICO (AUDITORIA PENDENTE) | 20 casos sintéticos avaliados (L1=100%, L2=100%, L3=100%, L4=90%, Latência=0.39ms) |
 | F | Ativação controlada | BLOQUEADA | Autorização de dados resolvida, revisão humana e promoção explícita de lifecycle |
 | G | Evolução do site | ADIADA | Decisão futura de Rafael |
 

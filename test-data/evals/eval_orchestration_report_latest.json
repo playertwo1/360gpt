@@ -1,0 +1,222 @@
+{
+  "report_id": "EVAL_ORCH_1787968636",
+  "evaluated_at": "2026-08-29T01:57:16.140227+00:00",
+  "total_cases_evaluated": 20,
+  "metrics": {
+    "l1_deterministic_accuracy_pct": 100.0,
+    "l2_data_integrity_pct": 100.0,
+    "l3_evidence_lineage_coverage_pct": 100.0,
+    "l4_decision_agreement_rate_pct": 90.0,
+    "average_latency_ms": 0.35
+  },
+  "target_slos": {
+    "min_l1_accuracy_pct": 100.0,
+    "min_l2_integrity_pct": 95.0,
+    "min_l3_coverage_pct": 100.0,
+    "min_l4_agreement_pct": 90.0,
+    "max_latency_ms": 250.0
+  },
+  "slo_compliance_status": "ALL_SLOS_MET",
+  "detailed_results": [
+    {
+      "case_id": "CASE_001",
+      "latency_ms": 0.44,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_002",
+      "latency_ms": 0.37,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_003",
+      "latency_ms": 0.35,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_004",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_005",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_006",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_007",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_008",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_009",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_010",
+      "latency_ms": 0.33,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_011",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_012",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_013",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_014",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_015",
+      "latency_ms": 0.32,
+      "restriction_grade": 1,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_016",
+      "latency_ms": 0.34,
+      "restriction_grade": 3,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_017",
+      "latency_ms": 0.32,
+      "restriction_grade": 3,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_018",
+      "latency_ms": 0.32,
+      "restriction_grade": 3,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": true
+    },
+    {
+      "case_id": "CASE_019",
+      "latency_ms": 0.42,
+      "restriction_grade": 5,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": false
+    },
+    {
+      "case_id": "CASE_020",
+      "latency_ms": 0.44,
+      "restriction_grade": 5,
+      "overall_status": "READY",
+      "l1_deterministic": true,
+      "l2_extraction": true,
+      "l3_reasoning": true,
+      "l4_decision": false
+    }
+  ]
+}
