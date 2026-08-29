@@ -1,0 +1,47 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://360.internal/contracts/carteira-specialist-result.schema.json",
+  "title": "CarteiraSpecialistResult",
+  "type": "object",
+  "required": [
+    "cnpj",
+    "razao_social",
+    "evaluated_at",
+    "specialist_results",
+    "next_best_actions",
+    "evidence_nodes"
+  ],
+  "properties": {
+    "cnpj": { "type": "string" },
+    "razao_social": { "type": "string" },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "specialist_results": {
+      "type": "object",
+      "required": ["cadastro", "restricoes", "maturacao", "elegibilidade"],
+      "properties": {
+        "cadastro": { "type": "object" },
+        "restricoes": { "type": "object" },
+        "maturacao": { "type": "object" },
+        "elegibilidade": { "type": "object" }
+      }
+    },
+    "next_best_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action_id", "product", "priority", "rationale"],
+        "properties": {
+          "action_id": { "type": "string" },
+          "product": { "type": "string" },
+          "priority": { "type": "string", "enum": ["P0", "P1", "P2"] },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "evidence_nodes": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "additionalProperties": false
+}

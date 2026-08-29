@@ -56,7 +56,8 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 - **Homologação Concluída:** Fases A4 (`ACTIVE_READ_ONLY_SUPERVISED`) e A5 (`EFEITOS_EXTERNOS_AUTORIZADOS`) 100% testadas e aprovadas com 16/16 testes verdes.
 - **Backup de Marco:** `backup-MARCO-CODEX-PARA-ANTIGRAVITY-A4-A5-20260828.zip` registrado no Google Drive e repositório.
 - **Próximas Frentes Imediatas:** 
-  1. **Marco C1:** Ingestão da Base da Carteira PJ Real com triagem do GG Conta e GG Financeiro.
+  1. **Marco C1:** Ingestão da Base da Carteira PJ Real com triagem do GG Conta e GG Financeiro. (CONCLUÍDO)
+  2. **Marco C2:** Especialistas de Conta PJ (Cadastro, Restrições 1-7, Maturação D0-D120 e Elegibilidade de Produtos) 100% integrados (`scripts/test-phase-c2-carteira-specialists.ps1` PASS).
   2. **Plano Diário Integrado:** Cruzamento automático de Gaps do POBJ com empresas elegíveis da carteira.
 
 ---

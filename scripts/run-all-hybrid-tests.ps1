@@ -1,9 +1,9 @@
-﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4/A5 + C1 + P2 + Etapa D + Etapa E (20 Testes)
+﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4/A5 + C1/C2 + P2 + Etapas D/E (21 Testes)
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (TODAS AS FASES + ETAPAS D/E)' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (TODAS AS FASES + C1/C2/D/E)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -24,6 +24,7 @@ $tests = @(
     @{ Name = 'Fase A4 - Leitura Assistida Supervisionada'; Script = 'scripts/test-phase-a4-read-only.ps1' },
     @{ Name = 'Fase A5 - Efeitos Externos Autorizados'; Script = 'scripts/test-phase-a5-external-effects.ps1' },
     @{ Name = 'Fase C1 - Ingestao Carteira PJ & Plano Diario'; Script = 'scripts/test-phase-c1-daily-plan.ps1' },
+    @{ Name = 'Fase C2 - Especialistas de Conta & Esteira PJ'; Script = 'scripts/test-phase-c2-carteira-specialists.ps1' },
     @{ Name = 'Fase P2 - Motores Deterministicos dos 4 Dominios'; Script = 'scripts/test-phase-p2-engines.ps1' },
     @{ Name = 'Etapa D - Orquestracao Diretor-Gerentes Gerais'; Script = 'scripts/test-phase-d-orchestration.ps1' },
     @{ Name = 'Etapa E - Homologacao Sintetica & Evals L1-L4'; Script = 'scripts/test-phase-e-synthetic-evals.ps1' }
@@ -57,7 +58,7 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
-Write-Host '   (Etapas D e E: Orquestracao e Evals Sinteticos L1-L4 Aprovados)' -ForegroundColor Yellow
+Write-Host '   (Marco C2: Especialistas de Conta e Esteira PJ 100% Certificados)    ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
