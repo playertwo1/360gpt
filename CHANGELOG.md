@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.2.36] - 2026-08-29
+
+### Changed
+- Revalidada a preparação de ingestão sintética C1/C2: carteira PJ, plano diário, especialistas de Conta e linhagem.
+
 ## [3.2.35] - 2026-08-29
 
 ### Changed
