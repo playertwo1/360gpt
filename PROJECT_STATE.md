@@ -10,13 +10,14 @@ Last completed: R1 aprovado localmente com intake rápido no site/Telegram, prot
 Next task: Executar R2 usando arquivos já autorizados, sem pedir novo upload a Rafael
 
 Last validation: PASS — `scripts/test-r1-async-intake.ps1`, lint e build
-Last commit: 59890aab6d26979fb15009221722835aff610fc9
+Last commit: 34fb0340d9a7ba243862f4c10f8f0fad96e65e78
 
 Blockers:
 - none
 
 Pending decisions:
-- Nenhuma para R0–R5; efeitos externos continuam fora do escopo.
+- Publicação da versão hospedada 35 do R1 exige autorização explícita porque o site tem acesso público; isso não bloqueia R2.
+- Efeitos externos continuam fora do escopo.
 
 Last update: 2026-08-29 07:05
 
