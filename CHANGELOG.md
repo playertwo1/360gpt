@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.34] - 2026-08-29
+
+### Added
+- Onda A4 somente leitura supervisionada validada para os quatro domínios, com Evidence Graph íntegro.
+
+### Security
+- Despacho humano obrigatório preservado; nenhum efeito externo foi executado.
+
 ## [3.2.33] - 2026-08-29
 
 ### Changed

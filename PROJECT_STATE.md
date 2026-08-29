@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.33
+Version: 3.2.34
 Current phase: A3 — expansão progressiva de Performance em SHADOW sintético
 Current milestone: PERFORMANCE_EXECUTABILITY_PLAN — janela supervisionada concluída
-Current task: Preparar próxima onda de ativação somente leitura supervisionada
+Current task: Manter onda somente leitura supervisionada e preparar revisão de dados autorizados
 Status: IN_PROGRESS
 
-Last completed: Canary sintético Performance aprovado por Rafael após revisão humana
+Last completed: Onda A4 somente leitura supervisionada validada com os quatro gerentes e Evidence Graph íntegro
 Next task: Receber/registrar evidência normativa para versionar curvas oficiais; manter dados reais, ACTIVE e efeitos externos bloqueados
 
-Last validation: PASS — canary sintético, 0 mutações e 0 efeitos externos
+Last validation: PASS — A4 read-only, 4 domínios, 8 nós de linhagem, sem efeitos externos
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -19,7 +19,7 @@ Blockers:
 Pending decisions:
 - Autorizar ou manter bloqueada qualquer expansão adicional em A3.
 
-Last update: 2026-08-29 02:30
+Last update: 2026-08-29 02:45
 
 Resume instruction:
 Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; mantenha as capacidades Performance em SHADOW e aguarde autorização explícita antes de nova expansão. Não conecte dados reais nem permita efeitos externos.
