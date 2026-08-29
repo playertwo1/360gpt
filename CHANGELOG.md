@@ -18,6 +18,7 @@
 - Configurado `gemini-3.5-flash-lite` como modelo principal do ambiente hospedado após o modelo maior apresentar congestionamento 503; modelos maiores permanecem como fallback.
 - Suspensos novos testes manuais do processamento síncrono; a próxima implementação oficial passa a ser upload rápido com fila persistente e processamento local assíncrono.
 - Publicada a versão hospedada 34 com `DIRECTOR_SYNC_AI_ENABLED=false` na revisão de ambiente 16.
+- Publicada a versão hospedada 35 com o intake assíncrono do R1 no endereço oficial.
 
 ### Fixed
 - Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.

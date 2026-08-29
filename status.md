@@ -19,7 +19,7 @@
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Próximo passo exato:** executar R2; ampliar a ponte para reservar e baixar documentos pendentes com lease e worker durável, sem pedir novo envio.
-**Checkpoint R1:** `34fb034`; versão hospedada 35 salva e ainda não publicada, pois o endereço tem acesso público. Versão pública 34 permanece ativa.
+**Checkpoint R1:** `34fb034`; versão hospedada 35 publicada com sucesso no endereço oficial e environment revision 16.
 
 ---
 

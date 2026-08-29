@@ -16,10 +16,9 @@ Blockers:
 - none
 
 Pending decisions:
-- Publicação da versão hospedada 35 do R1 exige autorização explícita porque o site tem acesso público; isso não bloqueia R2.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 07:05
+Last update: 2026-08-29 06:08
 
 Resume instruction:
 Continue `docs/ROADMAP_RECONSTRUCAO_MVP_REAL.md` em R2; ajuste claim/file/lease e implemente o worker local durável sem solicitar upload ao usuário.
