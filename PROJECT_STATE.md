@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.27
+Version: 3.2.28
 Current phase: A3 — expansão progressiva de Performance em SHADOW sintético
-Current milestone: PERFORMANCE_EXECUTABILITY_PLAN em avaliação inicial
-Current task: Validar a nova capacidade de plano executável em janela supervisionada
+Current milestone: PERFORMANCE_EXECUTABILITY_PLAN — janela supervisionada concluída
+Current task: Manter A3 restrita e preparar próxima expansão somente após autorização explícita
 Status: IN_PROGRESS
 
-Last completed: `PERFORMANCE_EXECUTABILITY_PLAN` implementado, testado e promovido isoladamente para SHADOW sintético
-Next task: Executar observações supervisionadas da nova capacidade; não promover outra capacidade até nova autorização explícita
+Last completed: `PERFORMANCE_EXECUTABILITY_PLAN` concluiu 3/3 observações (30/30 casos) em SHADOW sintético
+Next task: Aguardar autorização explícita para nova capacidade; manter dados reais, ACTIVE e efeitos externos bloqueados
 
-Last validation: PASS — ranking consultivo, manifesto, lifecycle e lint aprovados
+Last validation: PASS — 3/3 observações, 30/30 casos, 0 erros, 0% divergência, custo US$ 0,00, 0 mutações e 0 efeitos externos
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -19,7 +19,7 @@ Blockers:
 Pending decisions:
 - Autorizar ou manter bloqueada qualquer expansão adicional em A3.
 
-Last update: 2026-08-28 21:05
+Last update: 2026-08-29 00:25
 
 Resume instruction:
-Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde autorização explícita de Rafael antes de expandir A3. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.
+Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; mantenha as capacidades Performance em SHADOW e aguarde autorização explícita antes de nova expansão. Não conecte dados reais nem permita efeitos externos.

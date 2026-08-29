@@ -183,3 +183,8 @@ Melhorias de governança permanecem no backlog:
 - Build aprovado e lint sem erros; drill-down publicado no site na versão 25 após confirmação explícita.
 - Correção de navegação publicada na versão 26: cartão usa carregamento direto e o clique foi validado até `/state` no ambiente publicado.
 - Correção da API de auditoria publicada na versão 27: removido filtro por coluna inexistente em `audit_log`; tela validada com Estado `READY`, linhagem `COMPLETE` e evento `state_published`.
+
+### Atualização 29/08/2026 — A3 plano executável homologado
+- `PERFORMANCE_EXECUTABILITY_PLAN` concluiu 3/3 observações sintéticas consecutivas (30/30 casos).
+- Todas as medições: runtime `SHADOW`, `SYNTHETIC_ONLY`, zero erros, 0% divergência, custo US$ 0,00, zero mutações e zero efeitos externos.
+- Ranking permanece consultivo; nenhuma conta foi selecionada e nenhuma capacidade adicional foi promovida.

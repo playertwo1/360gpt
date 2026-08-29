@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.28] - 2026-08-29
+
+### Changed
+- Homologada a janela supervisionada de `PERFORMANCE_EXECUTABILITY_PLAN` em A3, com três observações consecutivas aprovadas (30/30 casos).
+- ROADMAP, PROJECT_STATE e status sincronizados; novas expansões aguardam autorização explícita.
+
+### Security
+- Execuções permaneceram em `SHADOW` e `SYNTHETIC_ONLY`, sem dados reais, mutações, efeitos externos ou agentes `ACTIVE`.
+
 ## [3.2.27] - 2026-08-28
 
 ### Added
