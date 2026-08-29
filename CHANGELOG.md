@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.2.33] - 2026-08-29
+
+### Changed
+- Gate P8 e primeiro canary sintético Performance aprovados por Rafael após revisão humana.
+
 ## [3.2.32] - 2026-08-29
 
 ### Added

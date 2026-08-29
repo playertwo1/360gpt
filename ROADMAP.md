@@ -589,7 +589,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 **Gate P7:** canary pronto, mas não executado antes do Gate geral.
 
-### P8 — Gate geral de prontidão — PARCIALMENTE APROVADO; AGUARDA DECISÕES HUMANAS REMANESCENTES
+### P8 — Gate geral de prontidão — APROVADO PARA CANARY SINTÉTICO
 
 - [ ] Gates P0–P7 concluídos.
 - [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
