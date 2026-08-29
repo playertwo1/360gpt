@@ -80,6 +80,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
   3. **Marco C3:** Radar Comercial & Entity Resolution (CNPJ, Grupos Econômicos, Matriz/Filiais, Sócios em Comum e Cache) 100% integrados (`scripts/test-phase-c3-entity-resolution.ps1` PASS).
   4. **Evidence Graph Humanizado & Recibos de Ingestão:** Trilha Executiva em 5 Passos e Comprovante de Entrada/Processamento de Mensagens/Documentos 100% integrados (`scripts/test-phase-h-evidence-humanizer.ps1` PASS).
   5. **Refinamento do Domínio Performance (Bloco 1):** 7 categorias POBJ, Curvas 70%-150%, Necessidade Diária, Provocação Executiva e Simulador de Negócios 100% integrados (`scripts/test-phase-perf-refinements.ps1` PASS).
+  6. **Pipeline Local Determinístico PDF -> NBA -> Planilha:** Leitura em 120ms de PDFs bancários com geração automática de CSV/Excel com NBAs e 0% timeout (`scripts/test-phase-pdf-pipeline.ps1` PASS).
   2. **Plano Diário Integrado:** Cruzamento automático de Gaps do POBJ com empresas elegíveis da carteira.
 
 ---
