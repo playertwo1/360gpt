@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.38] - 2026-08-29
+
+### Changed
+- Registrada aprovação de Rafael para uso somente leitura supervisionado da reconciliação POBJ de agosto.
+
+### Security
+- Fonte permanece `DRAFT` e desconectada até o gate técnico; nenhum processamento ou efeito externo foi iniciado.
+
 ## [3.2.37] - 2026-08-29
 
 ### Added

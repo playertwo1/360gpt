@@ -2,6 +2,7 @@
   "registry_id": "POBJ_AUGUST_2026_RECONCILIATION",
   "version": "1.0.0",
   "status": "DRAFT",
+  "owner_approval": {"status":"OWNER_APPROVED_FOR_READ_ONLY","approved_by":"Rafael","approved_at":"2026-08-29","scope":"POBJ agosto/2026; somente meta, realizado e periodo"},
   "purpose": "Reconciliação local antes de qualquer ativação da fonte POBJ real",
   "period": "2026-08",
   "base_date": "2026-08-14",
