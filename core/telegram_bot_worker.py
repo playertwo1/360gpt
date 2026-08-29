@@ -5,8 +5,10 @@ from typing import Dict, Any, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 try:
     from core.performance_engine import PerformanceEngine
+    from core.daily_action_plan_engine import DailyActionPlanEngine
 except ImportError:
     from performance_engine import PerformanceEngine
+    from daily_action_plan_engine import DailyActionPlanEngine
 
 class TelegramBotWorker:
     def __init__(self):
@@ -17,6 +19,7 @@ class TelegramBotWorker:
         self.file_base = f"https://api.telegram.org/file/bot{self.bot_token}" if self.bot_token else ""
         self.last_update_id = 0
         self.performance_engine = PerformanceEngine()
+        self.daily_plan_engine = DailyActionPlanEngine()
         os.makedirs("documents", exist_ok=True)
         
     def load_env(self):
@@ -168,6 +171,7 @@ class TelegramBotWorker:
                 f"👋 *Olá, {user_name}! Bem-vindo ao Diretor 360 PJ.*\n\n"
                 "Sou o seu copiloto executivo nas 4 áreas centrais de negócio (Conta, Performance, Financeiro e Relacionamento).\n\n"
                 "📋 *Comandos Rápidos:*\n"
+                "• `/hoje` ou `/planodiario` - 🎯 Fila de Atendimento do Dia (Gaps POBJ + Clientes)\n"
                 "• `/metas` ou `/pobj` - Score do POBJ, Gaps e Alavancas de Produção\n"
                 "• `/status` - Estado do sistema e métricas FinOps\n"
                 "• `/analisar <CNPJ ou Nome>` - Análise 360 completa da empresa\n"
@@ -176,6 +180,11 @@ class TelegramBotWorker:
                 "Envie balanços, relatórios de metas POBJ, extratos ou DREs para análise instantânea!"
             )
             self.send_message(chat_id, welcome_msg)
+            return
+
+        if text.startswith("/hoje") or text.startswith("/planodiario") or "plano" in text.lower() or "hoje" in text.lower():
+            briefing = self.daily_plan_engine.format_telegram_daily_briefing()
+            self.send_message(chat_id, briefing)
             return
 
         if text.startswith("/metas") or text.startswith("/pobj") or "meta" in text.lower() or "pobj" in text.lower():

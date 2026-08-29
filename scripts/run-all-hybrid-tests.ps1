@@ -1,9 +1,9 @@
-﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4 e A5
+﻿# Master Test Runner - Homologacao Completa H3 a H10 + A4/A5 + C1 (Plano Diario)
 $ErrorActionPreference = 'Stop'
 
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (4 DOMINIOS + A4/A5)      ' -ForegroundColor Yellow
+Write-Host '   DIRETOR 360 — BATERIA DE HOMOLOGACAO GERAL (FASES 0 A 8 + C1)        ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
@@ -22,7 +22,8 @@ $tests = @(
     @{ Name = 'Fase 6 - Security, LGPD & PRR'; Script = 'scripts/test-phase6-security-prr.ps1' },
     @{ Name = 'Fase 7 - Simulacao Sintetica Canary'; Script = 'scripts/test-phase7-canary-rollout.ps1' },
     @{ Name = 'Fase A4 - Leitura Assistida Supervisionada'; Script = 'scripts/test-phase-a4-read-only.ps1' },
-    @{ Name = 'Fase A5 - Efeitos Externos Autorizados'; Script = 'scripts/test-phase-a5-external-effects.ps1' }
+    @{ Name = 'Fase A5 - Efeitos Externos Autorizados'; Script = 'scripts/test-phase-a5-external-effects.ps1' },
+    @{ Name = 'Fase C1 - Ingestao Carteira PJ & Plano Diario'; Script = 'scripts/test-phase-c1-daily-plan.ps1' }
 )
 
 $passed = 0
@@ -53,7 +54,7 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host "   TODOS OS $passed DE $total TESTES FORAM 100% HOMOLOGADOS!            " -ForegroundColor Green
-Write-Host '   (A4: Leitura Assistida Ativa | A5: Efeitos Externos Autorizados)' -ForegroundColor Yellow
+Write-Host '   (Marco C1 e Plano Diário Integrado Operacionais)' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 

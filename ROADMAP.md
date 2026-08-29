@@ -15,6 +15,16 @@
 
 ---
 
+## 🏆 Marco Histórico de Transição (28 de Agosto de 2026)
+- **Origem / Destino:** Transição de desenvolvimento concluída entre ChatGPT Codex (OpenAI) e Antigravity (Google).
+- **Homologação Concluída:** Fases A4 (`ACTIVE_READ_ONLY_SUPERVISED`) e A5 (`EFEITOS_EXTERNOS_AUTORIZADOS`) 100% testadas e aprovadas com 16/16 testes verdes.
+- **Backup de Marco:** `backup-MARCO-CODEX-PARA-ANTIGRAVITY-A4-A5-20260828.zip` registrado no Google Drive e repositório.
+- **Próximas Frentes Imediatas:** 
+  1. **Marco C1:** Ingestão da Base da Carteira PJ Real com triagem do GG Conta e GG Financeiro.
+  2. **Plano Diário Integrado:** Cruzamento automático de Gaps do POBJ com empresas elegíveis da carteira.
+
+---
+
 ## Painel atual — Arquitetura dos Agentes
 
 **Atualizado em:** 27 de agosto de 2026  

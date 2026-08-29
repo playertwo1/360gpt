@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.3.0-a4-a5-homologado",
-  "last_updated": "2026-08-28T21:40:00-03:00",
+  "version": "3.4.0-marco-antigravity",
+  "last_updated": "2026-08-28T21:45:00-03:00",
   "last_active_assistant": "Antigravity (Google)",
-  "next_recommended_assistant": "Antigravity (Google) ou ChatGPT Codex (OpenAI)",
-  "current_mission": "A4_A5_HOMOLOGADO",
-  "current_mission_goal": "Fase A4 (Leitura Assistida Supervisionada) e Fase A5 (Efeitos Externos Autorizados) 100% implementadas e homologadas.",
+  "next_recommended_assistant": "Antigravity (Google)",
+  "current_mission": "CARTEIRA_REAL_E_PLANO_DIARIO_P1_P2",
+  "current_mission_goal": "Transição concluída do Codex para o Antigravity. Fases A4/A5 homologadas. Avançando para Ingestão da Carteira PJ (C1) e Plano Diário Integrado Performance + Conta.",
   "current_roadmap": "ROADMAP.md (Evolucao Orientada a Confianca - 4 Gerentes Gerais)",
-  "current_phase": "A4 (Leitura Assistida) e A5 (Efeitos Externos com Human-in-the-Loop) Homologados",
+  "current_phase": "Marco de Transição Codex -> Antigravity Concluído | Iniciando C1 & Plano Diário",
   "completed_phases": [
     "Fase 0 (Baseline)",
     "Fase 1 (Reliability Foundation)",
@@ -42,5 +42,10 @@
     "gg_conhecimento_status": "domains/conhecimento/GERENTE_GERAL_CONHECIMENTO.md (PARALISADO)"
   },
   "verification_command": "powershell -File scripts/run-all-hybrid-tests.ps1",
-  "launcher_command": ".\\iniciar-diretor-360.bat"
+  "launcher_command": ".\\iniciar-diretor-360.bat",
+  "landmark_transition": {
+    "date": "2026-08-28T21:45:00-03:00",
+    "description": "Marco histórico: Transição de desenvolvimento de ChatGPT Codex para Antigravity. Homologação das Fases A4 e A5.",
+    "tests_homologated": "16/16 ALL_HYBRID_TESTS_PASS"
+  }
 }
