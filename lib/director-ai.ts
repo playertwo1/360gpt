@@ -31,8 +31,8 @@ const schema = {
     competence: { type: 'string', description: 'Competência YYYY-MM ou UNKNOWN.' },
     baseDate: { type: 'string', description: 'Data-base YYYY-MM-DD ou UNKNOWN.' },
     summary: { type: 'string' },
-    currentPoints: { type: ['number', 'null'], description: 'Pontuação POBJ atual total, quando explicitamente presente.' },
-    targetPoints: { type: ['number', 'null'], description: 'Total de pontos possíveis ou meta total, quando explicitamente presente.' },
+    currentPoints: { type: 'number', nullable: true, description: 'Pontuação POBJ atual total, quando explicitamente presente.' },
+    targetPoints: { type: 'number', nullable: true, description: 'Total de pontos possíveis ou meta total, quando explicitamente presente.' },
     domains: { type: 'array', items: { type: 'string', enum: ['conta', 'performance', 'financeiro', 'relacionamento'] } },
     indicators: {
       type: 'array', maxItems: 50,
@@ -40,7 +40,7 @@ const schema = {
         type: 'object',
         properties: {
           key: { type: 'string' }, name: { type: 'string' },
-          meta: { type: ['number', 'null'] }, realizado: { type: ['number', 'null'] },
+          meta: { type: 'number', nullable: true }, realizado: { type: 'number', nullable: true },
           unit: { type: 'string', enum: ['percent', 'points', 'currency', 'count'] },
           confidence: { type: 'number', minimum: 0, maximum: 1 }, evidence: { type: 'string' },
         },
@@ -78,13 +78,15 @@ export async function analyzeWithDirector(input: { bytes: ArrayBuffer; mime: str
       headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
       body: JSON.stringify({
         contents: [{ role: 'user', parts }],
-        generationConfig: { temperature: 0.1, responseMimeType: 'application/json', responseSchema: schema },
+        generationConfig: model.startsWith('gemini-3.7')
+          ? { temperature: 0.1, responseFormat: { text: { mimeType: 'application/json', schema } } }
+          : { temperature: 0.1, responseMimeType: 'application/json', responseSchema: schema },
       }),
       signal: AbortSignal.timeout(45_000),
     });
     if (!response.ok) {
       lastStatus = response.status;
-      if ([404, 429, 500, 502, 503, 504].includes(response.status)) continue;
+      if ([400, 404, 429, 500, 502, 503, 504].includes(response.status)) continue;
       throw new Error(`director_ai_${response.status}`);
     }
     const payload = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };

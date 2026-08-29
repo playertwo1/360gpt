@@ -76,8 +76,9 @@ export default function PobjPanelV2() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-      openReview(data.import);
       setItems((list) => [data.import, ...list]);
+      if (data.import.aiAnalysis) openReview(data.import);
+      else setError("O Diretor IA não concluiu a leitura. O arquivo foi preservado; tente enviá-lo novamente.");
       setFile(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (reason) {
@@ -205,7 +206,7 @@ export default function PobjPanelV2() {
             {items.map((item) => (
               <button
                 key={item.id}
-                onClick={() => openReview(item)}
+                onClick={() => item.aiAnalysis || item.approved ? openReview(item) : setError("Este envio ainda não possui leitura do Diretor IA. Reenvie o arquivo para processá-lo.")}
                 className="flex w-full items-center justify-between rounded-[20px] bg-[#1d1d1f] p-4 text-left"
               >
                 <span className="min-w-0">
@@ -220,7 +221,7 @@ export default function PobjPanelV2() {
                     item.official ? "text-[#55eca0]" : "text-[#ffd983]"
                   }
                 >
-                  {item.status === "processed" ? "N8N CONCLUÍDO" : item.status === "local_reviewed" ? "PRÉ-REVISADO" : "NA FILA"}
+                  {item.status === "processed" ? "CONCLUÍDO" : item.status === "local_reviewed" ? "REVISADO" : item.aiStatus === "completed" || item.status === "ai_review_ready" ? "IA PRONTA" : item.aiStatus?.startsWith("director_ai_") ? "FALHA IA" : "AGUARDANDO IA"}
                 </small>
               </button>
             ))}
@@ -238,6 +239,7 @@ export default function PobjPanelV2() {
               {review.indicatorSuggestions?.length ?? 0} indicadores encontrados
             </h2>
             {review.aiAnalysis?.summary && <div className="mt-4 rounded-[18px] bg-[#202b3d] p-4"><small className="font-bold uppercase text-[#8fb1ff]">Leitura do Diretor IA</small><p className="mt-2 text-sm leading-5 text-[#d5dded]">{review.aiAnalysis.summary}</p>{review.aiAnalysis.domains?.length ? <p className="mt-2 text-xs text-[#9db7ed]">Gerentes acionados: {review.aiAnalysis.domains.join(', ')}</p> : null}</div>}
+            {review.aiAnalysis?.managerBriefs?.length ? <div className="mt-3 space-y-2">{review.aiAnalysis.managerBriefs.map((brief) => <article key={brief.domain} className="rounded-[18px] bg-[#28282a] p-4"><small className="font-bold uppercase text-[#a9c3ff]">Gerente {brief.domain}</small><p className="mt-2 text-sm text-[#e5e7ee]">{brief.diagnosis}</p><p className="mt-2 text-xs text-[#b9bbc5]">Recomendação: {brief.recommendation}</p></article>)}</div> : null}
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Field label="Pontos atuais">
                 <input
