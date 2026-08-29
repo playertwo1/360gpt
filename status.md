@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 28 de agosto de 2026  
-**Versão Atual da Release:** `v3.2.24`
+**Versão Atual da Release:** `v3.2.27`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
@@ -15,11 +15,11 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** A2 do GG Performance homologado: 3/3 medições, 30/30 casos, zero erro, divergência, custo, mutações e efeitos externos.
+**Último marco concluído:** A3 expandiu o plano de executabilidade da Performance para SHADOW sintético, com ranking consultivo e sem efeitos externos.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** Rafael decidir se autoriza avaliar A3, mantendo expansão de uma capacidade por vez. C1 permanece necessário antes de qualquer dado real.
-**Checkpoint local:** `HEAD` — A2 homologado; uma capacidade permanece em SHADOW e nenhum agente está ACTIVE.
+**Próximo passo exato:** validar a janela supervisionada desta capacidade; não promover outra capacidade sem nova autorização. C1 permanece necessário antes de qualquer dado real.
+**Checkpoint local:** `HEAD` — três capacidades Performance em SHADOW e nenhum agente está ACTIVE.
 
 ---
 

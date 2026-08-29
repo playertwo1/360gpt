@@ -36,6 +36,18 @@ routes:
     allowed_fields: [meta, realizado, periodo]
     prohibited_sources: [REAL_POBJ_SPREADSHEET, TELEGRAM_DOCUMENT, EXTERNAL_CONNECTOR]
 
+  performance_a3_plan_supervised:
+    executable: true
+    runtime_status: SHADOW
+    data_scope: SYNTHETIC_ONLY
+    external_effects: PROHIBITED
+    human_review_required: true
+    rollback: DISABLE_CAPABILITY
+    intent: performance_executability_plan
+    capability: PERFORMANCE_EXECUTABILITY_PLAN
+    allowed_fields: [meta, realizado, periodo]
+    prohibited_sources: [REAL_POBJ_SPREADSHEET, TELEGRAM_DOCUMENT, EXTERNAL_CONNECTOR]
+
   legacy_synthetic:
     executable: true
     data_scope: SYNTHETIC_ONLY

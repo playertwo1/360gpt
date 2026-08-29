@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.2.26
-Current phase: A3 — primeira expansão de Performance homologada
-Current milestone: PERFORMANCE_GAP_SCENARIOS homologado em SHADOW sintético
-Current task: Aguardar autorização explícita de Rafael para nova expansão A3
-Status: WAITING_APPROVAL
+Version: 3.2.27
+Current phase: A3 — expansão progressiva de Performance em SHADOW sintético
+Current milestone: PERFORMANCE_EXECUTABILITY_PLAN em avaliação inicial
+Current task: Validar a nova capacidade de plano executável em janela supervisionada
+Status: IN_PROGRESS
 
-Last completed: `PERFORMANCE_GAP_SCENARIOS` homologado: janela 3/3 aprovada e sem incidentes
-Next task: Rafael decide se autoriza nova expansão A3; não promover outra capacidade até autorização explícita
+Last completed: `PERFORMANCE_EXECUTABILITY_PLAN` implementado, testado e promovido isoladamente para SHADOW sintético
+Next task: Executar observações supervisionadas da nova capacidade; não promover outra capacidade até nova autorização explícita
 
-Last validation: PASS — janela A3 3/3: 30/30 casos, zero erro, divergência, custo, mutação e efeito externo
+Last validation: PASS — ranking consultivo, manifesto, lifecycle e lint aprovados
 Last commit: HEAD (checkpoint que entrega a interface de revisão do canary Performance)
 
 Blockers:
@@ -19,7 +19,7 @@ Blockers:
 Pending decisions:
 - Autorizar ou manter bloqueada qualquer expansão adicional em A3.
 
-Last update: 2026-08-28 20:59
+Last update: 2026-08-28 21:05
 
 Resume instruction:
 Leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente; aguarde autorização explícita de Rafael antes de expandir A3. Não conecte dados reais, não promova mais capacidades e não permita efeitos externos.

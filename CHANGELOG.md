@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.27] - 2026-08-28
+
+### Added
+- Motor determinístico de plano de executabilidade da Performance em SHADOW, sem seleção de empresas ou efeitos externos.
+
+### Security
+- O plano é consultivo, exige seleção de conta posterior e preserva zero mutações e efeitos externos.
+
 ## [3.2.26] - 2026-08-28
 
 ### Changed

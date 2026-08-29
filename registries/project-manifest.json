@@ -51,7 +51,7 @@
         {"id":"PERFORMANCE_SOURCES_RECONCILIATION","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_SOURCES_RECONCILIATION.md","capability":"fontes e reconciliacao"},
         {"id":"PERFORMANCE_SCORING_STATE","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"IMPLEMENTED","runtime_status":"SHADOW","source":"domains/performance/specialists/PERFORMANCE_SCORING_STATE.md","capability":"pontuacao e estado"},
         {"id":"PERFORMANCE_GAP_SCENARIOS","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"IMPLEMENTED","runtime_status":"SHADOW","source":"domains/performance/specialists/PERFORMANCE_GAP_SCENARIOS.md","capability":"gaps e cenarios"},
-        {"id":"PERFORMANCE_EXECUTABILITY_PLAN","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_EXECUTABILITY_PLAN.md","capability":"executabilidade e plano diario"},
+        {"id":"PERFORMANCE_EXECUTABILITY_PLAN","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"IMPLEMENTED","runtime_status":"SHADOW","source":"domains/performance/specialists/PERFORMANCE_EXECUTABILITY_PLAN.md","capability":"executabilidade e plano diario"},
         {"id":"PERFORMANCE_OUTCOMES_LEARNING","version":"1.1.0-approved-design","design_status":"APPROVED","implementation_status":"SPECIFICATION_ONLY","runtime_status":"INACTIVE","source":"domains/performance/specialists/PERFORMANCE_OUTCOMES_LEARNING.md","capability":"resultados e aprendizado"}
       ]
     },

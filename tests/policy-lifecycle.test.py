@@ -37,4 +37,7 @@ assert performance["external_effects"] == "PROHIBITED"
 gap = registry["domains"]["performance"]["specialists"]["analisar_gaps_cenarios"]
 assert gap["runtime_status"] == "SHADOW"
 assert gap["data_scope"] == "SYNTHETIC_ONLY"
+plan = registry["domains"]["performance"]["specialists"]["construir_plano_executavel"]
+assert plan["runtime_status"] == "SHADOW"
+assert plan["data_scope"] == "SYNTHETIC_ONLY"
 print("policy-lifecycle: manifesto, registro e roteamento reconciliados")
