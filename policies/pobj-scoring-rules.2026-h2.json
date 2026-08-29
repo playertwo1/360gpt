@@ -33,7 +33,7 @@
     { "indicator": "Sucesso de Equipe - Credito", "ruleId": "P1_TEAM_CREDIT_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
     { "indicator": "EncantaBRA", "ruleId": "Q1_ENCANTABRA_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
     { "indicator": "Vencidos Ate 59 dias", "ruleId": "R2_OVERDUE_59_STEP", "status": "EXPLICIT_RULE_AVAILABLE" },
-    { "indicator": "Consorcio", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
+    { "indicator": "Consorcio", "ruleId": "N3_CONSORCIO_EXPERT_LINEAR", "status": "EXPLICIT_RULE_AVAILABLE" },
     { "indicator": "Cartoes", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
     { "indicator": "Seguros", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" },
     { "indicator": "Aceleradores", "ruleId": null, "status": "DEDICATED_RULE_REQUIRED" }
@@ -80,6 +80,19 @@
       "minimumTargetPercent": 100,
       "status": "REQUIRES_STRUCTURED_INPUT_CONTRACT",
       "sourceLocator": "Aceleradores Individuais Especificos - Conecta PJ"
+    },
+    "N3_CONSORCIO_EXPERT_LINEAR": {
+      "type": "LINEAR_CAPPED_BY_RUNTIME",
+      "unit": "PERCENT",
+      "minimumPercent": 0,
+      "positiveOnly": true,
+      "caps": { "POBJ": 100, "PADE": 150 },
+      "formula": "weight * min(max(attainmentPercent, 0), runtimeCapPercent) / 100",
+      "weights": { "PJ_NEGOCIOS": 5 },
+      "adjustmentDeadline": "FOURTH_BUSINESS_DAY_OF_FOLLOWING_MONTH",
+      "adjustmentChannel": "SERVICENOW_CORPORATE",
+      "adjustmentRequires": "GERENTE_REGIONAL_PARECER",
+      "sourceLocator": "Campanha Expert + Guia POBJ/PADE 2026"
     }
   }
 }

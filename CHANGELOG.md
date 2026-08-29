@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.31] - 2026-08-29
+
+### Added
+- Regra explícita `N3_CONSORCIO_EXPERT_LINEAR`, com cálculo linear, mínimo positivo e tetos distintos para POBJ (100%) e PADE (150%).
+- Registrados peso PJ Negócios (5 pontos) e fluxo de ajustes até o 4º dia útil via ServiceNow com parecer regional.
+
 ## [3.2.30] - 2026-08-29
 
 ### Changed

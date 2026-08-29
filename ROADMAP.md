@@ -126,7 +126,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 - [ ] Observar ao menos um mês completo, validar OCR e homologar perfis de cadência com Rafael.
 - [x] Motor GDAD inicial para orçamento, realizado, variação e atribuição desconhecida; concentração permanece no adaptador financeiro.
 - [x] Motor inicial de compromissos, datas e vencimentos, mantendo vencido como aberto.
-- [ ] Curvas oficiais de pontos versionadas a partir do manual vigente.
+- [~] Curvas oficiais de pontos versionadas a partir do manual vigente — Consórcio (Expert) registrado; Cartões, Seguros e demais aceleradores pendentes.
 - [ ] Motor determinístico do GDAD.
 - [ ] Motor de datas, compromissos e ausência de contato.
 
@@ -487,7 +487,7 @@ Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentaçã
 
 - [x] Inventariar indicadores POBJ suportados.
 - [x] Confirmar piso, teto, peso, multiplicadores e versões de política.
-- [ ] Versionar as curvas oficiais disponíveis após receber evidência normativa.
+- [~] Versionar as curvas oficiais disponíveis após receber evidência normativa — Consórcio (Expert) versionado para POBJ/PADE; exceções restantes pendentes.
 - [ ] Manter exceções sem norma completa como `UNDETERMINED`.
 - [x] Validar produção oficial, pendente e projetada.
 - [x] Testar ranking, gaps e prioridades reproduzíveis.
