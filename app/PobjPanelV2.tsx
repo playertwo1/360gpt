@@ -47,8 +47,6 @@ export default function PobjPanelV2() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [file, setFile] = useState<File | null>(null);
-  const [competence, setCompetence] = useState("");
-  const [baseDate, setBaseDate] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [review, setReview] = useState<Item | null>(null);
@@ -71,8 +69,6 @@ export default function PobjPanelV2() {
     setError("");
     const body = new FormData();
     body.set("file", file);
-    body.set("competence", competence);
-    body.set("baseDate", baseDate);
     try {
       const response = await fetch("/api/pobj/import", {
         method: "POST",
@@ -140,27 +136,9 @@ export default function PobjPanelV2() {
         </small>
         <h2 className="mt-2 text-2xl font-semibold">Atualizar POBJ</h2>
         <p className="mt-2 text-sm text-[#b9bbc5]">
-          Importe e confira os indicadores. O arquivo seguirá pela mesma fila do Telegram para processamento no n8n.
+          Apenas envie o arquivo. O Diretor IA identifica período, indicadores e Gerentes Gerais envolvidos para sua revisão.
         </p>
         <form onSubmit={upload} className="mt-5 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Competência">
-              <input
-                  type="month"
-                value={competence}
-                onChange={(e) => setCompetence(e.target.value)}
-                className="field [color-scheme:dark]"
-              />
-            </Field>
-            <Field label="Data-base">
-              <input
-                  type="date"
-                value={baseDate}
-                onChange={(e) => setBaseDate(e.target.value)}
-                className="field [color-scheme:dark]"
-              />
-            </Field>
-          </div>
           <input
             ref={fileRef}
             id="pobj-v2-file"
@@ -195,7 +173,7 @@ export default function PobjPanelV2() {
         <section className="rounded-[28px] bg-[#1d1d1f] p-5">
           <div className="flex items-center justify-between gap-3"><h3 className="text-lg font-semibold">Prévia do Performance</h3><small className="rounded-full bg-[#29364e] px-2 py-1 text-[#a9c3ff]">NÃO OFICIAL</small></div>
           <p className="mt-1 text-xs text-[#aeb1bd]">
-            Pré-revisão local: {latest.competence} · aguardando n8n
+            Revisão aprovada: {latest.competence} · processada pelo Diretor IA
           </p>
           <div className="mt-4 space-y-2">
             {latest.approved!.performanceAnalysis!.map((result) => {

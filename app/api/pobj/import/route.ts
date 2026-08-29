@@ -46,6 +46,8 @@ export async function POST(request: Request) {
 
   const bytes = await file.arrayBuffer();
   if (!contentMatches(bytes, mime)) return invalid('file_content_mismatch');
+  // unpdf may transfer/detach its input buffer; keep an independent copy for the AI request.
+  const aiBytes = bytes.slice(0);
   const hash = `sha256:${await sha256Hex(bytes)}`;
   const duplicate = await env.DB.prepare(`SELECT id, original_name, mime_type, content_hash, raw_text, status, received_at FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile','telegram') ORDER BY received_at DESC LIMIT 1`).bind(access.userId, hash).first<ImportRow>();
   const now = Date.now();
@@ -56,7 +58,7 @@ export async function POST(request: Request) {
   const learningExamples = await loadLearningExamples(access.userId);
   let aiStatus = 'not_configured'; let aiAnalysis: Awaited<ReturnType<typeof analyzeWithDirector>> extends { analysis: infer T } ? T | undefined : never;
   try {
-    const ai = await analyzeWithDirector({ bytes, mime, fileName: file.name, extractedText: extraction.modelText ?? extraction.previewLines.join('\n'), learningExamples });
+    const ai = await analyzeWithDirector({ bytes: aiBytes, mime, fileName: file.name, extractedText: extraction.modelText ?? extraction.previewLines.join('\n'), learningExamples });
     aiStatus = ai.status;
     if (ai.status === 'completed') aiAnalysis = ai.analysis;
   } catch (error) { aiStatus = error instanceof Error ? error.message.slice(0, 80) : 'director_ai_failed'; }
