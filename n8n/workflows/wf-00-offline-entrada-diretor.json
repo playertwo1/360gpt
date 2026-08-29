@@ -8,7 +8,10 @@
       "name": "Executar teste manual",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [-760, 80]
+      "position": [
+        -760,
+        80
+      ]
     },
     {
       "parameters": {
@@ -18,7 +21,10 @@
       "name": "Criar entrada sintética",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-520, 80]
+      "position": [
+        -520,
+        80
+      ]
     },
     {
       "parameters": {
@@ -28,7 +34,10 @@
       "name": "Construir envelope rastreável",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-260, 80]
+      "position": [
+        -260,
+        80
+      ]
     },
     {
       "parameters": {
@@ -38,7 +47,10 @@
       "name": "Aplicar roteamento determinístico",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [20, 80]
+      "position": [
+        20,
+        80
+      ]
     },
     {
       "parameters": {
@@ -48,14 +60,57 @@
       "name": "Validar fronteira",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [300, 80]
+      "position": [
+        300,
+        80
+      ]
     }
   ],
   "connections": {
-    "Executar teste manual": { "main": [[{ "node": "Criar entrada sintética", "type": "main", "index": 0 }]] },
-    "Criar entrada sintética": { "main": [[{ "node": "Construir envelope rastreável", "type": "main", "index": 0 }]] },
-    "Construir envelope rastreável": { "main": [[{ "node": "Aplicar roteamento determinístico", "type": "main", "index": 0 }]] },
-    "Aplicar roteamento determinístico": { "main": [[{ "node": "Validar fronteira", "type": "main", "index": 0 }]] }
+    "Executar teste manual": {
+      "main": [
+        [
+          {
+            "node": "Criar entrada sintética",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar entrada sintética": {
+      "main": [
+        [
+          {
+            "node": "Construir envelope rastreável",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir envelope rastreável": {
+      "main": [
+        [
+          {
+            "node": "Aplicar roteamento determinístico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicar roteamento determinístico": {
+      "main": [
+        [
+          {
+            "node": "Validar fronteira",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
   "pinData": {},
   "active": false,

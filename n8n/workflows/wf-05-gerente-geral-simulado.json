@@ -51,6 +51,8 @@
   },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

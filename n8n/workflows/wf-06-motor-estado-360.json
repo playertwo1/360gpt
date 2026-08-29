@@ -3,12 +3,17 @@
   "name": "WF-06 — Motor e publicação do Estado 360 (OFFLINE_EVAL)",
   "nodes": [
     {
-      "parameters": { "inputSource": "passthrough" },
+      "parameters": {
+        "inputSource": "passthrough"
+      },
       "id": "25ebdb76-8ee7-4678-821d-22fa0b3ef957",
       "name": "Receber pareceres validados",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
-      "position": [-420, 80]
+      "position": [
+        -420,
+        80
+      ]
     },
     {
       "parameters": {
@@ -20,7 +25,10 @@
       "name": "Consolidar deterministicamente",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-180, 80]
+      "position": [
+        -180,
+        80
+      ]
     },
     {
       "parameters": {
@@ -35,8 +43,16 @@
       "name": "Publicar snapshot atomicamente",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
-      "position": [60, 80],
-      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+      "position": [
+        60,
+        80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
     },
     {
       "parameters": {
@@ -48,17 +64,57 @@
       "name": "Entregar Estado persistido",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [300, 80]
+      "position": [
+        300,
+        80
+      ]
     }
   ],
   "connections": {
-    "Receber pareceres validados": { "main": [[{ "node": "Consolidar deterministicamente", "type": "main", "index": 0 }]] },
-    "Consolidar deterministicamente": { "main": [[{ "node": "Publicar snapshot atomicamente", "type": "main", "index": 0 }]] },
-    "Publicar snapshot atomicamente": { "main": [[{ "node": "Entregar Estado persistido", "type": "main", "index": 0 }]] }
+    "Receber pareceres validados": {
+      "main": [
+        [
+          {
+            "node": "Consolidar deterministicamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consolidar deterministicamente": {
+      "main": [
+        [
+          {
+            "node": "Publicar snapshot atomicamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar snapshot atomicamente": {
+      "main": [
+        [
+          {
+            "node": "Entregar Estado persistido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

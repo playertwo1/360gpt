@@ -74,9 +74,16 @@
     {
       "parameters": {
         "source": "database",
-        "workflowId": { "__rl": true, "value": "dc6ba586-7bd7-4b22-a55b-155bedf96328", "mode": "list", "cachedResultName": "WF-06 — Motor e publicação do Estado 360 (OFFLINE_EVAL)" },
+        "workflowId": {
+          "__rl": true,
+          "value": "dc6ba586-7bd7-4b22-a55b-155bedf96328",
+          "mode": "list",
+          "cachedResultName": "WF-06 — Motor e publicação do Estado 360 (OFFLINE_EVAL)"
+        },
         "mode": "once",
-        "options": { "waitForSubWorkflow": true }
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "id": "aac4020a-990f-4702-94d3-6ae7a4621197",
       "name": "Consolidar no WF-06",
@@ -90,9 +97,16 @@
     {
       "parameters": {
         "source": "database",
-        "workflowId": { "__rl": true, "value": "cd588c3c-d11d-4888-9db2-120172075158", "mode": "list", "cachedResultName": "WF-07 — Assessor Executivo determinístico (OFFLINE_EVAL)" },
+        "workflowId": {
+          "__rl": true,
+          "value": "cd588c3c-d11d-4888-9db2-120172075158",
+          "mode": "list",
+          "cachedResultName": "WF-07 — Assessor Executivo determinístico (OFFLINE_EVAL)"
+        },
         "mode": "once",
-        "options": { "waitForSubWorkflow": true }
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "id": "8c1cc1b8-99d5-42ce-a6cc-fb01ddbe556d",
       "name": "Sintetizar no WF-07",

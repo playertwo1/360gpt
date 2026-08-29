@@ -13,7 +13,10 @@
       "name": "Receber consulta local",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-420, 80],
+      "position": [
+        -420,
+        80
+      ],
       "webhookId": "44093924-569c-49e4-bcd8-f531f16f33dc"
     },
     {
@@ -26,7 +29,10 @@
       "name": "Validar escopo da consulta",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-180, 80]
+      "position": [
+        -180,
+        80
+      ]
     },
     {
       "parameters": {
@@ -41,8 +47,16 @@
       "name": "Ler último snapshot",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
-      "position": [60, 80],
-      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+      "position": [
+        60,
+        80
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
     },
     {
       "parameters": {
@@ -54,17 +68,56 @@
       "name": "Projetar resposta somente leitura",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [300, 80]
+      "position": [
+        300,
+        80
+      ]
     }
   ],
   "connections": {
-    "Receber consulta local": { "main": [[{ "node": "Validar escopo da consulta", "type": "main", "index": 0 }]] },
-    "Validar escopo da consulta": { "main": [[{ "node": "Ler último snapshot", "type": "main", "index": 0 }]] },
-    "Ler último snapshot": { "main": [[{ "node": "Projetar resposta somente leitura", "type": "main", "index": 0 }]] }
+    "Receber consulta local": {
+      "main": [
+        [
+          {
+            "node": "Validar escopo da consulta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar escopo da consulta": {
+      "main": [
+        [
+          {
+            "node": "Ler último snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler último snapshot": {
+      "main": [
+        [
+          {
+            "node": "Projetar resposta somente leitura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true
+  },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

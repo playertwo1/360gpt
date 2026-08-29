@@ -3,12 +3,17 @@
   "name": "WF-07 — Assessor Executivo determinístico (OFFLINE_EVAL)",
   "nodes": [
     {
-      "parameters": { "inputSource": "passthrough" },
+      "parameters": {
+        "inputSource": "passthrough"
+      },
       "id": "19910cb8-bff1-44c3-b049-74e8c1456779",
       "name": "Receber Estado persistido",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
-      "position": [-220, 80]
+      "position": [
+        -220,
+        80
+      ]
     },
     {
       "parameters": {
@@ -20,13 +25,35 @@
       "name": "Sintetizar sem alterar o Estado",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [40, 80]
+      "position": [
+        40,
+        80
+      ]
     }
   ],
-  "connections": { "Receber Estado persistido": { "main": [[{ "node": "Sintetizar sem alterar o Estado", "type": "main", "index": 0 }]] } },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "connections": {
+    "Receber Estado persistido": {
+      "main": [
+        [
+          {
+            "node": "Sintetizar sem alterar o Estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

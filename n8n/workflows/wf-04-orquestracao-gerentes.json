@@ -3,12 +3,17 @@
   "name": "WF-04 — Orquestração dos Gerentes Gerais simulados (OFFLINE_EVAL)",
   "nodes": [
     {
-      "parameters": { "inputSource": "passthrough" },
+      "parameters": {
+        "inputSource": "passthrough"
+      },
       "id": "c7cbd981-1f7b-4502-b29f-aa9dd428d3aa",
       "name": "Receber decisão roteada",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
-      "position": [-460, 80]
+      "position": [
+        -460,
+        80
+      ]
     },
     {
       "parameters": {
@@ -20,20 +25,33 @@
       "name": "Minimizar contexto por domínio",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-220, 80]
+      "position": [
+        -220,
+        80
+      ]
     },
     {
       "parameters": {
         "source": "database",
-        "workflowId": { "__rl": true, "value": "5f136a17-a768-4a90-952c-66d2ca53134a", "mode": "list", "cachedResultName": "WF-05 — Gerente Geral determinístico simulado (OFFLINE_EVAL)" },
+        "workflowId": {
+          "__rl": true,
+          "value": "5f136a17-a768-4a90-952c-66d2ca53134a",
+          "mode": "list",
+          "cachedResultName": "WF-05 — Gerente Geral determinístico simulado (OFFLINE_EVAL)"
+        },
         "mode": "each",
-        "options": { "waitForSubWorkflow": true }
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "id": "f38b5e8d-cfd7-4e40-9e68-440d822ae0a6",
       "name": "Acionar Gerente por domínio",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [20, 80]
+      "position": [
+        20,
+        80
+      ]
     },
     {
       "parameters": {
@@ -45,17 +63,57 @@
       "name": "Reunir pareceres de domínio",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [280, 80]
+      "position": [
+        280,
+        80
+      ]
     }
   ],
   "connections": {
-    "Receber decisão roteada": { "main": [[{ "node": "Minimizar contexto por domínio", "type": "main", "index": 0 }]] },
-    "Minimizar contexto por domínio": { "main": [[{ "node": "Acionar Gerente por domínio", "type": "main", "index": 0 }]] },
-    "Acionar Gerente por domínio": { "main": [[{ "node": "Reunir pareceres de domínio", "type": "main", "index": 0 }]] }
+    "Receber decisão roteada": {
+      "main": [
+        [
+          {
+            "node": "Minimizar contexto por domínio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Minimizar contexto por domínio": {
+      "main": [
+        [
+          {
+            "node": "Acionar Gerente por domínio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acionar Gerente por domínio": {
+      "main": [
+        [
+          {
+            "node": "Reunir pareceres de domínio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

@@ -1,13 +1,13 @@
 {
-  "report_id": "EVAL_ORCH_1787992409",
-  "evaluated_at": "2026-08-29T08:33:29.875510+00:00",
+  "report_id": "EVAL_ORCH_1787993351",
+  "evaluated_at": "2026-08-29T08:49:11.715879+00:00",
   "total_cases_evaluated": 20,
   "metrics": {
     "l1_deterministic_accuracy_pct": 100.0,
     "l2_data_integrity_pct": 100.0,
     "l3_evidence_lineage_coverage_pct": 100.0,
     "l4_decision_agreement_rate_pct": 90.0,
-    "average_latency_ms": 0.42
+    "average_latency_ms": 0.39
   },
   "target_slos": {
     "min_l1_accuracy_pct": 100.0,
@@ -20,7 +20,7 @@
   "detailed_results": [
     {
       "case_id": "CASE_001",
-      "latency_ms": 1.19,
+      "latency_ms": 1.2,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -30,7 +30,7 @@
     },
     {
       "case_id": "CASE_002",
-      "latency_ms": 0.5,
+      "latency_ms": 0.57,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -40,7 +40,7 @@
     },
     {
       "case_id": "CASE_003",
-      "latency_ms": 0.53,
+      "latency_ms": 0.43,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -50,7 +50,7 @@
     },
     {
       "case_id": "CASE_004",
-      "latency_ms": 0.46,
+      "latency_ms": 0.35,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -60,7 +60,7 @@
     },
     {
       "case_id": "CASE_005",
-      "latency_ms": 0.41,
+      "latency_ms": 0.34,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -70,7 +70,7 @@
     },
     {
       "case_id": "CASE_006",
-      "latency_ms": 0.41,
+      "latency_ms": 0.35,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -80,7 +80,7 @@
     },
     {
       "case_id": "CASE_007",
-      "latency_ms": 0.41,
+      "latency_ms": 0.33,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -90,7 +90,7 @@
     },
     {
       "case_id": "CASE_008",
-      "latency_ms": 0.4,
+      "latency_ms": 0.33,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -100,7 +100,7 @@
     },
     {
       "case_id": "CASE_009",
-      "latency_ms": 0.41,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -110,7 +110,7 @@
     },
     {
       "case_id": "CASE_010",
-      "latency_ms": 0.41,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -120,7 +120,7 @@
     },
     {
       "case_id": "CASE_011",
-      "latency_ms": 0.37,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -130,7 +130,7 @@
     },
     {
       "case_id": "CASE_012",
-      "latency_ms": 0.34,
+      "latency_ms": 0.33,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -140,7 +140,7 @@
     },
     {
       "case_id": "CASE_013",
-      "latency_ms": 0.34,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -150,7 +150,7 @@
     },
     {
       "case_id": "CASE_014",
-      "latency_ms": 0.34,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -160,7 +160,7 @@
     },
     {
       "case_id": "CASE_015",
-      "latency_ms": 0.33,
+      "latency_ms": 0.32,
       "restriction_grade": 1,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -170,7 +170,7 @@
     },
     {
       "case_id": "CASE_016",
-      "latency_ms": 0.33,
+      "latency_ms": 0.31,
       "restriction_grade": 3,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -190,7 +190,7 @@
     },
     {
       "case_id": "CASE_018",
-      "latency_ms": 0.32,
+      "latency_ms": 0.31,
       "restriction_grade": 3,
       "overall_status": "READY",
       "l1_deterministic": true,
@@ -200,7 +200,7 @@
     },
     {
       "case_id": "CASE_019",
-      "latency_ms": 0.33,
+      "latency_ms": 0.32,
       "restriction_grade": 5,
       "overall_status": "READY",
       "l1_deterministic": true,

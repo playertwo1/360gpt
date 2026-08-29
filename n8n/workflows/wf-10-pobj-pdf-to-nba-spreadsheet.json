@@ -1,4 +1,4 @@
-﻿{
+{
   "id": "e9b2a731-9f44-4e12-8821-pobj-nba-360",
   "name": "WF-10 — Ingestão de PDF POBJ, Análise de Metas e Geração de Planilha com NBA",
   "nodes": [
@@ -14,7 +14,10 @@
       "name": "Receber PDF / Planilha (Webhook)",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-900, 100],
+      "position": [
+        -900,
+        100
+      ],
       "webhookId": "pobj-ingest-webhook-360"
     },
     {
@@ -25,7 +28,10 @@
       "name": "Extrair Dados e Indicadores (Determinístico)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-640, 100]
+      "position": [
+        -640,
+        100
+      ]
     },
     {
       "parameters": {
@@ -35,7 +41,10 @@
       "name": "Motor de Cálculo POBJ (Curvas 70%-150%)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-380, 100]
+      "position": [
+        -380,
+        100
+      ]
     },
     {
       "parameters": {
@@ -45,7 +54,10 @@
       "name": "Gerador de NBA & Cruzamento Carteira PJ",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-120, 100]
+      "position": [
+        -120,
+        100
+      ]
     },
     {
       "parameters": {
@@ -55,7 +67,10 @@
       "name": "Gerar Planilha CSV/Excel com NBAs",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [140, 100]
+      "position": [
+        140,
+        100
+      ]
     },
     {
       "parameters": {
@@ -67,24 +82,67 @@
       "name": "Responder Webhook com Planilha e NBA",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [400, 100]
+      "position": [
+        400,
+        100
+      ]
     }
   ],
   "connections": {
     "Receber PDF / Planilha (Webhook)": {
-      "main": [[{ "node": "Extrair Dados e Indicadores (Determinístico)", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Extrair Dados e Indicadores (Determinístico)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Extrair Dados e Indicadores (Determinístico)": {
-      "main": [[{ "node": "Motor de Cálculo POBJ (Curvas 70%-150%)", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Motor de Cálculo POBJ (Curvas 70%-150%)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Motor de Cálculo POBJ (Curvas 70%-150%)": {
-      "main": [[{ "node": "Gerador de NBA & Cruzamento Carteira PJ", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Gerador de NBA & Cruzamento Carteira PJ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Gerador de NBA & Cruzamento Carteira PJ": {
-      "main": [[{ "node": "Gerar Planilha CSV/Excel com NBAs", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Gerar Planilha CSV/Excel com NBAs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Gerar Planilha CSV/Excel com NBAs": {
-      "main": [[{ "node": "Responder Webhook com Planilha e NBA", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Responder Webhook com Planilha e NBA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -94,5 +152,5 @@
     "saveDataSuccessExecution": "all",
     "saveManualExecutions": true
   },
-  "tags": ["POBJ", "DIRETOR_360", "NBA", "CARTEIRA_PJ"]
+  "tags": []
 }

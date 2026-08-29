@@ -3,99 +3,403 @@
   "name": "WF-09 — Ponte hospedada para o Estado 360 (OFFLINE_EVAL)",
   "nodes": [
     {
-      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 1 }] } },
-      "id": "9e9fcfe2-b339-4433-9a71-982b322325eb", "name": "Verificar fila a cada minuto",
-      "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [-900, 80]
-    },
-    {
       "parameters": {
-        "method": "POST", "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/claim", "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
-        "sendBody": true, "contentType": "json", "specifyBody": "json", "jsonBody": "={{JSON.stringify({worker_id: 'n8n-local-wf09'})}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 15000 }
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
       },
-      "id": "4d954958-28ef-47a4-9482-10db1671502c", "name": "Reservar próximo trabalho",
-      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [-660, 80],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "id": "9e9fcfe2-b339-4433-9a71-982b322325eb",
+      "name": "Verificar fila a cada minuto",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        80
+      ]
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems", "language": "javaScript",
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/claim",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({worker_id: 'n8n-local-wf09'})}}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "4d954958-28ef-47a4-9482-10db1671502c",
+      "name": "Reservar próximo trabalho",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -660,
+        80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
         "jsCode": "const job = $input.first().json;\nif (!job || Object.keys(job).length === 0 || job.empty === true) return [];\nif (job.ok !== true) throw new Error(`BRIDGE_CLAIM_${job.error ?? 'INVALID'}`);\nif (!job.job_id || !job.lease_token || job.security?.external_effects_allowed !== false) throw new Error('BRIDGE_JOB_INVALID');\nreturn [{ json: job }];"
       },
-      "id": "0b63d164-4ccc-4d40-8275-660d1987a92c", "name": "Validar trabalho reservado",
-      "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [-420, 80]
-    },
-    {
-      "parameters": { "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{Boolean($json.document)}}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }], "combinator": "and" } },
-      "id": "a82f7932-6bfd-4a2c-928e-d3ea8de74014", "name": "Possui documento?",
-      "type": "n8n-nodes-base.if", "typeVersion": 2.2, "position": [-180, 80]
+      "id": "0b63d164-4ccc-4d40-8275-660d1987a92c",
+      "name": "Validar trabalho reservado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -420,
+        80
+      ]
     },
     {
       "parameters": {
-        "url": "={{'https://visao-360-diretor.fael360092.chatgpt.site' + $json.document.download_path}}", "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth", "sendHeaders": true,
-        "headerParameters": { "parameters": [{ "name": "X-Bridge-Lease-Token", "value": "={{$json.lease_token}}" }] },
-        "options": { "response": { "response": { "responseFormat": "file", "outputPropertyName": "attachment" } }, "timeout": 30000 }
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{Boolean($json.document)}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
       },
-      "id": "0c0e2166-9c00-4d12-9ccb-d25c4376849e", "name": "Baixar documento protegido",
-      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [60, -40],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "id": "a82f7932-6bfd-4a2c-928e-d3ea8de74014",
+      "name": "Possui documento?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -180,
+        80
+      ]
     },
     {
       "parameters": {
-        "method": "POST", "url": "http://n8n:5678/webhook/visao-360/offline-test-input", "sendHeaders": true,
-        "headerParameters": { "parameters": [{ "name": "X-Visao360-Test-Mode", "value": "OFFLINE_EVAL" }] },
-        "sendBody": true, "contentType": "multipart-form-data", "bodyParameters": { "parameters": [
-          { "parameterType": "formData", "name": "tenant_id", "value": "={{$('Validar trabalho reservado').item.json.tenant_id}}" },
-          { "parameterType": "formData", "name": "source_event_id", "value": "={{$('Validar trabalho reservado').item.json.source_event_id}}" },
-          { "parameterType": "formData", "name": "actor_id", "value": "={{$('Validar trabalho reservado').item.json.actor_id}}" },
-          { "parameterType": "formData", "name": "subject_ref", "value": "={{$('Validar trabalho reservado').item.json.subject_ref}}" },
-          { "parameterType": "formData", "name": "purpose", "value": "offline_evaluation" },
-          { "parameterType": "formData", "name": "data_classification", "value": "INTERNAL" },
-          { "parameterType": "formData", "name": "text", "value": "={{$('Validar trabalho reservado').item.json.text}}" },
-          { "parameterType": "formBinaryData", "name": "attachment", "inputDataFieldName": "attachment" }
-        ] }, "options": { "timeout": 120000 }
+        "url": "={{'https://visao-360-diretor.fael360092.chatgpt.site' + $json.document.download_path}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bridge-Lease-Token",
+              "value": "={{$json.lease_token}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "attachment"
+            }
+          },
+          "timeout": 30000
+        }
       },
-      "id": "3391f4de-b36f-4e50-a165-814f98cf0267", "name": "Processar documento no fluxo 360",
-      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [300, -40]
+      "id": "0c0e2166-9c00-4d12-9ccb-d25c4376849e",
+      "name": "Baixar documento protegido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        -40
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
       "parameters": {
-        "method": "POST", "url": "http://n8n:5678/webhook/visao-360/offline-test-input", "sendHeaders": true,
-        "headerParameters": { "parameters": [{ "name": "X-Visao360-Test-Mode", "value": "OFFLINE_EVAL" }] },
-        "sendBody": true, "contentType": "json", "specifyBody": "json",
+        "method": "POST",
+        "url": "http://n8n:5678/webhook/visao-360/offline-test-input",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Visao360-Test-Mode",
+              "value": "OFFLINE_EVAL"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formData",
+              "name": "tenant_id",
+              "value": "={{$('Validar trabalho reservado').item.json.tenant_id}}"
+            },
+            {
+              "parameterType": "formData",
+              "name": "source_event_id",
+              "value": "={{$('Validar trabalho reservado').item.json.source_event_id}}"
+            },
+            {
+              "parameterType": "formData",
+              "name": "actor_id",
+              "value": "={{$('Validar trabalho reservado').item.json.actor_id}}"
+            },
+            {
+              "parameterType": "formData",
+              "name": "subject_ref",
+              "value": "={{$('Validar trabalho reservado').item.json.subject_ref}}"
+            },
+            {
+              "parameterType": "formData",
+              "name": "purpose",
+              "value": "offline_evaluation"
+            },
+            {
+              "parameterType": "formData",
+              "name": "data_classification",
+              "value": "INTERNAL"
+            },
+            {
+              "parameterType": "formData",
+              "name": "text",
+              "value": "={{$('Validar trabalho reservado').item.json.text}}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "attachment",
+              "inputDataFieldName": "attachment"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "3391f4de-b36f-4e50-a165-814f98cf0267",
+      "name": "Processar documento no fluxo 360",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://n8n:5678/webhook/visao-360/offline-test-input",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Visao360-Test-Mode",
+              "value": "OFFLINE_EVAL"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
         "jsonBody": "={{JSON.stringify({tenant_id: $json.tenant_id, source_event_id: $json.source_event_id, actor_id: $json.actor_id, subject_ref: $json.subject_ref, purpose: 'offline_evaluation', data_classification: 'INTERNAL', text: $json.text})}}",
-        "options": { "timeout": 120000 }
+        "options": {
+          "timeout": 120000
+        }
       },
-      "id": "b4ec4d71-c0b1-470e-bccb-1566f6629bc6", "name": "Processar texto no fluxo 360",
-      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [60, 200]
+      "id": "b4ec4d71-c0b1-470e-bccb-1566f6629bc6",
+      "name": "Processar texto no fluxo 360",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        200
+      ]
     },
     {
       "parameters": {
-        "method": "POST", "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/complete", "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
-        "sendBody": true, "contentType": "json", "specifyBody": "json",
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/complete",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
         "jsonBody": "={{JSON.stringify({job_id: $('Validar trabalho reservado').item.json.job_id, lease_token: $('Validar trabalho reservado').item.json.lease_token, result: $json})}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
       },
-      "id": "c6cbb40f-411b-46fe-97d3-891b45713709", "name": "Publicar Estado 360 hospedado",
-      "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [560, 80],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "id": "c6cbb40f-411b-46fe-97d3-891b45713709",
+      "name": "Publicar Estado 360 hospedado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
-      "parameters": { "mode": "runOnceForAllItems", "language": "javaScript", "jsCode": "const response = $input.first().json;\nif (response.ok !== true) throw new Error(`BRIDGE_COMPLETE_${response.error ?? 'INVALID'}`);\nreturn [{ json: { execution_mode: 'OFFLINE_EVAL', external_effects_allowed: false, bridge_status: 'SUCCEEDED', state_id: response.state_id, state_hash: response.state_hash } }];" },
-      "id": "56ae1664-da2f-45b2-aeb7-bec838fa13dc", "name": "Confirmar publicação",
-      "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [800, 80]
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const response = $input.first().json;\nif (response.ok !== true) throw new Error(`BRIDGE_COMPLETE_${response.error ?? 'INVALID'}`);\nreturn [{ json: { execution_mode: 'OFFLINE_EVAL', external_effects_allowed: false, bridge_status: 'SUCCEEDED', state_id: response.state_id, state_hash: response.state_hash } }];"
+      },
+      "id": "56ae1664-da2f-45b2-aeb7-bec838fa13dc",
+      "name": "Confirmar publicação",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        80
+      ]
     }
   ],
   "connections": {
-    "Verificar fila a cada minuto": { "main": [[{ "node": "Reservar próximo trabalho", "type": "main", "index": 0 }]] },
-    "Reservar próximo trabalho": { "main": [[{ "node": "Validar trabalho reservado", "type": "main", "index": 0 }]] },
-    "Validar trabalho reservado": { "main": [[{ "node": "Possui documento?", "type": "main", "index": 0 }]] },
-    "Possui documento?": { "main": [[{ "node": "Baixar documento protegido", "type": "main", "index": 0 }], [{ "node": "Processar texto no fluxo 360", "type": "main", "index": 0 }]] },
-    "Baixar documento protegido": { "main": [[{ "node": "Processar documento no fluxo 360", "type": "main", "index": 0 }]] },
-    "Processar documento no fluxo 360": { "main": [[{ "node": "Publicar Estado 360 hospedado", "type": "main", "index": 0 }]] },
-    "Processar texto no fluxo 360": { "main": [[{ "node": "Publicar Estado 360 hospedado", "type": "main", "index": 0 }]] },
-    "Publicar Estado 360 hospedado": { "main": [[{ "node": "Confirmar publicação", "type": "main", "index": 0 }]] }
+    "Verificar fila a cada minuto": {
+      "main": [
+        [
+          {
+            "node": "Reservar próximo trabalho",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar próximo trabalho": {
+      "main": [
+        [
+          {
+            "node": "Validar trabalho reservado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar trabalho reservado": {
+      "main": [
+        [
+          {
+            "node": "Possui documento?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Possui documento?": {
+      "main": [
+        [
+          {
+            "node": "Baixar documento protegido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Processar texto no fluxo 360",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar documento protegido": {
+      "main": [
+        [
+          {
+            "node": "Processar documento no fluxo 360",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar documento no fluxo 360": {
+      "main": [
+        [
+          {
+            "node": "Publicar Estado 360 hospedado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar texto no fluxo 360": {
+      "main": [
+        [
+          {
+            "node": "Publicar Estado 360 hospedado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar Estado 360 hospedado": {
+      "main": [
+        [
+          {
+            "node": "Confirmar publicação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true },
-  "active": false, "pinData": {}, "meta": { "templateCredsSetupCompleted": true }, "tags": []
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
 }
