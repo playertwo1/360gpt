@@ -1,0 +1,49 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://360.internal/contracts/entity-resolution-result.schema.json",
+  "title": "EntityResolutionResult",
+  "type": "object",
+  "required": [
+    "primary_cnpj",
+    "razao_social",
+    "situacao_cadastral",
+    "economic_group_identified",
+    "group_companies",
+    "shared_partners",
+    "evidence_nodes"
+  ],
+  "properties": {
+    "primary_cnpj": { "type": "string" },
+    "razao_social": { "type": "string" },
+    "situacao_cadastral": { "type": "string", "enum": ["ATIVA", "SUSPENSA", "INAPTA", "BAIXADA"] },
+    "economic_group_identified": { "type": "boolean" },
+    "group_companies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["cnpj", "razao_social", "relationship_type"],
+        "properties": {
+          "cnpj": { "type": "string" },
+          "razao_social": { "type": "string" },
+          "relationship_type": { "type": "string", "enum": ["MATRIZ", "FILIAL", "COLIGADA_SOCIOS_COMUNS"] }
+        }
+      }
+    },
+    "shared_partners": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nome", "qualificacao"],
+        "properties": {
+          "nome": { "type": "string" },
+          "qualificacao": { "type": "string" }
+        }
+      }
+    },
+    "evidence_nodes": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "additionalProperties": false
+}
