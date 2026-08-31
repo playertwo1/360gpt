@@ -6,10 +6,10 @@ Current milestone: M5 — Piloto curto e correção de rota
 Current task: M5.8 — homologar conversa supervisionada em ensaio real controlado
 Status: IN_PROGRESS
 
-Last completed: M5.1–M5.7 implementados; bateria geral 32/32, build e lint aprovados
+Last completed: M5.1–M5.7 implementados; bateria geral 32/32, build/lint aprovados e acompanhamento de progresso no Telegram adicionado
 Next task: Processar um arquivo real com lacuna material, responder no Telegram e validar retomada do mesmo protocolo
 
-Last validation: PASS — bateria geral 32/32; WF-11/WF-13; Telegram conversacional; build e lint
+Last validation: PASS — bateria geral 32/32; WF-11/WF-13; Telegram conversacional; acompanhamento `/protocolo`; build e lint
 Last commit: 3bfe9c5 (`feat(telegram): add supervised conversational MVP`)
 
 Blockers:
@@ -20,7 +20,7 @@ Pending decisions:
 - Fornecer/confirmar as regras dedicadas oficiais de Seguros e Cartões; até lá, permanecem somente como valores reportados pela fonte.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-31 22:45
+Last update: 2026-08-31 23:05
 
 Resume instruction:
 Continue o ROADMAP em M5.8: executar ensaio real controlado do ciclo arquivo → pergunta → resposta → parecer; não expandir para outros Gerentes.

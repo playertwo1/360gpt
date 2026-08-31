@@ -121,7 +121,10 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
   if (command === '/protocolo') {
     const protocol = args[0];
     const row = protocol ? await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, ar.status AS job_status, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE d.id = ? AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, ownerId).first<Record<string, unknown>>() : null;
-    await sendTelegramText(token, chatId, row ? `PROTOCOLO ${row.id}\nArquivo: ${row.original_name ?? 'sem nome'}\nDocumento: ${row.document_status}\nProcessamento: ${row.job_status ?? 'não iniciado'}${row.last_error_code ? `\nErro: ${row.last_error_code}` : ''}` : 'Protocolo não encontrado ou não informado.');
+    const status = String(row?.job_status ?? row?.document_status ?? 'RECEIVED').toUpperCase();
+    const progress = status === 'SUCCEEDED' || status === 'COMPLETED' ? 100 : status === 'PROCESSING' ? 60 : status === 'AWAITING_OWNER_INPUT' ? 80 : status.startsWith('FAILED') ? 0 : 10;
+    const stage = status === 'SUCCEEDED' ? 'parecer enviado' : status === 'PROCESSING' ? 'OCR e análise em execução' : status === 'AWAITING_OWNER_INPUT' ? 'aguardando sua resposta' : status.startsWith('FAILED') ? 'erro — tente novamente' : 'recebido e aguardando o worker';
+    await sendTelegramText(token, chatId, row ? `PROTOCOLO ${row.id}\nArquivo: ${row.original_name ?? 'sem nome'}\nProgresso: ${progress}%\nEtapa: ${stage}\nDocumento: ${row.document_status}\nProcessamento: ${row.job_status ?? 'não iniciado'}${row.last_error_code ? `\nErro: ${row.last_error_code}` : ''}` : 'Protocolo não encontrado ou não informado.');
     return { handled: true, kind: 'protocol' };
   }
   if (command === '/pendencias' || command === '/duvidas') {

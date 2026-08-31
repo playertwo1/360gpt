@@ -18,6 +18,9 @@
 ## [Unreleased]
 
 ### Changed
+- A confirmação inicial do Telegram agora informa progresso de 10% e orienta `/protocolo <id>`, que exibe percentual e etapa derivados do estado persistido.
+
+### Changed
 - Worker `document-worker`/MinerU e dependências Docker iniciados; agenda do WF-11 publicada no n8n com execução a cada 1 minuto.
 - Versão hospedada 37 publicada no endereço público com a correção de retorno ao Telegram.
 

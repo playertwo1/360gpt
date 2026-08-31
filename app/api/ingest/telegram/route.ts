@@ -181,7 +181,7 @@ export async function POST(request: Request) {
           `🛡️ *Linhagem W3C PROV:* Registrado no Evidence Graph.
 
 ` +
-          `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Não reenvie o arquivo.`;
+          `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Progresso: 10% (recebido). Consulte /protocolo ${canonicalDocumentId} para acompanhar. Não reenvie o arquivo.`;
         await sendTelegramMessage(message.chat.id, docConfirm);
         ackSent = true;
       }
