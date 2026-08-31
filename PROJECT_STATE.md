@@ -3,13 +3,13 @@
 Version: 3.5.4-mvp-performance
 Current phase: MVP mínimo Telegram → Performance → Telegram
 Current milestone: M3 — GG Performance e especialistas
-Current task: Homologar regras específicas e cálculos do parecer produzido pelo WF-13
+Current task: Decidir ativação da regra geral POBJ e obter regras dedicadas de Seguros e Cartões
 Status: IN_PROGRESS
 
 Last completed: WF-13 criado, conectado ao WF-12 e validado sobre os 106 indicadores extraídos do PDF real
-Next task: Conferir e homologar meta, realizado, piso, teto, pontos e direção dos indicadores prioritários antes de fechar M3
+Next task: Rafael autoriza ou rejeita promover `POBJ_SCORING_2026_H2` ao runtime; cadastrar regras oficiais de Seguros e Cartões quando disponíveis
 
-Last validation: PASS — 106 indicadores; AGOSTO/2026; base 28/08/2026; 100,65 pontos finais preservados; ranking exclui direção desconhecida e métricas de redução
+Last validation: PASS — Consórcio 4,67 e Open Finance 7,00 reproduzidos sem divergência em shadow; valores da fonte não sobrescritos
 Last commit: 0453f8f (`feat(n8n): add GG Performance analysis workflow`)
 
 Blockers:
@@ -18,9 +18,11 @@ Blockers:
 - Imagem oficial herdada apresenta conflitos não bloqueantes de `pip check` entre o runtime VLLM e dependências fixadas pelo MinerU.
 
 Pending decisions:
+- Autorizar ou rejeitar a promoção da regra geral `POBJ_SCORING_2026_H2`, hoje `APPROVED_SOURCE_NOT_RUNTIME_ACTIVE`.
+- Fornecer/confirmar as regras dedicadas oficiais de Seguros e Cartões; até lá, permanecem somente como valores reportados pela fonte.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-31 14:18
+Last update: 2026-08-31 14:32
 
 Resume instruction:
-Continue o ROADMAP no M3 homologando as regras dos indicadores prioritários e validando os cálculos do WF-13 contra o PDF real.
+Após decisão de Rafael sobre a política geral, fechar os cálculos elegíveis de M3; em paralelo, o M4 pode formatar somente valores reportados e validações explícitas.

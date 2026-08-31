@@ -57,13 +57,26 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [520, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nconst analysis = envelope.performance_analysis;\nconst normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst round2 = (value) => Math.round((value + Number.EPSILON) * 100) / 100;\nconst validations = [];\nfor (const item of analysis.indicators) {\n  const name = normalize(item.name);\n  let ruleId = null; let expected = null;\n  if (/consorcio \\(expert\\)/.test(name) && item.attainment_percent !== null && item.weight > 0) { ruleId = 'N3_CONSORCIO_EXPERT_LINEAR'; expected = round2(item.weight * Math.min(Math.max(item.attainment_percent, 0), 100) / 100); }\n  else if (/^open finance pj$/.test(name) && item.attainment_percent !== null && item.weight > 0) { ruleId = 'OPEN_FINANCE_PJ_BINARY'; expected = item.attainment_percent >= 100 ? round2(item.weight) : 0; }\n  if (!ruleId) continue;\n  const reported = item.reported_points; const difference = reported === null ? null : round2(reported - expected);\n  validations.push({indicator_id: item.indicator_id, indicator_name: item.name, rule_id: ruleId, policy_id: 'POBJ_SCORING_2026_H2', policy_version: '1.0.0', validation_mode: 'SHADOW_COMPARE_ONLY', expected_points: expected, reported_points: reported, difference, status: reported !== null && Math.abs(difference) <= 0.01 ? 'MATCH' : 'REVIEW_REQUIRED'});\n}\nanalysis.rule_validation = {policy_id: 'POBJ_SCORING_2026_H2', policy_version: '1.0.0', runtime_policy_status: 'APPROVED_SOURCE_NOT_RUNTIME_ACTIVE', source_values_overwritten: false, validations, matched: validations.filter((item) => item.status === 'MATCH').length, review_required: validations.filter((item) => item.status !== 'MATCH').length};\nif (analysis.rule_validation.review_required > 0) analysis.data_gaps.push({field: 'rule_validation', reason_code: 'REPORTED_POINTS_DIVERGE_FROM_EXPLICIT_RULE', impact: 'A divergência deve ser revisada antes de ativar cálculo automático.', requires_manual_review: true});\nreturn [{json: {...envelope, performance_analysis: analysis}}];"
+      },
+      "id": "validate-explicit-rules",
+      "name": "06 Validar regras explícitas em shadow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 80]
     }
   ],
   "connections": {
     "01 Receber handoff Performance": { "main": [[{ "node": "02 Validar contrato e segurança", "type": "main", "index": 0 }]] },
     "02 Validar contrato e segurança": { "main": [[{ "node": "03 Reconciliar fonte e estruturar indicadores", "type": "main", "index": 0 }]] },
     "03 Reconciliar fonte e estruturar indicadores": { "main": [[{ "node": "04 Produzir parecer GG Performance", "type": "main", "index": 0 }]] },
-    "04 Produzir parecer GG Performance": { "main": [[{ "node": "05 Governar direção e ranking", "type": "main", "index": 0 }]] }
+    "04 Produzir parecer GG Performance": { "main": [[{ "node": "05 Governar direção e ranking", "type": "main", "index": 0 }]] },
+    "05 Governar direção e ranking": { "main": [[{ "node": "06 Validar regras explícitas em shadow", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
   "active": true,

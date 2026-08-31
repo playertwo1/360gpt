@@ -6,6 +6,7 @@
 - Corrigida a validação booleana da extração no WF-11 e publicado o WF-12 como subworkflow interno sem webhook, agenda ou gatilho Telegram.
 
 ### Validated
+- WF-13 reproduziu em shadow os pontos de Consórcio Expert (`4,67`) e Open Finance (`7,00`) do PDF real, com divergência zero e sem sobrescrever a fonte.
 - PDF real enviado pelo Telegram percorreu fila, lease, download protegido, OCR MinerU híbrido de 3 páginas e roteamento determinístico exclusivo ao GG Performance; Estado mínimo persistido sem efeitos externos.
 
 ### Changed

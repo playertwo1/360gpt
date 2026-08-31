@@ -90,6 +90,8 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 **Validação de 2026-08-31:** o WF-13 estruturou 106 indicadores do PDF real, reconheceu `AGOSTO/2026`, base `28/08/2026` e preservou os `100,65` pontos finais reportados. Indicadores com direção desconhecida e métricas `LOWER_IS_BETTER` foram excluídos do ranking de aumento. Continuam pendentes a homologação das regras específicas por indicador e a validação dos cálculos de gap/cenários antes de fechar o gate M3.
 
+**Validação de regras explícitas:** em comparação shadow, `N3_CONSORCIO_EXPERT_LINEAR` reproduziu `4,67` pontos e `OPEN_FINANCE_PJ_BINARY` reproduziu `7,00` pontos, ambos sem divergência. Nenhum valor da fonte foi sobrescrito. A regra geral permanece `APPROVED_SOURCE_NOT_RUNTIME_ACTIVE`; Seguros e Cartões continuam exigindo regras dedicadas.
+
 **Gate:** os valores do parecer reproduzem os valores e cálculos conferíveis do arquivo real.
 
 ### M4 — Resposta final no Telegram — PENDENTE
