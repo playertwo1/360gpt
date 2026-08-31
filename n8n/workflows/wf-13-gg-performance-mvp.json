@@ -1,0 +1,73 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000013",
+  "name": "WF-13 — GG Performance — Análise POBJ MVP",
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "id": "receive-performance-handoff",
+      "name": "01 Receber handoff Performance",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-520, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nconst handoff = envelope?.performance_handoff;\nif (!handoff || handoff.handoff_target !== 'GERENTE_GERAL_PERFORMANCE') throw new Error('PERFORMANCE_HANDOFF_REQUIRED');\nif (handoff.security?.external_effects_allowed !== false) throw new Error('EXTERNAL_EFFECTS_NOT_BLOCKED');\nif (typeof handoff.extracted_text !== 'string' || !handoff.extracted_text.trim()) throw new Error('EXTRACTED_TEXT_REQUIRED');\nif (handoff.source?.mime_type && !['application/pdf','image/jpeg','image/png','image/webp'].includes(handoff.source.mime_type)) throw new Error('UNSUPPORTED_DOCUMENT_TYPE');\nreturn [{json: {...envelope, performance_validation: {valid: true, input_kind: 'STRUCTURED_EXTRACTION', raw_binary_received: false, capabilities: handoff.capabilities}}}];"
+      },
+      "id": "validate-performance-handoff",
+      "name": "02 Validar contrato e segurança",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-280, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID } = require('crypto');\nconst envelope = $input.first().json;\nconst handoff = envelope.performance_handoff;\nconst text = handoff.extracted_text;\nconst decode = (value) => String(value ?? '').replace(/<[^>]+>/g, ' ').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\\s+/g, ' ').trim();\nconst numberPt = (value) => { const clean = decode(value).replace(/R\\$\\s*/gi, '').replace(/\\./g, '').replace(',', '.').replace(/[^0-9+\\-.]/g, ''); if (!clean || !/[0-9]/.test(clean)) return null; const parsed = Number(clean); return Number.isFinite(parsed) ? parsed : null; };\nconst rowMatches = [...text.matchAll(/<tr[^>]*>([\\s\\S]*?)<\\/tr>/gi)];\nconst indicators = [];\nfor (const match of rowMatches) {\n  const cells = [...match[1].matchAll(/<td[^>]*>([\\s\\S]*?)<\\/td>/gi)].map((cell) => decode(cell[1]));\n  if (cells.length < 11) continue;\n  const name = cells[0];\n  if (!name || /^(\\+\\s*)?produto$/i.test(name) || /indicadores|legendas|negócios|qualidade|gestão de risco|clientes/i.test(name)) continue;\n  const weight = numberPt(cells[1]); const metric = cells[2]; const baseDate = cells[3]; const target = numberPt(cells[4]); const achieved = numberPt(cells[5]); const attainment = numberPt(cells[6]); const reference = numberPt(cells[7]); const projection = numberPt(cells[8]); const dailyNeed = numberPt(cells[9]); const points = numberPt(cells[10]);\n  if (weight === null || !metric || !['QTD','PROD','PERC','PONT'].includes(metric.toUpperCase())) continue;\n  indicators.push({indicator_id: `pobj-${String(indicators.length + 1).padStart(3,'0')}`, name, weight, metric: metric.toUpperCase(), base_date: /^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(baseDate) ? baseDate : null, target, achieved, attainment_percent: attainment, reference_percent: reference, projected_final_percent: projection, daily_need: dailyNeed, reported_points: points, value_origin: 'DOCUMENT_REPORTED', locator: `document://${handoff.source?.content_hash ?? 'unknown'}#row-${indicators.length + 1}`});\n}\nconst period = text.match(/MENSAL\\s*-\\s*([A-ZÇÃÕÉÍÓÚ]+)\\/(20\\d{2})/i);\nconst base = text.match(/Base\\s+(\\d{2}\\/\\d{2}\\/20\\d{2})/i);\nconst headline = text.match(/PONTOS possíveis atingidos % ating\\. acelora % final\\s*([\\d.,-]+)\\s+([\\d.,-]+)\\s+([\\d.,-]+)\\s+([\\d.,-]+)\\s+([\\d.,-]+)/i);\nconst summary = {period: period ? `${period[1].toUpperCase()}/${period[2]}` : null, base_date: base?.[1] ?? null, possible_points: headline ? numberPt(headline[1]) : null, achieved_points: headline ? numberPt(headline[2]) : null, attainment_percent: headline ? numberPt(headline[3]) : null, accelerator_points: headline ? numberPt(headline[4]) : null, final_points: headline ? numberPt(headline[5]) : null};\nconst recon = {schema_version: '1.0.0', reconciliation_id: randomUUID(), capability: 'PERFORMANCE_SOURCES_RECONCILIATION', source_count: 1, source_status: 'SINGLE_AUTHORIZED_DOCUMENT', conflicts: [], indicator_count: indicators.length, period: summary.period, base_date: summary.base_date};\nreturn [{json: {...envelope, performance_reconciliation: recon, performance_observations: {schema_version: '1.0.0', summary, indicators, provenance: {source_hash: handoff.source?.content_hash, extraction_method: handoff.source?.extraction_method, evidence_count: handoff.evidence?.length ?? 0}}}}];"
+      },
+      "id": "reconcile-performance-source",
+      "name": "03 Reconciliar fonte e estruturar indicadores",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-20, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID } = require('crypto');\nconst envelope = $input.first().json;\nconst observations = envelope.performance_observations;\nconst weighted = observations.indicators.filter((item) => item.weight > 0);\nconst withAttainment = weighted.filter((item) => item.attainment_percent !== null);\nconst candidates = withAttainment.filter((item) => item.attainment_percent < 100).sort((a,b) => (a.attainment_percent ?? 999) - (b.attainment_percent ?? 999)).slice(0,5);\nconst strengths = withAttainment.filter((item) => item.attainment_percent >= 100).sort((a,b) => (b.reported_points ?? 0) - (a.reported_points ?? 0)).slice(0,3);\nconst missing = weighted.filter((item) => item.target === null || item.achieved === null || item.attainment_percent === null);\nconst findings = [];\nif (observations.summary.final_points !== null) findings.push({finding_id: randomUUID(), topic: 'pobj_score_reportado', statement: `O documento reporta ${observations.summary.final_points.toFixed(2)} pontos finais no período ${observations.summary.period ?? 'não identificado'}, base ${observations.summary.base_date ?? 'não identificada'}.`, inference_type: 'SOURCE_REPORTED', evidence_quality: 'SUFFICIENT'});\nif (candidates.length) findings.push({finding_id: randomUUID(), topic: 'indicadores_abaixo_da_meta', statement: `${candidates.length} indicadores ponderados aparecem abaixo de 100% entre os candidatos prioritários: ${candidates.map((item) => `${item.name} (${item.attainment_percent.toFixed(2)}%)`).join('; ')}.`, inference_type: 'DETERMINISTIC', evidence_quality: 'SUFFICIENT'});\nif (strengths.length) findings.push({finding_id: randomUUID(), topic: 'indicadores_em_meta', statement: `Destaques em ou acima de 100%: ${strengths.map((item) => `${item.name} (${item.attainment_percent.toFixed(2)}%)`).join('; ')}.`, inference_type: 'DETERMINISTIC', evidence_quality: 'SUFFICIENT'});\nconst gaps = missing.map((item) => ({field: item.name, reason_code: 'SOURCE_FIELD_NOT_AVAILABLE', impact: 'Não é seguro calcular gap ou cenário deste indicador.', requires_manual_review: false}));\nconst actions = candidates.slice(0,3).map((item,index) => ({action_id: randomUUID(), action: `Revisar alavancas para ${item.name}; o documento registra ${item.attainment_percent.toFixed(2)}% de atingimento${item.daily_need !== null ? ` e necessidade diária de ${item.daily_need.toLocaleString('pt-BR')}` : ''}.`, priority: index === 0 ? 'P1' : 'P2', requires_human_approval: false, execution_authorization: 'NOT_APPLICABLE', related_indicator_id: item.indicator_id}));\nconst complete = observations.indicators.length > 0 && observations.summary.base_date !== null;\nconst assessment = {schema_version: '1.0.0', assessment_id: randomUUID(), manager: 'GERENTE_GERAL_PERFORMANCE', producer_version: '1.0.0', execution_status: 'SUCCESS', decision_status: complete ? 'READY' : 'MANUAL_REVIEW_REQUIRED', capabilities_executed: ['PERFORMANCE_SOURCES_RECONCILIATION','PERFORMANCE_SCORING_STATE','PERFORMANCE_GAP_SCENARIOS'], period: observations.summary.period, base_date: observations.summary.base_date, summary: observations.summary, indicators: observations.indicators, priority_candidates: candidates, strengths, findings, data_gaps: gaps, recommended_actions: actions, calculation_policy: {reported_values_preserved: true, recalculated_points: false, reason: 'Pontos permanecem os reportados pela fonte até a regra específica de cada indicador estar homologada.'}, security: {external_effects_allowed: false}};\nreturn [{json: {...envelope, performance_analysis: assessment}}];"
+      },
+      "id": "analyze-performance",
+      "name": "04 Produzir parecer GG Performance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [260, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nconst analysis = envelope.performance_analysis;\nconst normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst direction = (item) => { const name = normalize(item.name); if (/vencidos|inadimpl|perda|atraso/.test(name)) return 'LOWER_IS_BETTER'; if (/captacao|seguro|capitalizacao|folha|boleto|pix|consorcio|cart(ao|oes)|faturamento|open finance|crescimento|conquista|reativacao|credito|cielo|centralizacao|encanta|conecta/.test(name)) return 'HIGHER_IS_BETTER'; return 'UNKNOWN'; };\nanalysis.indicators = analysis.indicators.map((item) => ({...item, goal_direction: direction(item)}));\nconst comparable = analysis.indicators.filter((item) => item.weight > 0 && item.attainment_percent !== null && item.goal_direction === 'HIGHER_IS_BETTER');\nanalysis.priority_candidates = comparable.filter((item) => item.attainment_percent < 100).sort((a,b) => a.attainment_percent - b.attainment_percent).slice(0,5);\nanalysis.strengths = comparable.filter((item) => item.attainment_percent >= 100).sort((a,b) => (b.reported_points ?? 0) - (a.reported_points ?? 0)).slice(0,3);\nanalysis.data_gaps.push(...analysis.indicators.filter((item) => item.weight > 0 && item.goal_direction === 'UNKNOWN').map((item) => ({field: item.name, reason_code: 'GOAL_DIRECTION_NOT_HOMOLOGATED', impact: 'Indicador preservado, mas excluído do ranking até homologar a direção da meta.', requires_manual_review: false})));\nanalysis.recommended_actions = analysis.priority_candidates.slice(0,3).map((item,index) => ({action_id: `candidate-${item.indicator_id}`, action: `Revisar alavancas para ${item.name}; o documento registra ${item.attainment_percent.toFixed(2)}% de atingimento${item.daily_need !== null ? ` e necessidade diária de ${item.daily_need.toLocaleString('pt-BR')}` : ''}.`, priority: index === 0 ? 'P1' : 'P2', requires_human_approval: false, execution_authorization: 'NOT_APPLICABLE', related_indicator_id: item.indicator_id}));\nanalysis.findings = analysis.findings.filter((item) => !['indicadores_abaixo_da_meta','indicadores_em_meta'].includes(item.topic));\nif (analysis.priority_candidates.length) analysis.findings.push({finding_id: `gaps-${analysis.assessment_id}`, topic: 'indicadores_abaixo_da_meta', statement: `${analysis.priority_candidates.length} indicadores comparáveis aparecem abaixo de 100%: ${analysis.priority_candidates.map((item) => `${item.name} (${item.attainment_percent.toFixed(2)}%)`).join('; ')}.`, inference_type: 'DETERMINISTIC', evidence_quality: 'SUFFICIENT'});\nif (analysis.strengths.length) analysis.findings.push({finding_id: `strengths-${analysis.assessment_id}`, topic: 'indicadores_em_meta', statement: `Destaques comparáveis em ou acima de 100%: ${analysis.strengths.map((item) => `${item.name} (${item.attainment_percent.toFixed(2)}%)`).join('; ')}.`, inference_type: 'DETERMINISTIC', evidence_quality: 'SUFFICIENT'});\nanalysis.ranking_policy = {version: '1.0.0', unknown_direction_excluded: true, lower_is_better_excluded_from_higher_ranking: true};\nreturn [{json: {...envelope, performance_analysis: analysis}}];"
+      },
+      "id": "govern-performance-ranking",
+      "name": "05 Governar direção e ranking",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 80]
+    }
+  ],
+  "connections": {
+    "01 Receber handoff Performance": { "main": [[{ "node": "02 Validar contrato e segurança", "type": "main", "index": 0 }]] },
+    "02 Validar contrato e segurança": { "main": [[{ "node": "03 Reconciliar fonte e estruturar indicadores", "type": "main", "index": 0 }]] },
+    "03 Reconciliar fonte e estruturar indicadores": { "main": [[{ "node": "04 Produzir parecer GG Performance", "type": "main", "index": 0 }]] },
+    "04 Produzir parecer GG Performance": { "main": [[{ "node": "05 Governar direção e ranking", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "active": true,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

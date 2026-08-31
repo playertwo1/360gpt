@@ -14,6 +14,8 @@
 - Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
 
 ### Added
+- WF-13 interno do GG Performance para validar o handoff, estruturar tabelas POBJ, reconciliar a fonte, preservar valores reportados, separar direção de metas e produzir parecer consultivo.
+- Testes estrutural e funcional do WF-13 com números brasileiros, valores negativos, proveniência e bloqueio de efeitos externos.
 - WF-12, Diretor mínimo do MVP, para classificar extrações e gerar handoff estruturado exclusivo ao GG Performance.
 - Teste estrutural do WF-12 e gatilho manual seguro no WF-11 para ensaios sem ativar o agendamento.
 - Script seguro `release-mineru-memory.ps1` para descarregar os modelos após uso híbrido e manter o serviço pronto.
@@ -21,6 +23,7 @@
 - Teste automatizado da imagem, saúde, conectividade interna, limite de concorrência e contrato de extração MinerU.
 
 ### Changed
+- WF-12 passou a chamar o WF-13 como subworkflow interno após o roteamento exclusivo a Performance.
 - WF-11 agora chama o Diretor mínimo após validar o OCR e só conclui jobs quando o handoff Performance estiver válido.
 - PDFs começam no pipeline econômico e escalam ao híbrido somente diante de evidência vazia ou tabela complexa; imagens continuam no híbrido.
 - Concorrência e janela do MinerU limitadas a uma unidade para reduzir picos de memória.

@@ -723,7 +723,7 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 - [x] M0 intake Telegram durável.
 - [x] M1 leitor homologado em job real do Telegram: PDF de 3 páginas processado pelo MinerU híbrido.
 - [x] M2 roteamento mínimo exclusivo para Performance: WF-11/WF-12 reconheceram POBJ com confiança alta e persistiram o Estado mínimo.
-- [ ] M3 análise e cálculos do GG Performance.
+- [ ] M3 análise e cálculos do GG Performance — WF-13 criado e validado sobre 106 indicadores reais; falta homologar regras específicas de cálculo e fechar o gate.
 - [ ] M4 resposta final no mesmo chat.
 - [ ] M5 validação com 3–5 arquivos reais.
 

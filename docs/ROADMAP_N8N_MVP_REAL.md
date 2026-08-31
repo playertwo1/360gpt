@@ -81,12 +81,14 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 ### M3 — GG Performance e especialistas — PENDENTE
 
-- [ ] Criar WF-13 Performance recebendo somente JSON validado.
-- [ ] Acionar reconciliação de fontes e estado de pontuação.
+- [x] Criar WF-13 Performance recebendo somente JSON validado.
+- [x] Acionar reconciliação de fontes e estado de pontuação reportado pelo documento.
 - [ ] Aplicar regras versionadas de meta, realizado, piso, teto e pontos.
 - [ ] Calcular atingimento, gap e cenários sem permitir que a IA invente números.
-- [ ] Acionar plano executável somente quando houver dados suficientes.
-- [ ] Produzir parecer do GG Performance com fatos, análise, lacunas e recomendação.
+- [x] Acionar plano consultivo somente quando houver dados suficientes e direção da meta conhecida.
+- [x] Produzir parecer do GG Performance com fatos, análise, lacunas e recomendação.
+
+**Validação de 2026-08-31:** o WF-13 estruturou 106 indicadores do PDF real, reconheceu `AGOSTO/2026`, base `28/08/2026` e preservou os `100,65` pontos finais reportados. Indicadores com direção desconhecida e métricas `LOWER_IS_BETTER` foram excluídos do ranking de aumento. Continuam pendentes a homologação das regras específicas por indicador e a validação dos cálculos de gap/cenários antes de fechar o gate M3.
 
 **Gate:** os valores do parecer reproduzem os valores e cálculos conferíveis do arquivo real.
 
