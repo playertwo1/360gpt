@@ -722,7 +722,7 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 
 - [x] M0 intake Telegram durável.
 - [ ] M1 leitor homologado isoladamente; falta atravessar um job real do Telegram.
-- [ ] M2 roteamento mínimo exclusivo para Performance.
+- [ ] M2 roteamento mínimo exclusivo para Performance — estrutura WF-11/WF-12 concluída; falta atravessar novo arquivo real do Telegram.
 - [ ] M3 análise e cálculos do GG Performance.
 - [ ] M4 resposta final no mesmo chat.
 - [ ] M5 validação com 3–5 arquivos reais.

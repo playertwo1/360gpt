@@ -8,11 +8,14 @@
 - Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
 
 ### Added
+- WF-12, Diretor mínimo do MVP, para classificar extrações e gerar handoff estruturado exclusivo ao GG Performance.
+- Teste estrutural do WF-12 e gatilho manual seguro no WF-11 para ensaios sem ativar o agendamento.
 - Script seguro `release-mineru-memory.ps1` para descarregar os modelos após uso híbrido e manter o serviço pronto.
 - MinerU 3.4.5 como parser interno local de PDF e imagem, com todos os modelos armazenados no computador e acesso exclusivo pela rede Docker do n8n.
 - Teste automatizado da imagem, saúde, conectividade interna, limite de concorrência e contrato de extração MinerU.
 
 ### Changed
+- WF-11 agora chama o Diretor mínimo após validar o OCR e só conclui jobs quando o handoff Performance estiver válido.
 - PDFs começam no pipeline econômico e escalam ao híbrido somente diante de evidência vazia ou tabela complexa; imagens continuam no híbrido.
 - Concorrência e janela do MinerU limitadas a uma unidade para reduzir picos de memória.
 - `document-worker` agora roteia PDF/JPG/PNG ao MinerU híbrido e mantém XLSX/CSV em parsers determinísticos nativos.

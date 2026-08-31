@@ -1,0 +1,34 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000012",
+  "name": "WF-12 — Diretor — Roteamento Performance do MVP",
+  "nodes": [
+    {
+      "parameters": { "inputSource": "passthrough" },
+      "id": "receive-extraction",
+      "name": "01 Receber extração estruturada",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-360, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID } = require('crypto');\nconst envelope = $input.first().json;\nif (envelope?.valid !== true || envelope?.result?.ok !== true) throw new Error('VALID_EXTRACTION_REQUIRED');\nconst extraction = envelope.result.extraction ?? {};\nconst text = String(extraction.text ?? '');\nconst normalized = `${extraction.file_name ?? ''} ${text}`.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst signals = ['pobj','meta','realizado','atingimento','pontuacao','pontos','consorcio','seguros','captacao','credito pj','open finance'];\nconst matched = signals.filter((term) => normalized.includes(term));\nconst fileHint = /pobj|meta|objetivo|performance/.test(String(extraction.file_name ?? '').toLowerCase());\nconst isPerformance = matched.length >= 2 || (fileHint && matched.length >= 1);\nconst decisionStatus = isPerformance ? 'READY' : 'MANUAL_REVIEW_REQUIRED';\nconst routing = {\n  schema_version: '1.0.0',\n  routing_id: randomUUID(),\n  routing_method: 'DETERMINISTIC',\n  rule_id: 'mvp.performance.document-signals.v1',\n  intent: isPerformance ? 'ANALISAR_METAS_POBJ' : 'CLASSIFICACAO_DOCUMENTAL_INCONCLUSIVA',\n  selected_domains: isPerformance ? [{\n    domain: 'performance',\n    requirement: 'REQUIRED',\n    capabilities: ['PERFORMANCE_SOURCES_RECONCILIATION','PERFORMANCE_SCORING_STATE','PERFORMANCE_GAP_SCENARIOS']\n  }] : [],\n  excluded_domains: ['conta','financeiro','relacionamento'].map((domain) => ({domain, reason_code: 'NOT_REQUIRED_FOR_INTENT'})),\n  dependencies: isPerformance ? [{before: 'DOCUMENT_EXTRACTION_VALIDATED', after: 'PERFORMANCE_SOURCES_RECONCILIATION'}] : [],\n  fallback: 'MANUAL_REVIEW_REQUIRED',\n  decision_status: decisionStatus\n};\nconst minimalEvidence = (extraction.evidence ?? []).slice(0, 80).map(({locator,text,extraction_method,confidence}) => ({locator,text:String(text ?? '').slice(0,8000),extraction_method,confidence:confidence ?? null}));\nconst performanceHandoff = isPerformance ? {\n  schema_version: '1.0.0',\n  handoff_id: randomUUID(),\n  handoff_target: 'GERENTE_GERAL_PERFORMANCE',\n  job_id: envelope.job_id,\n  source: {\n    file_name: extraction.file_name,\n    mime_type: extraction.mime_type,\n    content_hash: extraction.content_hash,\n    extraction_method: extraction.extraction_method,\n    page_count: extraction.page_count ?? null\n  },\n  intent: routing.intent,\n  matched_signals: matched,\n  extracted_text: text.slice(0,200000),\n  evidence: minimalEvidence,\n  capabilities: routing.selected_domains[0].capabilities,\n  data_gaps: [],\n  security: {content_trust: 'UNTRUSTED', external_effects_allowed: false}\n} : null;\nreturn [{json: {...envelope, routing, performance_handoff: performanceHandoff, orchestration: {director: 'DIRETOR_360_MVP', version: '1.0.0', matched_signals: matched, confidence: isPerformance ? (matched.length >= 4 ? 'HIGH' : 'MEDIUM') : 'LOW'}}}];"
+      },
+      "id": "route-performance",
+      "name": "02 Classificar e rotear Performance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-80, 80]
+    }
+  ],
+  "connections": {
+    "01 Receber extração estruturada": { "main": [[{ "node": "02 Classificar e rotear Performance", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
+  "active": false,
+  "pinData": {},
+  "meta": { "templateCredsSetupCompleted": true },
+  "tags": []
+}

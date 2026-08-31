@@ -22,6 +22,7 @@ $workflowFiles = @(
   'wf-01-webhook-entrada-teste.json'
   'wf-09-ponte-hospedada.json'
   'wf-11-diretor-360-orquestrador-mvp.json'
+  'wf-12-diretor-roteamento-performance-mvp.json'
 )
 
 foreach ($workflowFile in $workflowFiles) {

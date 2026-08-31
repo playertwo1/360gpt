@@ -69,11 +69,13 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 ### M2 — Orquestrador mínimo no n8n — PRÓXIMO
 
 - [ ] Fazer o WF-11 atravessar claim → download → leitor → validação.
-- [ ] Criar subworkflow mínimo do Diretor para classificar documento e intenção.
-- [ ] Rotear POBJ/metas exclusivamente ao GG Performance.
-- [ ] Registrar justificativa, confiança, lacunas e evidências do roteamento.
-- [ ] Enviar entrada estruturada; nunca entregar PDF bruto aos agentes.
-- [ ] Encerrar com retry/falha rastreável quando a classificação não for segura.
+- [x] Criar subworkflow mínimo do Diretor para classificar documento e intenção — WF-12 criado, testado e importado no n8n.
+- [x] Rotear POBJ/metas exclusivamente ao GG Performance.
+- [x] Registrar justificativa, confiança, lacunas e evidências do roteamento.
+- [x] Enviar entrada estruturada; nunca entregar PDF bruto aos agentes.
+- [x] Encerrar com retry/falha rastreável quando a classificação não for segura.
+
+**Ensaio de 2026-08-31:** WF-11 executou manualmente no n8n e encerrou corretamente com `empty: true`; a fila estava vazia. O próximo ensaio exige um novo arquivo enviado pelo Telegram.
 
 **Gate:** um arquivo POBJ extraído produz um handoff válido para Performance e não aciona outro Gerente.
 
@@ -247,4 +249,4 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ## Próximo passo exato
 
-Executar M2: fazer um job real do Telegram atravessar WF-11 claim → download → document-worker/MinerU → validação e produzir o primeiro handoff estruturado exclusivamente para o GG Performance. Não desenvolver outros Gerentes antes do Gate final de M4.
+Rafael envia um arquivo POBJ pelo Telegram. Em seguida, executar WF-11 e comprovar claim → download → document-worker/MinerU → WF-12 → primeiro handoff estruturado exclusivamente para o GG Performance. Não desenvolver outros Gerentes antes do Gate final de M4.

@@ -11,6 +11,7 @@ $tests = @(
     @{ Name = 'MinerU - Parser interno'; Script = 'scripts/test-mineru-integration.ps1' },
     @{ Name = 'Document Worker - Roteamento e fallback'; Script = 'scripts/test-document-worker.ps1' },
     @{ Name = 'WF-11 - Orquestrador Mestre n8n'; Script = 'scripts/test-wf11-n8n-master.ps1' },
+    @{ Name = 'WF-12 - Roteamento mínimo Performance'; Script = 'scripts/test-wf12-performance-routing.ps1' },
     @{ Name = 'H3 - Ponte Site <-> Computador'; Script = 'scripts/test-h3-bridge-audit.ps1' },
     @{ Name = 'H4 - Iniciador de 1-Clique'; Script = 'scripts/test-h4-launcher.ps1' },
     @{ Name = 'H5 - Telegram Hospedado (Texto)'; Script = 'scripts/test-h5-telegram-text.ps1' },
