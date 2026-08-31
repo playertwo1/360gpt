@@ -19,7 +19,8 @@
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
-**Próximo passo exato:** enviar um novo arquivo pelo Telegram e executar o WF-11 para confirmar `telegram_reply_sent: true` no M4.
+**Worker e agenda:** `document-worker`/MinerU ativos no Docker; WF-11 publicado e agendado a cada 1 minuto.
+**Próximo passo exato:** enviar um novo arquivo pelo Telegram e confirmar a resposta automática e `telegram_reply_sent: true` no M4.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada publicada:** 36; inclui claim do WF-11 e suporte a JPG/PNG.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

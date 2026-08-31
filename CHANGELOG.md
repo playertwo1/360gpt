@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- Worker `document-worker`/MinerU e dependências Docker iniciados; agenda do WF-11 publicada no n8n com execução a cada 1 minuto.
+
+### Fixed
+- Corrigida a resolução do chat autorizado no retorno Telegram quando `owner_id` é UUID de conta; utiliza o único chat da allowlist sem ampliar destinatários.
+
 ### Fixed
 - Corrigida a validação booleana da extração no WF-11 e publicado o WF-12 como subworkflow interno sem webhook, agenda ou gatilho Telegram.
 
