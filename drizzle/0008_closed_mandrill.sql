@@ -71,12 +71,3 @@ DELETE FROM `companies` WHERE lower(`name`) LIKE '%santa rita%' OR lower(`name`)
 	OR lower(`name`) LIKE '%bebidas paraiso%' OR lower(`name`) LIKE '%transvale%'
 	OR lower(`id`) LIKE '%demo%' OR lower(`id`) LIKE '%synthetic%';
 --> statement-breakpoint
-DELETE FROM `evidence_edges` WHERE `tenant_id` = 'tenant-demo';
---> statement-breakpoint
-DELETE FROM `evidence_nodes` WHERE `tenant_id` = 'tenant-demo';
---> statement-breakpoint
-DELETE FROM `manual_review_resolutions` WHERE `tenant_id` = 'tenant-demo';
---> statement-breakpoint
-DELETE FROM `manual_review_requests` WHERE `tenant_id` = 'tenant-demo';
---> statement-breakpoint
-DELETE FROM `state_snapshots` WHERE `tenant_id` = 'tenant-demo' OR lower(`subject_ref`) LIKE '%demo%' OR lower(`subject_ref`) LIKE '%synthetic%';
