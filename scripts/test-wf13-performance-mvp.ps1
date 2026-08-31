@@ -8,7 +8,7 @@ $workflow = Get-Content $path -Raw | ConvertFrom-Json
 $raw = Get-Content $path -Raw
 
 if ($workflow.id -ne '9eb8e86a-84b8-4aa9-97e4-360000000013') { throw 'ID canônico do WF-13 inválido.' }
-if ($workflow.nodes.Count -ne 7) { throw 'WF-13 deve possuir sete estágios mínimos.' }
+if ($workflow.nodes.Count -ne 8) { throw 'WF-13 deve possuir oito estágios mínimos.' }
 if ($workflow.active -ne $true) { throw 'WF-13 deve estar ativo como subworkflow interno.' }
 if (($workflow.nodes | Where-Object { $_.type -match 'webhook|scheduleTrigger|telegramTrigger' }).Count -ne 0) { throw 'WF-13 não pode expor gatilho externo.' }
 if ($raw -match 'binary\.data|PDF_BINARY') { throw 'WF-13 não pode receber PDF bruto.' }
@@ -21,6 +21,7 @@ if ($raw -notmatch 'DOCUMENT_REPORTED') { throw 'Proveniência dos valores repor
 if ($raw -notmatch 'GOAL_DIRECTION_NOT_HOMOLOGATED') { throw 'Governança da direção de metas ausente.' }
 if ($raw -notmatch 'SHADOW_COMPARE_ONLY' -or $raw -notmatch 'source_values_overwritten: false') { throw 'Validação segura das regras explícitas ausente.' }
 if ($raw -notmatch 'projected_final_percent' -or $raw -notmatch "runtime_status: 'RUNTIME_ACTIVE'") { throw 'Política geral ativa ou base projetada ausente.' }
+if ($raw -notmatch 'state_hash' -or $raw -notmatch 'completion_payload' -or $raw -notmatch 'external_effects_allowed: false') { throw 'Payload idempotente e bloqueio externo ausentes.' }
 
 Write-Host '[PASS] WF-13 recebe somente handoff estruturado'
 Write-Host '[PASS] Fonte, indicadores, gaps e parecer separados'

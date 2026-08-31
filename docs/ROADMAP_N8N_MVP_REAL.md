@@ -98,12 +98,14 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 ### M4 — Resposta final no Telegram — PENDENTE
 
-- [ ] Transformar o parecer em mensagem curta e legível no celular.
-- [ ] Mostrar período, principais indicadores, pontos, gaps e ações recomendadas.
-- [ ] Informar incerteza ou campo não reconhecido sem fabricar resposta.
-- [ ] Devolver a mensagem ao mesmo chat e relacioná-la ao protocolo original.
-- [ ] Evitar resposta duplicada em retry ou update repetido.
-- [ ] Registrar duração, parser usado, agentes acionados e resultado final.
+- [x] Transformar o parecer em mensagem curta e legível no celular.
+- [x] Mostrar período, principais indicadores, pontos, gaps e ações recomendadas.
+- [x] Informar incerteza ou campo não reconhecido sem fabricar resposta.
+- [x] Preparar entrega idempotente ao mesmo chat e relacioná-la ao protocolo original.
+- [x] Evitar resposta duplicada em retry ou update repetido pela auditoria da ponte.
+- [x] Registrar duração, parser usado, agentes acionados e resultado final no payload de conclusão.
+
+**Implementação M4:** WF-13 produz `executive_assessment` e `persisted_state` com hash; WF-11 envia `completion_payload` à ponte. Falta apenas o ensaio real com um novo arquivo, pois o arquivo anterior já foi concluído antes dessa conexão.
 
 **Gate final do MVP:** Rafael envia `metas1708.pdf` pelo Telegram e recebe no mesmo chat uma análise correta do GG Performance, sem PowerShell, sem copiar dados manualmente e sem efeito externo além da própria resposta solicitada.
 

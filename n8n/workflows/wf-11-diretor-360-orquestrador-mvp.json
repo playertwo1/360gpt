@@ -159,7 +159,7 @@
         "sendBody": true,
         "contentType": "json",
         "specifyBody": "json",
-        "jsonBody": "={{JSON.stringify({job_id: $json.job_id, lease_token: $json.lease_token, result: {document_extraction: $json.result, routing: $json.routing, performance_handoff: $json.performance_handoff, orchestration: $json.orchestration}})}}",
+        "jsonBody": "={{JSON.stringify($json.completion_payload)}}",
         "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
       },
       "id": "complete-job",

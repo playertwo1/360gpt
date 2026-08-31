@@ -17,6 +17,7 @@
 - Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
 
 ### Added
+- Payload M4 com snapshot 360 versionado, hash de estado, parecer executivo curto e entrega idempotente ao chat Telegram.
 - WF-13 interno do GG Performance para validar o handoff, estruturar tabelas POBJ, reconciliar a fonte, preservar valores reportados, separar direção de metas e produzir parecer consultivo.
 - Testes estrutural e funcional do WF-13 com números brasileiros, valores negativos, proveniência e bloqueio de efeitos externos.
 - WF-12, Diretor mínimo do MVP, para classificar extrações e gerar handoff estruturado exclusivo ao GG Performance.

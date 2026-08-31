@@ -16,5 +16,6 @@ Assert-True ($raw -match 'external_effects_allowed') 'Efeitos externos bloqueado
 Assert-True ($raw -match 'document-worker:8787') 'Worker usa rede interna Docker'
 Assert-True (($raw -match '/api/bridge/claim') -and ($raw -match 'document\.download_path') -and ($raw -match '/api/bridge/fail')) 'Ponte duravel conectada'
 Assert-True (($raw -match '360000000012') -and ($raw -match 'GERENTE_GERAL_PERFORMANCE')) 'Diretor mínimo e handoff Performance conectados'
+Assert-True ($raw -match 'completion_payload') 'Payload de conclusão M4 conectado'
 Assert-True ($raw -match 'const valid = Boolean\(') 'Gate de extração força booleano estrito'
 Write-Host 'WF11_N8N_MASTER: PASS'

@@ -81,6 +81,18 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1040, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { randomUUID, createHash } = require('crypto');\nconst envelope = $input.first().json;\nconst analysis = envelope.performance_analysis;\nconst now = new Date().toISOString();\nconst eventId = randomUUID(); const correlationId = randomUUID();\nconst snapshot = {schema_version: '1.0.0', tenant_id: envelope.tenant_id ?? 'tenant-demo', subject_ref: envelope.subject_ref ?? 'cust-demo-001', event_id: eventId, correlation_id: correlationId, generated_at: now, overall_status: analysis.decision_status === 'READY' ? 'READY' : 'MANUAL_REVIEW_REQUIRED', domain_status: [{domain: 'performance', status: analysis.decision_status === 'READY' ? 'READY' : 'MANUAL_REVIEW_REQUIRED'}], findings: analysis.findings, data_gaps: analysis.data_gaps, gates: [], recommended_actions: analysis.recommended_actions, manual_review: analysis.data_gaps.some((item) => item.requires_manual_review) ? {reason_code: 'PERFORMANCE_RULE_REVIEW_REQUIRED', problem_statement: 'Um ou mais indicadores exigem confirmação antes de consolidar cálculo.', impact: 'O parecer permanece consultivo até a revisão.', required_decision: 'Confirmar regras e divergências dos indicadores.'} : null};\nconst canonical = (value) => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).sort(([a],[b]) => a.localeCompare(b)).map(([key,item]) => [key, canonical(item)])) : value;\nconst stateHash = `sha256:${createHash('sha256').update(JSON.stringify(canonical(snapshot))).digest('hex')}`;\nconst top = analysis.priority_candidates.slice(0,3).map((item,index) => `${index + 1}. ${item.name}: ${item.attainment_percent.toFixed(2)}%`).join('\\n');\nconst executive_assessment = {summary: `POBJ ${analysis.period ?? 'período não identificado'}: ${analysis.summary.final_points !== null ? `${analysis.summary.final_points.toFixed(2)} pontos finais reportados.` : 'pontuação final não identificada.'}${top ? `\\nPrioridades consultivas:\\n${top}` : ''}`, decision_status: snapshot.overall_status, manager: 'GERENTE_GERAL_PERFORMANCE', source_based: true, external_effects_allowed: false};\nconst result = {...envelope, executive_assessment, persisted_state: {state_id: `state-${eventId}`, state_version: 1, state_hash: stateHash, snapshot}};\nreturn [{json: {...envelope, executive_assessment, persisted_state: result.persisted_state, completion_payload: {job_id: envelope.job_id, lease_token: envelope.lease_token, result}}}];"
+      },
+      "id": "prepare-completion",
+      "name": "08 Preparar Estado e resposta Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 80]
     }
   ],
   "connections": {
@@ -89,7 +101,8 @@
     "03 Reconciliar fonte e estruturar indicadores": { "main": [[{ "node": "04 Produzir parecer GG Performance", "type": "main", "index": 0 }]] },
     "04 Produzir parecer GG Performance": { "main": [[{ "node": "05 Governar direção e ranking", "type": "main", "index": 0 }]] },
     "05 Governar direção e ranking": { "main": [[{ "node": "06 Validar regras explícitas em shadow", "type": "main", "index": 0 }]] },
-    "06 Validar regras explícitas em shadow": { "main": [[{ "node": "07 Aplicar política geral ativa", "type": "main", "index": 0 }]] }
+    "06 Validar regras explícitas em shadow": { "main": [[{ "node": "07 Aplicar política geral ativa", "type": "main", "index": 0 }]] },
+    "07 Aplicar política geral ativa": { "main": [[{ "node": "08 Preparar Estado e resposta Telegram", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
   "active": true,

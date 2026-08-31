@@ -43,6 +43,9 @@ assert.equal(current.performance_analysis.rule_validation.source_values_overwrit
 assert.equal(current.performance_analysis.general_rule_validation.eligible, 1);
 assert.equal(current.performance_analysis.general_rule_validation.matched, 1);
 assert.equal(current.performance_analysis.general_rule_validation.review_required, 0);
+assert.equal(current.completion_payload.result.persisted_state.snapshot.overall_status, 'READY');
+assert.match(current.completion_payload.result.persisted_state.state_hash, /^sha256:[0-9a-f]{64}$/);
+assert.equal(current.completion_payload.result.executive_assessment.external_effects_allowed, false);
 assert.equal(current.performance_analysis.calculation_policy.recalculated_points, false);
 assert.equal(current.performance_analysis.security.external_effects_allowed, false);
 
