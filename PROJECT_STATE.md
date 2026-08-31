@@ -10,7 +10,7 @@ Last completed: roadmap do MVP mínimo congelado e leitor MinerU otimizado com p
 Next task: Executar WF-11 com job real, validar extração e criar o roteamento mínimo exclusivo para Performance
 
 Last validation: PASS — roteamento MinerU, OCR/fallback, reinício de memória, Docker Compose, lint e build; PDF simples em 2,4 GB e POBJ híbrido com quatro marcadores críticos
-Last commit: beab99b (`feat(ocr): integrate MinerU as internal document parser`)
+Last commit: 8733369 (`feat(mvp): focus Telegram Performance flow and reduce OCR memory`)
 
 Blockers:
 - Imagem MinerU ocupa aproximadamente 13 GB; usa cerca de 2,4 GB após pipeline e 5,8 GB após híbrido; concorrência e janela limitadas a 1.
