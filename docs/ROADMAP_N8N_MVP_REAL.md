@@ -96,7 +96,7 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 **Gate:** os valores do parecer reproduzem os valores e cálculos conferíveis do arquivo real.
 
-### M4 — Resposta final no Telegram — PENDENTE
+### M4 — Resposta final no Telegram — CONCLUÍDO
 
 - [x] Transformar o parecer em mensagem curta e legível no celular.
 - [x] Mostrar período, principais indicadores, pontos, gaps e ações recomendadas.
@@ -105,11 +105,11 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 - [x] Evitar resposta duplicada em retry ou update repetido pela auditoria da ponte.
 - [x] Registrar duração, parser usado, agentes acionados e resultado final no payload de conclusão.
 
-**Implementação M4:** WF-13 produz `executive_assessment` e `persisted_state` com hash; WF-11 envia `completion_payload` à ponte. Falta apenas o ensaio real com um novo arquivo, pois o arquivo anterior já foi concluído antes dessa conexão.
+**Homologação M4 em 2026-08-31:** novo PDF enviado pelo Telegram foi processado automaticamente pela agenda do WF-11, passou pelo OCR MinerU e pelos WF-12/WF-13 e concluiu com `telegram_reply_sent: true`. A resposta foi vinculada ao protocolo original e entregue ao mesmo chat autorizado.
 
 **Gate final do MVP:** Rafael envia `metas1708.pdf` pelo Telegram e recebe no mesmo chat uma análise correta do GG Performance, sem PowerShell, sem copiar dados manualmente e sem efeito externo além da própria resposta solicitada.
 
-### M5 — Piloto curto e correção de rota — BLOQUEADO POR M4
+### M5 — Piloto curto e correção de rota — EM ANDAMENTO
 
 - [ ] Executar de 3 a 5 arquivos reais autorizados por Rafael.
 - [ ] Comparar extração, cálculos e análise com a leitura humana.

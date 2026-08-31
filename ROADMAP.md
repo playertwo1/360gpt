@@ -724,7 +724,7 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 - [x] M1 leitor homologado em job real do Telegram: PDF de 3 páginas processado pelo MinerU híbrido.
 - [x] M2 roteamento mínimo exclusivo para Performance: WF-11/WF-12 reconheceram POBJ com confiança alta e persistiram o Estado mínimo.
 - [x] M3 análise e cálculos do GG Performance — 106 indicadores reais; 15/15 validações de regras elegíveis sem divergência; exceções sem regra protegidas.
-- [ ] M4 resposta final no mesmo chat.
+- [x] M4 resposta final no mesmo chat — ensaio real concluído com `telegram_reply_sent: true`.
 - [ ] M5 validação com 3–5 arquivos reais.
 
 Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.
