@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.6.1] - 2026-08-31
+
+### Fixed
+- Jobs cuja terceira tentativa perdeu o lease agora saem de `PROCESSING` para `FAILED_FINAL` com `BRIDGE_TIMEOUT`, evitando progresso falso permanente.
+- `/tentar novamente` e a rota de reabertura zeram `attempt_count`, limpam leases antigos e permitem recuperar também `FAILED_FINAL`.
+
+### Validated
+- Lint, build e teste conversacional supervisionado aprovados; bateria geral ficou bloqueada na integração MinerU porque o Docker Desktop não iniciou.
+
 ## [3.6.0] - 2026-08-31
 
 ### Added

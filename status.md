@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 31 de agosto de 2026
-**Versão Atual da Release:** `v3.5.1-n2`
+**Versão Atual da Release:** `v3.6.1-mvp-conversacional`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
-**Saúde do Projeto:** 🟢 **VERDE EM HOMOLOGAÇÃO (29/29 testes, lint e build aprovados)**
+**Saúde do Projeto:** 🟡 **CORREÇÃO VALIDADA; RUNTIME LOCAL BLOQUEADO PELO DOCKER DESKTOP**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -22,7 +22,7 @@
 **Worker e agenda:** `document-worker`/MinerU ativos no Docker; WF-11 publicado e agendado a cada 1 minuto.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** enviar novo arquivo e validar no M5 a nova resposta detalhada contra a leitura humana.
+**Próximo passo exato:** publicar a correção de lease/retry, restabelecer Docker/n8n e reprocessar um único arquivo real antes dos demais itens do M5.9.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada publicada:** 37; inclui claim do WF-11, suporte a JPG/PNG e correção do destinatário autorizado no retorno Telegram.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

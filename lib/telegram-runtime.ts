@@ -49,7 +49,7 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
     ]);
   } else if (row.command === '/tentar' || row.command === '/reabrir') {
     await db.batch([
-      db.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, completed_at = NULL, last_error_code = NULL WHERE document_id = ? AND status IN ('FAILED_RETRYABLE','FAILED_FINAL','INCOMPLETE_OWNER_INPUT_TIMEOUT','CANCELLED')`).bind(now, protocol),
+      db.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, completed_at = NULL, last_error_code = NULL, attempt_count = 0, lease_token = NULL, lease_expires_at = NULL WHERE document_id = ? AND status IN ('FAILED_RETRYABLE','FAILED_FINAL','INCOMPLETE_OWNER_INPUT_TIMEOUT','CANCELLED')`).bind(now, protocol),
       db.prepare(`UPDATE documents SET status = 'ready_for_processing' WHERE id = ? AND owner_id = ?`).bind(protocol, ownerId),
     ]);
   } else if (row.command === '/excluir') {

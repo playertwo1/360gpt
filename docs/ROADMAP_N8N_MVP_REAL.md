@@ -120,6 +120,13 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 - [ ] Registrar métricas e critérios mínimos de estabilidade.
 - [ ] Declarar o MVP utilizável antes de expandir o escopo.
 
+**Auditoria operacional de 2026-08-31:** sete documentos reais do piloto foram localizados no D1. Três planilhas possuem extração estruturada; quatro PDFs registraram falha de extração/IA. Os sete jobs ficaram presos na terceira tentativa como `PROCESSING`, sem esclarecimento nem entrega. A ponte foi corrigida para transformar lease final expirado em `FAILED_FINAL`, e a reabertura passou a zerar o orçamento de tentativas. O reprocessamento depende do Docker/n8n local voltar a operar.
+
+- [x] Detectar e corrigir job órfão após expiração da terceira tentativa.
+- [x] Corrigir `/tentar novamente` e reabertura para reiniciar o contador de tentativas.
+- [ ] Publicar a correção da ponte e reclassificar os sete jobs órfãos.
+- [ ] Reprocessar primeiro um arquivo distinto de forma controlada; só então avançar pelos demais.
+
 **Gate:** fluxo repetível e útil; Rafael aprova iniciar a evolução pós-MVP.
 
 ## Evolução somente após o MVP

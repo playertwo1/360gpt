@@ -18,7 +18,10 @@ export async function POST(request: Request) {
     if (!workerId) return NextResponse.json({ ok: false, error: 'invalid_worker_id' }, { status: 400 });
 
     const now = Date.now(); const leaseToken = crypto.randomUUID(); const leaseExpiresAt = now + BRIDGE_LEASE_MS;
-    const [, selected] = await env.DB.batch([
+    const [, , selected] = await env.DB.batch([
+      env.DB.prepare(`UPDATE agent_runs SET status = 'FAILED_FINAL', last_error_code = 'BRIDGE_TIMEOUT', completed_at = ?, lease_token = NULL, lease_expires_at = NULL
+        WHERE status = 'PROCESSING' AND attempt_count >= ? AND COALESCE(lease_expires_at, 0) < ?`)
+        .bind(now, BRIDGE_MAX_ATTEMPTS, now),
       env.DB.prepare(`UPDATE agent_runs SET status = 'PROCESSING', started_at = ?, lease_token = ?, lease_expires_at = ?, attempt_count = attempt_count + 1, last_error_code = NULL
         WHERE id = (SELECT ar.id FROM agent_runs ar JOIN documents d ON d.id = ar.document_id
           WHERE ar.agent_role = 'diretor' AND ar.attempt_count < ? AND (

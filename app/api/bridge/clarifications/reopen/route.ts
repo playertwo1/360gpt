@@ -11,8 +11,9 @@ export async function POST(request: Request) {
     const documentId = boundedString(body.document_id, 180, /^[A-Za-z0-9._:-]+$/);
     if (!documentId) return NextResponse.json({ ok: false, error: 'invalid_document_id' }, { status: 400 });
     const now = Date.now();
-    const result = await env.DB.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, completed_at = NULL, last_error_code = NULL
-      WHERE document_id = ? AND status IN ('INCOMPLETE_OWNER_INPUT_TIMEOUT','FAILED_RETRYABLE','CANCELLED') RETURNING id`)
+    const result = await env.DB.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, completed_at = NULL, last_error_code = NULL,
+      attempt_count = 0, lease_token = NULL, lease_expires_at = NULL
+      WHERE document_id = ? AND status IN ('INCOMPLETE_OWNER_INPUT_TIMEOUT','FAILED_RETRYABLE','FAILED_FINAL','CANCELLED') RETURNING id`)
       .bind(now, documentId).first<{ id: string }>();
     if (!result) return NextResponse.json({ ok: false, error: 'not_reopenable' }, { status: 409 });
     await env.DB.prepare(`UPDATE documents SET status = 'ready_for_processing' WHERE id = ?`).bind(documentId).run();
