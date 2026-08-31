@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 29 de agosto de 2026  
-**Versão Atual da Release:** `v3.4.0-r0`
+**Data do status:** 31 de agosto de 2026
+**Versão Atual da Release:** `v3.5.1-n2`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
-**Saúde do Projeto:** 🟢 **VERDE OPERACIONAL (14/14 testes verdes; Telegram validado ponta a ponta)**  
+**Saúde do Projeto:** 🟢 **VERDE EM HOMOLOGAÇÃO (29/29 testes, lint e build aprovados)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -15,10 +15,10 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** document-worker OCR criado, isolado e saudável no Docker, acessível pelo n8n e validado com JPG e PDF.
+**Último marco concluído:** MinerU 3.4.5 integrado ao `document-worker` como parser local principal; PDF/JPG/XLSX reais e fallback OCR validados, mantendo o serviço restrito à rede Docker.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** preparar/publicar a liberação de claim e intake de JPG/PNG; depois executar o WF-11 manualmente com arquivo já autorizado.
+**Próximo passo exato:** executar `metas1708.pdf` por todo o WF-11 (claim → download → MinerU → validação → complete), inspecionar o resultado persistido e somente então decidir sobre o agendamento.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada publicada:** 36; inclui claim do WF-11 e suporte a JPG/PNG.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

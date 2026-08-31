@@ -71,7 +71,7 @@ def test_http_endpoint() -> None:
         },
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=30) as response:
+    with urllib.request.urlopen(request, timeout=360) as response:
         result = json.load(response)
     assert result["ok"] is True
     assert result["job_id"] == job_id

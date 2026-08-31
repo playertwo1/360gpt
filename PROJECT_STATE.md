@@ -1,24 +1,25 @@
 # PROJECT STATE
 
-Version: 3.5.0-n1
+Version: 3.5.1-n2
 Current phase: Reconstrução do MVP real assíncrono
 Current milestone: N1 — Controlador mestre no n8n
-Current task: Validar execução manual do WF-11 com o document-worker
+Current task: Validar o ciclo completo do WF-11 com `metas1708.pdf`
 Status: IN_PROGRESS
 
-Last completed: document-worker OCR criado e saudável na rede interna, com PDF nativo, PDF escaneado, JPG/PNG, XLSX/CSV e contrato estruturado
-Next task: Executar o WF-11 manualmente com arquivo já autorizado e inspecionar a extração
+Last completed: MinerU 3.4.5 integrado como parser local principal, fallback PyMuPDF/Tesseract comprovado e PDF/JPG/XLSX reais validados pelo worker
+Next task: Executar um job controlado pelo WF-11 e provar claim, download, extração MinerU, validação e complete
 
-Last validation: PASS — `scripts/test-document-worker.ps1`: saúde, acesso pelo n8n, endpoint multipart, OCR JPG e extração PDF nativa; lint e build
-Last commit: 9e070c5ed5d62a92a5a93da29dadcb68d7c4f362
+Last validation: PASS — bateria geral 29/29, MinerU, fallback OCR, WF-11, H3, C1, lint, build e Docker Compose
+Last commit: 0626479 (checkpoint anterior; integração atual ainda não commitada)
 
 Blockers:
-- none
+- Imagem MinerU ocupa aproximadamente 13 GB e usa cerca de 5,7 GB de RAM no modo híbrido; concorrência limitada a 1.
+- Imagem oficial herdada apresenta conflitos não bloqueantes de `pip check` entre o runtime VLLM e dependências fixadas pelo MinerU.
 
 Pending decisions:
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-29 06:34
+Last update: 2026-08-31 01:15
 
 Resume instruction:
-Continue `docs/ROADMAP_N8N_MVP_REAL.md` em N1; valide manualmente o WF-11 com arquivo já autorizado e inspecione a extração do document-worker.
+Continue `docs/ROADMAP_N8N_MVP_REAL.md` em N1/N2; execute o `metas1708.pdf` pelo WF-11 completo e só depois avalie ativar seu agendamento.

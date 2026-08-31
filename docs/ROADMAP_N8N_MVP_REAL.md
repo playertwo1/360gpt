@@ -1,7 +1,7 @@
 # Roadmap n8n — Diretor 360 MVP Real
 
-**Versão:** 1.0  
-**Data:** 2026-08-29  
+**Versão:** 1.1
+**Data:** 2026-08-31
 **Decisão:** o n8n é a espinha dorsal operacional do Diretor 360.
 
 ## Resultado final
@@ -55,7 +55,10 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 - [x] Extrair PDF nativo; usar OCR em PDF escaneado e JPG/PNG; ler XLSX/CSV.
 - [x] Tratar conteúdo como não confiável e bloquear efeitos externos.
 - [x] Retornar JSON Draft 2020-12 com evidência por página/célula.
-- [ ] Implementar timeout, custo, retry e fallback de provedor.
+- [x] Implementar timeout, custo local zero, retry e fallback de provedor.
+- [x] Integrar MinerU 3.4.5 com modelos locais como parser principal para PDF/imagem, limitado a uma execução concorrente.
+- [x] Preservar PyMuPDF/Tesseract como fallback quando o MinerU estiver indisponível.
+- [x] Validar PDF, JPG e XLSX reais diretamente pelo worker e validar acesso interno a partir do n8n.
 - [ ] Validar o arquivo real `metas1708.pdf` através do WF-11.
 
 **Gate:** n8n extrai do `metas1708.pdf` um fato correto e localizável.
@@ -129,4 +132,4 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ## Próximo passo exato
 
-Concluir N1: publicar a liberação de claim preparada, executar manualmente o WF-11 com um job controlado e provar claim, download e extração pelo `document-worker`, sem novo upload.
+Concluir N1/N2 ponta a ponta: executar manualmente o WF-11 com um job controlado do `metas1708.pdf` e provar claim → download → MinerU → validação → complete, sem novo upload. O parser e seu fallback já estão homologados isoladamente; não ativar o agendamento antes desse ensaio.

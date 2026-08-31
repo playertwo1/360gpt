@@ -700,3 +700,16 @@ Enquanto o Shadow permanece isolado: `P0 → P1 → P2 → P3 → P4 → P5 docu
 Após 24/24: `S2 → aprovação do Gate Shadow → P8 → A1 → A2 → A3 → A4`.
 
 Nenhum gerente entra em `ACTIVE`, nenhuma fonte real é conectada e nenhum efeito externo é liberado antes dos respectivos gates e da aprovação explícita de Rafael.
+
+---
+
+## Trilha n8n do MVP real — atualização 2026-08-31
+
+O detalhamento canônico está em `docs/ROADMAP_N8N_MVP_REAL.md`.
+
+- [x] N0 — intake durável.
+- [ ] N1 — controlador mestre WF-11: estrutura homologada; falta ensaio manual ponta a ponta e decisão de agendamento.
+- [ ] N2 — leitor subordinado: MinerU, fallback, PDF/JPG/XLSX reais e contrato homologados; falta atravessar o WF-11 com `metas1708.pdf`.
+- [ ] N3–N9 — permanecem na ordem canônica depois do gate N1/N2.
+
+**Próxima tarefa elegível:** executar um job controlado pelo WF-11 e comprovar claim, download, extração MinerU, validação e persistência, sem ativar efeitos externos.

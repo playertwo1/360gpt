@@ -3,6 +3,22 @@
 ## [Unreleased]
 
 ### Added
+- MinerU 3.4.5 como parser interno local de PDF e imagem, com todos os modelos armazenados no computador e acesso exclusivo pela rede Docker do n8n.
+- Teste automatizado da imagem, saúde, conectividade interna, limite de concorrência e contrato de extração MinerU.
+
+### Changed
+- `document-worker` agora roteia PDF/JPG/PNG ao MinerU híbrido e mantém XLSX/CSV em parsers determinísticos nativos.
+- Timeouts do n8n, WF-11 e worker ampliados para acomodar documentos complexos sem travar o recebimento assíncrono.
+
+### Fixed
+- Restaurado o gate que impede claim de documento POBJ antes de `local_reviewed`.
+- Corrigido aviso de truncamento do worker para ser emitido apenas quando o texto realmente exceder o limite.
+
+### Security
+- MinerU não publica porta no host, opera com concorrência 1 e não recebe segredos do Telegram ou Gemini.
+- Conteúdo documental continua não confiável e efeitos externos permanecem bloqueados.
+
+### Added
 - Serviço interno `document-worker` em Docker com FastAPI, PyMuPDF, Tesseract OCR em português/inglês, Pillow e OpenPyXL.
 - Extração híbrida de PDF nativo/escaneado, OCR de JPG/PNG e leitura estruturada de CSV/XLSX com evidências localizáveis.
 - Contrato Draft 2020-12 `document-extraction` e testes reais de endpoint multipart, OCR e PDF nativo.

@@ -9,6 +9,7 @@ import time
 from typing import Annotated, Any
 
 import fitz
+import httpx
 import pytesseract
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from openpyxl import load_workbook
@@ -20,6 +21,11 @@ MAX_PDF_PAGES = int(os.getenv("DOCUMENT_MAX_PDF_PAGES", "80"))
 MAX_TEXT_CHARS = int(os.getenv("DOCUMENT_MAX_TEXT_CHARS", "200000"))
 MIN_NATIVE_TEXT_CHARS = int(os.getenv("DOCUMENT_MIN_NATIVE_TEXT_CHARS", "80"))
 OCR_LANGUAGE = os.getenv("DOCUMENT_OCR_LANGUAGE", "por+eng")
+MINERU_ENABLED = os.getenv("DOCUMENT_MINERU_ENABLED", "false").lower() == "true"
+MINERU_API_URL = os.getenv("MINERU_API_URL", "http://mineru:8000").rstrip("/")
+MINERU_BACKEND = os.getenv("MINERU_BACKEND", "hybrid-engine")
+MINERU_EFFORT = os.getenv("MINERU_EFFORT", "medium")
+MINERU_TIMEOUT_SECONDS = float(os.getenv("MINERU_TIMEOUT_SECONDS", "330"))
 SUPPORTED_MIME_TYPES = {
     "application/pdf",
     "image/jpeg",
@@ -28,7 +34,7 @@ SUPPORTED_MIME_TYPES = {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
 
-app = FastAPI(title="Diretor 360 Document Worker", version="1.0.0", docs_url=None, redoc_url=None)
+app = FastAPI(title="Diretor 360 Document Worker", version="1.1.0", docs_url=None, redoc_url=None)
 
 
 class Evidence(BaseModel):
@@ -56,7 +62,7 @@ class WorkerResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ok: bool
     schema_version: str = "1.0.0"
-    worker_version: str = "1.0.0"
+    worker_version: str = "1.1.0"
     job_id: str
     duration_ms: int
     security: dict[str, Any]
@@ -64,8 +70,13 @@ class WorkerResponse(BaseModel):
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "service": "document-worker", "version": "1.0.0"}
+def health() -> dict[str, str | bool]:
+    return {
+        "status": "ok",
+        "service": "document-worker",
+        "version": "1.1.0",
+        "mineru_enabled": MINERU_ENABLED,
+    }
 
 
 @app.post("/v1/process", response_model=WorkerResponse)
@@ -95,9 +106,9 @@ async def process_document(
 
     file_name = safe_name(document.filename or job.get("document", {}).get("file_name") or "documento")
     if mime == "application/pdf":
-        extracted = extract_pdf(content, file_name, digest)
+        extracted = await extract_pdf_routed(content, file_name, digest)
     elif mime in {"image/jpeg", "image/png"}:
-        extracted = extract_image(content, file_name, mime, digest)
+        extracted = await extract_image_routed(content, file_name, mime, digest)
     elif mime == "text/csv":
         extracted = extract_csv(content, file_name, digest)
     else:
@@ -114,6 +125,108 @@ async def process_document(
             "external_effects_allowed": False,
         },
         extraction=extracted,
+    )
+
+
+async def extract_pdf_routed(content: bytes, file_name: str, digest: str) -> Extraction:
+    if MINERU_ENABLED:
+        try:
+            return await extract_with_mineru(content, file_name, "application/pdf", digest)
+        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+            fallback = extract_pdf(content, file_name, digest)
+            fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
+            return fallback
+    return extract_pdf(content, file_name, digest)
+
+
+async def extract_image_routed(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
+    if MINERU_ENABLED:
+        try:
+            return await extract_with_mineru(content, file_name, mime, digest)
+        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+            fallback = extract_image(content, file_name, mime, digest)
+            fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
+            return fallback
+    return extract_image(content, file_name, mime, digest)
+
+
+async def extract_with_mineru(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
+    if MINERU_BACKEND not in {"pipeline", "hybrid-engine"}:
+        raise ValueError("unsupported_mineru_backend")
+    request_data = {
+        "backend": MINERU_BACKEND,
+        "effort": MINERU_EFFORT,
+        "parse_method": "auto",
+        "formula_enable": "false",
+        "table_enable": "true",
+        "image_analysis": "false",
+        "return_md": "true",
+        "return_middle_json": "false",
+        "return_model_output": "false",
+        "return_content_list": "true",
+        "return_images": "false",
+        "response_format_zip": "false",
+    }
+    timeout = httpx.Timeout(MINERU_TIMEOUT_SECONDS, connect=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        response = await client.post(
+            f"{MINERU_API_URL}/file_parse",
+            data=request_data,
+            files=[("files", (file_name, content, mime))],
+        )
+        response.raise_for_status()
+        payload = response.json()
+    if payload.get("status") != "completed" or payload.get("error"):
+        raise ValueError("mineru_processing_failed")
+    results = payload.get("results")
+    if not isinstance(results, dict) or not results:
+        raise ValueError("mineru_result_missing")
+    result = next(iter(results.values()))
+    if not isinstance(result, dict):
+        raise TypeError("mineru_result_invalid")
+    markdown_warnings: list[str] = []
+    markdown = bounded_text(str(result.get("md_content") or ""), markdown_warnings)
+    content_list = result.get("content_list") or []
+    if isinstance(content_list, str):
+        content_list = json.loads(content_list)
+    if not isinstance(content_list, list):
+        raise TypeError("mineru_content_list_invalid")
+
+    method = "MINERU_HYBRID" if MINERU_BACKEND == "hybrid-engine" else "MINERU_PIPELINE"
+    evidence: list[Evidence] = []
+    page_indexes: list[int] = []
+    for index, block in enumerate(content_list):
+        if not isinstance(block, dict):
+            continue
+        page_index = int(block.get("page_idx", 0))
+        page_indexes.append(page_index)
+        block_text = str(block.get("text") or block.get("table_body") or "").strip()
+        if not block_text:
+            continue
+        evidence.append(
+            Evidence(
+                locator=f"page:{page_index + 1};block:{index + 1};type:{block.get('type', 'unknown')}",
+                text=block_text,
+                extraction_method=method,
+                confidence=None,
+            )
+        )
+    warnings: list[str] = list(markdown_warnings)
+    if not markdown:
+        warnings.append("mineru_without_useful_text")
+    if not evidence:
+        warnings.append("mineru_without_structured_evidence")
+    page_count = max(page_indexes) + 1 if page_indexes else (1 if mime.startswith("image/") else None)
+    return Extraction(
+        document_type="PDF" if mime == "application/pdf" else "IMAGE",
+        mime_type=mime,
+        file_name=file_name,
+        content_hash=digest,
+        text=markdown,
+        page_count=page_count,
+        extraction_method=method,
+        evidence=evidence,
+        warnings=warnings,
     )
 
 

@@ -72,7 +72,7 @@
           { "parameterType": "formData", "name": "metadata", "value": "={{JSON.stringify($('03 Validar contrato e segurança').item.json)}}" },
           { "parameterType": "formBinaryData", "name": "document", "inputDataFieldName": "document" }
         ] },
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 180000 }
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 360000 }
       },
       "id": "document-worker",
       "name": "05 Leitor documental subordinado",

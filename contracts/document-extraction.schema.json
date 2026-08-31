@@ -32,7 +32,7 @@
         "content_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
         "text": { "type": "string" },
         "page_count": { "type": ["integer", "null"], "minimum": 1 },
-        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
+        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "MINERU_PIPELINE", "MINERU_HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
         "evidence": {
           "type": "array",
           "items": {
