@@ -10,7 +10,7 @@ Last completed: WF-13 criado, conectado ao WF-12 e validado sobre os 106 indicad
 Next task: Conferir e homologar meta, realizado, piso, teto, pontos e direção dos indicadores prioritários antes de fechar M3
 
 Last validation: PASS — 106 indicadores; AGOSTO/2026; base 28/08/2026; 100,65 pontos finais preservados; ranking exclui direção desconhecida e métricas de redução
-Last commit: 973778e (`fix(n8n): validate live Telegram Performance routing`)
+Last commit: 0453f8f (`feat(n8n): add GG Performance analysis workflow`)
 
 Blockers:
 - O retorno útil ao Telegram ainda depende do fechamento das regras específicas de M3 e da entrega de M4.
