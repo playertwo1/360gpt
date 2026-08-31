@@ -17,6 +17,12 @@
 
 ## [Unreleased]
 
+### Deployed
+- Versão hospedada 39 publicada com rotas de esclarecimento e migração conversacional; WF-11/WF-13 atualizados, publicados e reiniciados no n8n local.
+
+### Fixed
+- Migração passou a preservar integralmente o Evidence Graph append-only; dados demonstrativos históricos ficam isolados por escopo, sem exclusão da auditoria.
+
 ### Validated
 - M5.8 aceito por Rafael: ciclo real Telegram → OCR → pergunta material → resposta → reprocessamento → parecer final concluído no mesmo protocolo.
 
