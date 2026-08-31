@@ -10,7 +10,7 @@ Last completed: M3 fechado com política geral ativa e 15/15 validações elegí
 Next task: Implementar WF-14/etapa M4 para formatar e entregar a análise no Telegram
 
 Last validation: PASS — regra geral 13/13 e regras explícitas 2/2; divergência zero; valores da fonte não sobrescritos
-Last commit: b3f83a0 (`feat(performance): validate explicit POBJ rules in shadow`)
+Last commit: c583cff (`feat(performance): activate authorized POBJ runtime policy`)
 
 Blockers:
 - O retorno útil ao Telegram ainda depende da entrega de M4.
