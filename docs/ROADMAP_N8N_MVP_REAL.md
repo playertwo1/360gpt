@@ -79,18 +79,20 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 **Gate:** um arquivo POBJ extraído produz um handoff válido para Performance e não aciona outro Gerente.
 
-### M3 — GG Performance e especialistas — PENDENTE
+### M3 — GG Performance e especialistas — CONCLUÍDO COM EXCEÇÕES PROTEGIDAS
 
 - [x] Criar WF-13 Performance recebendo somente JSON validado.
 - [x] Acionar reconciliação de fontes e estado de pontuação reportado pelo documento.
-- [ ] Aplicar regras versionadas de meta, realizado, piso, teto e pontos.
-- [ ] Calcular atingimento, gap e cenários sem permitir que a IA invente números.
+- [x] Aplicar regras versionadas de meta, realizado, piso, teto e pontos somente aos indicadores elegíveis.
+- [x] Calcular atingimento, gap e cenários sem permitir que a IA invente números; exceções sem regra permanecem reportadas pela fonte.
 - [x] Acionar plano consultivo somente quando houver dados suficientes e direção da meta conhecida.
 - [x] Produzir parecer do GG Performance com fatos, análise, lacunas e recomendação.
 
 **Validação de 2026-08-31:** o WF-13 estruturou 106 indicadores do PDF real, reconheceu `AGOSTO/2026`, base `28/08/2026` e preservou os `100,65` pontos finais reportados. Indicadores com direção desconhecida e métricas `LOWER_IS_BETTER` foram excluídos do ranking de aumento. Continuam pendentes a homologação das regras específicas por indicador e a validação dos cálculos de gap/cenários antes de fechar o gate M3.
 
 **Validação de regras explícitas:** em comparação shadow, `N3_CONSORCIO_EXPERT_LINEAR` reproduziu `4,67` pontos e `OPEN_FINANCE_PJ_BINARY` reproduziu `7,00` pontos, ambos sem divergência. Nenhum valor da fonte foi sobrescrito. A regra geral permanece `APPROVED_SOURCE_NOT_RUNTIME_ACTIVE`; Seguros e Cartões continuam exigindo regras dedicadas.
+
+**Ativação autorizada por Rafael em 2026-08-31:** a política `POBJ_SCORING_2026_H2` v1.1.0 foi promovida a `RUNTIME_ACTIVE` no escopo do WF-13, sem efeitos externos. A base correta do painel mensal é `% PROJ. FINAL`. O teste real reproduziu 13/13 indicadores elegíveis pela regra geral e 2/2 regras explícitas, com divergência zero. Seguros e Cartões não herdam a regra geral e permanecem como valores reportados até receberem regra dedicada.
 
 **Gate:** os valores do parecer reproduzem os valores e cálculos conferíveis do arquivo real.
 

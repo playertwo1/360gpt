@@ -1,7 +1,14 @@
 {
   "policyId": "POBJ_SCORING_2026_H2",
-  "version": "1.0.0",
-  "status": "APPROVED_SOURCE_NOT_RUNTIME_ACTIVE",
+  "version": "1.1.0",
+  "status": "RUNTIME_ACTIVE",
+  "runtimeActivation": {
+    "authorizedBy": "Rafael",
+    "authorizedAt": "2026-08-31",
+    "scope": "WF-13_GG_PERFORMANCE_MVP",
+    "mode": "DETERMINISTIC_VALIDATION_AND_ANALYSIS",
+    "externalEffectsAllowed": false
+  },
   "effectivePeriod": "SECOND_HALF_2026",
   "source": {
     "name": "Guia POBJ | PADE 2026",
@@ -13,6 +20,8 @@
   },
   "generalRule": {
     "ruleId": "POBJ_GENERAL_WEIGHT_ATTAINMENT_MULTIPLIER",
+    "attainmentField": "projectedFinalPercent",
+    "attainmentFieldContext": "POBJ_DASHBOARD_MONTHLY",
     "minimumPercent": 70,
     "capPercent": 150,
     "formula": "weight * cappedAttainmentPercent / 100 * multiplier",

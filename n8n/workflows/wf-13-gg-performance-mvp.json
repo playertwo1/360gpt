@@ -69,6 +69,18 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [780, 80]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const envelope = $input.first().json;\nconst analysis = envelope.performance_analysis;\nconst normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();\nconst exceptionPattern = /consorcio|cart(ao|oes)|seguro|encanta|vencidos|open finance|acelera|conecta|capital de giro total pj - mes|cdc velculos pj - mes|conquista de clientes pj - mes|capitalizacao pu \\+ pm/;\nconst round2 = (value) => Math.round((value + Number.EPSILON) * 100) / 100;\nconst calculate = (attainment, weight) => { const bounded = Math.min(Math.max(0, attainment), 150); const multiplier = bounded < 70 ? 0 : bounded < 80 ? 0.5 : bounded < 90 ? 0.75 : 1; return {points: round2(weight * bounded / 100 * multiplier), bounded_attainment_percent: bounded, multiplier}; };\nconst validations = analysis.indicators.filter((item) => item.weight > 0 && item.projected_final_percent !== null && !exceptionPattern.test(normalize(item.name))).map((item) => { const calculated = calculate(item.projected_final_percent, item.weight); const difference = item.reported_points === null ? null : round2(item.reported_points - calculated.points); return {indicator_id: item.indicator_id, indicator_name: item.name, rule_id: 'POBJ_GENERAL_WEIGHT_ATTAINMENT_MULTIPLIER', policy_id: 'POBJ_SCORING_2026_H2', policy_version: '1.1.0', attainment_field: 'projected_final_percent', projected_final_percent: item.projected_final_percent, expected_points: calculated.points, reported_points: item.reported_points, difference, multiplier: calculated.multiplier, bounded_attainment_percent: calculated.bounded_attainment_percent, status: item.reported_points !== null && Math.abs(difference) <= 0.01 ? 'MATCH' : 'REVIEW_REQUIRED'}; });\nconst general = {runtime_status: 'RUNTIME_ACTIVE', authorized_by: 'Rafael', external_effects_allowed: false, source_values_overwritten: false, eligible: validations.length, matched: validations.filter((item) => item.status === 'MATCH').length, review_required: validations.filter((item) => item.status !== 'MATCH').length, validations};\nanalysis.general_rule_validation = general;\nanalysis.rule_validation.policy_version = '1.1.0';\nanalysis.rule_validation.runtime_policy_status = 'RUNTIME_ACTIVE';\nif (general.review_required > 0) { analysis.decision_status = 'MANUAL_REVIEW_REQUIRED'; analysis.data_gaps.push({field: 'general_rule_validation', reason_code: 'GENERAL_RULE_DIVERGENCE', impact: 'Pontuação reportada diverge da política ativa; cálculo não deve ser promovido para o Estado.', requires_manual_review: true}); }\nreturn [{json: {...envelope, performance_analysis: analysis}}];"
+      },
+      "id": "apply-general-runtime-policy",
+      "name": "07 Aplicar política geral ativa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 80]
     }
   ],
   "connections": {
@@ -76,7 +88,8 @@
     "02 Validar contrato e segurança": { "main": [[{ "node": "03 Reconciliar fonte e estruturar indicadores", "type": "main", "index": 0 }]] },
     "03 Reconciliar fonte e estruturar indicadores": { "main": [[{ "node": "04 Produzir parecer GG Performance", "type": "main", "index": 0 }]] },
     "04 Produzir parecer GG Performance": { "main": [[{ "node": "05 Governar direção e ranking", "type": "main", "index": 0 }]] },
-    "05 Governar direção e ranking": { "main": [[{ "node": "06 Validar regras explícitas em shadow", "type": "main", "index": 0 }]] }
+    "05 Governar direção e ranking": { "main": [[{ "node": "06 Validar regras explícitas em shadow", "type": "main", "index": 0 }]] },
+    "06 Validar regras explícitas em shadow": { "main": [[{ "node": "07 Aplicar política geral ativa", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "callerPolicy": "workflowsFromSameOwner" },
   "active": true,

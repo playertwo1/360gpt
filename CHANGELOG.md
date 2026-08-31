@@ -6,10 +6,12 @@
 - Corrigida a validação booleana da extração no WF-11 e publicado o WF-12 como subworkflow interno sem webhook, agenda ou gatilho Telegram.
 
 ### Validated
+- Regra geral reproduziu 13/13 indicadores elegíveis e regras explícitas reproduziram 2/2 indicadores do PDF real, sem divergência e sem sobrescrever a fonte.
 - WF-13 reproduziu em shadow os pontos de Consórcio Expert (`4,67`) e Open Finance (`7,00`) do PDF real, com divergência zero e sem sobrescrever a fonte.
 - PDF real enviado pelo Telegram percorreu fila, lease, download protegido, OCR MinerU híbrido de 3 páginas e roteamento determinístico exclusivo ao GG Performance; Estado mínimo persistido sem efeitos externos.
 
 ### Changed
+- Política `POBJ_SCORING_2026_H2` promovida à v1.1.0 `RUNTIME_ACTIVE` por autorização de Rafael, usando `% PROJ. FINAL` no painel mensal e mantendo exceções fora da regra geral.
 - Escopo do primeiro MVP congelado na jornada Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram.
 - Conta, Financeiro, Relacionamento e Visão 360 multidomínio movidos explicitamente para depois do gate ponta a ponta do MVP Performance.
 - Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.

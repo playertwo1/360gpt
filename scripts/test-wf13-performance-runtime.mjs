@@ -40,6 +40,9 @@ assert.equal(current.performance_analysis.ranking_policy.unknown_direction_exclu
 assert.equal(current.performance_analysis.rule_validation.matched, 2);
 assert.equal(current.performance_analysis.rule_validation.review_required, 0);
 assert.equal(current.performance_analysis.rule_validation.source_values_overwritten, false);
+assert.equal(current.performance_analysis.general_rule_validation.eligible, 1);
+assert.equal(current.performance_analysis.general_rule_validation.matched, 1);
+assert.equal(current.performance_analysis.general_rule_validation.review_required, 0);
 assert.equal(current.performance_analysis.calculation_policy.recalculated_points, false);
 assert.equal(current.performance_analysis.security.external_effects_allowed, false);
 
