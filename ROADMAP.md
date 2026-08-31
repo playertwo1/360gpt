@@ -766,7 +766,14 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 
 **Gate:** lacuna material pausa; Rafael responde naturalmente; o fluxo retoma sem misturar protocolos ou inventar fatos.
 
-#### M5.8–M5.9 — Homologação e piloto real — PRÓXIMO
+#### M5.8 — Ensaio real controlado — CONCLUÍDO
+
+- [x] Arquivo real enviado pelo Telegram e processado em segundo plano.
+- [x] Protocolo acompanhado pelo comando `/protocolo`.
+- [x] Pergunta material respondida por Rafael e protocolo reprocessado.
+- [x] Parecer final recebido no mesmo chat, sem duplicidade ou efeito externo.
+
+#### M5.9 — Homologação e piloto real — PRÓXIMO
 
 - [ ] Cobrir documento completo, ausência material, OCR incerto, conflito, resposta ambígua, concorrência, retry, timeout e reabertura.
 - [ ] Validar ações críticas, multipartes, ausência de contas fictícias, bateria geral, build e lint.

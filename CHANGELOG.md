@@ -17,6 +17,9 @@
 
 ## [Unreleased]
 
+### Validated
+- M5.8 aceito por Rafael: ciclo real Telegram → OCR → pergunta material → resposta → reprocessamento → parecer final concluído no mesmo protocolo.
+
 ### Changed
 - A confirmação inicial do Telegram agora informa progresso de 10% e orienta `/protocolo <id>`, que exibe percentual e etapa derivados do estado persistido.
 
