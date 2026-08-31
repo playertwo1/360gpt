@@ -121,7 +121,9 @@ async function maybeSendTelegramResult(
   now: number,
 ) {
   if (job.source !== 'telegram' || env.TELEGRAM_SEND_RESULTS_ENABLED !== 'true' || !env.TELEGRAM_BOT_TOKEN) return false;
-  if (!/^-?[0-9]{1,20}$/.test(job.owner_id)) return false;
+  const configuredChatIds = (env.TELEGRAM_ALLOWED_CHAT_IDS ?? '').split(',').map((value) => value.trim()).filter((value) => /^-?[0-9]{1,20}$/.test(value));
+  const chatId = /^-?[0-9]{1,20}$/.test(job.owner_id) ? Number(job.owner_id) : configuredChatIds.length === 1 ? Number(configuredChatIds[0]) : null;
+  if (chatId === null) return false;
 
   const auditId = `telegram-result-${jobId}`;
   const previous = await env.DB.prepare('SELECT action FROM audit_log WHERE id = ?').bind(auditId).first<{ action: string }>();
@@ -136,7 +138,7 @@ async function maybeSendTelegramResult(
   }
 
   try {
-    await sendTelegramResult(Number(job.owner_id), buildTelegramResultText(snapshot, result, stateId));
+    await sendTelegramResult(chatId, buildTelegramResultText(snapshot, result, stateId));
     await env.DB.prepare(`UPDATE audit_log SET action = 'telegram_reply_sent', details_json = ? WHERE id = ?`)
       .bind(JSON.stringify({ stateId, sentAt: Date.now() }), auditId).run();
     return true;
