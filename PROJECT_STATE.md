@@ -10,7 +10,7 @@ Last completed: MinerU 3.4.5 integrado como parser local principal, fallback PyM
 Next task: Executar um job controlado pelo WF-11 e provar claim, download, extração MinerU, validação e complete
 
 Last validation: PASS — bateria geral 29/29, MinerU, fallback OCR, WF-11, H3, C1, lint, build e Docker Compose
-Last commit: 0626479 (checkpoint anterior; integração atual ainda não commitada)
+Last commit: beab99b (`feat(ocr): integrate MinerU as internal document parser`)
 
 Blockers:
 - Imagem MinerU ocupa aproximadamente 13 GB e usa cerca de 5,7 GB de RAM no modo híbrido; concorrência limitada a 1.
