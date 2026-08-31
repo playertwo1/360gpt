@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Fixed
+- Corrigida a validação booleana da extração no WF-11 e publicado o WF-12 como subworkflow interno sem webhook, agenda ou gatilho Telegram.
+
+### Validated
+- PDF real enviado pelo Telegram percorreu fila, lease, download protegido, OCR MinerU híbrido de 3 páginas e roteamento determinístico exclusivo ao GG Performance; Estado mínimo persistido sem efeitos externos.
+
 ### Changed
 - Escopo do primeiro MVP congelado na jornada Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram.
 - Conta, Financeiro, Relacionamento e Visão 360 multidomínio movidos explicitamente para depois do gate ponta a ponta do MVP Performance.

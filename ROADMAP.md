@@ -721,8 +721,8 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 `M0 Telegram → M1 OCR → M2 Orquestrador → M3 GG Performance + especialistas → M4 resposta Telegram → M5 piloto curto`.
 
 - [x] M0 intake Telegram durável.
-- [ ] M1 leitor homologado isoladamente; falta atravessar um job real do Telegram.
-- [ ] M2 roteamento mínimo exclusivo para Performance — estrutura WF-11/WF-12 concluída; falta atravessar novo arquivo real do Telegram.
+- [x] M1 leitor homologado em job real do Telegram: PDF de 3 páginas processado pelo MinerU híbrido.
+- [x] M2 roteamento mínimo exclusivo para Performance: WF-11/WF-12 reconheceram POBJ com confiança alta e persistiram o Estado mínimo.
 - [ ] M3 análise e cálculos do GG Performance.
 - [ ] M4 resposta final no mesmo chat.
 - [ ] M5 validação com 3–5 arquivos reais.

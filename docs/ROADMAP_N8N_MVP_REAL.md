@@ -53,7 +53,7 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 **Gate:** o arquivo chega à fila uma única vez e Rafael recebe o protocolo.
 
-### M1 — Leitor documental local — CONCLUÍDO ISOLADAMENTE
+### M1 — Leitor documental local — CONCLUÍDO
 
 - [x] `document-worker` interno com PDF, JPG/PNG, XLSX e CSV.
 - [x] MinerU 3.4.5 como OCR/parser local principal.
@@ -66,7 +66,7 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 **Gate:** o arquivo real do Telegram gera extração correta dentro do workflow, não apenas em teste isolado.
 
-### M2 — Orquestrador mínimo no n8n — PRÓXIMO
+### M2 — Orquestrador mínimo no n8n — CONCLUÍDO
 
 - [ ] Fazer o WF-11 atravessar claim → download → leitor → validação.
 - [x] Criar subworkflow mínimo do Diretor para classificar documento e intenção — WF-12 criado, testado e importado no n8n.
@@ -75,7 +75,7 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 - [x] Enviar entrada estruturada; nunca entregar PDF bruto aos agentes.
 - [x] Encerrar com retry/falha rastreável quando a classificação não for segura.
 
-**Ensaio de 2026-08-31:** WF-11 executou manualmente no n8n e encerrou corretamente com `empty: true`; a fila estava vazia. O próximo ensaio exige um novo arquivo enviado pelo Telegram.
+**Ensaio real de 2026-08-31:** PDF enviado pelo Telegram atravessou fila, lease, download protegido e OCR MinerU híbrido (3 páginas). O WF-12 reconheceu sinais de POBJ com confiança alta e roteou exclusivamente ao `GERENTE_GERAL_PERFORMANCE`, com zero efeitos externos. O Estado mínimo foi persistido pela ponte. A análise especializada e a resposta útil ao Telegram pertencem aos marcos M3 e M4.
 
 **Gate:** um arquivo POBJ extraído produz um handoff válido para Performance e não aciona outro Gerente.
 

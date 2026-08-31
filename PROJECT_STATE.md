@@ -1,26 +1,26 @@
 # PROJECT STATE
 
-Version: 3.5.2-mvp-performance
+Version: 3.5.3-mvp-performance
 Current phase: MVP mínimo Telegram → Performance → Telegram
-Current milestone: M2 — Orquestrador mínimo no n8n
-Current task: Aguardar novo arquivo POBJ no Telegram e executar o WF-11
-Status: BLOCKED_BY_INPUT
+Current milestone: M3 — GG Performance e especialistas
+Current task: Criar WF-13 para analisar o handoff JSON validado do WF-12
+Status: IN_PROGRESS
 
-Last completed: WF-12 criado, testado, importado e conectado ao WF-11 para rotear extração POBJ exclusivamente ao GG Performance
-Next task: Rafael envia um arquivo POBJ pelo Telegram; executar imediatamente o WF-11 e inspecionar o handoff produzido
+Last completed: PDF real do Telegram atravessou OCR MinerU e WF-12, foi roteado exclusivamente ao GG Performance e teve Estado mínimo persistido
+Next task: Implementar WF-13 Performance com análise verificável, sem receber PDF bruto
 
-Last validation: PASS — WF-11 e WF-12 estruturais; importação n8n; execução manual concluída com fila vazia (`empty: true`)
+Last validation: PASS — PDF real processado em 3 páginas; 9 sinais de POBJ; confiança alta; roteamento exclusivo ao GG Performance; zero efeitos externos
 Last commit: 91bd7f0 (`feat(n8n): route OCR output to Performance director`)
 
 Blockers:
-- Fila da ponte vazia; é necessário Rafael enviar um novo arquivo pelo bot do Telegram para concluir o gate real M1/M2.
+- O retorno útil ao Telegram ainda depende da análise especializada de M3 e da entrega de M4.
 - Imagem MinerU ocupa aproximadamente 13 GB; usa cerca de 2,4 GB após pipeline e 5,8 GB após híbrido; concorrência e janela limitadas a 1.
 - Imagem oficial herdada apresenta conflitos não bloqueantes de `pip check` entre o runtime VLLM e dependências fixadas pelo MinerU.
 
 Pending decisions:
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-31 13:08
+Last update: 2026-08-31 13:48
 
 Resume instruction:
-Após Rafael enviar um POBJ pelo Telegram, execute o WF-11 manualmente, valide a extração MinerU e confirme que o WF-12 produziu somente `GERENTE_GERAL_PERFORMANCE`.
+Continue o ROADMAP no M3 criando o WF-13 Performance sobre o JSON validado; não envie PDF bruto aos agentes.

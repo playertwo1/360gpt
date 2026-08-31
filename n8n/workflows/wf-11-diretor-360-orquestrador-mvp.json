@@ -92,7 +92,7 @@
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const result = $input.first().json;\nconst valid = result?.ok === true && result?.schema_version && result?.extraction;\nreturn [{json: {valid, result, job_id: $('03 Validar contrato e segurança').first().json.job_id, lease_token: $('03 Validar contrato e segurança').first().json.lease_token}}];"
+        "jsCode": "const result = $input.first().json;\nconst valid = Boolean(result?.ok === true && result?.schema_version && result?.extraction);\nreturn [{json: {valid, result, job_id: $('03 Validar contrato e segurança').first().json.job_id, lease_token: $('03 Validar contrato e segurança').first().json.lease_token}}];"
       },
       "id": "validate-extraction",
       "name": "06 Validar saída estruturada",
