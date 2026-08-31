@@ -10,7 +10,7 @@ Last completed: WF-13 criado, conectado ao WF-12 e validado sobre os 106 indicad
 Next task: Rafael autoriza ou rejeita promover `POBJ_SCORING_2026_H2` ao runtime; cadastrar regras oficiais de Seguros e Cartões quando disponíveis
 
 Last validation: PASS — Consórcio 4,67 e Open Finance 7,00 reproduzidos sem divergência em shadow; valores da fonte não sobrescritos
-Last commit: 0453f8f (`feat(n8n): add GG Performance analysis workflow`)
+Last commit: b3f83a0 (`feat(performance): validate explicit POBJ rules in shadow`)
 
 Blockers:
 - O retorno útil ao Telegram ainda depende do fechamento das regras específicas de M3 e da entrega de M4.
