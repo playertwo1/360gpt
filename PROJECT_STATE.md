@@ -10,7 +10,7 @@ Last completed: M4 implementado: snapshot com hash, parecer executivo e payload 
 Next task: Rafael enviar novo PDF/arquivo pelo Telegram e executar WF-11 para confirmar resposta no mesmo chat
 
 Last validation: PASS — WF-11/WF-13 estruturais, política 13/13 + explícitas 2/2, payload de conclusão e hash validados
-Last commit: c583cff (`feat(performance): activate authorized POBJ runtime policy`)
+Last commit: 2145ca5 (`feat(m4): prepare idempotent Telegram response payload`)
 
 Blockers:
 - O retorno útil ao Telegram depende do ensaio real; nenhum arquivo novo foi processado após a conexão do payload M4.
