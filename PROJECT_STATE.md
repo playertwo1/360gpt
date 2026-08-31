@@ -10,7 +10,7 @@ Last completed: PDF real do Telegram atravessou OCR MinerU e WF-12, foi roteado 
 Next task: Implementar WF-13 Performance com análise verificável, sem receber PDF bruto
 
 Last validation: PASS — PDF real processado em 3 páginas; 9 sinais de POBJ; confiança alta; roteamento exclusivo ao GG Performance; zero efeitos externos
-Last commit: 91bd7f0 (`feat(n8n): route OCR output to Performance director`)
+Last commit: 973778e (`fix(n8n): validate live Telegram Performance routing`)
 
 Blockers:
 - O retorno útil ao Telegram ainda depende da análise especializada de M3 e da entrega de M4.
