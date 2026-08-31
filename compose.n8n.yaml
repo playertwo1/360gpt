@@ -98,7 +98,11 @@ services:
       DOCUMENT_OCR_LANGUAGE: por+eng
       DOCUMENT_MINERU_ENABLED: "true"
       MINERU_API_URL: http://mineru:8000
-      MINERU_BACKEND: hybrid-engine
+      MINERU_PDF_PRIMARY_BACKEND: pipeline
+      MINERU_IMAGE_BACKEND: hybrid-engine
+      MINERU_HYBRID_ESCALATION_ENABLED: "true"
+      MINERU_COMPLEX_TABLE_MIN_ROWS: 8
+      MINERU_COMPLEX_TABLE_MIN_CELLS: 40
       MINERU_EFFORT: medium
       MINERU_TIMEOUT_SECONDS: 330
     expose:
@@ -127,7 +131,7 @@ services:
     environment:
       MINERU_MODEL_SOURCE: local
       MINERU_API_MAX_CONCURRENT_REQUESTS: 1
-      MINERU_PROCESSING_WINDOW_SIZE: 8
+      MINERU_PROCESSING_WINDOW_SIZE: 1
       MINERU_API_ENABLE_FASTAPI_DOCS: 0
     entrypoint: mineru-api
     command: ["--host", "0.0.0.0", "--port", "8000"]

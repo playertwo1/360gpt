@@ -9,7 +9,7 @@ import uuid
 import fitz
 from PIL import Image, ImageDraw, ImageFont
 
-from app.main import extract_image, extract_pdf
+from app.main import Evidence, Extraction, extract_image, extract_pdf, requires_hybrid_escalation
 
 
 def test_ocr_image() -> None:
@@ -38,6 +38,31 @@ def test_native_pdf() -> None:
     assert result.extraction_method == "PDF_NATIVE_TEXT", result.extraction_method
     assert "CONSORCIO" in result.text
     assert result.evidence[0].locator == "page:1"
+
+
+def test_adaptive_mineru_routing() -> None:
+    common = {
+        "document_type": "PDF",
+        "mime_type": "application/pdf",
+        "file_name": "routing.pdf",
+        "content_hash": "sha256:" + "0" * 64,
+        "page_count": 1,
+        "extraction_method": "MINERU_PIPELINE",
+        "warnings": [],
+    }
+    simple = Extraction(
+        **common,
+        text="Documento simples com conteúdo suficiente.",
+        evidence=[Evidence(locator="page:1;block:1;type:text", text="Conteúdo", extraction_method="MINERU_PIPELINE")],
+    )
+    table_html = "<table>" + "".join("<tr>" + "<td>x</td>" * 6 + "</tr>" for _ in range(8)) + "</table>"
+    complex_table = Extraction(
+        **common,
+        text=table_html,
+        evidence=[Evidence(locator="page:1;block:1;type:table", text=table_html, extraction_method="MINERU_PIPELINE")],
+    )
+    assert requires_hybrid_escalation(simple) is False
+    assert requires_hybrid_escalation(complex_table) is True
 
 
 def test_http_endpoint() -> None:
@@ -81,5 +106,6 @@ def test_http_endpoint() -> None:
 if __name__ == "__main__":
     test_ocr_image()
     test_native_pdf()
+    test_adaptive_mineru_routing()
     test_http_endpoint()
     print("DOCUMENT_WORKER_EXTRACTION: PASS")

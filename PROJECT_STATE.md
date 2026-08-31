@@ -1,25 +1,25 @@
 # PROJECT STATE
 
-Version: 3.5.1-n2
-Current phase: Reconstrução do MVP real assíncrono
-Current milestone: N1 — Controlador mestre no n8n
-Current task: Validar o ciclo completo do WF-11 com `metas1708.pdf`
+Version: 3.5.2-mvp-performance
+Current phase: MVP mínimo Telegram → Performance → Telegram
+Current milestone: M2 — Orquestrador mínimo no n8n
+Current task: Fazer um job real do Telegram chegar como handoff estruturado ao GG Performance
 Status: IN_PROGRESS
 
-Last completed: MinerU 3.4.5 integrado como parser local principal, fallback PyMuPDF/Tesseract comprovado e PDF/JPG/XLSX reais validados pelo worker
-Next task: Executar um job controlado pelo WF-11 e provar claim, download, extração MinerU, validação e complete
+Last completed: roadmap do MVP mínimo congelado e leitor MinerU otimizado com pipeline econômico, escalada híbrida e janela 1
+Next task: Executar WF-11 com job real, validar extração e criar o roteamento mínimo exclusivo para Performance
 
-Last validation: PASS — bateria geral 29/29, MinerU, fallback OCR, WF-11, H3, C1, lint, build e Docker Compose
+Last validation: PASS — roteamento MinerU, OCR/fallback, reinício de memória, Docker Compose, lint e build; PDF simples em 2,4 GB e POBJ híbrido com quatro marcadores críticos
 Last commit: beab99b (`feat(ocr): integrate MinerU as internal document parser`)
 
 Blockers:
-- Imagem MinerU ocupa aproximadamente 13 GB e usa cerca de 5,7 GB de RAM no modo híbrido; concorrência limitada a 1.
+- Imagem MinerU ocupa aproximadamente 13 GB; usa cerca de 2,4 GB após pipeline e 5,8 GB após híbrido; concorrência e janela limitadas a 1.
 - Imagem oficial herdada apresenta conflitos não bloqueantes de `pip check` entre o runtime VLLM e dependências fixadas pelo MinerU.
 
 Pending decisions:
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-08-31 01:15
+Last update: 2026-08-31 07:20
 
 Resume instruction:
-Continue `docs/ROADMAP_N8N_MVP_REAL.md` em N1/N2; execute o `metas1708.pdf` pelo WF-11 completo e só depois avalie ativar seu agendamento.
+Continue `docs/ROADMAP_N8N_MVP_REAL.md` em M2; entregue primeiro Telegram → OCR → Orquestrador → GG Performance → Telegram e não expanda para outros Gerentes antes do Gate M4.

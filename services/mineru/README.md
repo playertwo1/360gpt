@@ -7,8 +7,10 @@ conversa com o MinerU.
 - versão fixada: `3.4.5`;
 - fonte auditada: `opendatalab/MinerU`, commit `4fe4bde114a2`;
 - imagem local: `diretor360/mineru:3.4.5`;
-- backend padrão: `hybrid-engine`, esforço `medium`;
+- PDF: `pipeline` econômico primeiro, com escalada para `hybrid-engine` somente diante de tabela/layout complexo;
+- imagem: `hybrid-engine`, esforço `medium`;
 - concorrência: uma leitura por vez, compatível com a RTX 4060 Ti de 8 GB;
+- janela de processamento: uma página/lote por vez para reduzir pico de memória;
 - rede: somente `frontend` do Docker, sem porta publicada no Windows;
 - modelos: baixados na construção da imagem para execução local/offline;
 - fallback: PyMuPDF/Tesseract preservado no `document-worker`.

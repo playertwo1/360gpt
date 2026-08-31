@@ -2,11 +2,19 @@
 
 ## [Unreleased]
 
+### Changed
+- Escopo do primeiro MVP congelado na jornada Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram.
+- Conta, Financeiro, Relacionamento e Visão 360 multidomínio movidos explicitamente para depois do gate ponta a ponta do MVP Performance.
+- Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
+
 ### Added
+- Script seguro `release-mineru-memory.ps1` para descarregar os modelos após uso híbrido e manter o serviço pronto.
 - MinerU 3.4.5 como parser interno local de PDF e imagem, com todos os modelos armazenados no computador e acesso exclusivo pela rede Docker do n8n.
 - Teste automatizado da imagem, saúde, conectividade interna, limite de concorrência e contrato de extração MinerU.
 
 ### Changed
+- PDFs começam no pipeline econômico e escalam ao híbrido somente diante de evidência vazia ou tabela complexa; imagens continuam no híbrido.
+- Concorrência e janela do MinerU limitadas a uma unidade para reduzir picos de memória.
 - `document-worker` agora roteia PDF/JPG/PNG ao MinerU híbrido e mantém XLSX/CSV em parsers determinísticos nativos.
 - Timeouts do n8n, WF-11 e worker ampliados para acomodar documentos complexos sem travar o recebimento assíncrono.
 

@@ -18,7 +18,8 @@
 **Último marco concluído:** MinerU 3.4.5 integrado ao `document-worker` como parser local principal; PDF/JPG/XLSX reais e fallback OCR validados, mantendo o serviço restrito à rede Docker.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Próximo passo exato:** executar `metas1708.pdf` por todo o WF-11 (claim → download → MinerU → validação → complete), inspecionar o resultado persistido e somente então decidir sobre o agendamento.
+**Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
+**Próximo passo exato:** executar M2, fazendo um job real do Telegram atravessar o WF-11 e gerar o primeiro handoff estruturado exclusivamente para o GG Performance.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada publicada:** 36; inclui claim do WF-11 e suporte a JPG/PNG.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

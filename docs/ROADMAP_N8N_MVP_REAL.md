@@ -1,8 +1,123 @@
 # Roadmap n8n — Diretor 360 MVP Real
 
-**Versão:** 1.1
+**Versão:** 2.0
 **Data:** 2026-08-31
 **Decisão:** o n8n é a espinha dorsal operacional do Diretor 360.
+
+## Escopo congelado do MVP mínimo
+
+O primeiro produto utilizável possui uma única jornada obrigatória:
+
+```text
+Arquivo enviado pelo Telegram
+  → n8n recebe, registra e reserva o job
+  → document-worker lê PDF/JPG/PNG/XLSX
+  → MinerU pipeline ou híbrido extrai texto, tabelas e evidências
+  → Orquestrador identifica que o conteúdo pertence a Performance
+  → GG Performance consulta somente seus especialistas necessários
+  → regras determinísticas calculam metas, realizado, atingimento, pontos e gaps
+  → GG Performance produz análise executiva rastreável
+  → n8n devolve a análise no mesmo chat do Telegram
+```
+
+O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celular e receber no Telegram uma análise correta, compreensível e sustentada pelos valores do arquivo, sem terminal e sem intervenção manual no fluxo.
+
+### Dentro do MVP
+
+- Telegram como canal de entrada e saída.
+- n8n como controlador de todas as etapas e estados.
+- leitura local de PDF, foto, planilha e documento escaneado.
+- Diretor/Orquestrador limitado a classificar, rotear e integrar.
+- somente o GG Performance e seus especialistas.
+- cálculo determinístico e evidência por página, bloco ou célula.
+- resposta consultiva no Telegram, sem efeito externo adicional.
+- retry, idempotência, timeout, fallback e erro compreensível.
+
+### Fora do MVP — somente depois do gate ponta a ponta
+
+- GG Conta, Financeiro e Relacionamento.
+- visão 360 completa e cruzamentos multidomínio.
+- automações de contato, envio ou qualquer outro efeito externo.
+- aprendizado automático a partir das correções de Rafael.
+- escala, VPS, alta disponibilidade e otimizações não necessárias ao primeiro fluxo.
+- expansão visual do Dashboard além do necessário para auditoria técnica.
+
+## Plano executivo do MVP mínimo
+
+### M0 — Baseline e intake Telegram — CONCLUÍDO
+
+- [x] Webhook Telegram autenticado e allowlist de Rafael.
+- [x] Arquivo original preservado com protocolo, hash e idempotência.
+- [x] Job durável criado sem depender da IA ou do Docker estar disponível.
+- [x] Confirmação imediata de recebimento sem alegar processamento antecipado.
+
+**Gate:** o arquivo chega à fila uma única vez e Rafael recebe o protocolo.
+
+### M1 — Leitor documental local — CONCLUÍDO ISOLADAMENTE
+
+- [x] `document-worker` interno com PDF, JPG/PNG, XLSX e CSV.
+- [x] MinerU 3.4.5 como OCR/parser local principal.
+- [x] Pipeline econômico com escalada automática para híbrido em layout complexo.
+- [x] Fallback PyMuPDF/Tesseract quando MinerU falhar.
+- [x] Evidências por página, bloco ou célula em contrato validado.
+- [x] Concorrência e janela limitadas a 1; reinício seguro disponível para liberar RAM após uso híbrido.
+- [x] PDF/JPG/XLSX reais testados diretamente pelo worker.
+- [ ] Validar leitura passando pelo job real do Telegram e WF-11.
+
+**Gate:** o arquivo real do Telegram gera extração correta dentro do workflow, não apenas em teste isolado.
+
+### M2 — Orquestrador mínimo no n8n — PRÓXIMO
+
+- [ ] Fazer o WF-11 atravessar claim → download → leitor → validação.
+- [ ] Criar subworkflow mínimo do Diretor para classificar documento e intenção.
+- [ ] Rotear POBJ/metas exclusivamente ao GG Performance.
+- [ ] Registrar justificativa, confiança, lacunas e evidências do roteamento.
+- [ ] Enviar entrada estruturada; nunca entregar PDF bruto aos agentes.
+- [ ] Encerrar com retry/falha rastreável quando a classificação não for segura.
+
+**Gate:** um arquivo POBJ extraído produz um handoff válido para Performance e não aciona outro Gerente.
+
+### M3 — GG Performance e especialistas — PENDENTE
+
+- [ ] Criar WF-13 Performance recebendo somente JSON validado.
+- [ ] Acionar reconciliação de fontes e estado de pontuação.
+- [ ] Aplicar regras versionadas de meta, realizado, piso, teto e pontos.
+- [ ] Calcular atingimento, gap e cenários sem permitir que a IA invente números.
+- [ ] Acionar plano executável somente quando houver dados suficientes.
+- [ ] Produzir parecer do GG Performance com fatos, análise, lacunas e recomendação.
+
+**Gate:** os valores do parecer reproduzem os valores e cálculos conferíveis do arquivo real.
+
+### M4 — Resposta final no Telegram — PENDENTE
+
+- [ ] Transformar o parecer em mensagem curta e legível no celular.
+- [ ] Mostrar período, principais indicadores, pontos, gaps e ações recomendadas.
+- [ ] Informar incerteza ou campo não reconhecido sem fabricar resposta.
+- [ ] Devolver a mensagem ao mesmo chat e relacioná-la ao protocolo original.
+- [ ] Evitar resposta duplicada em retry ou update repetido.
+- [ ] Registrar duração, parser usado, agentes acionados e resultado final.
+
+**Gate final do MVP:** Rafael envia `metas1708.pdf` pelo Telegram e recebe no mesmo chat uma análise correta do GG Performance, sem PowerShell, sem copiar dados manualmente e sem efeito externo além da própria resposta solicitada.
+
+### M5 — Piloto curto e correção de rota — BLOQUEADO POR M4
+
+- [ ] Executar de 3 a 5 arquivos reais autorizados por Rafael.
+- [ ] Comparar extração, cálculos e análise com a leitura humana.
+- [ ] Corrigir apenas erros observados no uso real.
+- [ ] Registrar métricas e critérios mínimos de estabilidade.
+- [ ] Declarar o MVP utilizável antes de expandir o escopo.
+
+**Gate:** fluxo repetível e útil; Rafael aprova iniciar a evolução pós-MVP.
+
+## Evolução somente após o MVP
+
+1. Melhorar revisão e correção pelo site.
+2. Incorporar aprendizado governado pelas correções aprovadas.
+3. Adicionar GG Conta.
+4. Adicionar GG Financeiro.
+5. Adicionar GG Relacionamento.
+6. Consolidar a Visão 360 multidomínio.
+7. Evoluir operação, disponibilidade, custo e escala.
 
 ## Resultado final
 
@@ -132,4 +247,4 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ## Próximo passo exato
 
-Concluir N1/N2 ponta a ponta: executar manualmente o WF-11 com um job controlado do `metas1708.pdf` e provar claim → download → MinerU → validação → complete, sem novo upload. O parser e seu fallback já estão homologados isoladamente; não ativar o agendamento antes desse ensaio.
+Executar M2: fazer um job real do Telegram atravessar WF-11 claim → download → document-worker/MinerU → validação e produzir o primeiro handoff estruturado exclusivamente para o GG Performance. Não desenvolver outros Gerentes antes do Gate final de M4.

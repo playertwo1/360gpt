@@ -713,3 +713,18 @@ O detalhamento canônico está em `docs/ROADMAP_N8N_MVP_REAL.md`.
 - [ ] N3–N9 — permanecem na ordem canônica depois do gate N1/N2.
 
 **Próxima tarefa elegível:** executar um job controlado pelo WF-11 e comprovar claim, download, extração MinerU, validação e persistência, sem ativar efeitos externos.
+
+### Prioridade absoluta aprovada — MVP mínimo Performance
+
+Até o primeiro uso real ser comprovado, a ordem passa a ser:
+
+`M0 Telegram → M1 OCR → M2 Orquestrador → M3 GG Performance + especialistas → M4 resposta Telegram → M5 piloto curto`.
+
+- [x] M0 intake Telegram durável.
+- [ ] M1 leitor homologado isoladamente; falta atravessar um job real do Telegram.
+- [ ] M2 roteamento mínimo exclusivo para Performance.
+- [ ] M3 análise e cálculos do GG Performance.
+- [ ] M4 resposta final no mesmo chat.
+- [ ] M5 validação com 3–5 arquivos reais.
+
+Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.

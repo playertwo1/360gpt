@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import time
 from typing import Annotated, Any
 
@@ -23,7 +24,11 @@ MIN_NATIVE_TEXT_CHARS = int(os.getenv("DOCUMENT_MIN_NATIVE_TEXT_CHARS", "80"))
 OCR_LANGUAGE = os.getenv("DOCUMENT_OCR_LANGUAGE", "por+eng")
 MINERU_ENABLED = os.getenv("DOCUMENT_MINERU_ENABLED", "false").lower() == "true"
 MINERU_API_URL = os.getenv("MINERU_API_URL", "http://mineru:8000").rstrip("/")
-MINERU_BACKEND = os.getenv("MINERU_BACKEND", "hybrid-engine")
+MINERU_PDF_PRIMARY_BACKEND = os.getenv("MINERU_PDF_PRIMARY_BACKEND", "pipeline")
+MINERU_IMAGE_BACKEND = os.getenv("MINERU_IMAGE_BACKEND", "hybrid-engine")
+MINERU_HYBRID_ESCALATION_ENABLED = os.getenv("MINERU_HYBRID_ESCALATION_ENABLED", "true").lower() == "true"
+MINERU_COMPLEX_TABLE_MIN_ROWS = int(os.getenv("MINERU_COMPLEX_TABLE_MIN_ROWS", "8"))
+MINERU_COMPLEX_TABLE_MIN_CELLS = int(os.getenv("MINERU_COMPLEX_TABLE_MIN_CELLS", "40"))
 MINERU_EFFORT = os.getenv("MINERU_EFFORT", "medium")
 MINERU_TIMEOUT_SECONDS = float(os.getenv("MINERU_TIMEOUT_SECONDS", "330"))
 SUPPORTED_MIME_TYPES = {
@@ -131,7 +136,23 @@ async def process_document(
 async def extract_pdf_routed(content: bytes, file_name: str, digest: str) -> Extraction:
     if MINERU_ENABLED:
         try:
-            return await extract_with_mineru(content, file_name, "application/pdf", digest)
+            primary = await extract_with_mineru(
+                content, file_name, "application/pdf", digest, MINERU_PDF_PRIMARY_BACKEND
+            )
+            if (
+                MINERU_HYBRID_ESCALATION_ENABLED
+                and MINERU_PDF_PRIMARY_BACKEND != "hybrid-engine"
+                and requires_hybrid_escalation(primary)
+            ):
+                try:
+                    escalated = await extract_with_mineru(
+                        content, file_name, "application/pdf", digest, "hybrid-engine"
+                    )
+                    escalated.warnings.insert(0, "mineru_escalated:complex_layout")
+                    return escalated
+                except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+                    primary.warnings.insert(0, f"mineru_hybrid_fallback:{type(error).__name__}")
+            return primary
         except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
             fallback = extract_pdf(content, file_name, digest)
             fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
@@ -142,7 +163,7 @@ async def extract_pdf_routed(content: bytes, file_name: str, digest: str) -> Ext
 async def extract_image_routed(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
     if MINERU_ENABLED:
         try:
-            return await extract_with_mineru(content, file_name, mime, digest)
+            return await extract_with_mineru(content, file_name, mime, digest, MINERU_IMAGE_BACKEND)
         except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
             fallback = extract_image(content, file_name, mime, digest)
             fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
@@ -150,11 +171,13 @@ async def extract_image_routed(content: bytes, file_name: str, mime: str, digest
     return extract_image(content, file_name, mime, digest)
 
 
-async def extract_with_mineru(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
-    if MINERU_BACKEND not in {"pipeline", "hybrid-engine"}:
+async def extract_with_mineru(
+    content: bytes, file_name: str, mime: str, digest: str, backend: str
+) -> Extraction:
+    if backend not in {"pipeline", "hybrid-engine"}:
         raise ValueError("unsupported_mineru_backend")
     request_data = {
-        "backend": MINERU_BACKEND,
+        "backend": backend,
         "effort": MINERU_EFFORT,
         "parse_method": "auto",
         "formula_enable": "false",
@@ -192,7 +215,7 @@ async def extract_with_mineru(content: bytes, file_name: str, mime: str, digest:
     if not isinstance(content_list, list):
         raise TypeError("mineru_content_list_invalid")
 
-    method = "MINERU_HYBRID" if MINERU_BACKEND == "hybrid-engine" else "MINERU_PIPELINE"
+    method = "MINERU_HYBRID" if backend == "hybrid-engine" else "MINERU_PIPELINE"
     evidence: list[Evidence] = []
     page_indexes: list[int] = []
     for index, block in enumerate(content_list):
@@ -228,6 +251,19 @@ async def extract_with_mineru(content: bytes, file_name: str, mime: str, digest:
         evidence=evidence,
         warnings=warnings,
     )
+
+
+def requires_hybrid_escalation(extraction: Extraction) -> bool:
+    if not extraction.text.strip() or not extraction.evidence:
+        return True
+    for item in extraction.evidence:
+        if "type:table" not in item.locator:
+            continue
+        rows = len(re.findall(r"<tr\b", item.text, flags=re.IGNORECASE))
+        cells = len(re.findall(r"<(?:td|th)\b", item.text, flags=re.IGNORECASE))
+        if rows >= MINERU_COMPLEX_TABLE_MIN_ROWS or cells >= MINERU_COMPLEX_TABLE_MIN_CELLS:
+            return True
+    return False
 
 
 def parse_metadata(value: str) -> dict[str, Any]:
