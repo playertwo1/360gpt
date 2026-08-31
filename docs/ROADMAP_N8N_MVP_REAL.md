@@ -111,6 +111,7 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 ### M5 — Piloto curto e correção de rota — EM ANDAMENTO
 
+- [x] Ampliar o parecer do GG Performance após feedback do primeiro ensaio, incluindo visão geral, forças, riscos, cenários conferíveis e próxima ação.
 - [ ] Executar de 3 a 5 arquivos reais autorizados por Rafael.
 - [ ] Comparar extração, cálculos e análise com a leitura humana.
 - [ ] Corrigir apenas erros observados no uso real.

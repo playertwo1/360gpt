@@ -25,6 +25,7 @@
 - Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
 
 ### Added
+- Parecer Telegram do GG Performance v1.1.0 com situação geral, pontos fortes, riscos e gaps, cenários conferíveis, caminho recomendado, próxima ação, risco e confiança.
 - Payload M4 com snapshot 360 versionado, hash de estado, parecer executivo curto e entrega idempotente ao chat Telegram.
 - WF-13 interno do GG Performance para validar o handoff, estruturar tabelas POBJ, reconciliar a fonte, preservar valores reportados, separar direção de metas e produzir parecer consultivo.
 - Testes estrutural e funcional do WF-13 com números brasileiros, valores negativos, proveniência e bloqueio de efeitos externos.

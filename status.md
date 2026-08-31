@@ -21,7 +21,8 @@
 **Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
 **Worker e agenda:** `document-worker`/MinerU ativos no Docker; WF-11 publicado e agendado a cada 1 minuto.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
-**Próximo passo exato:** executar o M5 com mais 2 a 4 arquivos reais, comparar com a leitura humana e corrigir apenas os problemas observados.
+**Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
+**Próximo passo exato:** enviar novo arquivo e validar no M5 a nova resposta detalhada contra a leitura humana.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada publicada:** 37; inclui claim do WF-11, suporte a JPG/PNG e correção do destinatário autorizado no retorno Telegram.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

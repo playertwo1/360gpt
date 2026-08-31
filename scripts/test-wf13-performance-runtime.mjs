@@ -46,6 +46,11 @@ assert.equal(current.performance_analysis.general_rule_validation.review_require
 assert.equal(current.completion_payload.result.persisted_state.snapshot.overall_status, 'READY');
 assert.match(current.completion_payload.result.persisted_state.state_hash, /^sha256:[0-9a-f]{64}$/);
 assert.equal(current.completion_payload.result.executive_assessment.external_effects_allowed, false);
+assert.match(current.completion_payload.result.executive_assessment.summary, /SITUAÇÃO GERAL/);
+assert.match(current.completion_payload.result.executive_assessment.summary, /PONTOS FORTES/);
+assert.match(current.completion_payload.result.executive_assessment.summary, /RISCOS E GAPS/);
+assert.match(current.completion_payload.result.executive_assessment.summary, /CAMINHO RECOMENDADO/);
+assert.ok(current.completion_payload.result.executive_assessment.summary.length <= 3900);
 assert.equal(current.performance_analysis.calculation_policy.recalculated_points, false);
 assert.equal(current.performance_analysis.security.external_effects_allowed, false);
 
