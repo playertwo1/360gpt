@@ -727,4 +727,51 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 - [x] M4 resposta final no mesmo chat — ensaio real concluído com `telegram_reply_sent: true`.
 - [ ] M5 validação com 3–5 arquivos reais.
 
+#### M5.1 — Backup e isolamento sintético — CONCLUÍDO
+
+- [x] Criar backup pré-implementação local e no Google Drive.
+- [x] Remover empresas, contatos, limites e oportunidades fictícias do runtime Telegram/site.
+- [x] Remover fallbacks operacionais `cust-demo-001` e impedir fixtures no runtime real.
+- [x] Preservar dados sintéticos somente em `test-data` e `OFFLINE_EVAL`.
+
+**Gate:** nenhuma saída operacional cita conta ou oportunidade fictícia.
+
+#### M5.2 — Menu e comandos Telegram — CONCLUÍDO
+
+- [ ] Implementar `/comandos` com aliases `/ajuda` e `/menu`.
+- [ ] Implementar acompanhamento: `/status`, `/ultimo`, `/protocolo`, `/pendencias`, `/duvidas`, `/cancelar` e `/tentar novamente`.
+- [ ] Implementar Performance: `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios`, `/indicador`, `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario`.
+- [ ] Implementar governança: `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir`.
+- [ ] Exigir confirmação para cancelar, corrigir, reabrir ou excluir.
+
+**Gate:** comandos consultam somente dados persistidos autorizados e o menu oficial do bot lista as capacidades.
+
+#### M5.3 — Parecer completo multipartes — CONCLUÍDO
+
+- [ ] Remover o corte interno de 1.500 caracteres.
+- [ ] Dividir o parecer em 2–3 mensagens numeradas e auditadas.
+- [ ] Rotular `FONTE`, `CÁLCULO`, `INFORMADO POR RAFAEL`, `ESTIMATIVA` e `PENDENTE`.
+- [ ] Impedir duplicidade parcial ou total em retry.
+
+**Gate:** parecer detalhado chega integralmente e com rastreabilidade.
+
+#### M5.4–M5.7 — Conversa supervisionada — IMPLEMENTADO, PENDENTE ENSAIO REAL
+
+- [ ] Criar `AWAITING_OWNER_INPUT`, tabelas de perguntas/respostas e timeout de sete dias.
+- [ ] Criar endpoints autenticados para perguntar, consultar, responder, reabrir e reenfileirar.
+- [ ] Correlacionar resposta Telegram por mensagem ou protocolo e interpretar linguagem natural com JSON estruturado.
+- [ ] Marcar respostas como `OWNER_PROVIDED` e perguntar novamente diante de ambiguidade.
+- [ ] Integrar caminhos `READY` e `AWAITING_OWNER_INPUT` nos WF-11/WF-13.
+- [ ] Reprocessar o mesmo protocolo e produzir novo Estado 360 versionado.
+
+**Gate:** lacuna material pausa; Rafael responde naturalmente; o fluxo retoma sem misturar protocolos ou inventar fatos.
+
+#### M5.8–M5.9 — Homologação e piloto real — PRÓXIMO
+
+- [ ] Cobrir documento completo, ausência material, OCR incerto, conflito, resposta ambígua, concorrência, retry, timeout e reabertura.
+- [ ] Validar ações críticas, multipartes, ausência de contas fictícias, bateria geral, build e lint.
+- [ ] Processar 3–5 arquivos reais e comparar com a leitura humana.
+
+**Gate final:** Telegram conversacional utilizável e aprovado por Rafael antes da expansão multidomínio.
+
 Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.

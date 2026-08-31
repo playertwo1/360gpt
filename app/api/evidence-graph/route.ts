@@ -1,60 +1,37 @@
-﻿import { NextResponse } from 'next/server';
+import { env } from 'cloudflare:workers';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
 export async function GET() {
-  // Evidence Graph is an authenticated, read-only surface.
   const authModule = await import('../../chatgpt-auth');
   const user = await authModule.getChatGPTUser();
   if (!user) return NextResponse.json({ error: 'authentication_required' }, { status: 401 });
   if (!authModule.isDashboardUserAllowed(user)) return NextResponse.json({ error: 'access_denied' }, { status: 403 });
-  const humanizedGraph = {
-    estado_id: "STATE_360_LIVE",
-    data_geracao: new Date().toISOString(),
-    resumo_executivo: "Trilha de Evidências Humanizada: do dado bruto até a recomendação comercial.",
-    trilha_humanizada: [
-      {
-        passo: 1,
-        fase: "📥 ORIGEM DO DADO",
-        icone: "📥",
-        titulo: "Entrada via Telegram (@Diretor_360bot)",
-        descricao: "Rafael enviou comando ou documento com parâmetros da agência 6895 (VJ-SAO FIDELIS). Dados recebidos e validados.",
-        detalhes: { canal: "Telegram Webhook Oficial", remetente: "Rafael Pedrosa (ID 5281600644)" }
-      },
-      {
-        passo: 2,
-        fase: "⚙️ MOTOR DETERMINÍSTICO",
-        icone: "⚙️",
-        titulo: "Processamento por Regra Oficial 2026",
-        descricao: "Motores de Performance e Finanças aplicaram as curvas do POBJ (Piso 70% = 0 pts / Meta 100% = 10 pts / Teto 150% = 15 pts) e conciliação do GDAD.",
-        detalhes: { motor: "PerformanceEngine & FinanceiroEngine", status_calculo: "100% DETERMINÍSTICO" }
-      },
-      {
-        passo: 3,
-        fase: "🔍 DIAGNÓSTICO & ACHADO",
-        icone: "🔍",
-        titulo: "Gaps de Metas & Clientes Elegíveis",
-        descricao: "Identificado gap de 26,96 pontos no POBJ. 4 empresas da carteira PJ foram identificadas como 100% elegíveis para Capital de Giro (Grau 1 sem restrições).",
-        detalhes: { gap_pobj: "26.96 pts", clientes_aptos: 4 }
-      },
-      {
-        passo: 4,
-        fase: "💡 RECOMENDAÇÃO EXECUTIVA",
-        icone: "💡",
-        titulo: "Plano de Ação Comercial (P0/P1/P2)",
-        descricao: "Ação P0 sugerida: Ofertar Capital de Giro de R$ 1,5M para Metalúrgica Santa Rita e R$ 800k para Transportadora TransVale.",
-        detalhes: { acao_principal: "CAPITAL_DE_GIRO", prioridade: "P0" }
-      },
-      {
-        passo: 5,
-        fase: "✍️ DECISÃO SOBERANA",
-        icone: "✍️",
-        titulo: "Aguardando Despacho de Rafael",
-        descricao: "A recomendação está montada na Mesa de Decisão. O sistema NUNCA dispara ações externas sem seu clique expresso de aprovação.",
-        detalhes: { autoridade: "Rafael Pedrosa (fael@live.de)", status: "AGUARDANDO_AUTORIZACAO" }
-      }
-    ]
-  };
 
-  return NextResponse.json(humanizedGraph, { status: 200 });
+  const state = await env.DB.prepare(`SELECT state_id, state_version, state_hash, overall_status, snapshot_json, executive_assessment_json, generated_at
+    FROM state_snapshots WHERE tenant_id = 'tenant-owner' AND subject_ref = 'performance-owner'
+    ORDER BY state_version DESC LIMIT 1`).first<{
+      state_id: string; state_version: number; state_hash: string; overall_status: string;
+      snapshot_json: string; executive_assessment_json: string | null; generated_at: number;
+    }>();
+  if (!state) return NextResponse.json({ available: false, read_only: true, message: 'Nenhum Estado 360 real foi persistido ainda.' }, { status: 404 });
+
+  const snapshot = safeJson(state.snapshot_json);
+  const assessment = state.executive_assessment_json ? safeJson(state.executive_assessment_json) : null;
+  const nodes = await env.DB.prepare(`SELECT node_id, node_type, entity_id, content_hash, payload_json, recorded_at
+    FROM evidence_nodes WHERE tenant_id = 'tenant-owner' AND (entity_id = ? OR payload_json LIKE ?)
+    ORDER BY recorded_at ASC LIMIT 200`).bind(state.state_id, `%${state.state_id}%`).all<Record<string, unknown>>();
+
+  return NextResponse.json({
+    available: true,
+    read_only: true,
+    state: { id: state.state_id, version: state.state_version, hash: state.state_hash, status: state.overall_status, generated_at: new Date(state.generated_at).toISOString() },
+    snapshot,
+    executive_assessment: assessment,
+    evidence_nodes: (nodes.results ?? []).map((node) => ({ ...node, payload: safeJson(String(node.payload_json ?? '{}')), payload_json: undefined })),
+    limitation: (nodes.results ?? []).length ? null : 'Nenhum nó de evidência real foi vinculado a este Estado; o sistema não criará trilha demonstrativa.',
+  }, { headers: { 'Cache-Control': 'private, no-store' } });
 }
+
+function safeJson(value: string) { try { return JSON.parse(value) as unknown; } catch { return {}; } }

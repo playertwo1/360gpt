@@ -1,0 +1,34 @@
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = 'Stop'
+$repo = Split-Path -Parent $PSScriptRoot
+
+function Assert-True([bool]$condition, [string]$message) {
+  if (-not $condition) { throw $message }
+  Write-Host "[PASS] $message"
+}
+
+$runtime = Get-Content (Join-Path $repo 'lib/telegram-runtime.ts') -Raw
+$messages = Get-Content (Join-Path $repo 'lib/telegram-messages.ts') -Raw
+$complete = Get-Content (Join-Path $repo 'app/api/bridge/complete/route.ts') -Raw
+$request = Get-Content (Join-Path $repo 'app/api/bridge/clarifications/request/route.ts') -Raw
+$claim = Get-Content (Join-Path $repo 'app/api/bridge/claim/route.ts') -Raw
+$telegram = Get-Content (Join-Path $repo 'app/api/ingest/telegram/route.ts') -Raw
+$wf11 = Get-Content (Join-Path $repo 'n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json') -Raw
+$wf13 = Get-Content (Join-Path $repo 'n8n/workflows/wf-13-gg-performance-mvp.json') -Raw
+
+Write-Host '=== TELEGRAM CONVERSACIONAL SUPERVISIONADO ==='
+foreach ($command in @('/comandos','/status','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/explicar','/privacidade','/meusdados','/excluir')) {
+  Assert-True ($messages.Contains($command) -or $runtime.Contains($command)) "Comando documentado: $command"
+}
+Assert-True ($runtime -match 'toLowerCase\(\)' -and $runtime -match 'replace\(/\\s\+\/g') 'Comandos toleram caixa e espaços extras'
+Assert-True ($runtime -match 'command_confirmations' -and $runtime -match '/confirmar') 'Ações críticas exigem confirmação temporária'
+Assert-True ($request -match 'AWAITING_OWNER_INPUT' -and $wf11 -match 'AWAITING_OWNER_INPUT') 'Dúvida material pausa o mesmo job'
+Assert-True ($runtime -match 'clarification_resolved' -and $runtime -match "status = 'QUEUED'") 'Resposta natural reabre e reenfileira o mesmo protocolo'
+Assert-True ($claim -match 'OWNER_PROVIDED' -and $wf13 -match 'OWNER_PROVIDED') 'Resposta do Rafael preserva proveniência explícita'
+Assert-True ($messages -match 'TELEGRAM_SAFE_LIMIT = 3600' -and $complete -match 'telegram_deliveries') 'Parecer usa partes seguras e idempotentes'
+Assert-True ($telegram -notmatch 'Santa Rita|Agro Vale|Supermercado Central|Bebidas Paraíso|TransVale') 'Webhook operacional não contém empresas fictícias'
+Assert-True ($wf13 -notmatch "tenant-demo|cust-demo-001") 'GG Performance publica somente no escopo real do proprietário'
+
+Write-Host 'TELEGRAM_CONVERSATIONAL_PASS'

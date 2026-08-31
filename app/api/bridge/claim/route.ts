@@ -35,12 +35,23 @@ export async function POST(request: Request) {
     ]);
     const job = (selected.results?.[0] ?? null) as ClaimedJob | null;
     if (!job) return NextResponse.json({ ok: true, empty: true }, { headers: { 'Cache-Control': 'no-store' } });
+    const clarification = await env.DB.prepare(`SELECT id, answer_text, interpretation_json FROM clarification_requests
+      WHERE job_id = ? AND status = 'RESOLVED' ORDER BY resolved_at DESC LIMIT 1`).bind(job.id)
+      .first<{ id: string; answer_text: string | null; interpretation_json: string | null }>();
+    const ownerContext = clarification ? {
+      clarification_id: clarification.id,
+      answer_text: clarification.answer_text,
+      interpretation: clarification.interpretation_json ? JSON.parse(clarification.interpretation_json) : null,
+      evidence_type: 'OWNER_PROVIDED',
+    } : null;
+    const subjectRef = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'performance-owner' : 'subject-not-resolved';
+    const purpose = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'pobj_performance_analysis' : 'document_classification';
 
     return NextResponse.json({
       ok: true, schema_version: '1.0.0', worker_id: workerId, job_id: job.id, document_id: job.document_id,
       lease_token: job.lease_token, lease_expires_at: new Date(job.lease_expires_at).toISOString(), attempt: job.attempt_count,
-      source_event_id: `${job.source}-${job.source_message_id ?? job.document_id}`, tenant_id: 'tenant-demo', subject_ref: job.source === 'pobj_mobile' ? 'pobj-performance' : 'cust-demo-001',
-      actor_id: `${job.source}:${job.owner_id}`, purpose: job.source === 'pobj_mobile' ? 'pobj_performance_analysis' : 'offline_evaluation', data_classification: 'INTERNAL', text: job.raw_text ?? '',
+      source_event_id: `${job.source}-${job.source_message_id ?? job.document_id}`, tenant_id: 'tenant-owner', subject_ref: subjectRef,
+      actor_id: `${job.source}:${job.owner_id}`, purpose, data_classification: 'INTERNAL', text: job.raw_text ?? '', owner_context: ownerContext,
       document: job.storage_key ? { file_name: job.original_name, mime_type: job.mime_type, content_hash: job.content_hash, download_path: `/api/bridge/file?job_id=${encodeURIComponent(job.id)}` } : null,
       security: { content_trust: 'UNTRUSTED', external_effects_allowed: false },
     }, { headers: { 'Cache-Control': 'no-store' } });

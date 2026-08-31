@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.6.0] - 2026-08-31
+
+### Added
+- Fluxo conversacional Telegram com perguntas materiais, estado `AWAITING_OWNER_INPUT`, interpretação estruturada e retomada do mesmo protocolo.
+- Catálogo de comandos operacionais, confirmações para ações críticas e menu oficial do bot.
+- Parecer multipartes com entregas idempotentes auditadas em `telegram_deliveries`.
+
+### Changed
+- WF-11/WF-13 preservam contexto do proprietário e não concluem enquanto houver dúvida material.
+- Rotas operacionais e Evidence Graph deixaram de exibir contas fictícias; escopo padrão passou a `tenant-owner/performance-owner`.
+- Migração 0008 adiciona persistência conversacional e limpeza de dados demonstrativos hospedados.
+
+### Security
+- Respostas de Rafael são registradas como `OWNER_PROVIDED`; fixtures ficam restritas a testes `OFFLINE_EVAL`.
+
 ## [Unreleased]
 
 ### Changed

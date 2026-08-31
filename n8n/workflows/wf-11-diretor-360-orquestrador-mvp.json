@@ -92,13 +92,42 @@
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const result = $input.first().json;\nconst valid = Boolean(result?.ok === true && result?.schema_version && result?.extraction);\nreturn [{json: {valid, result, job_id: $('03 Validar contrato e segurança').first().json.job_id, lease_token: $('03 Validar contrato e segurança').first().json.lease_token}}];"
+        "jsCode": "const result = $input.first().json;\nconst job = $('03 Validar contrato e segurança').first().json;\nconst valid = Boolean(result?.ok === true && result?.schema_version && result?.extraction);\nreturn [{json: {...job, valid, result, job_id: job.job_id, lease_token: job.lease_token}}];"
       },
       "id": "validate-extraction",
       "name": "06 Validar saída estruturada",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [160, 120]
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{$json.processing_decision}}", "rightValue": "AWAITING_OWNER_INPUT", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" }
+      },
+      "id": "if-owner-input",
+      "name": "13 Esclarecimento necessário?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1360, 20]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://visao-360-diretor.fael360092.chatgpt.site/api/bridge/clarifications/request",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify($json.clarification_payload)}}",
+        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "pause-for-owner-input",
+      "name": "14 Pausar e perguntar ao Rafael",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, -120],
+      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
     },
     {
       "parameters": {
@@ -166,7 +195,7 @@
       "name": "08 Concluir e persistir",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1360, -60],
+      "position": [1600, 80],
       "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
     },
     {
@@ -200,7 +229,8 @@
     "07 Extração válida?": { "main": [[{ "node": "10 Acionar Diretor mínimo", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] },
     "10 Acionar Diretor mínimo": { "main": [[{ "node": "11 Validar handoff Performance", "type": "main", "index": 0 }]] },
     "11 Validar handoff Performance": { "main": [[{ "node": "12 Roteamento Performance válido?", "type": "main", "index": 0 }]] },
-    "12 Roteamento Performance válido?": { "main": [[{ "node": "08 Concluir e persistir", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] }
+    "12 Roteamento Performance válido?": { "main": [[{ "node": "13 Esclarecimento necessário?", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] },
+    "13 Esclarecimento necessário?": { "main": [[{ "node": "14 Pausar e perguntar ao Rafael", "type": "main", "index": 0 }], [{ "node": "08 Concluir e persistir", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "saveExecutionProgress": true },
   "active": false,

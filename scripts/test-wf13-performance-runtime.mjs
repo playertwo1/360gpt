@@ -4,7 +4,23 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const workflow = JSON.parse(fs.readFileSync(new URL('../n8n/workflows/wf-13-gg-performance-mvp.json', import.meta.url), 'utf8'));
-const codeNodes = workflow.nodes.filter((node) => node.type === 'n8n-nodes-base.code');
+const executionOrder = [
+  '02 Validar contrato e segurança',
+  '03 Reconciliar fonte e estruturar indicadores',
+  '04 Produzir parecer GG Performance',
+  '10 Aplicar contexto informado por Rafael',
+  '05 Governar direção e ranking',
+  '06 Validar regras explícitas em shadow',
+  '07 Aplicar política geral ativa',
+  '08 Preparar Estado e resposta Telegram',
+  '09 Ampliar parecer executivo',
+  '11 Decidir esclarecimento material',
+];
+const codeNodes = executionOrder.map((name) => {
+  const node = workflow.nodes.find((candidate) => candidate.name === name);
+  assert.ok(node, `Nó ausente: ${name}`);
+  return node;
+});
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 const html = `MENSAL - AGOSTO/2026 Base 28/08/2026 PONTOS possíveis atingidos % ating. acelora % final 78,00 70,71 90,65 10,00 100,65
 <table><tr><td>PRODUTO</td><td>PESO</td><td>MÉTRICA</td><td>DT.BASE</td><td>META</td><td>REALIZADO</td><td>% ATG.</td><td>% REF.</td><td>% PROJ.FINAL</td><td>NEC DIA</td><td>PTS</td></tr>
@@ -53,5 +69,6 @@ assert.match(current.completion_payload.result.executive_assessment.summary, /CA
 assert.ok(current.completion_payload.result.executive_assessment.summary.length <= 3900);
 assert.equal(current.performance_analysis.calculation_policy.recalculated_points, false);
 assert.equal(current.performance_analysis.security.external_effects_allowed, false);
+assert.equal(current.processing_decision, 'READY');
 
 console.log('WF13_PERFORMANCE_RUNTIME_PASS');

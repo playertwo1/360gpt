@@ -9,7 +9,7 @@
     "protocol": { "type": "string", "minLength": 1, "maxLength": 160 },
     "document_id": { "type": "string", "minLength": 1, "maxLength": 160 },
     "job_id": { "type": ["string", "null"], "maxLength": 160 },
-    "state": { "enum": ["RECEIVED", "PROCESSING", "AWAITING_RETRY", "READY_FOR_REVIEW", "COMPLETED", "ERROR"] },
+    "state": { "enum": ["RECEIVED", "PROCESSING", "AWAITING_RETRY", "AWAITING_OWNER_INPUT", "INCOMPLETE_OWNER_INPUT_TIMEOUT", "READY_FOR_REVIEW", "COMPLETED", "ERROR"] },
     "document_status": { "type": "string", "minLength": 1, "maxLength": 64 },
     "job_status": { "type": ["string", "null"], "maxLength": 64 },
     "attempts": { "type": "integer", "minimum": 0 },

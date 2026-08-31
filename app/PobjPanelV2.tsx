@@ -24,7 +24,7 @@ type Item = {
   status: string;
   documentStatus?: string;
   jobStatus?: string;
-  processingState?: "RECEIVED" | "PROCESSING" | "AWAITING_RETRY" | "READY_FOR_REVIEW" | "COMPLETED" | "ERROR";
+  processingState?: "RECEIVED" | "PROCESSING" | "AWAITING_RETRY" | "AWAITING_OWNER_INPUT" | "INCOMPLETE_OWNER_INPUT_TIMEOUT" | "READY_FOR_REVIEW" | "COMPLETED" | "ERROR";
   attempts?: number;
   errorCode?: string;
   competence: string;
@@ -397,6 +397,8 @@ function statusLabel(state?: Item["processingState"]) {
     RECEIVED: "RECEBIDO",
     PROCESSING: "PROCESSANDO",
     AWAITING_RETRY: "NOVA TENTATIVA",
+    AWAITING_OWNER_INPUT: "AGUARDANDO RAFAEL",
+    INCOMPLETE_OWNER_INPUT_TIMEOUT: "INCOMPLETO — PRAZO EXPIRADO",
     READY_FOR_REVIEW: "PRONTO PARA REVISÃO",
     COMPLETED: "CONCLUÍDO",
     ERROR: "ERRO",

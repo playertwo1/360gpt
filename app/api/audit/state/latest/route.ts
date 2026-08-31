@@ -17,8 +17,8 @@ export async function GET(request: Request) {
   if (isDenied(access)) return access;
 
   const url = new URL(request.url);
-  const tenantId = bounded(url.searchParams.get('tenant_id') ?? 'tenant-demo', 120);
-  const subjectRef = bounded(url.searchParams.get('subject_ref') ?? 'cust-demo-001', 120);
+  const tenantId = bounded(url.searchParams.get('tenant_id') ?? 'tenant-owner', 120);
+  const subjectRef = bounded(url.searchParams.get('subject_ref') ?? 'performance-owner', 120);
   if (!tenantId || !subjectRef) return NextResponse.json({ ok: false, error: 'invalid_query' }, { status: 400 });
 
   const latestState = await env.DB.prepare(`

@@ -38,7 +38,7 @@ function Score(){
 }
 function State360Card(){
  const [state,setState]=useState<State360|null>(null);
- useEffect(()=>{fetch('/api/state/latest?tenant_id=tenant-demo&subject_ref=bridge-cycle-synthetic',{cache:'no-store'}).then(async response=>response.ok?response.json():Promise.reject()).then(setState).catch(()=>setState({available:false}))},[]);
+ useEffect(()=>{fetch('/api/state/latest?tenant_id=tenant-owner&subject_ref=performance-owner',{cache:'no-store'}).then(async response=>response.ok?response.json():Promise.reject()).then(setState).catch(()=>setState({available:false}))},[]);
  if(!state)return <section className="animate-pulse rounded-[28px] bg-[#1d1d1f] p-5"><div className="h-4 w-32 rounded bg-[#333]"/><div className="mt-4 h-8 w-48 rounded bg-[#333]"/></section>;
  const ready=state.available&&state.overall_status==='READY';
  const date=state.generated_at?new Date(state.generated_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'—';

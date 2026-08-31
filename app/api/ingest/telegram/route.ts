@@ -1,8 +1,9 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
+import { handleClarificationReply, handleTelegramCommand } from '../../../../lib/telegram-runtime';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
-type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string } } };
+type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; reply_to_message?: { message_id: number }; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string } } };
 type Reservation = { claimed: boolean; status: string; attemptCount?: number };
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -100,6 +101,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, duplicate: true, protocol: documentId, documentId, updateId, status: reservation.status });
   }
 
+  if (!document && text) {
+    try {
+      const clarificationHandled = await handleClarificationReply(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, message.message_id, text, message.reply_to_message?.message_id);
+      const interaction = clarificationHandled ? { handled: true, kind: 'clarification' } : await handleTelegramCommand(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
+      if (!interaction.handled && env.TELEGRAM_BOT_TOKEN) {
+        await sendTelegramMessage(message.chat.id, 'Envie um PDF, imagem ou planilha para análise, ou use /comandos. Se estiver respondendo uma dúvida, use o botão Responder na mensagem do bot.');
+      }
+      await env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`).bind(Date.now(), updateId).run();
+      return NextResponse.json({ ok: true, interaction: interaction.kind ?? 'guidance', updateId, status: 'SUCCEEDED' });
+    } catch {
+      await env.DB.prepare(`UPDATE telegram_updates SET status = 'FAILED_RETRYABLE', error_code = 'interaction_failed' WHERE update_id = ?`).bind(updateId).run();
+      return NextResponse.json({ ok: false, error: 'interaction_failed', retryable: true }, { status: 502 });
+    }
+  }
+
   let storageKey: string | null = null;
   let contentHash: string | null = null;
   let canonicalDocumentId = documentId;
@@ -148,22 +164,7 @@ export async function POST(request: Request) {
 
     let ackSent = false;
     if (Boolean(env.TELEGRAM_BOT_TOKEN)) {
-      const lowerText = text.toLowerCase();
-      const userName = message.from?.first_name || 'Rafael';
-      
-      if (lowerText.startsWith('/hoje') || lowerText.startsWith('/planodiario') || lowerText === 'hoje' || lowerText.includes('plano')) {
-        await sendTelegramMessage(message.chat.id, getDailyPlanBriefing());
-        ackSent = true;
-      } else if (lowerText.startsWith('/metas') || lowerText.startsWith('/pobj') || lowerText.includes('meta')) {
-        await sendTelegramMessage(message.chat.id, getPobjDiagnostic());
-        ackSent = true;
-      } else if (lowerText.startsWith('/status')) {
-        await sendTelegramMessage(message.chat.id, getStatusMessage());
-        ackSent = true;
-      } else if (lowerText.startsWith('/start')) {
-        await sendTelegramMessage(message.chat.id, getWelcomeMessage(userName));
-        ackSent = true;
-      } else if (document) {
+      if (document) {
         const docConfirm = `✅ *DOCUMENTO RECEBIDO E ENFILEIRADO!*
 
 ` +
@@ -182,10 +183,6 @@ export async function POST(request: Request) {
 ` +
           `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Não reenvie o arquivo.`;
         await sendTelegramMessage(message.chat.id, docConfirm);
-        ackSent = true;
-      } else if (env.TELEGRAM_SEND_ACK_ENABLED === 'true') {
-        await sendTelegramMessage(message.chat.id, `Recebido com segurança pelo Diretor 360. Protocolo: ${documentId}
-Digite /hoje para ver suas prioridades do dia!`);
         ackSent = true;
       }
     }
@@ -260,160 +257,6 @@ async function sendTelegramMessage(chatId: number, text: string, parseMode = 'Ma
   } catch (err) {
     console.error('Falha ao enviar mensagem no Telegram:', err);
   }
-}
-
-function getDailyPlanBriefing() {
-  const dateStr = new Date().toLocaleDateString('pt-BR');
-  return `📋 *PLANO DIÁRIO DE AÇÃO COMERCIAL — ${dateStr}*
-` +
-    `👤 *Gerente:* Rafael Pedrosa (VJ-SAO FIDELIS)
-` +
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-` +
-    `🎯 *Score POBJ Atual:* \`51.04 pts\` / \`78.00 pts\`
-` +
-    `⚡ *Gap para o Teto:* \`26.96 pts\` (Proj: \`72.44 pts\`)
-` +
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-` +
-    `🔥 *FILA DE ATENDIMENTO RECOMENDADA:* (5 ações prioritárias)
-
-` +
-    `🔴 *[P0] 1. Santa Rita Metais*
-` +
-    `   💼 *Ação:* Capital de Giro (R$ 850.000,00 pré-aprovado)
-` +
-    `   📈 *Ganho:* \`+15.00 pts no POBJ\`
-` +
-    `   👤 *Contato:* Roberto Silva (Diretor Financeiro) | \`(22) 99881-2233\`
-` +
-    `   🗣️ *Abordagem:* _Limite pré-aprovado com taxa diferenciada disponível para liberação hoje._
-
-` +
-    `🔴 *[P0] 2. Agro Vale*
-` +
-    `   💼 *Ação:* Capital de Giro (R$ 1.500.000,00 pré-aprovado)
-` +
-    `   📈 *Ganho:* \`+15.00 pts no POBJ\`
-` +
-    `   👤 *Contato:* Carlos Eduardo (Sócio-Administrador) | \`(22) 99772-4411\`
-` +
-    `   🗣️ *Abordagem:* _Captação de giro para safra com liberação imediata._
-
-` +
-    `🟠 *[P1] 3. Santa Rita Metais*
-` +
-    `   💼 *Ação:* Captação de Folha (48 vidas)
-` +
-    `   📈 *Ganho:* \`+8.50 pts no POBJ\`
-` +
-    `   👤 *Contato:* Roberto Silva | \`(22) 99881-2233\`
-` +
-    `   🗣️ *Abordagem:* _Apresentar proposta de isenção de cesta de serviços para colaboradores._
-
-` +
-    `🟠 *[P1] 4. Supermercado Central*
-` +
-    `   💼 *Ação:* Captação de Folha (32 vidas)
-` +
-    `   📈 *Ganho:* \`+8.50 pts no POBJ\`
-` +
-    `   👤 *Contato:* Mariana Souza (Gerente Geral) | \`(22) 99123-5566\`
-
-` +
-    `🟡 *[P2] 5. Bebidas Paraíso*
-` +
-    `   💼 *Ação:* Implantação de Esteira de Boletos
-` +
-    `   📈 *Ganho:* \`+5.00 pts no POBJ\`
-` +
-    `   👤 *Contato:* Juliana Martins | \`(22) 98833-1122\`
-
-` +
-    `👉 Digite \`/analisar <CNPJ>\` para ver o dossiê completo de qualquer cliente!`;
-}
-
-function getPobjDiagnostic() {
-  return `📊 *DIAGNÓSTICO EXECUTIVO — POBJ AGOSTO/2026*
-` +
-    `👤 *Gerente:* Rafael Pedrosa (6895 - VJ-SAO FIDELIS)
-` +
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-` +
-    `🏆 *Score Realizado:* \`51,04 pts\` (65,44%)
-` +
-    `🎯 *Meta Teto:* \`78,00 pts\` (100,00%)
-` +
-    `⚡ *Projeção Final:* \`72,44 pts\` (92,87%)
-` +
-    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-` +
-    `🌟 *Destaques Positivos:*
-` +
-    `• 🟢 *Crédito PJ:* R$ 1.384.193,37 realizado (180,77% da meta) ➔ \`15,00 pts [TETO]\`
-` +
-    `• 🟢 *Qualidade (Encanta BRA):* 150,00 realizado ➔ \`15,00 pts [TETO]\`
-` +
-    `• 🟢 *Open Finance:* 5 propostas ➔ \`7,00 pts [TETO]\`
-
-` +
-    `🔥 *Alavancas para Bater o Teto:*
-` +
-    `1. *Captação Grupo A:* Faltam 9,09 pts para o teto.
-` +
-    `2. *Clientes PJ:* Produção diária recomendada de 0,20 conta/dia.
-` +
-    `3. *Seguros & Cartões PJ:* Alavancas de margem alta.
-
-` +
-    `👉 Digite \`/hoje\` para ver a fila de clientes recomendada!`;
-}
-
-function getStatusMessage() {
-  return `📊 *DIRETOR 360 — PAINEL EXECUTIVO*
-
-` +
-    `🟢 *Status do Sistema:* OPERACIONAL & SEGURO
-` +
-    `🛡️ *Postura de Segurança:* CERTIFIED HARDENED (PRR 10/10)
-` +
-    `⚡ *Model Router:* ATIVO (Economia FinOps de *79.1%*)
-` +
-    `🏢 *4 Gerentes Gerais Ativos:* Conta, Performance, Financeiro, Relacionamento
-` +
-    `📈 *GG Performance:* Score POBJ 51,04 pts (Proj: 72,44 pts)
-` +
-    `⏱️ *RTO / RPO:* 3m12s / 0s (Perda Zero)
-
-` +
-    `👉 *Dashboard Web:* [Acessar Painel](http://localhost:3000)`;
-}
-
-function getWelcomeMessage(userName: string) {
-  return `👋 *Olá, ${userName}! Bem-vindo ao Diretor 360 PJ.*
-
-` +
-    `Sou o seu copiloto executivo nas 4 áreas centrais de negócio (Conta, Performance, Financeiro e Relacionamento).
-
-` +
-    `📋 *Comandos Rápidos:*
-` +
-    `• \`/hoje\` ou \`/planodiario\` - 🎯 Fila de Atendimento do Dia (Gaps POBJ + Clientes)
-` +
-    `• \`/metas\` ou \`/pobj\` - Score do POBJ, Gaps e Alavancas de Produção
-` +
-    `• \`/status\` - Estado do sistema e métricas FinOps
-` +
-    `• \`/analisar <CNPJ ou Nome>\` - Análise 360 completa da empresa
-` +
-    `• \`/laudo <CNPJ>\` - Emite e envia o Laudo Executivo em PDF de 3 páginas
-
-` +
-    `📎 *Envio de Documentos:*
-` +
-    `Envie balanços, relatórios de metas POBJ, extratos ou DREs para análise instantânea!`;
 }
 
 function allowedFileName(name: string, mime: string) {

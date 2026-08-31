@@ -23,7 +23,7 @@ Assert-True ($telegramRoute -match 'duplicateByHash') 'Telegram deduplica conteu
 Assert-True ($telegramRoute -notmatch 'Processando no GG Performance') 'Telegram nao afirma processamento de Gerentes antes da hora'
 Assert-True ($telegramRoute -match 'DOCUMENTO RECEBIDO E ENFILEIRADO') 'Telegram confirma somente recebimento e fila'
 
-$states = @('RECEIVED', 'PROCESSING', 'AWAITING_RETRY', 'READY_FOR_REVIEW', 'COMPLETED', 'ERROR')
+$states = @('RECEIVED', 'PROCESSING', 'AWAITING_RETRY', 'AWAITING_OWNER_INPUT', 'INCOMPLETE_OWNER_INPUT_TIMEOUT', 'READY_FOR_REVIEW', 'COMPLETED', 'ERROR')
 foreach ($state in $states) {
   Assert-True ($statusModule.Contains("'$state'")) "Estado $state implementado"
   Assert-True ($statusSchema.properties.state.enum -contains $state) "Estado $state documentado no schema"

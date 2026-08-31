@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { boundedString, readBoundedJson, requestErrorResponse, requireBridge, sha256 } from '../shared';
 import { hashCanonical } from '../../reviews/shared';
 import { createEvidenceEdge, createEvidenceNode, prepareEvidenceEdgeInsert, prepareEvidenceNodeInsert, uuidFromSha256 } from '../../evidence/shared';
+import { sendTelegramText, splitTelegramText } from '../../../../lib/telegram-messages';
 
 export const runtime = 'edge';
 
@@ -42,7 +43,8 @@ export async function POST(request: Request) {
     if (job.status === 'SUCCEEDED') {
       const previous = job.output_json ? JSON.parse(job.output_json) as { state_id?: string; state_hash?: string } : {};
       if (previous.state_hash !== suppliedHash) return NextResponse.json({ ok: false, error: 'state_conflict' }, { status: 409 });
-      return NextResponse.json({ ok: true, duplicate: true, state_id: previous.state_id, state_hash: previous.state_hash });
+      const telegramReplySent = await maybeSendTelegramResult(job, jobId, snapshot, result, previous.state_id ?? String(persisted?.state_id ?? `state-${snapshot.event_id}`), Date.now());
+      return NextResponse.json({ ok: true, duplicate: true, state_id: previous.state_id, state_hash: previous.state_hash, telegram_reply_sent: telegramReplySent });
     }
     const existing = await env.DB.prepare(`SELECT state_hash FROM state_snapshots WHERE event_id = ?`).bind(snapshot.event_id).first<{ state_hash: string }>();
     if (existing && existing.state_hash !== suppliedHash) return NextResponse.json({ ok: false, error: 'state_conflict' }, { status: 409 });
@@ -138,7 +140,7 @@ async function maybeSendTelegramResult(
   }
 
   try {
-    await sendTelegramResult(chatId, buildTelegramResultText(snapshot, result, stateId));
+    await sendTelegramResultParts(chatId, jobId, stateId, buildTelegramResultText(snapshot, result, stateId));
     await env.DB.prepare(`UPDATE audit_log SET action = 'telegram_reply_sent', details_json = ? WHERE id = ?`)
       .bind(JSON.stringify({ stateId, sentAt: Date.now() }), auditId).run();
     return true;
@@ -154,7 +156,7 @@ function buildTelegramResultText(snapshot: StateSnapshot, result: Record<string,
   const assessment = result.executive_assessment && typeof result.executive_assessment === 'object'
     ? result.executive_assessment as Record<string, unknown>
     : {};
-  const summary = boundedString(assessment.summary, 1500) || boundedString(assessment.executive_summary, 1500);
+  const summary = boundedString(assessment.summary, 12000) || boundedString(assessment.executive_summary, 12000);
   const statusLabel = snapshot.overall_status === 'READY' ? 'Pronto para análise' : 'Revisão humana necessária';
   const lines = [
     'Diretor 360 concluiu o processamento.',
@@ -165,17 +167,26 @@ function buildTelegramResultText(snapshot: StateSnapshot, result: Record<string,
   ];
   if (summary) lines.push('', summary);
   lines.push('', `Protocolo: ${stateId}`);
-  return lines.join('\n').slice(0, 3900);
+  return lines.join('\n').slice(0, 12000);
 }
 
-async function sendTelegramResult(chatId: number, text: string) {
-  const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text }),
-    signal: AbortSignal.timeout(10000),
-  });
-  if (!response.ok) throw new Error(`telegram_send_${response.status}`);
+async function sendTelegramResultParts(chatId: number, jobId: string, stateId: string, text: string) {
+  const parts = splitTelegramText(text);
+  for (let index = 0; index < parts.length; index += 1) {
+    const partIndex = index + 1; const body = parts.length > 1 ? `Parte ${partIndex}/${parts.length}\n\n${parts[index]}` : parts[index];
+    const deliveryId = `telegram-result-${jobId}-part-${partIndex}`;
+    const contentHash = `sha256:${await sha256(body)}`;
+    const prior = await env.DB.prepare(`SELECT status, content_hash FROM telegram_deliveries WHERE id = ?`).bind(deliveryId).first<{ status: string; content_hash: string }>();
+    if (prior?.status === 'SENT' && prior.content_hash === contentHash) continue;
+    if (!prior) {
+      await env.DB.prepare(`INSERT INTO telegram_deliveries (id, job_id, state_id, chat_id, part_index, part_count, content_hash, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)`)
+        .bind(deliveryId, jobId, stateId, String(chatId), partIndex, parts.length, contentHash, Date.now()).run();
+    } else {
+      await env.DB.prepare(`UPDATE telegram_deliveries SET content_hash = ?, status = 'PENDING', part_count = ? WHERE id = ?`).bind(contentHash, parts.length, deliveryId).run();
+    }
+    const messageId = await sendTelegramText(env.TELEGRAM_BOT_TOKEN!, chatId, body);
+    await env.DB.prepare(`UPDATE telegram_deliveries SET status = 'SENT', telegram_message_id = ?, sent_at = ? WHERE id = ?`).bind(messageId, Date.now(), deliveryId).run();
+  }
 }
 
 async function buildReviewRequest(snapshot: StateSnapshot, stateId: string, stateVersion: number, now: number) {

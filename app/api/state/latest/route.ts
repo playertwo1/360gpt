@@ -15,8 +15,8 @@ export async function GET(request: Request) {
   }
 
   const requestUrl = new URL(request.url);
-  const tenantId = bounded(requestUrl.searchParams.get('tenant_id') ?? 'tenant-demo', 120);
-  const subjectRef = bounded(requestUrl.searchParams.get('subject_ref') ?? 'cust-demo-001', 160);
+  const tenantId = bounded(requestUrl.searchParams.get('tenant_id') ?? 'tenant-owner', 120);
+  const subjectRef = bounded(requestUrl.searchParams.get('subject_ref') ?? 'performance-owner', 160);
   if (!tenantId || !subjectRef) {
     return NextResponse.json({ available: false, error: 'invalid_scope' }, { status: 400 });
   }
@@ -30,18 +30,18 @@ export async function GET(request: Request) {
         state_id: string; state_version: number; event_id: string; correlation_id: string; state_hash: string;
         overall_status: string; snapshot_json: string; executive_assessment_json: string | null; generated_at: number;
       }>();
-    if (!row) return NextResponse.json({ available: false, execution_mode: 'OFFLINE_EVAL', read_only: true, tenant_id: tenantId, subject_ref: subjectRef }, {
+    if (!row) return NextResponse.json({ available: false, execution_mode: 'RUNTIME_ACTIVE', read_only: true, tenant_id: tenantId, subject_ref: subjectRef }, {
       headers: { 'Cache-Control': 'private, no-store' },
     });
     return NextResponse.json({
-      available: true, execution_mode: 'OFFLINE_EVAL', read_only: true,
+      available: true, execution_mode: 'RUNTIME_ACTIVE', read_only: true,
       state_id: row.state_id, state_version: row.state_version, event_id: row.event_id, correlation_id: row.correlation_id,
       state_hash: row.state_hash, overall_status: row.overall_status, generated_at: new Date(row.generated_at).toISOString(),
       snapshot: JSON.parse(row.snapshot_json), executive_assessment: row.executive_assessment_json ? JSON.parse(row.executive_assessment_json) : null,
     }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch {
     return NextResponse.json(
-      { available: false, execution_mode: 'OFFLINE_EVAL', read_only: true, tenant_id: tenantId, subject_ref: subjectRef, error: 'hosted_read_model_unavailable' },
+      { available: false, execution_mode: 'RUNTIME_ACTIVE', read_only: true, tenant_id: tenantId, subject_ref: subjectRef, error: 'hosted_read_model_unavailable' },
       { status: 503, headers: { 'Cache-Control': 'private, no-store' } },
     );
   }

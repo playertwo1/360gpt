@@ -49,6 +49,60 @@ export const telegramRateLimits = sqliteTable('telegram_rate_limits', {
   requestCount: integer('request_count').notNull().default(1),
 }, (table) => [index('idx_telegram_rate_limits_window').on(table.windowStartedAt)]);
 
+export const clarificationRequests = sqliteTable('clarification_requests', {
+  id: text('id').primaryKey(),
+  jobId: text('job_id').notNull().references(() => agentRuns.id),
+  documentId: text('document_id').notNull().references(() => documents.id),
+  ownerId: text('owner_id').notNull(),
+  chatId: text('chat_id').notNull(),
+  telegramMessageId: text('telegram_message_id'),
+  status: text('status').notNull().default('PENDING'),
+  questionsJson: text('questions_json').notNull(),
+  evidenceJson: text('evidence_json').notNull().default('[]'),
+  answerText: text('answer_text'),
+  answerMessageId: text('answer_message_id'),
+  interpretationJson: text('interpretation_json'),
+  attemptCount: integer('attempt_count').notNull().default(0),
+  dueAt: integer('due_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  resolvedAt: integer('resolved_at', { mode: 'timestamp_ms' }),
+}, (table) => [
+  index('idx_clarifications_chat_status').on(table.chatId, table.status, table.createdAt),
+  index('idx_clarifications_job_status').on(table.jobId, table.status),
+  index('idx_clarifications_due').on(table.status, table.dueAt),
+]);
+
+export const telegramDeliveries = sqliteTable('telegram_deliveries', {
+  id: text('id').primaryKey(),
+  jobId: text('job_id').notNull(),
+  stateId: text('state_id').notNull(),
+  chatId: text('chat_id').notNull(),
+  partIndex: integer('part_index').notNull(),
+  partCount: integer('part_count').notNull(),
+  contentHash: text('content_hash').notNull(),
+  status: text('status').notNull().default('PENDING'),
+  telegramMessageId: text('telegram_message_id'),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  sentAt: integer('sent_at', { mode: 'timestamp_ms' }),
+}, (table) => [
+  uniqueIndex('uq_telegram_delivery_part').on(table.jobId, table.stateId, table.partIndex),
+  index('idx_telegram_deliveries_status').on(table.status, table.createdAt),
+]);
+
+export const commandConfirmations = sqliteTable('command_confirmations', {
+  id: text('id').primaryKey(),
+  ownerId: text('owner_id').notNull(),
+  chatId: text('chat_id').notNull(),
+  command: text('command').notNull(),
+  argumentsJson: text('arguments_json').notNull().default('{}'),
+  status: text('status').notNull().default('PENDING'),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  confirmedAt: integer('confirmed_at', { mode: 'timestamp_ms' }),
+}, (table) => [
+  index('idx_command_confirmations_chat_status').on(table.chatId, table.status, table.expiresAt),
+]);
+
 export const insights = sqliteTable('insights', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), companyId: text('company_id').references(() => companies.id),
   agentRunId: text('agent_run_id').references(() => agentRuns.id), kind: text('kind').notNull(), title: text('title').notNull(),
