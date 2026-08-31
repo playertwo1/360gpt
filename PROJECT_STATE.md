@@ -10,7 +10,7 @@ Last completed: WF-12 criado, testado, importado e conectado ao WF-11 para rotea
 Next task: Rafael envia um arquivo POBJ pelo Telegram; executar imediatamente o WF-11 e inspecionar o handoff produzido
 
 Last validation: PASS — WF-11 e WF-12 estruturais; importação n8n; execução manual concluída com fila vazia (`empty: true`)
-Last commit: 8733369 (`feat(mvp): focus Telegram Performance flow and reduce OCR memory`)
+Last commit: 91bd7f0 (`feat(n8n): route OCR output to Performance director`)
 
 Blockers:
 - Fila da ponte vazia; é necessário Rafael enviar um novo arquivo pelo bot do Telegram para concluir o gate real M1/M2.
