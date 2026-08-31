@@ -22,7 +22,7 @@
 **Worker e agenda:** `document-worker`/MinerU ativos no Docker; WF-11 publicado e agendado a cada 1 minuto.
 **Próximo passo exato:** enviar um novo arquivo pelo Telegram e confirmar a resposta automática e `telegram_reply_sent: true` no M4.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
-**Versão hospedada publicada:** 36; inclui claim do WF-11 e suporte a JPG/PNG.
+**Versão hospedada publicada:** 37; inclui claim do WF-11, suporte a JPG/PNG e correção do destinatário autorizado no retorno Telegram.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
 
 ---

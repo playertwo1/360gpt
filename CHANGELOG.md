@@ -4,6 +4,7 @@
 
 ### Changed
 - Worker `document-worker`/MinerU e dependências Docker iniciados; agenda do WF-11 publicada no n8n com execução a cada 1 minuto.
+- Versão hospedada 37 publicada no endereço público com a correção de retorno ao Telegram.
 
 ### Fixed
 - Corrigida a resolução do chat autorizado no retorno Telegram quando `owner_id` é UUID de conta; utiliza o único chat da allowlist sem ampliar destinatários.
