@@ -17,13 +17,14 @@ Host baseline:
 Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
-Last validation: 2026-09-01 — npm lint PASS; npm build PASS; pedidos de contexto e respostas numéricas do Telegram validados contra loop de clarificação
-Last commit: pending checkpoint desta correção
+Last validation: 2026-09-01 — npm lint PASS; npm build PASS; versão Sites 42 salva e deploy público iniciado; confirmação final bloqueada porque a conta Sites conectada deixou de enxergar o projeto de `fael@live.de`
+Last commit: cab1740 (`fix: stop telegram clarification question loops`)
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - Não republicar o Telegram automático enquanto META, REALIZADO, % ATG, pontos e período não estiverem 100% associados.
+- Verificação final do deploy Sites v42 exige reconectar a conta proprietária `fael@live.de`; a sessão atual retorna `project_not_found` e não lista Sites.
 
 Decisions:
 - Docling Serve 1.30.0 em CPU é o único OCR.
@@ -34,7 +35,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 20:45
+Last update: 2026-09-01 20:31
 
 Resume instruction:
 1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.
