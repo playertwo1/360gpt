@@ -50,7 +50,7 @@ $credential = @(
 )
 [IO.File]::WriteAllText(
   $credentialFile,
-  ($credential | ConvertTo-Json -Depth 6 -AsArray),
+  (ConvertTo-Json -InputObject @($credential) -Depth 6),
   [Text.UTF8Encoding]::new($false)
 )
 

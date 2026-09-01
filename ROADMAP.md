@@ -807,14 +807,19 @@ Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões perma
 - [x] Bind mounts confirmados: `./n8n/workflows` em `/files/workflows:ro` e `./infra/postgres/init` em `/docker-entrypoint-initdb.d:ro`.
 - [x] PostgreSQL iniciado e saudável.
 - [ ] Aguardar o build único já iniciado de `document-worker` e MinerU; não iniciar build concorrente.
-- [ ] Após o build, diagnosticar e recuperar o n8n, atualmente com processo Node bloqueado em I/O e healthcheck recusando a porta 5678.
-- [ ] Confirmar workflows, credenciais, ativações e agenda do WF-11 sem recriar `visao-360_n8n_data`.
-- [ ] Confirmar tabelas e registros do projeto sem recriar `visao-360_postgres_data`; os scripts de `infra/postgres/init` não substituem backup lógico.
-- [ ] Subir `document-worker` e MinerU separadamente, com concorrência 1 e perfil híbrido de menor memória.
+- [x] n8n recuperado e validado em `/healthz` com HTTP 200, sem recriar volumes.
+- [x] Restaurar do repositório 13 workflows canônicos e regenerar 2 credenciais locais a partir de `.env.n8n`, removendo o arquivo temporário ao final.
+- [x] Confirmar bancos `n8n` e `visao360`, com 129 e 8 tabelas respectivamente; os scripts de `infra/postgres/init` não substituem backup lógico.
+- [x] Subir `document-worker` isoladamente com `--no-build --no-deps`; healthcheck aprovado.
+- [x] Publicar WF-12 e WF-13 como subworkflows internos.
+- [ ] Aguardar o build do MinerU terminar e validar sua imagem/healthcheck com concorrência 1 e perfil híbrido de menor memória.
+- [ ] Publicar/ativar a agenda do WF-11 somente depois de MinerU e worker estarem saudáveis; WF-11 permanece inativo neste checkpoint.
 - [ ] Validar saúde de PostgreSQL, n8n, worker, OCR leve e fallback MinerU.
 - [ ] Executar teste controlado Telegram → fila → OCR → Diretor → Performance → resposta Telegram.
 - [ ] Depois da validação, executar o ensaio M5.10 de reutilização e conflito do conhecimento POBJ.
 
 **Proteções obrigatórias:** não remover/recriar volumes; não limpar cache durante o build; não copiar o VHDX com Docker/WSL gravando; para backup, combinar repositório, exportação lógica do PostgreSQL e backup controlado dos dados do n8n.
 
-**Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram; em seguida validar `docker compose ... ps`, recuperar somente o serviço n8n se necessário e continuar a lista acima na primeira caixa não concluída.
+**Checkpoint de pausa — 01/09/2026 07:37:** n8n, PostgreSQL e `document-worker` saudáveis; 13 workflows e 2 credenciais presentes; WF-12/WF-13 publicados; WF-11 inativo; build do MinerU ainda em segundo plano.
+
+**Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram e se a imagem `diretor360/mineru:3.4.5` existe; subir/validar MinerU, confirmar o acesso do worker ao parser e somente então publicar WF-11 e executar o teste Telegram ponta a ponta.

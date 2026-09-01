@@ -66,6 +66,11 @@
 ### Operations
 - Registrado checkpoint recuperável: PostgreSQL saudável, build único de `document-worker`/MinerU em andamento e n8n pendente de estabilização após contenção de I/O.
 - Formalizado que scripts de inicialização do PostgreSQL não substituem backup lógico e que o VHDX não deve ser copiado enquanto Docker/WSL estiver gravando.
+- Runtime local reconstruído no volume novo: 13 workflows canônicos e 2 credenciais locais importados; arquivo temporário de credenciais removido.
+- n8n, PostgreSQL e `document-worker` validados como saudáveis; WF-12/WF-13 publicados e WF-11 mantido inativo até a conclusão do MinerU.
+
+### Fixed
+- Importador local de credenciais compatibilizado com Windows PowerShell 5.1 e PowerShell 7 ao serializar explicitamente o array JSON sem depender de `-AsArray`.
 
 ### Deployed
 - Versão hospedada 39 publicada com rotas de esclarecimento e migração conversacional; WF-11/WF-13 atualizados, publicados e reiniciados no n8n local.
