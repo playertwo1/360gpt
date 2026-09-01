@@ -8,7 +8,7 @@ Write-Host '====================================================================
 Write-Host ''
 
 $tests = @(
-    @{ Name = 'MinerU - Parser interno'; Script = 'scripts/test-mineru-integration.ps1' },
+    @{ Name = 'Docling - Parser principal CPU'; Script = 'scripts/test-docling-integration.ps1' },
     @{ Name = 'Document Worker - Roteamento e fallback'; Script = 'scripts/test-document-worker.ps1' },
     @{ Name = 'WF-11 - Orquestrador Mestre n8n'; Script = 'scripts/test-wf11-n8n-master.ps1' },
     @{ Name = 'WF-12 - Roteamento mínimo Performance'; Script = 'scripts/test-wf12-performance-routing.ps1' },

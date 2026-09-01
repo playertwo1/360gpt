@@ -8,8 +8,9 @@ import uuid
 
 import fitz
 from PIL import Image, ImageDraw, ImageFont
+from openpyxl import Workbook
 
-from app.main import Evidence, Extraction, extract_image, extract_pdf, requires_hybrid_escalation
+from app.main import extract_csv, extract_image, extract_pdf, extract_xlsx, parse_docling_result
 
 
 def test_ocr_image() -> None:
@@ -40,29 +41,39 @@ def test_native_pdf() -> None:
     assert result.evidence[0].locator == "page:1"
 
 
-def test_adaptive_mineru_routing() -> None:
-    common = {
-        "document_type": "PDF",
-        "mime_type": "application/pdf",
-        "file_name": "routing.pdf",
-        "content_hash": "sha256:" + "0" * 64,
-        "page_count": 1,
-        "extraction_method": "MINERU_PIPELINE",
-        "warnings": [],
-    }
-    simple = Extraction(
-        **common,
-        text="Documento simples com conteúdo suficiente.",
-        evidence=[Evidence(locator="page:1;block:1;type:text", text="Conteúdo", extraction_method="MINERU_PIPELINE")],
-    )
-    table_html = "<table>" + "".join("<tr>" + "<td>x</td>" * 6 + "</tr>" for _ in range(8)) + "</table>"
-    complex_table = Extraction(
-        **common,
-        text=table_html,
-        evidence=[Evidence(locator="page:1;block:1;type:table", text=table_html, extraction_method="MINERU_PIPELINE")],
-    )
-    assert requires_hybrid_escalation(simple) is False
-    assert requires_hybrid_escalation(complex_table) is True
+def test_docling_structured_table() -> None:
+    payload = {"version": "1.30.0", "document": {"md_content": "# POBJ", "json_content": {
+        "tables": [{"prov": [{"page_no": 2}], "data": {"num_rows": 2, "num_cols": 3, "table_cells": [
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 0, "end_col_offset_idx": 1, "text": "INDICADOR"},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 1, "end_col_offset_idx": 2, "text": "META"},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 2, "end_col_offset_idx": 3, "text": "REALIZADO"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 0, "end_col_offset_idx": 1, "text": "Consórcio"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 1, "end_col_offset_idx": 2, "text": "100"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 2, "end_col_offset_idx": 3, "text": "80"},
+        ]}}], "texts": [{"label": "title", "text": "POBJ Agosto", "prov": [{"page_no": 1}]}]
+    }}}
+    result = parse_docling_result(payload, "pobj.pdf", "application/pdf", "sha256:" + "0" * 64, "success", 1200)
+    assert result.extraction_method == "DOCLING_TABLEFORMER"
+    assert result.tables[0].headers == ["INDICADOR", "META", "REALIZADO"]
+    assert result.tables[0].rows[0] == ["Consórcio", "100", "80"]
+    assert result.tables[0].page_number == 2
+
+
+def test_native_tabular_formats() -> None:
+    csv_content = b"INDICADOR,META,REALIZADO\nConsorcio,100,80\n"
+    csv_result = extract_csv(csv_content, "pobj.csv", f"sha256:{hashlib.sha256(csv_content).hexdigest()}")
+    assert csv_result.extraction_method == "CSV_NATIVE"
+    assert csv_result.tables[0].headers == ["INDICADOR", "META", "REALIZADO"]
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.append(["INDICADOR", "META", "REALIZADO"])
+    sheet.append(["Consórcio", 100, 80])
+    buffer = io.BytesIO()
+    workbook.save(buffer)
+    xlsx_content = buffer.getvalue()
+    xlsx_result = extract_xlsx(xlsx_content, "pobj.xlsx", f"sha256:{hashlib.sha256(xlsx_content).hexdigest()}")
+    assert xlsx_result.extraction_method == "XLSX_NATIVE"
+    assert xlsx_result.tables[0].rows[0] == ["Consórcio", "100", "80"]
 
 
 def test_http_endpoint() -> None:
@@ -106,6 +117,7 @@ def test_http_endpoint() -> None:
 if __name__ == "__main__":
     test_ocr_image()
     test_native_pdf()
-    test_adaptive_mineru_routing()
+    test_docling_structured_table()
+    test_native_tabular_formats()
     test_http_endpoint()
     print("DOCUMENT_WORKER_EXTRACTION: PASS")

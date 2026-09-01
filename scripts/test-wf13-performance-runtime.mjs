@@ -71,4 +71,47 @@ assert.equal(current.performance_analysis.calculation_policy.recalculated_points
 assert.equal(current.performance_analysis.security.external_effects_allowed, false);
 assert.equal(current.processing_decision, 'READY');
 
+async function executePipeline(initial) {
+  let state = initial;
+  for (const node of codeNodes) {
+    const execute = new AsyncFunction('$input', 'require', node.parameters.jsCode);
+    const output = await execute({ first: () => ({ json: state }) }, require);
+    state = output[0].json;
+  }
+  return state;
+}
+
+const structured = await executePipeline({
+  performance_handoff: {
+    handoff_target: 'GERENTE_GERAL_PERFORMANCE',
+    extracted_text: 'MENSAL - AGOSTO/2026 Base 28/08/2026 PONTOS possíveis atingidos % ating. acelora % final 78,00 70,71 90,65 10,00 100,65',
+    tables: [{
+      table_id: 'table-1', locator: 'page:1;table:1', warnings: [],
+      headers: ['PRODUTO','PESO','MÉTRICA','DT.BASE','META','REALIZADO','% ATG.','% REF.','% PROJ.FINAL','NEC DIA','PTS'],
+      rows: [
+        ['Captação Líquida PJ','3,0','PROD','25/08/2026','139.312,03','-29.181,94','-20,95','81,00','-25,88','42.123,49','0,00'],
+        ['Consórcio (Expert)','5,0','PERC','26/08/2026','100,00','93,31','93,31','86,00','93,31','2,23','4,67'],
+        ['Open Finance PJ','7,0','QTD','27/08/2026','4,00','5,00','125,00','90,00','138,16','0,00','7,00'],
+      ],
+    }],
+    capabilities: ['PERFORMANCE_SOURCES_RECONCILIATION', 'PERFORMANCE_SCORING_STATE', 'PERFORMANCE_GAP_SCENARIOS'],
+    source: { mime_type: 'application/pdf', content_hash: 'sha256:structured', extraction_method: 'DOCLING_TABLEFORMER' },
+    evidence: [{ locator: 'page:1;table:1' }], security: { external_effects_allowed: false },
+  },
+});
+assert.equal(structured.performance_reconciliation.indicator_count, 3);
+assert.equal(structured.performance_observations.provenance.structured_table_count, 1);
+assert.equal(structured.performance_analysis.indicators[0].target, 139312.03);
+assert.equal(structured.processing_decision, 'READY');
+
+const ambiguous = await executePipeline({
+  performance_handoff: {
+    ...structured.performance_handoff,
+    tables: structured.performance_handoff.tables.map((table) => ({ ...table, warnings: ['docling_possible_column_shift'] })),
+  },
+});
+assert.equal(ambiguous.performance_analysis.decision_status, 'MANUAL_REVIEW_REQUIRED');
+assert.equal(ambiguous.processing_decision, 'AWAITING_OWNER_INPUT');
+assert.ok(ambiguous.clarification_request.questions.some((question) => question.field === 'gap:table_structure'));
+
 console.log('WF13_PERFORMANCE_RUNTIME_PASS');

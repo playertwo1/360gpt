@@ -10,25 +10,19 @@ function Invoke-WslDocker {
     & wsl.exe -d Ubuntu -u root --cd $repo -- docker @Arguments
 }
 
-Write-Host '=== MINERU INTERNAL PARSER ==='
+Write-Host '=== MINERU MANUAL RESERVE ==='
 
 Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'config', '--quiet')
 if ($LASTEXITCODE -ne 0) { throw 'Invalid Docker Compose configuration' }
 
-$imageVersion = Invoke-WslDocker @('exec', 'visao-360-mineru-1', 'mineru', '--version')
-if ($LASTEXITCODE -ne 0 -or $imageVersion -notmatch '3\.4\.5') {
-    throw 'MinerU 3.4.5 container is unavailable'
-}
+$imageId = Invoke-WslDocker @('image', 'inspect', 'diretor360/mineru:3.4.5', '--format', '{{.Id}}') 2>$null
+if (-not $imageId) { throw 'MinerU 3.4.5 reserve image is unavailable' }
+$running = Invoke-WslDocker @('inspect', '--format', '{{.State.Running}}', 'visao-360-mineru-1') 2>$null
+if ($running -eq 'true') { throw 'MinerU must remain stopped outside an audited manual contingency' }
 
-$healthRaw = Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'exec', '-T', 'n8n', 'wget', '-qO-', 'http://mineru:8000/health')
-if ($LASTEXITCODE -ne 0) { throw 'n8n cannot reach MinerU over the internal network' }
-$health = $healthRaw | ConvertFrom-Json
-if ($health.status -ne 'healthy' -or $health.version -ne '3.4.5') { throw 'MinerU health contract failed' }
-if ($health.max_concurrent_requests -ne 1) { throw 'MinerU concurrency must remain limited to one request' }
-
-$workerConfig = Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'config') | Out-String
-if ($workerConfig -notmatch 'MINERU_PDF_PRIMARY_BACKEND: pipeline') { throw 'PDF must start with the economical pipeline backend' }
-if ($workerConfig -notmatch 'MINERU_HYBRID_ESCALATION_ENABLED: "true"') { throw 'Hybrid escalation must remain enabled' }
+$workerConfig = Invoke-WslDocker @('compose', '--profile', 'mineru-manual', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'config') | Out-String
+if ($workerConfig -notmatch 'profiles:\s*\r?\n\s*- mineru-manual') { throw 'MinerU must require the manual profile' }
+if ($workerConfig -notmatch 'DOCUMENT_MINERU_ENABLED: "false"') { throw 'Automatic MinerU routing must remain disabled' }
 if ($workerConfig -notmatch 'MINERU_PROCESSING_WINDOW_SIZE: "1"') { throw 'MinerU processing window must remain limited to one' }
 
 $contract = Get-Content -Raw $schema | ConvertFrom-Json
@@ -38,9 +32,9 @@ if ($methods -notcontains 'MINERU_PIPELINE' -or $methods -notcontains 'MINERU_HY
 }
 
 Write-Host '[PASS] Compose configuration'
-Write-Host '[PASS] MinerU 3.4.5 image and all local models'
-Write-Host '[PASS] Internal n8n to MinerU connectivity'
+Write-Host '[PASS] MinerU 3.4.5 image preserved'
+Write-Host '[PASS] MinerU stopped and excluded from automatic routing'
 Write-Host '[PASS] Single-request resource guard'
-Write-Host '[PASS] Adaptive pipeline-to-hybrid routing and one-item window'
+Write-Host '[PASS] Manual profile and one-item window'
 Write-Host '[PASS] Extraction contract'
-Write-Host 'MINERU_INTEGRATION: PASS'
+Write-Host 'MINERU_MANUAL_RESERVE: PASS'

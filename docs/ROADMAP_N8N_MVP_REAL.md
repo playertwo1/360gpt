@@ -12,7 +12,7 @@ O primeiro produto utilizável possui uma única jornada obrigatória:
 Arquivo enviado pelo Telegram
   → n8n recebe, registra e reserva o job
   → document-worker lê PDF/JPG/PNG/XLSX
-  → MinerU pipeline ou híbrido extrai texto, tabelas e evidências
+  → Docling CPU/TableFormer extrai texto, tabelas e evidências; fallback leve usa PyMuPDF/Tesseract
   → Orquestrador identifica que o conteúdo pertence a Performance
   → GG Performance consulta somente seus especialistas necessários
   → regras determinísticas calculam metas, realizado, atingimento, pontos e gaps
@@ -56,9 +56,10 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 ### M1 — Leitor documental local — CONCLUÍDO
 
 - [x] `document-worker` interno com PDF, JPG/PNG, XLSX e CSV.
-- [x] MinerU 3.4.5 como OCR/parser local principal.
+- [ ] Docling Serve 1.30.0 em CPU como OCR/parser principal: implementação concluída, homologação POBJ real pendente por desalinhamento de células.
+- [x] MinerU 3.4.5 preservado, desligado e acessível somente por contingência administrativa auditada.
 - [x] Pipeline econômico com escalada automática para híbrido em layout complexo.
-- [x] Fallback PyMuPDF/Tesseract quando MinerU falhar.
+- [x] Fallback PyMuPDF/Tesseract quando Docling falhar ou exceder o timeout.
 - [x] Evidências por página, bloco ou célula em contrato validado.
 - [x] Concorrência e janela limitadas a 1; reinício seguro disponível para liberar RAM após uso híbrido.
 - [x] PDF/JPG/XLSX reais testados diretamente pelo worker.
@@ -194,8 +195,9 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 - [x] Tratar conteúdo como não confiável e bloquear efeitos externos.
 - [x] Retornar JSON Draft 2020-12 com evidência por página/célula.
 - [x] Implementar timeout, custo local zero, retry e fallback de provedor.
-- [x] Integrar MinerU 3.4.5 com modelos locais como parser principal para PDF/imagem, limitado a uma execução concorrente.
-- [x] Preservar PyMuPDF/Tesseract como fallback quando o MinerU estiver indisponível.
+- [ ] Homologar Docling Serve 1.30.0 em CPU como parser principal de PDF/imagem, TableFormer `accurate`, uma execução concorrente, dois threads e timeout de cinco minutos. A implementação passou saúde/tempo/memória, mas 3 PDFs POBJ reais ainda apresentaram células unidas.
+- [x] Preservar PyMuPDF/Tesseract como fallback automático leve quando o Docling estiver indisponível.
+- [x] Preservar MinerU desligado em perfil manual, sem fallback automático e com evento local de auditoria obrigatório para inicialização.
 - [x] Validar PDF, JPG e XLSX reais diretamente pelo worker e validar acesso interno a partir do n8n.
 - [ ] Validar o arquivo real `metas1708.pdf` através do WF-11.
 

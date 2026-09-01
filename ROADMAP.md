@@ -12,7 +12,7 @@ Ordem de entrega do primeiro corte ponta a ponta:
 
 R0 concluído e documentado em [`docs/baselines/R0_BASELINE_2026-08-29.md`](docs/baselines/R0_BASELINE_2026-08-29.md). R1 concluído localmente com intake assíncrono único, protocolo, deduplicação entre canais, estados formais e polling no site.
 
-Próximo passo oficial: concluir N1 com o WF-11 e worker stub. Nenhum novo upload será solicitado antes de N1–N2 serem validados com arquivos já autorizados.
+Próximo passo oficial: homologar o Docling nos layouts POBJ reais antes de republicar o WF-11. A migração técnica N2 está implementada, mas o gate objetivo de associação de células ainda não passou.
 
 ---
 
@@ -709,10 +709,10 @@ O detalhamento canônico está em `docs/ROADMAP_N8N_MVP_REAL.md`.
 
 - [x] N0 — intake durável.
 - [ ] N1 — controlador mestre WF-11: estrutura homologada; falta ensaio manual ponta a ponta e decisão de agendamento.
-- [ ] N2 — leitor subordinado: MinerU, fallback, PDF/JPG/XLSX reais e contrato homologados; falta atravessar o WF-11 com `metas1708.pdf`.
+- [ ] N2 — leitor subordinado: Docling CPU/TableFormer implementado como principal, contrato 1.1.0 e fallback leve validados; homologação real bloqueada por células mescladas/desalinhadas em 3 PDFs POBJ. MinerU preservado e desligado como contingência manual.
 - [ ] N3–N9 — permanecem na ordem canônica depois do gate N1/N2.
 
-**Próxima tarefa elegível:** executar um job controlado pelo WF-11 e comprovar claim, download, extração MinerU, validação e persistência, sem ativar efeitos externos.
+**Próxima tarefa elegível:** ajustar e comparar a reconstrução das tabelas POBJ até associar 100% de META, REALIZADO, % ATG, pontos e período; então republicar o WF-11 e executar o job controlado ponta a ponta.
 
 ### Prioridade absoluta aprovada — MVP mínimo Performance
 
@@ -721,7 +721,7 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 `M0 Telegram → M1 OCR → M2 Orquestrador → M3 GG Performance + especialistas → M4 resposta Telegram → M5 piloto curto`.
 
 - [x] M0 intake Telegram durável.
-- [x] M1 leitor homologado em job real do Telegram: PDF de 3 páginas processado pelo MinerU híbrido.
+- [ ] M1 leitor em nova homologação: Docling CPU é o caminho principal candidato; MinerU permanece parado como reserva manual. Três PDFs reais ficaram abaixo do gate de associação de células, portanto o WF-11 foi despublicado preventivamente.
 - [x] M2 roteamento mínimo exclusivo para Performance: WF-11/WF-12 reconheceram POBJ com confiança alta e persistiram o Estado mínimo.
 - [x] M3 análise e cálculos do GG Performance — 106 indicadores reais; 15/15 validações de regras elegíveis sem divergência; exceções sem regra protegidas.
 - [x] M4 resposta final no mesmo chat — ensaio real concluído com `telegram_reply_sent: true`.
@@ -805,3 +805,21 @@ Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões perma
 4. Processar 3–5 arquivos reais e comparar o resultado com a leitura humana de Rafael.
 
 **Pré-condição operacional:** confirmar OCR/worker saudável e WF-11 disponível antes dos ensaios reais. A configuração de infraestrutura permanece documentada no código e nos scripts oficiais, fora da trilha funcional do roadmap.
+
+### Migração Docling — checkpoint de retomada de 01/09/2026
+
+- [x] Backup Git bundle anterior à mudança criado na Área de Trabalho e hash registrado no `PROJECT_STATE.md`.
+- [x] Docling Serve 1.30.0 fixado por digest e isolado na rede Docker.
+- [x] CPU, dois threads, um worker, lote por página, 80 páginas, 20 MB, timeout de cinco minutos e TableFormer `accurate` configurados.
+- [x] Volume persistente de modelos criado; GPU e serviços remotos desabilitados.
+- [x] Worker 1.2.0 e contrato de extração 1.1.0 implementados com Markdown, tabelas, seções, parser, duração, proveniência e avisos.
+- [x] PDF/JPG/PNG roteados ao Docling; XLSX/CSV permanecem nativos; PyMuPDF/Tesseract é o fallback leve.
+- [x] MinerU retirado do caminho automático, colocado no perfil `mineru-manual` e protegido por comando auditado.
+- [x] WF-12 atualizado para transportar `tables[]`; WF-13 atualizado para priorizar tabelas e bloquear ambiguidade material.
+- [x] Regressão técnica: 32/32, lint e build aprovados.
+- [x] Benchmark real executado em POBJ2608, POBJ2708 e POBJ2808 dentro de cinco minutos e abaixo do limite de memória.
+- [ ] Gate funcional: corrigir células unidas/deslocadas e demonstrar 100% de associação dos campos críticos e pelo menos 98% das demais células em 3–5 arquivos.
+- [ ] Validar adicionalmente PDF escaneado, fotografia JPG, página rotacionada, tabela entre páginas e documento sem tabela.
+- [ ] Republicar WF-11 somente depois do gate funcional; executar o aceite Telegram ponta a ponta e retomar M5.9/M5.10.
+
+**Estado seguro atual:** Docling e worker saudáveis; MinerU parado; WF-11 despublicado. Nenhum dado ambíguo deve ser promovido automaticamente.

@@ -4,7 +4,7 @@
 **Versão Atual da Release:** `v3.7.0-mvp-conhecimento-supervisionado`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
-**Saúde do Projeto:** 🟢 **RUNTIME RECUPERADO; WF-11 ATIVO; M5.9 EM HOMOLOGAÇÃO**
+**Saúde do Projeto:** 🟡 **DOCLING IMPLEMENTADO; WF-11 PAUSADO; HOMOLOGAÇÃO POBJ PENDENTE**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -15,14 +15,16 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** MinerU 3.4.5 integrado ao `document-worker` como parser local principal; PDF/JPG/XLSX reais e fallback OCR validados, mantendo o serviço restrito à rede Docker.
+**Último marco concluído:** Docling Serve 1.30.0 integrado em CPU como leitor principal candidato, com contrato 1.1.0, tabelas estruturadas e fallback leve; MinerU preservado e desligado.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
-**Worker e agenda:** `document-worker` e MinerU 3.4.5 saudáveis; WF-11/WF-12/WF-13 publicados e ativos; primeira execução agendada do WF-11 concluída com sucesso.
+**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11 despublicado preventivamente porque o benchmark real ainda não passou; WF-12/WF-13 foram atualizados para tabelas estruturadas.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** concluir os edge cases do gate M5.9; depois executar reutilização e conflito do conhecimento POBJ no M5.10.
+**Próximo passo exato:** corrigir a associação das células mescladas nos PDFs POBJ e repetir o benchmark de 3–5 arquivos. Somente com 100% dos campos críticos corretos republicar WF-11 e retomar M5.9/M5.10.
+
+**Regressão técnica:** 32/32 testes gerais aprovados após a migração candidata. Esse resultado valida contratos e proteções, mas não substitui o gate funcional dos PDFs reais, que permanece pendente.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

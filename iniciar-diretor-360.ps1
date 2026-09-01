@@ -43,10 +43,10 @@ if (-not $dockerVersion) {
 }
 Write-Host "  [OK] Docker Engine $dockerVersion ativo no Ubuntu; Docker Desktop dispensado." -ForegroundColor Green
 
-# 2. Iniciar PostgreSQL e n8n
+# 2. Iniciar PostgreSQL, n8n, Docling e worker
 Write-Host ''
-Write-Host '[2/6] Inicializando banco PostgreSQL e orquestrador n8n...' -ForegroundColor Yellow
-Invoke-WslDocker @('compose', '-f', 'compose.n8n.yaml', '--env-file', '.env.n8n', 'up', '-d', 'postgres', 'n8n') 2>$null | Out-Null
+Write-Host '[2/6] Inicializando PostgreSQL, n8n, Docling CPU e document-worker...' -ForegroundColor Yellow
+Invoke-WslDocker @('compose', '-f', 'compose.n8n.yaml', '--env-file', '.env.n8n', 'up', '-d', 'postgres', 'n8n', 'docling', 'document-worker') 2>$null | Out-Null
 Write-Host '  [OK] Containers acionados.' -ForegroundColor Green
 
 
@@ -125,9 +125,11 @@ Write-Host '====================================================================
 Write-Host '   * Docker Engine WSL:  ATIVO [OK]' -ForegroundColor Green
 Write-Host '   * Banco PostgreSQL:   ATIVO (Porta 5432) [OK]' -ForegroundColor Green
 Write-Host '   * Orquestrador n8n:   ATIVO (Porta 5678) [OK]' -ForegroundColor Green
+Write-Host '   * OCR Docling CPU:    ATIVO (rede interna) [OK]' -ForegroundColor Green
+Write-Host '   * MinerU reserva:     DESLIGADO (perfil manual) [OK]' -ForegroundColor Green
 Write-Host '   * Site Hospedado:     CONECTADO [OK]' -ForegroundColor Green
 Write-Host '   * Ponte WF-09:        AUTENTICADA & SEGURA [OK]' -ForegroundColor Green
-Write-Host '   * Telegram Ingest:    WF-11 ATIVO (FILA A CADA 1 MINUTO) [OK]' -ForegroundColor Green
+Write-Host '   * Telegram Ingest:    WF-11 PAUSADO ATE HOMOLOGAR DOCLING [SEGURO]' -ForegroundColor Yellow
 
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''

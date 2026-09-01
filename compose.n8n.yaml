@@ -96,7 +96,11 @@ services:
       DOCUMENT_MAX_PDF_PAGES: 80
       DOCUMENT_MAX_TEXT_CHARS: 200000
       DOCUMENT_OCR_LANGUAGE: por+eng
-      DOCUMENT_MINERU_ENABLED: "true"
+      DOCUMENT_DOCLING_ENABLED: "true"
+      DOCLING_API_URL: http://docling:5001
+      DOCLING_TIMEOUT_SECONDS: 300
+      DOCLING_POLL_INTERVAL_SECONDS: 2
+      DOCUMENT_MINERU_ENABLED: "false"
       MINERU_API_URL: http://mineru:8000
       MINERU_PDF_PRIMARY_BACKEND: pipeline
       MINERU_IMAGE_BACKEND: hybrid-engine
@@ -123,11 +127,49 @@ services:
     networks:
       - frontend
 
+  docling:
+    image: ghcr.io/docling-project/docling-serve@sha256:0ccbc00b5f8b443334a7c4f36a5c6ff89c684c6fbe18ff7c1bc41e00b8e01657
+    restart: unless-stopped
+    environment:
+      DOCLING_DEVICE: cpu
+      DOCLING_NUM_THREADS: 2
+      DOCLING_PERF_PAGE_BATCH_SIZE: 1
+      DOCLING_PERF_ELEMENTS_BATCH_SIZE: 1
+      DOCLING_SERVE_ENG_KIND: local
+      DOCLING_SERVE_ENG_LOC_NUM_WORKERS: 1
+      DOCLING_SERVE_ENG_LOC_SHARE_MODELS: "true"
+      DOCLING_SERVE_ENABLE_UI: "false"
+      DOCLING_SERVE_ENABLE_REMOTE_SERVICES: "false"
+      DOCLING_SERVE_MAX_NUM_PAGES: 80
+      DOCLING_SERVE_MAX_FILE_SIZE: 20971520
+      DOCLING_SERVE_MAX_DOCUMENT_TIMEOUT: 300
+      DOCLING_SERVE_MAX_SYNC_WAIT: 300
+      UVICORN_WORKERS: 1
+    expose:
+      - "5001"
+    volumes:
+      - docling_models:/opt/app-root/src/.cache/docling
+    mem_limit: 3g
+    cpus: 2.0
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5001/health', timeout=5)"]
+      interval: 15s
+      timeout: 8s
+      retries: 20
+      start_period: 60s
+    networks:
+      - frontend
+
   mineru:
+    profiles: ["mineru-manual"]
     image: diretor360/mineru:3.4.5
     build:
       context: ./services/mineru
-    restart: unless-stopped
+    restart: "no"
     environment:
       MINERU_MODEL_SOURCE: local
       MINERU_API_MAX_CONCURRENT_REQUESTS: 1
@@ -157,6 +199,7 @@ services:
 volumes:
   postgres_data:
   n8n_data:
+  docling_models:
 
 networks:
   frontend:

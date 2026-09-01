@@ -7,7 +7,7 @@
   "required": ["ok", "schema_version", "worker_version", "job_id", "duration_ms", "security", "extraction"],
   "properties": {
     "ok": { "const": true },
-    "schema_version": { "const": "1.0.0" },
+    "schema_version": { "const": "1.1.0" },
     "worker_version": { "type": "string" },
     "job_id": { "type": "string", "minLength": 1, "maxLength": 160 },
     "duration_ms": { "type": "integer", "minimum": 0 },
@@ -24,15 +24,57 @@
     "extraction": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["document_type", "mime_type", "file_name", "content_hash", "text", "extraction_method", "evidence", "warnings"],
+      "required": ["document_type", "mime_type", "file_name", "content_hash", "text", "markdown", "tables", "sections", "parser", "extraction_method", "evidence", "warnings"],
       "properties": {
         "document_type": { "enum": ["PDF", "IMAGE", "CSV", "XLSX"] },
         "mime_type": { "type": "string" },
         "file_name": { "type": "string" },
         "content_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
         "text": { "type": "string" },
+        "markdown": { "type": "string" },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["table_id", "page_number", "headers", "rows", "markdown", "locator", "warnings"],
+            "properties": {
+              "table_id": { "type": "string" },
+              "page_number": { "type": ["integer", "null"], "minimum": 1 },
+              "headers": { "type": "array", "items": { "type": "string" } },
+              "rows": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+              "markdown": { "type": "string" },
+              "locator": { "type": "string" },
+              "warnings": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["level", "title", "page_number", "locator"],
+            "properties": {
+              "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+              "title": { "type": "string" },
+              "page_number": { "type": ["integer", "null"], "minimum": 1 },
+              "locator": { "type": "string" }
+            }
+          }
+        },
+        "parser": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version", "processing_ms"],
+          "properties": {
+            "name": { "enum": ["DOCLING", "NATIVE", "TESSERACT", "MINERU"] },
+            "version": { "type": ["string", "null"] },
+            "processing_ms": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
         "page_count": { "type": ["integer", "null"], "minimum": 1 },
-        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "MINERU_PIPELINE", "MINERU_HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
+        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "DOCLING_TABLEFORMER", "DOCLING_OCR", "MINERU_PIPELINE", "MINERU_HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
         "evidence": {
           "type": "array",
           "items": {

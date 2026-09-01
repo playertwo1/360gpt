@@ -8,15 +8,30 @@
       "name": "00 Executar manualmente",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [-1040, -40]
+      "position": [
+        -1040,
+        -40
+      ]
     },
     {
-      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 1 }] } },
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
       "id": "schedule-queue",
       "name": "01 Verificar fila",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-1040, 120]
+      "position": [
+        -1040,
+        120
+      ]
     },
     {
       "parameters": {
@@ -28,14 +43,30 @@
         "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{JSON.stringify({worker_id: 'n8n-wf11-master'})}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 15000 }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
       },
       "id": "claim-job",
       "name": "02 Reservar job com lease",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-800, 120],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "position": [
+        -800,
+        120
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
       "parameters": {
@@ -47,7 +78,10 @@
       "name": "03 Validar contrato e segurança",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-560, 120]
+      "position": [
+        -560,
+        120
+      ]
     },
     {
       "parameters": {
@@ -55,60 +89,134 @@
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
-        "headerParameters": { "parameters": [{ "name": "X-Bridge-Lease-Token", "value": "={{$json.lease_token}}" }] },
-        "options": { "response": { "response": { "responseFormat": "file", "outputPropertyName": "document" } }, "timeout": 30000 }
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bridge-Lease-Token",
+              "value": "={{$json.lease_token}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "document"
+            }
+          },
+          "timeout": 30000
+        }
       },
       "id": "download-file",
       "name": "04 Baixar original protegido",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-320, 120],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "position": [
+        -320,
+        120
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
       "parameters": {
         "method": "POST",
         "url": "http://document-worker:8787/v1/process",
         "sendHeaders": true,
-        "headerParameters": { "parameters": [
-          { "name": "X-Job-Id", "value": "={{$('03 Validar contrato e segurança').item.json.job_id}}" },
-          { "name": "X-Content-Trust", "value": "UNTRUSTED" }
-        ] },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Job-Id",
+              "value": "={{$('03 Validar contrato e segurança').item.json.job_id}}"
+            },
+            {
+              "name": "X-Content-Trust",
+              "value": "UNTRUSTED"
+            }
+          ]
+        },
         "sendBody": true,
         "contentType": "multipart-form-data",
-        "bodyParameters": { "parameters": [
-          { "parameterType": "formData", "name": "metadata", "value": "={{JSON.stringify($('03 Validar contrato e segurança').item.json)}}" },
-          { "parameterType": "formBinaryData", "name": "document", "inputDataFieldName": "document" }
-        ] },
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 360000 }
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formData",
+              "name": "metadata",
+              "value": "={{JSON.stringify($('03 Validar contrato e segurança').item.json)}}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "document",
+              "inputDataFieldName": "document"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 360000
+        }
       },
       "id": "document-worker",
       "name": "05 Leitor documental subordinado",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-80, 120]
+      "position": [
+        -80,
+        120
+      ]
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
         "language": "javaScript",
-        "jsCode": "const result = $input.first().json;\nconst job = $('03 Validar contrato e segurança').first().json;\nconst valid = Boolean(result?.ok === true && result?.schema_version && result?.extraction);\nreturn [{json: {...job, valid, result, job_id: job.job_id, lease_token: job.lease_token}}];"
+        "jsCode": "const result = $input.first().json;\nconst job = $('03 Validar contrato e segurança').first().json;\nconst valid = Boolean(result?.ok === true && result?.schema_version === '1.1.0' && result?.extraction && Array.isArray(result.extraction.tables) && typeof result.extraction.markdown === 'string');\nreturn [{json: {...job, valid, result, job_id: job.job_id, lease_token: job.lease_token}}];"
       },
       "id": "validate-extraction",
       "name": "06 Validar saída estruturada",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [160, 120]
+      "position": [
+        160,
+        120
+      ]
     },
     {
       "parameters": {
-        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{$json.processing_decision}}", "rightValue": "AWAITING_OWNER_INPUT", "operator": { "type": "string", "operation": "equals" } }], "combinator": "and" }
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.processing_decision}}",
+              "rightValue": "AWAITING_OWNER_INPUT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
       },
       "id": "if-owner-input",
       "name": "13 Esclarecimento necessário?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1360, 20]
+      "position": [
+        1360,
+        20
+      ]
     },
     {
       "parameters": {
@@ -120,24 +228,60 @@
         "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{JSON.stringify($json.clarification_payload)}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
       },
       "id": "pause-for-owner-input",
       "name": "14 Pausar e perguntar ao Rafael",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1600, -120],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "position": [
+        1600,
+        -120
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
       "parameters": {
-        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{$json.valid}}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }], "combinator": "and" }
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.valid}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
       },
       "id": "if-valid",
       "name": "07 Extração válida?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [400, 120]
+      "position": [
+        400,
+        120
+      ]
     },
     {
       "parameters": {
@@ -149,13 +293,18 @@
           "cachedResultName": "WF-12 — Diretor — Roteamento Performance do MVP"
         },
         "mode": "once",
-        "options": { "waitForSubWorkflow": true }
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "id": "director-routing",
       "name": "10 Acionar Diretor mínimo",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
-      "position": [640, 20]
+      "position": [
+        640,
+        20
+      ]
     },
     {
       "parameters": {
@@ -167,17 +316,40 @@
       "name": "11 Validar handoff Performance",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [880, 20]
+      "position": [
+        880,
+        20
+      ]
     },
     {
       "parameters": {
-        "conditions": { "options": { "caseSensitive": true, "typeValidation": "strict" }, "conditions": [{ "leftValue": "={{$json.route_valid}}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }], "combinator": "and" }
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.route_valid}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
       },
       "id": "if-performance-route",
       "name": "12 Roteamento Performance válido?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1120, 20]
+      "position": [
+        1120,
+        20
+      ]
     },
     {
       "parameters": {
@@ -189,14 +361,30 @@
         "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{JSON.stringify($json.completion_payload)}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
       },
       "id": "complete-job",
       "name": "08 Concluir e persistir",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1600, 80],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "position": [
+        1600,
+        80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     },
     {
       "parameters": {
@@ -208,33 +396,197 @@
         "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{JSON.stringify({job_id: $json.job_id, lease_token: $json.lease_token, error_code: $json.error_code || 'INVALID_WORKFLOW_RESULT', retryable: $json.retryable ?? true})}}",
-        "options": { "response": { "response": { "neverError": true, "responseFormat": "json" } }, "timeout": 30000 }
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
       },
       "id": "fail-job",
       "name": "09 Registrar falha e retry",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1360, 180],
-      "credentials": { "httpHeaderAuth": { "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382", "name": "Visao 360 Bridge" } }
+      "position": [
+        1360,
+        180
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "865fb0bd-dbd8-4352-9718-4eac7f89a382",
+          "name": "Visao 360 Bridge"
+        }
+      }
     }
   ],
   "connections": {
-    "00 Executar manualmente": { "main": [[{ "node": "02 Reservar job com lease", "type": "main", "index": 0 }]] },
-    "01 Verificar fila": { "main": [[{ "node": "02 Reservar job com lease", "type": "main", "index": 0 }]] },
-    "02 Reservar job com lease": { "main": [[{ "node": "03 Validar contrato e segurança", "type": "main", "index": 0 }]] },
-    "03 Validar contrato e segurança": { "main": [[{ "node": "04 Baixar original protegido", "type": "main", "index": 0 }]] },
-    "04 Baixar original protegido": { "main": [[{ "node": "05 Leitor documental subordinado", "type": "main", "index": 0 }]] },
-    "05 Leitor documental subordinado": { "main": [[{ "node": "06 Validar saída estruturada", "type": "main", "index": 0 }]] },
-    "06 Validar saída estruturada": { "main": [[{ "node": "07 Extração válida?", "type": "main", "index": 0 }]] },
-    "07 Extração válida?": { "main": [[{ "node": "10 Acionar Diretor mínimo", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] },
-    "10 Acionar Diretor mínimo": { "main": [[{ "node": "11 Validar handoff Performance", "type": "main", "index": 0 }]] },
-    "11 Validar handoff Performance": { "main": [[{ "node": "12 Roteamento Performance válido?", "type": "main", "index": 0 }]] },
-    "12 Roteamento Performance válido?": { "main": [[{ "node": "13 Esclarecimento necessário?", "type": "main", "index": 0 }], [{ "node": "09 Registrar falha e retry", "type": "main", "index": 0 }]] },
-    "13 Esclarecimento necessário?": { "main": [[{ "node": "14 Pausar e perguntar ao Rafael", "type": "main", "index": 0 }], [{ "node": "08 Concluir e persistir", "type": "main", "index": 0 }]] }
+    "00 Executar manualmente": {
+      "main": [
+        [
+          {
+            "node": "02 Reservar job com lease",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "01 Verificar fila": {
+      "main": [
+        [
+          {
+            "node": "02 Reservar job com lease",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Reservar job com lease": {
+      "main": [
+        [
+          {
+            "node": "03 Validar contrato e segurança",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "03 Validar contrato e segurança": {
+      "main": [
+        [
+          {
+            "node": "04 Baixar original protegido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "04 Baixar original protegido": {
+      "main": [
+        [
+          {
+            "node": "05 Leitor documental subordinado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "05 Leitor documental subordinado": {
+      "main": [
+        [
+          {
+            "node": "06 Validar saída estruturada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "06 Validar saída estruturada": {
+      "main": [
+        [
+          {
+            "node": "07 Extração válida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "07 Extração válida?": {
+      "main": [
+        [
+          {
+            "node": "10 Acionar Diretor mínimo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "09 Registrar falha e retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10 Acionar Diretor mínimo": {
+      "main": [
+        [
+          {
+            "node": "11 Validar handoff Performance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11 Validar handoff Performance": {
+      "main": [
+        [
+          {
+            "node": "12 Roteamento Performance válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "12 Roteamento Performance válido?": {
+      "main": [
+        [
+          {
+            "node": "13 Esclarecimento necessário?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "09 Registrar falha e retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "13 Esclarecimento necessário?": {
+      "main": [
+        [
+          {
+            "node": "14 Pausar e perguntar ao Rafael",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "08 Concluir e persistir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveManualExecutions": true, "saveExecutionProgress": true },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  },
   "active": false,
   "pinData": {},
-  "meta": { "templateCredsSetupCompleted": true },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "tags": []
 }

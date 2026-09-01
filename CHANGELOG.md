@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.8.0-rc.1] - 2026-09-01
+
+### Added
+
+- Docling Serve 1.30.0 fixado por digest, interno à rede Docker, CPU, dois threads, um worker, TableFormer `accurate`, limites de 80 páginas/20 MB e timeout de cinco minutos.
+- Contrato de extração 1.1.0 com Markdown, tabelas, seções, parser, proveniência e avisos estruturais.
+- Contingência MinerU manual e auditada, sem fallback automático.
+
+### Changed
+
+- PDF/JPG/PNG passam primeiro pelo Docling; CSV/XLSX continuam nativos; PyMuPDF/Tesseract é o fallback automático leve.
+- WF-12 prioriza `tables[]`; WF-13 consome cabeçalhos e linhas estruturadas e converte ambiguidade material em revisão humana.
+
+### Security
+
+- Docling não publica porta no host, não usa GPU nem serviços remotos; MinerU fica parado no runtime normal.
+- WF-11 foi despublicado até o gate real de associação de células ser aprovado.
+
+### Validation
+
+- Saúde, contrato, API assíncrona, OCR JPG, PDF nativo, CSV, XLSX e regressões estruturadas passaram.
+- Bateria geral concluída com 32/32 testes aprovados.
+- POBJ2608, POBJ2708 e POBJ2808 respeitaram o teto de cinco minutos, mas falharam no gate funcional por células mescladas/desalinhadas; release permanece candidata, não homologada.
+
 ## [Unreleased] - 2026-09-01
 
 ### Changed

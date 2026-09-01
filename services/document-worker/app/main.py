@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import asyncio
 import hashlib
 import io
 import json
@@ -22,6 +23,10 @@ MAX_PDF_PAGES = int(os.getenv("DOCUMENT_MAX_PDF_PAGES", "80"))
 MAX_TEXT_CHARS = int(os.getenv("DOCUMENT_MAX_TEXT_CHARS", "200000"))
 MIN_NATIVE_TEXT_CHARS = int(os.getenv("DOCUMENT_MIN_NATIVE_TEXT_CHARS", "80"))
 OCR_LANGUAGE = os.getenv("DOCUMENT_OCR_LANGUAGE", "por+eng")
+DOCLING_ENABLED = os.getenv("DOCUMENT_DOCLING_ENABLED", "true").lower() == "true"
+DOCLING_API_URL = os.getenv("DOCLING_API_URL", "http://docling:5001").rstrip("/")
+DOCLING_TIMEOUT_SECONDS = float(os.getenv("DOCLING_TIMEOUT_SECONDS", "300"))
+DOCLING_POLL_INTERVAL_SECONDS = float(os.getenv("DOCLING_POLL_INTERVAL_SECONDS", "2"))
 MINERU_ENABLED = os.getenv("DOCUMENT_MINERU_ENABLED", "false").lower() == "true"
 MINERU_API_URL = os.getenv("MINERU_API_URL", "http://mineru:8000").rstrip("/")
 MINERU_PDF_PRIMARY_BACKEND = os.getenv("MINERU_PDF_PRIMARY_BACKEND", "pipeline")
@@ -39,7 +44,7 @@ SUPPORTED_MIME_TYPES = {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
 
-app = FastAPI(title="Diretor 360 Document Worker", version="1.1.0", docs_url=None, redoc_url=None)
+app = FastAPI(title="Diretor 360 Document Worker", version="1.2.0", docs_url=None, redoc_url=None)
 
 
 class Evidence(BaseModel):
@@ -50,6 +55,32 @@ class Evidence(BaseModel):
     confidence: float | None = Field(default=None, ge=0, le=1)
 
 
+class ExtractedTable(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    table_id: str
+    page_number: int | None = None
+    headers: list[str]
+    rows: list[list[str]]
+    markdown: str
+    locator: str
+    warnings: list[str]
+
+
+class ExtractedSection(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    level: int = Field(ge=1, le=6)
+    title: str
+    page_number: int | None = None
+    locator: str
+
+
+class ParserInfo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str
+    version: str | None = None
+    processing_ms: int | None = Field(default=None, ge=0)
+
+
 class Extraction(BaseModel):
     model_config = ConfigDict(extra="forbid")
     document_type: str
@@ -57,6 +88,10 @@ class Extraction(BaseModel):
     file_name: str
     content_hash: str
     text: str
+    markdown: str
+    tables: list[ExtractedTable]
+    sections: list[ExtractedSection]
+    parser: ParserInfo
     page_count: int | None = None
     extraction_method: str
     evidence: list[Evidence]
@@ -66,8 +101,8 @@ class Extraction(BaseModel):
 class WorkerResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
     ok: bool
-    schema_version: str = "1.0.0"
-    worker_version: str = "1.1.0"
+    schema_version: str = "1.1.0"
+    worker_version: str = "1.2.0"
     job_id: str
     duration_ms: int
     security: dict[str, Any]
@@ -79,7 +114,8 @@ def health() -> dict[str, str | bool]:
     return {
         "status": "ok",
         "service": "document-worker",
-        "version": "1.1.0",
+        "version": "1.2.0",
+        "docling_enabled": DOCLING_ENABLED,
         "mineru_enabled": MINERU_ENABLED,
     }
 
@@ -134,41 +170,176 @@ async def process_document(
 
 
 async def extract_pdf_routed(content: bytes, file_name: str, digest: str) -> Extraction:
-    if MINERU_ENABLED:
+    if DOCLING_ENABLED:
         try:
-            primary = await extract_with_mineru(
-                content, file_name, "application/pdf", digest, MINERU_PDF_PRIMARY_BACKEND
-            )
-            if (
-                MINERU_HYBRID_ESCALATION_ENABLED
-                and MINERU_PDF_PRIMARY_BACKEND != "hybrid-engine"
-                and requires_hybrid_escalation(primary)
-            ):
-                try:
-                    escalated = await extract_with_mineru(
-                        content, file_name, "application/pdf", digest, "hybrid-engine"
-                    )
-                    escalated.warnings.insert(0, "mineru_escalated:complex_layout")
-                    return escalated
-                except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
-                    primary.warnings.insert(0, f"mineru_hybrid_fallback:{type(error).__name__}")
-            return primary
-        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+            return await extract_with_docling(content, file_name, "application/pdf", digest)
+        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError, TimeoutError) as error:
             fallback = extract_pdf(content, file_name, digest)
-            fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
+            fallback.warnings.insert(0, f"docling_fallback:{type(error).__name__}")
             return fallback
     return extract_pdf(content, file_name, digest)
 
 
 async def extract_image_routed(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
-    if MINERU_ENABLED:
+    if DOCLING_ENABLED:
         try:
-            return await extract_with_mineru(content, file_name, mime, digest, MINERU_IMAGE_BACKEND)
-        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+            return await extract_with_docling(content, file_name, mime, digest)
+        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError, TimeoutError) as error:
             fallback = extract_image(content, file_name, mime, digest)
-            fallback.warnings.insert(0, f"mineru_fallback:{type(error).__name__}")
+            fallback.warnings.insert(0, f"docling_fallback:{type(error).__name__}")
             return fallback
     return extract_image(content, file_name, mime, digest)
+
+
+async def extract_with_docling(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
+    started = time.monotonic()
+    request_data = {
+        "to_formats": ["md", "json"],
+        "image_export_mode": "placeholder", "do_ocr": "true",
+        "force_ocr": "false", "ocr_lang": ["pt", "en"],
+        "do_table_structure": "true", "table_mode": "accurate",
+        "table_cell_matching": "true", "include_images": "false",
+        "include_page_images": "false", "abort_on_error": "false",
+        "document_timeout": str(int(DOCLING_TIMEOUT_SECONDS)),
+    }
+    timeout = httpx.Timeout(DOCLING_TIMEOUT_SECONDS + 15, connect=10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        response = await client.post(
+            f"{DOCLING_API_URL}/v1/convert/file/async",
+            data=request_data,
+            files={"files": (file_name, content, mime)},
+        )
+        response.raise_for_status()
+        task_id = str(response.json().get("task_id") or "")
+        if not task_id:
+            raise ValueError("docling_task_missing")
+        deadline = time.monotonic() + DOCLING_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            status_response = await client.get(f"{DOCLING_API_URL}/v1/status/poll/{task_id}")
+            status_response.raise_for_status()
+            status = str(status_response.json().get("task_status") or status_response.json().get("status") or "").lower()
+            if status in {"success", "partial_success", "failure", "failed"}:
+                break
+            await asyncio.sleep(DOCLING_POLL_INTERVAL_SECONDS)
+        else:
+            raise TimeoutError("docling_timeout")
+        if status in {"failure", "failed"}:
+            raise ValueError("docling_processing_failed")
+        result_response = await client.get(f"{DOCLING_API_URL}/v1/result/{task_id}")
+        result_response.raise_for_status()
+        payload = result_response.json()
+    return parse_docling_result(payload, file_name, mime, digest, status, round((time.monotonic() - started) * 1000))
+
+
+def parse_docling_result(payload: dict[str, Any], file_name: str, mime: str, digest: str, status: str, duration_ms: int) -> Extraction:
+    document = payload.get("document") or payload.get("result", {}).get("document") or {}
+    markdown_warnings: list[str] = []
+    markdown = bounded_text(str(document.get("md_content") or ""), markdown_warnings)
+    doc_json = document.get("json_content") or {}
+    if isinstance(doc_json, str):
+        doc_json = json.loads(doc_json)
+    if not isinstance(doc_json, dict):
+        raise TypeError("docling_json_invalid")
+    tables = parse_docling_tables(doc_json)
+    sections = parse_docling_sections(doc_json)
+    warnings = list(markdown_warnings)
+    if status == "partial_success":
+        warnings.append("docling_partial_success")
+    for table in tables:
+        warnings.extend(item for item in table.warnings if item not in warnings)
+    if not markdown:
+        warnings.append("docling_without_useful_text")
+    evidence = [Evidence(locator=table.locator, text=table.markdown, extraction_method="DOCLING_TABLEFORMER") for table in tables]
+    if not evidence and markdown:
+        evidence.append(Evidence(locator="document:markdown", text=markdown, extraction_method="DOCLING_OCR"))
+    page_numbers = [value for value in [table.page_number for table in tables] + [section.page_number for section in sections] if value]
+    page_count = max(page_numbers) if page_numbers else (1 if mime.startswith("image/") else None)
+    method = "DOCLING_TABLEFORMER" if tables else "DOCLING_OCR"
+    version = str(payload.get("service_version") or payload.get("version") or "1.30.0")
+    return Extraction(document_type="PDF" if mime == "application/pdf" else "IMAGE", mime_type=mime,
+        file_name=file_name, content_hash=digest, text=markdown, markdown=markdown, tables=tables,
+        sections=sections, parser=ParserInfo(name="DOCLING", version=version, processing_ms=duration_ms),
+        page_count=page_count, extraction_method=method, evidence=evidence, warnings=warnings)
+
+
+def parse_docling_tables(doc_json: dict[str, Any]) -> list[ExtractedTable]:
+    parsed: list[ExtractedTable] = []
+    headers_by_width: dict[int, list[str]] = {}
+    for index, raw in enumerate(doc_json.get("tables") or [], start=1):
+        if not isinstance(raw, dict):
+            continue
+        data = raw.get("data") or {}
+        cells = data.get("table_cells") or raw.get("table_cells") or []
+        row_count = int(data.get("num_rows") or raw.get("num_rows") or 0)
+        col_count = int(data.get("num_cols") or raw.get("num_cols") or 0)
+        warnings: list[str] = []
+        logical_rows: dict[int, list[tuple[int, str, bool]]] = {}
+        for cell in cells:
+            if not isinstance(cell, dict):
+                continue
+            rs, re_ = int(cell.get("start_row_offset_idx", 0)), int(cell.get("end_row_offset_idx", 0))
+            cs, ce = int(cell.get("start_col_offset_idx", 0)), int(cell.get("end_col_offset_idx", 0))
+            if re_ - rs > 1 or ce - cs > 1:
+                warnings.append("docling_merged_cells")
+            text = str(cell.get("text") or "").strip()
+            logical_rows.setdefault(rs, []).append((cs, text, bool(cell.get("column_header"))))
+        compact_rows = [[text for _, text, _ in sorted(row)] for _, row in sorted(logical_rows.items())]
+        if not compact_rows:
+            warnings.append("docling_incomplete_table")
+        header_index = next((row_index for row_index, row in enumerate(compact_rows)
+            if sum(1 for value in row if normalize_header(value) in {"produto", "indicador", "peso", "metrica", "meta", "realizado", "%ating", "pontos"}) >= 3), None)
+        headers = compact_rows[header_index] if header_index is not None else []
+        rows = compact_rows[header_index + 1:] if header_index is not None else compact_rows
+        common_width = max((len(row) for row in rows), default=len(headers))
+        if headers:
+            headers_by_width[common_width] = headers
+        elif common_width in headers_by_width:
+            headers = headers_by_width[common_width]
+        rows = [row for row in rows if sum(1 for value in row if normalize_header(value) in {"produto", "indicador", "peso", "metrica", "meta", "realizado", "%ating", "pontos"}) < 3]
+        if rows and any(abs(len(row) - common_width) > 1 for row in rows):
+            warnings.append("docling_incomplete_table")
+        normalized_headers = {normalize_header(value) for value in headers}
+        critical = {"meta", "realizado"}
+        pobj_like = any(len(row) >= 9 and any(normalize_header(value) in {"qtd", "prod", "perc", "pont"} for value in row) for row in rows)
+        if (normalized_headers & critical and not critical.issubset(normalized_headers)) or (pobj_like and not headers):
+            warnings.append("docling_possible_column_shift")
+        provenance = raw.get("prov") or []
+        page = next((int(item.get("page_no")) for item in provenance if isinstance(item, dict) and item.get("page_no")), None)
+        locator = f"page:{page};table:{index}" if page else f"table:{index}"
+        display_headers = headers or [f"col_{position + 1}" for position in range(common_width)]
+        markdown = table_to_markdown(display_headers, rows)
+        parsed.append(ExtractedTable(table_id=f"table-{index}", page_number=page, headers=headers, rows=rows,
+            markdown=markdown, locator=locator, warnings=list(dict.fromkeys(warnings))))
+    return parsed
+
+
+def parse_docling_sections(doc_json: dict[str, Any]) -> list[ExtractedSection]:
+    sections: list[ExtractedSection] = []
+    for index, item in enumerate(doc_json.get("texts") or [], start=1):
+        if not isinstance(item, dict) or item.get("label") not in {"title", "section_header"}:
+            continue
+        title = str(item.get("text") or "").strip()
+        if not title:
+            continue
+        provenance = item.get("prov") or []
+        page = next((int(value.get("page_no")) for value in provenance if isinstance(value, dict) and value.get("page_no")), None)
+        level = 1 if item.get("label") == "title" else 2
+        sections.append(ExtractedSection(level=level, title=title, page_number=page, locator=f"page:{page};section:{index}" if page else f"section:{index}"))
+    return sections
+
+
+def normalize_header(value: str) -> str:
+    import unicodedata
+    return re.sub(r"[^a-z0-9%]+", "", unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode().lower())
+
+
+def table_to_markdown(headers: list[str], rows: list[list[str]]) -> str:
+    if not headers:
+        return ""
+    escape = lambda value: str(value).replace("|", "\\|").replace("\n", " ")
+    lines = ["| " + " | ".join(map(escape, headers)) + " |", "| " + " | ".join("---" for _ in headers) + " |"]
+    lines.extend("| " + " | ".join(map(escape, row)) + " |" for row in rows)
+    return "\n".join(lines)
 
 
 async def extract_with_mineru(
@@ -246,6 +417,10 @@ async def extract_with_mineru(
         file_name=file_name,
         content_hash=digest,
         text=markdown,
+        markdown=markdown,
+        tables=[],
+        sections=[],
+        parser=ParserInfo(name="MINERU", version=None, processing_ms=None),
         page_count=page_count,
         extraction_method=method,
         evidence=evidence,
@@ -321,7 +496,8 @@ def extract_pdf(content: bytes, file_name: str, digest: str) -> Extraction:
     full_text = bounded_text("\n\n".join(item.text for item in evidence), warnings)
     return Extraction(
         document_type="PDF", mime_type="application/pdf", file_name=file_name, content_hash=digest,
-        text=full_text, page_count=document.page_count,
+        text=full_text, markdown=full_text, tables=[], sections=[],
+        parser=ParserInfo(name="NATIVE", version=fitz.VersionBind, processing_ms=None), page_count=document.page_count,
         extraction_method="HYBRID" if len(methods) > 1 else (next(iter(methods)) if methods else "NO_TEXT"),
         evidence=evidence, warnings=warnings,
     )
@@ -333,6 +509,7 @@ def extract_image(content: bytes, file_name: str, mime: str, digest: str) -> Ext
     warnings = [] if text else ["image_without_useful_text"]
     evidence = [Evidence(locator="image:1", text=text, extraction_method="OCR_TESSERACT", confidence=confidence)] if text else []
     return Extraction(document_type="IMAGE", mime_type=mime, file_name=file_name, content_hash=digest, text=text,
+                      markdown=text, tables=[], sections=[], parser=ParserInfo(name="TESSERACT", version=None, processing_ms=None),
                       page_count=1, extraction_method="OCR_TESSERACT", evidence=evidence, warnings=warnings)
 
 
@@ -342,7 +519,13 @@ def extract_csv(content: bytes, file_name: str, digest: str) -> Extraction:
     lines = [" | ".join(cell.strip() for cell in row) for row in rows if any(cell.strip() for cell in row)]
     text = bounded_text("\n".join(lines), [])
     evidence = [Evidence(locator=f"row:{index}", text=line, extraction_method="CSV_NATIVE") for index, line in enumerate(lines, start=1)]
+    headers = rows[0] if rows else []
+    data_rows = rows[1:] if len(rows) > 1 else []
+    table = ExtractedTable(table_id="table-1", page_number=None, headers=headers, rows=data_rows,
+                           markdown=table_to_markdown(headers, data_rows), locator="csv:table:1", warnings=[])
     return Extraction(document_type="CSV", mime_type="text/csv", file_name=file_name, content_hash=digest, text=text,
+                      markdown=table.markdown, tables=[table] if headers else [], sections=[],
+                      parser=ParserInfo(name="NATIVE", version=None, processing_ms=None),
                       extraction_method="CSV_NATIVE", evidence=evidence[:1000], warnings=[])
 
 
@@ -350,21 +533,30 @@ def extract_xlsx(content: bytes, file_name: str, digest: str) -> Extraction:
     workbook = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
     evidence: list[Evidence] = []
     lines: list[str] = []
+    tables: list[ExtractedTable] = []
     for sheet in workbook.worksheets[:20]:
+        sheet_rows: list[list[str]] = []
         for row_index, row in enumerate(sheet.iter_rows(values_only=True), start=1):
-            values = [str(value).strip() for value in row if value is not None and str(value).strip()]
-            if not values:
+            values = ["" if value is None else str(value).strip() for value in row]
+            if not any(values):
                 continue
+            sheet_rows.append(values)
             line = " | ".join(values)
             lines.append(line)
             if len(evidence) < 5000:
                 evidence.append(Evidence(locator=f"sheet:{sheet.title};row:{row_index}", text=line, extraction_method="XLSX_NATIVE"))
             if len(lines) >= 10000:
                 break
+        if sheet_rows:
+            headers, data_rows = sheet_rows[0], sheet_rows[1:]
+            tables.append(ExtractedTable(table_id=f"sheet-{len(tables) + 1}", page_number=None,
+                headers=headers, rows=data_rows, markdown=table_to_markdown(headers, data_rows),
+                locator=f"sheet:{sheet.title}", warnings=[]))
     warnings: list[str] = []
     text = bounded_text("\n".join(lines), warnings)
     return Extraction(document_type="XLSX", mime_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                      file_name=file_name, content_hash=digest, text=text, extraction_method="XLSX_NATIVE",
+                      file_name=file_name, content_hash=digest, text=text, markdown="\n\n".join(table.markdown for table in tables),
+                      tables=tables, sections=[], parser=ParserInfo(name="NATIVE", version=None, processing_ms=None), extraction_method="XLSX_NATIVE",
                       evidence=evidence, warnings=warnings)
 
 
