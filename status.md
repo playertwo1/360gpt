@@ -25,6 +25,8 @@
 **Próximo passo exato:** corrigir a associação das células mescladas nos PDFs POBJ e repetir o benchmark de 3–5 arquivos. Somente com 100% dos campos críticos corretos republicar WF-11 e retomar M5.9/M5.10.
 
 **Regressão técnica:** 32/32 testes gerais aprovados após a migração candidata. Esse resultado valida contratos e proteções, mas não substitui o gate funcional dos PDFs reais, que permanece pendente.
+
+**Checkpoint local:** commit `1ba30c0` (`feat: add Docling CPU OCR candidate`).
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

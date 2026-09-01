@@ -10,7 +10,7 @@ Last completed: migração técnica para Docling CPU, contrato 1.1.0, tabelas es
 Next task: comparar e corrigir a estrutura das 3 tabelas POBJ até passar o gate de 100% dos campos críticos; depois republicar WF-11 e retomar M5.9/M5.10
 
 Last validation: 32/32 regressões PASS; gate funcional Docling PARTIAL — saudável em CPU, pico observado 1,96 GiB/3 GiB e PDFs em 124–198 s, mas células unidas/desalinhadas em POBJ2608, POBJ2708 e POBJ2808
-Last commit: 35a69da (`feat: migrate local runtime to WSL Docker Engine`)
+Last commit: 1ba30c0 (`feat: add Docling CPU OCR candidate`)
 
 Blockers:
 - Docker Desktop foi abandonado em favor do Docker Engine nativo no Ubuntu/WSL2 para reduzir RAM; não tentar reparar ou iniciar o Desktop.
@@ -27,7 +27,7 @@ Pending decisions:
 - Fornecer/confirmar as regras dedicadas oficiais de Seguros e Cartões; até lá, permanecem somente como valores reportados pela fonte.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-09-01 14:48
+Last update: 2026-09-01 14:55
 
 Resume instruction:
 Continue o `ROADMAP.md` pelo gate N2/M1: melhorar a reconstrução das tabelas POBJ e repetir o benchmark real. Não republicar WF-11 enquanto os campos críticos não atingirem 100% de associação correta.
