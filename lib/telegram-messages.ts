@@ -24,7 +24,7 @@ export function splitTelegramText(text: string, limit = TELEGRAM_SAFE_LIMIT) {
 export async function sendTelegramText(token: string, chatId: number, text: string, replyToMessageId?: number) {
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json; charset=utf-8' },
     body: JSON.stringify({ chat_id: chatId, text, ...(replyToMessageId ? { reply_parameters: { message_id: replyToMessageId } } : {}) }),
     signal: AbortSignal.timeout(10000),
   });
@@ -122,7 +122,7 @@ export function telegramCommandMenu() {
 
 export async function registerTelegramCommands(token: string) {
   const response = await fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ commands: TELEGRAM_COMMANDS }), signal: AbortSignal.timeout(10000),
+    method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8' }, body: JSON.stringify({ commands: TELEGRAM_COMMANDS }), signal: AbortSignal.timeout(10000),
   });
   if (!response.ok) throw new Error(`telegram_commands_${response.status}`);
 }

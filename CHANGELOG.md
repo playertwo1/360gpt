@@ -9,6 +9,8 @@
 - `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
 
 ### Changed
+- Webhook Telegram valida UTF-8 estrito, ignora mensagens originadas por bots, envia JSON com `charset=utf-8` e nunca produz cabeçalho de pendências vazio; n8n passa a declarar `LANG`/`LC_ALL=C.UTF-8`.
+- WSL mantido ativo em segundo plano durante a operação para evitar reinicialização contínua dos containers n8n/PostgreSQL/Docling/worker.
 - Respostas de esclarecimento agora são acumuladas entre mensagens do mesmo protocolo, e campos técnicos recebem nomes legíveis antes de serem mostrados a Rafael.
 - Conversa Telegram agora repara mojibake comum em português, mantém perguntas com respostas de baixa confiança, rejeita reclamações/perguntas como valores e registra feedback conversacional auditável para melhoria supervisionada.
 - Pedidos de contexto no Telegram (`qual indicador?`, `não sei`, perguntas com `?`) não são mais aceitos como resposta de negócio; o bot reapresenta indicador, campo e evidência, e campos numéricos exigem valor numérico.

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { handleClarificationReply, handleTelegramCommand } from '../../../../lib/telegram-runtime';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
-type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; reply_to_message?: { message_id: number }; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string } } };
+type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; reply_to_message?: { message_id: number }; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string; is_bot?: boolean } } };
 type Reservation = { claimed: boolean; status: string; attemptCount?: number };
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     if (!bytes.byteLength || bytes.byteLength > MAX_WEBHOOK_BYTES) {
       return NextResponse.json({ ok: false, error: 'invalid_request_size' }, { status: bytes.byteLength > MAX_WEBHOOK_BYTES ? 413 : 400 });
     }
-    update = JSON.parse(new TextDecoder().decode(bytes)) as TelegramUpdate;
+    update = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)) as TelegramUpdate;
   }
   catch { return NextResponse.json({ ok: false, error: 'invalid_json' }, { status: 400 }); }
 
@@ -56,6 +56,7 @@ export async function POST(request: Request) {
   }
   const message = update.message;
   if (!message) return NextResponse.json({ ok: true, ignored: true, reason: 'unsupported_update' });
+  if (message.from?.is_bot === true) return NextResponse.json({ ok: true, ignored: true, reason: 'bot_message' });
   if (!Number.isSafeInteger(message.message_id) || !Number.isSafeInteger(message.chat?.id)) {
     return NextResponse.json({ ok: false, error: 'invalid_message' }, { status: 400 });
   }
@@ -224,7 +225,7 @@ async function consumeRateLimit(chatId: string) {
 
 async function downloadTelegramFile(document: TelegramDocument) {
   const infoResponse = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/getFile`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ file_id: document.file_id }), signal: AbortSignal.timeout(10000),
+    method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8' }, body: JSON.stringify({ file_id: document.file_id }), signal: AbortSignal.timeout(10000),
   });
   const info = await infoResponse.json() as { ok: boolean; result?: { file_path: string; file_size?: number } };
   if (!infoResponse.ok || !info.ok || !info.result?.file_path) throw new IngestError('telegram_get_file_failed');
@@ -241,7 +242,7 @@ async function sendTelegramMessage(chatId: number, text: string, parseMode = 'Ma
   try {
     const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json; charset=utf-8' },
       body: JSON.stringify({ chat_id: chatId, text, parse_mode: parseMode }),
       signal: AbortSignal.timeout(10000),
     });
@@ -249,7 +250,7 @@ async function sendTelegramMessage(chatId: number, text: string, parseMode = 'Ma
       // Fallback sem Markdown se houver erro de sintaxe
       await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json; charset=utf-8' },
         body: JSON.stringify({ chat_id: chatId, text }),
         signal: AbortSignal.timeout(10000),
       });

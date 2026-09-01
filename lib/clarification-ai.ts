@@ -36,7 +36,7 @@ export async function interpretClarification(questions: ClarificationQuestion[],
   const models = [...new Set([env.GEMINI_MODEL, 'gemini-3.7-flash', 'gemini-3.5-flash'].filter(Boolean) as string[])];
   for (const model of models) {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
+      method: 'POST', headers: { 'content-type': 'application/json; charset=utf-8', 'x-goog-api-key': env.GEMINI_API_KEY },
       body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: model.startsWith('gemini-3.7') ? { temperature: 0, responseFormat: { text: { mimeType: 'application/json', schema: responseSchema } } } : { temperature: 0, responseMimeType: 'application/json', responseSchema } }),
       signal: AbortSignal.timeout(45000),
     });

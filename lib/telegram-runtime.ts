@@ -117,6 +117,7 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
       return `${label}${repairMojibake(question.question)}`;
     });
     const nextQuestions = remaining.length ? remaining : questions;
+    if (!followUp.length) followUp.push('Não identifiquei um valor confirmável. Responda com o número da pergunta e o valor correspondente.');
     const persisted = { ...interpretation, answers: combinedAnswers, follow_up: followUp };
     await db.prepare(`UPDATE clarification_requests SET status = 'NEEDS_FOLLOW_UP', questions_json = ?, answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1 WHERE id = ?`)
       .bind(JSON.stringify(nextQuestions), text, String(messageId), JSON.stringify(persisted), String(row.id)).run();
