@@ -17,6 +17,9 @@ const responseSchema = {
 };
 
 export async function interpretClarification(questions: ClarificationQuestion[], userAnswer: string) {
+  if (isContextRequest(userAnswer)) {
+    return { resolved: false, answers: [] as ClarificationAnswer[], follow_up: questions.map(formatQuestionWithContext), model: 'deterministic_context_request' };
+  }
   // Primeiro tenta uma interpretação determinística para respostas numeradas ou
   // respostas diretas de valor. Isso evita loop quando Rafael responde apenas
   // parte da lista (por exemplo, “Total de pontos 51,04” e “2. 0”).
@@ -60,11 +63,26 @@ function parseOwnerAnswerLocally(questions: ClarificationQuestion[], text: strin
     if (index < 0 || index >= questions.length) continue;
     const question = questions[index];
     const numeric = valueText.replace(/\./g, '').replace(',', '.').match(/-?\d+(?:\.\d+)?/);
+    const expectsNumeric = /(valor|realizado|meta|pontos?|resultado|percentual|atingimento)/i.test(`${question.field} ${question.question}`);
+    if (expectsNumeric && !numeric) continue;
     const value: number | string = numeric ? Number(numeric[0]) : valueText;
     if (answers.some((item) => item.question_id === question.id)) continue;
     answers.push({ question_id: question.id, field: question.field, indicator: question.indicator ?? null, value, unit: null, answer: valueText, confidence: 1 });
   }
   const answered = new Set(answers.map((item) => item.question_id));
-  const follow_up = questions.filter((q) => !answered.has(q.id)).map((q) => `${q.indicator ? `${q.indicator} — ` : q.field ? `${q.field} — ` : ''}${q.question}`);
+  const follow_up = questions.filter((q) => !answered.has(q.id)).map(formatQuestionWithContext);
   return { resolved: answers.length === questions.length, answers, follow_up, model: 'deterministic_owner_parser' };
+}
+
+function isContextRequest(text: string) {
+  const normalized = String(text ?? '').trim().toLowerCase();
+  return normalized.includes('?') || /\b(qual|quais|quem|onde|como|não sei|nao sei|não entendi|nao entendi)\b/.test(normalized);
+}
+
+function formatQuestionWithContext(question: ClarificationQuestion) {
+  const indicator = question.indicator?.trim();
+  const field = question.field?.trim();
+  const label = indicator ? `Indicador: ${indicator}` : field && field !== 'unknown' ? `Campo: ${field}` : 'Indicador não identificado no arquivo';
+  const evidence = question.evidence ? ` | Evidência: ${question.evidence}` : '';
+  return `${label} — ${question.question}${evidence}`;
 }

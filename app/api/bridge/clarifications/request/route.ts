@@ -46,7 +46,10 @@ export async function POST(request: Request) {
       'PRECISO DA SUA CONFIRMAÇÃO',
       '',
       'O arquivo não será concluído enquanto estas dúvidas materiais não forem esclarecidas:',
-      ...questions.map((item, index) => `${index + 1}. ${item.question}${item.evidence ? `\n   Evidência: ${item.evidence}` : ''}`),
+      ...questions.map((item, index) => {
+        const label = item.indicator ? `Indicador: ${item.indicator}` : item.field !== 'unknown' ? `Campo: ${item.field}` : 'Indicador não identificado no arquivo';
+        return `${index + 1}. ${label}\n   Pergunta: ${item.question}${item.evidence ? `\n   Evidência: ${item.evidence}` : ''}`;
+      }),
       '',
       'Responda diretamente a esta mensagem em linguagem natural. Se houver mais de um arquivo pendente, use sempre o botão Responder.',
       `Protocolo: ${job.document_id}`,
