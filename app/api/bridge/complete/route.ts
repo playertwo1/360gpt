@@ -167,7 +167,9 @@ function buildTelegramResultText(snapshot: StateSnapshot, result: Record<string,
   ];
   if (summary) lines.push('', summary);
   lines.push('', `Protocolo: ${stateId}`);
-  return lines.join('\n').slice(0, 12000);
+  // A divisão segura em sendTelegramResultParts respeita o limite do Telegram.
+  // Não truncar aqui: pareceres longos devem chegar completos em várias partes.
+  return lines.join('\n');
 }
 
 async function sendTelegramResultParts(chatId: number, jobId: string, stateId: string, text: string) {

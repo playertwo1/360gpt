@@ -9,6 +9,7 @@
 - `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
 
 ### Changed
+- Telegram: pareceres longos não são mais truncados antes da divisão; o particionamento agora prefere parágrafos, linhas, frases e espaços para preservar legibilidade.
 - Docling Serve CPU consolidado como único OCR de PDF/JPG/PNG; PyMuPDF permanece apenas para texto digital nativo e XLSX/CSV continuam nativos.
 - Falha do Docling em imagem ou PDF escaneado agora gera retry/revisão, sem fallback OCR silencioso.
 - Tabelas Docling agora preservam posições vazias e offsets físicos; células mescladas permanecem sinalizadas em vez de deslocarem silenciosamente META, REALIZADO ou `% ATG`.

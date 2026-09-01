@@ -12,7 +12,8 @@ export function splitTelegramText(text: string, limit = TELEGRAM_SAFE_LIMIT) {
     const paragraph = window.lastIndexOf('\n\n');
     const line = window.lastIndexOf('\n');
     const sentence = Math.max(window.lastIndexOf('. '), window.lastIndexOf('; '));
-    const cut = paragraph > limit * 0.55 ? paragraph : line > limit * 0.65 ? line : sentence > limit * 0.7 ? sentence + 1 : limit;
+    const whitespace = window.lastIndexOf(' ');
+    const cut = paragraph > limit * 0.55 ? paragraph : line > limit * 0.65 ? line : sentence > limit * 0.7 ? sentence + 1 : whitespace > limit * 0.8 ? whitespace : limit;
     parts.push(remaining.slice(0, cut).trim());
     remaining = remaining.slice(cut).trim();
   }
