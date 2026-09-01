@@ -43,11 +43,12 @@ $tests = @(
 
 $passed = 0
 $total = $tests.Count
+$pwsh = (Get-Command pwsh -ErrorAction Stop).Source
 
 foreach ($t in $tests) {
     Write-Host ''
     Write-Host ">>> Executando Teste: $($t.Name)..." -ForegroundColor Cyan
-    & powershell -File $t.Script
+    & $pwsh -NoProfile -File $t.Script
     if ($LASTEXITCODE -eq 0) {
         $passed++
         Write-Host ">>> SUCESSO: $($t.Name) aprovado!" -ForegroundColor Green

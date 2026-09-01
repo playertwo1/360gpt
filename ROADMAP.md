@@ -738,31 +738,31 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 
 #### M5.2 — Menu e comandos Telegram — CONCLUÍDO
 
-- [ ] Implementar `/comandos` com aliases `/ajuda` e `/menu`.
-- [ ] Implementar acompanhamento: `/status`, `/ultimo`, `/protocolo`, `/pendencias`, `/duvidas`, `/cancelar` e `/tentar novamente`.
-- [ ] Implementar Performance: `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios`, `/indicador`, `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario`.
-- [ ] Implementar governança: `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir`.
-- [ ] Exigir confirmação para cancelar, corrigir, reabrir ou excluir.
+- [x] Implementar `/comandos` com aliases `/ajuda` e `/menu`.
+- [x] Implementar acompanhamento: `/status`, `/ultimo`, `/protocolo`, `/pendencias`, `/duvidas`, `/cancelar` e `/tentar novamente`.
+- [x] Implementar Performance: `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios`, `/indicador`, `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario`.
+- [x] Implementar governança: `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir`.
+- [x] Exigir confirmação para cancelar, corrigir, reabrir ou excluir.
 
 **Gate:** comandos consultam somente dados persistidos autorizados e o menu oficial do bot lista as capacidades.
 
 #### M5.3 — Parecer completo multipartes — CONCLUÍDO
 
-- [ ] Remover o corte interno de 1.500 caracteres.
-- [ ] Dividir o parecer em 2–3 mensagens numeradas e auditadas.
-- [ ] Rotular `FONTE`, `CÁLCULO`, `INFORMADO POR RAFAEL`, `ESTIMATIVA` e `PENDENTE`.
-- [ ] Impedir duplicidade parcial ou total em retry.
+- [x] Remover o corte interno de 1.500 caracteres.
+- [x] Dividir o parecer em 2–3 mensagens numeradas e auditadas.
+- [x] Rotular `FONTE`, `CÁLCULO`, `INFORMADO POR RAFAEL`, `ESTIMATIVA` e `PENDENTE`.
+- [x] Impedir duplicidade parcial ou total em retry.
 
 **Gate:** parecer detalhado chega integralmente e com rastreabilidade.
 
 #### M5.4–M5.7 — Conversa supervisionada — IMPLEMENTADO, PENDENTE ENSAIO REAL
 
-- [ ] Criar `AWAITING_OWNER_INPUT`, tabelas de perguntas/respostas e timeout de sete dias.
-- [ ] Criar endpoints autenticados para perguntar, consultar, responder, reabrir e reenfileirar.
-- [ ] Correlacionar resposta Telegram por mensagem ou protocolo e interpretar linguagem natural com JSON estruturado.
-- [ ] Marcar respostas como `OWNER_PROVIDED` e perguntar novamente diante de ambiguidade.
-- [ ] Integrar caminhos `READY` e `AWAITING_OWNER_INPUT` nos WF-11/WF-13.
-- [ ] Reprocessar o mesmo protocolo e produzir novo Estado 360 versionado.
+- [x] Criar `AWAITING_OWNER_INPUT`, tabelas de perguntas/respostas e timeout de sete dias.
+- [x] Criar endpoints autenticados para perguntar, consultar, responder, reabrir e reenfileirar.
+- [x] Correlacionar resposta Telegram por mensagem ou protocolo e interpretar linguagem natural com JSON estruturado.
+- [x] Marcar respostas como `OWNER_PROVIDED` e perguntar novamente diante de ambiguidade.
+- [x] Integrar caminhos `READY` e `AWAITING_OWNER_INPUT` nos WF-11/WF-13.
+- [x] Reprocessar o mesmo protocolo e produzir novo Estado 360 versionado.
 
 **Gate:** lacuna material pausa; Rafael responde naturalmente; o fluxo retoma sem misturar protocolos ou inventar fatos.
 

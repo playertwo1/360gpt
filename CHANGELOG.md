@@ -6,6 +6,14 @@
 
 - Removida do planejamento funcional a trilha temporária de migração do Docker; o roadmap volta a priorizar os gates M5.9 e M5.10 do MVP Telegram → Performance.
 - Mantida a saúde de OCR/worker/WF-11 como pré-condição operacional, sem misturar manutenção de infraestrutura com entregas funcionais.
+- Testes operacionais de MinerU e document-worker passaram a usar o Docker Engine oficial no Ubuntu/WSL2 e não refazem builds durante validações comuns.
+- Executor geral atualizado para usar PowerShell 7 (`pwsh`) em vez do Windows PowerShell legado.
+
+### Validated
+
+- MinerU 3.4.5 saudável com RTX 4060 Ti, n8n e worker conectados internamente, duas extrações concluídas e zero falhas.
+- WF-11 publicado e ativado com agenda de um minuto; primeira execução automática concluída com status `success`.
+- Testes de Telegram conversacional, WF-11, WF-13 e conhecimento POBJ aprovados.
 
 ### Removed
 

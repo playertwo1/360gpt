@@ -127,7 +127,7 @@ Write-Host '   * Banco PostgreSQL:   ATIVO (Porta 5432) [OK]' -ForegroundColor G
 Write-Host '   * Orquestrador n8n:   ATIVO (Porta 5678) [OK]' -ForegroundColor Green
 Write-Host '   * Site Hospedado:     CONECTADO [OK]' -ForegroundColor Green
 Write-Host '   * Ponte WF-09:        AUTENTICADA & SEGURA [OK]' -ForegroundColor Green
-Write-Host '   * Telegram Ingest:    WF-11 INATIVO ATE VALIDAR MINERU' -ForegroundColor Yellow
+Write-Host '   * Telegram Ingest:    WF-11 ATIVO (FILA A CADA 1 MINUTO) [OK]' -ForegroundColor Green
 
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
