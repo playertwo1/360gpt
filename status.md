@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 31 de agosto de 2026
-**Versão Atual da Release:** `v3.6.2-mvp-conversacional`
+**Versão Atual da Release:** `v3.7.0-mvp-conhecimento-supervisionado`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟡 **CORREÇÃO VALIDADA; RUNTIME LOCAL BLOQUEADO PELO DOCKER DESKTOP**
@@ -22,7 +22,7 @@
 **Worker e agenda:** `document-worker`/MinerU ativos no Docker; WF-11 publicado e agendado a cada 1 minuto.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** fazer o Docker Desktop chegar a “Engine running”; então executar `/destravar` e reprocessar um único arquivo real antes dos demais itens do M5.9.
+**Próximo passo exato:** fazer o Docker Desktop chegar a “Engine running”; homologar seletivamente um indicador no site e comprovar, em novo arquivo do mesmo layout, a reutilização auditada sem carregar valores mensais.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada atual:** 40; inclui a ponte WF-11 e comandos seguros de progresso/recuperação, com `/progresso` validado no webhook real.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

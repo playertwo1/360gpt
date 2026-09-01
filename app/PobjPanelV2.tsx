@@ -61,6 +61,7 @@ export default function PobjPanelV2() {
   const [current, setCurrent] = useState("");
   const [target, setTarget] = useState("1000");
   const [indicators, setIndicators] = useState<Indicator[]>([]);
+  const [promoteKeys, setPromoteKeys] = useState<string[]>([]);
   useEffect(() => {
     reload();
     const timer = window.setInterval(reload, 5000);
@@ -114,6 +115,7 @@ export default function PobjPanelV2() {
             target: s.target ?? null,
           })),
     );
+    setPromoteKeys([]);
   }
   async function publish() {
     if (!review) return;
@@ -131,6 +133,15 @@ export default function PobjPanelV2() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      if (promoteKeys.length) {
+        const knowledgeResponse = await fetch('/api/pobj/knowledge', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ documentId: review.id, indicatorKeys: promoteKeys }),
+        });
+        const knowledge = await knowledgeResponse.json();
+        if (!knowledgeResponse.ok) throw new Error(knowledge.error ?? 'Falha ao homologar conhecimento');
+        setNotice(`${promoteKeys.length} mapeamento(s) homologado(s) para arquivos futuros do mesmo layout.`);
+      }
       setReview(null);
       reload();
     } catch (reason) {
@@ -333,6 +344,10 @@ export default function PobjPanelV2() {
                   <p className="mt-2 text-[11px] uppercase text-[#9ca0ad]">
                     Unidade: {unitLabel(item.unit)}
                   </p>
+                  <label className="mt-3 flex items-start gap-3 rounded-[14px] bg-[#202b3d] p-3 text-xs text-[#cbd8f2]">
+                    <input type="checkbox" checked={promoteKeys.includes(item.key)} onChange={(event) => setPromoteKeys((current) => event.target.checked ? [...new Set([...current, item.key])] : current.filter((key) => key !== item.key))} className="mt-0.5 h-4 w-4" />
+                    <span>Homologar somente o mapeamento deste indicador para próximos arquivos com o mesmo layout. Valores e metas deste mês não serão reutilizados.</span>
+                  </label>
                 </article>
               ))}
             </div>
@@ -356,7 +371,7 @@ export default function PobjPanelV2() {
                   onClick={publish}
                   className="h-14 flex-[1.5] rounded-full bg-[#568dff] font-bold text-[#071d48] disabled:opacity-40"
                 >
-                  Salvar pré-revisão
+                  Salvar revisão{promoteKeys.length ? ` e homologar ${promoteKeys.length}` : ''}
                 </button>
               )}
             </div>

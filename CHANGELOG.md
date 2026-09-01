@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.7.0] - 2026-09-01
+
+### Added
+- Conhecimento POBJ versionado com aprovação seletiva, revogação, proveniência, isolamento por proprietário e aplicação idempotente.
+- Aba `/knowledge` e comandos Telegram `/conhecimento`, `/aprovar` e `/revogarregra`.
+- Contrato da ponte para aplicar somente conhecimento `ACTIVE` quando indicador e assinatura do layout coincidirem exatamente.
+
+### Security
+- Metas, realizados, valores, competência e pontuação mensal são proibidos no conteúdo reutilizável.
+- Mudança de layout ou conflito não produz inferência silenciosa; o fluxo supervisionado permanece responsável por consultar Rafael.
+
+### Validated
+- Lint, build e teste estrutural dedicado do conhecimento POBJ aprovados.
+
 ## [3.6.2] - 2026-09-01
 
 ### Added

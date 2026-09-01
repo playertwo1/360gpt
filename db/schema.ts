@@ -103,6 +103,31 @@ export const commandConfirmations = sqliteTable('command_confirmations', {
   index('idx_command_confirmations_chat_status').on(table.chatId, table.status, table.expiresAt),
 ]);
 
+export const pobjKnowledgeItems = sqliteTable('pobj_knowledge_items', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), indicatorKey: text('indicator_key').notNull(),
+  indicatorName: text('indicator_name').notNull(), layoutSignature: text('layout_signature').notNull(), knowledgeType: text('knowledge_type').notNull(),
+  version: integer('version').notNull().default(1), status: text('status').notNull().default('CANDIDATE'), contentJson: text('content_json').notNull(),
+  contentHash: text('content_hash').notNull(), sourceDocumentId: text('source_document_id').references(() => documents.id),
+  sourceJobId: text('source_job_id').references(() => agentRuns.id), sourceEvidenceJson: text('source_evidence_json').notNull().default('[]'),
+  approvedBy: text('approved_by'), approvedAt: integer('approved_at', { mode: 'timestamp_ms' }), validFrom: integer('valid_from', { mode: 'timestamp_ms' }),
+  supersededBy: text('superseded_by'), revokedAt: integer('revoked_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(), updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_pobj_knowledge_version').on(table.ownerId, table.indicatorKey, table.layoutSignature, table.knowledgeType, table.version),
+  index('idx_pobj_knowledge_owner_status_layout').on(table.ownerId, table.status, table.layoutSignature),
+  index('idx_pobj_knowledge_indicator_status').on(table.indicatorKey, table.status),
+]);
+
+export const pobjKnowledgeApplications = sqliteTable('pobj_knowledge_applications', {
+  id: text('id').primaryKey(), knowledgeId: text('knowledge_id').notNull().references(() => pobjKnowledgeItems.id),
+  knowledgeVersion: integer('knowledge_version').notNull(), ownerId: text('owner_id').notNull(),
+  documentId: text('document_id').notNull().references(() => documents.id), jobId: text('job_id').notNull().references(() => agentRuns.id),
+  result: text('result').notNull(), detailsJson: text('details_json').notNull().default('{}'), createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+}, (table) => [
+  uniqueIndex('uq_pobj_knowledge_application').on(table.knowledgeId, table.documentId, table.jobId),
+  index('idx_pobj_knowledge_application_owner').on(table.ownerId, table.createdAt),
+]);
+
 export const insights = sqliteTable('insights', {
   id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), companyId: text('company_id').references(() => companies.id),
   agentRunId: text('agent_run_id').references(() => agentRuns.id), kind: text('kind').notNull(), title: text('title').notNull(),

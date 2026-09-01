@@ -1,15 +1,15 @@
 # PROJECT STATE
 
-Version: 3.6.2-mvp-conversacional
+Version: 3.7.0-mvp-conhecimento-supervisionado
 Current phase: MVP mínimo Telegram → Performance → Telegram
 Current milestone: M5 — Piloto curto e correção de rota
-Current task: M5.9 — recuperação da fila real e piloto curto com 3–5 arquivos
+Current task: M5.10 — ensaio real de reutilização do conhecimento POBJ homologado
 Status: IN_PROGRESS
 
-Last completed: Versão hospedada 40 publicada; 26 comandos registrados e `/progresso` validado no webhook real com HTTP 200/SUCCEEDED
-Next task: Iniciar Docker/n8n, executar `/destravar` com confirmação e reprocessar um arquivo real controlado
+Last completed: Persistência, API, site, comandos Telegram e contrato n8n do conhecimento POBJ implementados; valores mensais excluídos da reutilização
+Next task: Homologar seletivamente um indicador no site, enviar novo arquivo do mesmo layout e comprovar a aplicação registrada
 
-Last validation: PASS parcial — teste conversacional, lint, build, varredura de segredos, menu 26/26, deploy v40 e webhook `/progresso`; integração Docker/MinerU indisponível
+Last validation: PASS — lint, build e teste estrutural dedicado; ensaio real permanece dependente do Docker/MinerU
 Last commit: 13d0acd (`fix(telegram): secure recovery and progress commands`)
 
 Blockers:
@@ -22,7 +22,7 @@ Pending decisions:
 - Fornecer/confirmar as regras dedicadas oficiais de Seguros e Cartões; até lá, permanecem somente como valores reportados pela fonte.
 - Efeitos externos continuam fora do escopo.
 
-Last update: 2026-09-01 05:26
+Last update: 2026-09-01 06:30
 
 Resume instruction:
-Abra o Docker Desktop e resolva/registre a mensagem exibida até aparecer “Engine running”; depois valide `docker ps`, use `/destravar` com confirmação e reprocesse um único arquivo real.
+Após o Docker mostrar “Engine running”, homologue um mapeamento pelo site, reprocesse um arquivo do mesmo layout e valide a reutilização e o cenário de conflito do M5.10.

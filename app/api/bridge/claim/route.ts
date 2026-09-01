@@ -47,6 +47,8 @@ export async function POST(request: Request) {
       interpretation: clarification.interpretation_json ? JSON.parse(clarification.interpretation_json) : null,
       evidence_type: 'OWNER_PROVIDED',
     } : null;
+    const approvedKnowledge = await env.DB.prepare(`SELECT id, indicator_key, indicator_name, layout_signature, knowledge_type, version, content_json, content_hash
+      FROM pobj_knowledge_items WHERE owner_id = ? AND status = 'ACTIVE' ORDER BY indicator_key, version DESC LIMIT 100`).bind(job.owner_id).all();
     const subjectRef = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'performance-owner' : 'subject-not-resolved';
     const purpose = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'pobj_performance_analysis' : 'document_classification';
 
@@ -55,8 +57,11 @@ export async function POST(request: Request) {
       lease_token: job.lease_token, lease_expires_at: new Date(job.lease_expires_at).toISOString(), attempt: job.attempt_count,
       source_event_id: `${job.source}-${job.source_message_id ?? job.document_id}`, tenant_id: 'tenant-owner', subject_ref: subjectRef,
       actor_id: `${job.source}:${job.owner_id}`, purpose, data_classification: 'INTERNAL', text: job.raw_text ?? '', owner_context: ownerContext,
+      approved_knowledge: (approvedKnowledge.results ?? []).map((item) => ({ ...item, content: safeJson(String(item.content_json ?? '{}')), content_json: undefined, applicability: 'REQUIRE_EXACT_INDICATOR_AND_LAYOUT_SIGNATURE' })),
       document: job.storage_key ? { file_name: job.original_name, mime_type: job.mime_type, content_hash: job.content_hash, download_path: `/api/bridge/file?job_id=${encodeURIComponent(job.id)}` } : null,
       security: { content_trust: 'UNTRUSTED', external_effects_allowed: false },
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) { return requestErrorResponse(error); }
 }
+
+function safeJson(value: string) { try { return JSON.parse(value) as unknown; } catch { return {}; } }

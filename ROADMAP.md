@@ -781,4 +781,18 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 
 **Gate final:** Telegram conversacional utilizável e aprovado por Rafael antes da expansão multidomínio.
 
+#### M5.10 — Conhecimento POBJ homologado e reutilizável — IMPLEMENTADO, PENDENTE ENSAIO REAL
+
+- [x] Separar valores mensais do conhecimento reutilizável; meta, realizado, competência e pontuação do documento nunca são promovidos.
+- [x] Persistir mapeamentos/regras como itens versionados, vinculados ao proprietário, indicador, evidência e assinatura exata do layout.
+- [x] Permitir homologação seletiva pelo site e aprovação/revogação com confirmação pelo Telegram.
+- [x] Expor ao n8n somente itens `ACTIVE`; aplicação exige mesmo proprietário, indicador e assinatura de layout.
+- [x] Registrar aplicações idempotentes e preservar auditoria de aprovação, substituição e revogação.
+- [x] Diante de layout diferente, regra conflitante ou ausência de correspondência, não aplicar silenciosamente e manter o fluxo de pergunta ao Rafael.
+- [ ] Executar ensaio real: homologar um indicador, enviar novo relatório do mesmo layout e comprovar reutilização sem nova conferência.
+- [ ] Executar ensaio de conflito: alterar layout/regra e comprovar `AWAITING_OWNER_INPUT` sem sobrescrita.
+- [ ] Revisar e promover seletivamente aprovações históricas; nenhuma aprovação antiga recebe promoção automática.
+
+**Gate M5.10:** conhecimento só vira oficial por decisão explícita de Rafael, não contém valores mensais e pode ser rastreado, substituído ou revogado.
+
 Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.

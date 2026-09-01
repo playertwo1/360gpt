@@ -55,6 +55,22 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
     await sendTelegramText(token, chatId, 'Falhas e leases expirados dos seus documentos foram reabertos. Jobs com lease ainda válido não foram interrompidos.');
     return;
   }
+  if (row.command === '/aprovar') {
+    const candidate = await db.prepare(`SELECT id, indicator_key, layout_signature, knowledge_type, version FROM pobj_knowledge_items WHERE id = ? AND owner_id = ? AND status = 'CANDIDATE'`).bind(protocol, ownerId).first<{ id: string; indicator_key: string; layout_signature: string; knowledge_type: string; version: number }>();
+    if (!candidate) { await sendTelegramText(token, chatId, 'Candidato não encontrado ou já decidido.'); return; }
+    const active = await db.prepare(`SELECT id, version FROM pobj_knowledge_items WHERE owner_id = ? AND indicator_key = ? AND layout_signature = ? AND knowledge_type = ? AND status = 'ACTIVE' ORDER BY version DESC LIMIT 1`).bind(ownerId, candidate.indicator_key, candidate.layout_signature, candidate.knowledge_type).first<{ id: string; version: number }>();
+    await db.batch([
+      ...(active ? [db.prepare(`UPDATE pobj_knowledge_items SET status = 'SUPERSEDED', superseded_by = ?, updated_at = ? WHERE id = ? AND owner_id = ?`).bind(candidate.id, now, active.id, ownerId)] : []),
+      db.prepare(`UPDATE pobj_knowledge_items SET status = 'ACTIVE', approved_by = ?, approved_at = ?, valid_from = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND status = 'CANDIDATE'`).bind(`telegram:${chatId}`, now, now, now, candidate.id, ownerId),
+      db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id),
+    ]);
+    await sendTelegramText(token, chatId, `Conhecimento ${candidate.id} homologado. Ele só será reutilizado para o mesmo indicador e assinatura exata de layout; valores mensais não são reaproveitados.`); return;
+  }
+  if (row.command === '/revogarregra') {
+    const result = await db.prepare(`UPDATE pobj_knowledge_items SET status = 'REVOKED', revoked_at = ?, updated_at = ? WHERE id = ? AND owner_id = ? AND status IN ('ACTIVE','CANDIDATE','CONTESTED')`).bind(now, now, protocol, ownerId).run();
+    await db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id).run();
+    await sendTelegramText(token, chatId, result.meta.changes ? `Conhecimento ${protocol} revogado para usos futuros.` : 'Item não encontrado ou já inativo.'); return;
+  }
   if (row.command === '/cancelar') {
     await db.batch([
       db.prepare(`UPDATE agent_runs SET status = 'CANCELLED', completed_at = ?, lease_token = NULL, lease_expires_at = NULL WHERE document_id = ? AND status NOT IN ('SUCCEEDED','CANCELLED')`).bind(now, protocol),
@@ -227,7 +243,7 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     await createConfirmation(db, token, chatId, ownerId, '/reprocessartodos', ['todos']);
     return { handled: true, kind: 'critical' };
   }
-  if (['/cancelar','/reabrir','/excluir','/corrigir'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
+  if (['/cancelar','/reabrir','/excluir','/corrigir','/aprovar','/revogarregra'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
     const normalizedArgs = command === '/tentar' ? args.slice(1) : args;
     const normalizedCommand = command === '/tentar' ? '/tentar' : command;
     if (!normalizedArgs[0]) await sendTelegramText(token, chatId, `Informe o protocolo. Exemplo: ${command} telegram-...`);
@@ -272,6 +288,11 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     await sendTelegramText(token, chatId, lines.length ? `SEUS DOCUMENTOS\n\n${lines.join('\n')}` : 'Nenhum documento encontrado.'); return { handled: true, kind: 'data' };
   }
   if (command === '/privacidade') { await sendTelegramText(token, chatId, 'PRIVACIDADE\n\nFinalidade: análise pessoal de Performance/POBJ.\nRetenção detalhada: até 24 meses.\nBackups: até 90 dias.\nAgregados não identificáveis: prazo indeterminado.\nRafael decide quais fontes e campos podem ser utilizados.\nUse /meusdados para consultar e /excluir <protocolo> para solicitar revogação.'); return { handled: true, kind: 'privacy' }; }
+  if (command === '/conhecimento') {
+    const rows = await db.prepare(`SELECT id, indicator_name, knowledge_type, version, status FROM pobj_knowledge_items WHERE owner_id = ? AND status IN ('CANDIDATE','ACTIVE','CONTESTED') ORDER BY created_at DESC LIMIT 30`).bind(ownerId).all<Record<string, unknown>>();
+    const lines = (rows.results ?? []).map((row) => `• ${row.id}\n  ${row.indicator_name} · ${row.knowledge_type} v${row.version} · ${row.status}`);
+    await sendTelegramText(token, chatId, lines.length ? `CONHECIMENTO POBJ\n\n${lines.join('\n')}\n\nCandidatos exigem /aprovar <id>. Itens ativos podem ser removidos com /revogarregra <id>.` : 'Nenhum conhecimento POBJ cadastrado.'); return { handled: true, kind: 'knowledge' };
+  }
   const state = await latestState(db);
   if (['/ultimo','/pobj','/metas','/prioridades','/riscos','/cenarios','/hoje','/planodiario'].includes(command)) {
     if (!state) { await sendTelegramText(token, chatId, 'Ainda não existe Estado POBJ real persistido. Envie um arquivo pelo Telegram. Nenhuma conta fictícia será sugerida.'); return { handled: true, kind: 'no-state' }; }

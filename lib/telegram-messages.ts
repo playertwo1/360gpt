@@ -71,6 +71,9 @@ export const TELEGRAM_COMMANDS = [
   { command: 'hoje', description: 'Plano diário sem dados inventados' },
   { command: 'meusdados', description: 'Listar seus documentos' },
   { command: 'privacidade', description: 'Uso e retenção dos dados' },
+  { command: 'conhecimento', description: 'Ver regras e mapeamentos homologados' },
+  { command: 'aprovar', description: 'Aprovar candidato de conhecimento' },
+  { command: 'revogarregra', description: 'Revogar conhecimento homologado' },
 ] as const;
 
 export function telegramCommandMenu() {
@@ -108,6 +111,9 @@ export function telegramCommandMenu() {
     '/privacidade — retenção e uso dos dados',
     '/meusdados — listar seus documentos',
     '/excluir <protocolo> — solicitar exclusão/revogação',
+    '/conhecimento — listar conhecimento POBJ homologado',
+    '/aprovar <id> — aprovar candidato selecionado',
+    '/revogarregra <id> — revogar regra ou mapeamento',
     '',
     'Ações críticas exigem /confirmar <código>.',
   ].join('\n');
