@@ -13,6 +13,9 @@
 - Removidos scripts e workflow paralelo com credenciais embutidas, envio direto e dados fictícios; nove backups contendo `.env` foram retirados do repositório para quarentena local.
 - Restaurados o worker Telegram e o workflow canônico anteriores, preservando webhook, allowlist, fila n8n, contratos e auditoria.
 
+### Deployed
+- Versão hospedada 40 publicada; menu Telegram confirmado com 26 comandos e `/progresso` validado pelo webhook real com status `SUCCEEDED`.
+
 ## [3.6.1] - 2026-08-31
 
 ### Fixed

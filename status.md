@@ -24,7 +24,7 @@
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
 **Próximo passo exato:** publicar os comandos seguros, restabelecer Docker/n8n, executar `/destravar` e reprocessar um único arquivo real antes dos demais itens do M5.9.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
-**Versão hospedada publicada:** 37; inclui claim do WF-11, suporte a JPG/PNG e correção do destinatário autorizado no retorno Telegram.
+**Versão hospedada atual:** 40; inclui a ponte WF-11 e comandos seguros de progresso/recuperação, com `/progresso` validado no webhook real.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
 
 ---
