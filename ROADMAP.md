@@ -824,16 +824,26 @@ Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões perma
 
 **Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram e se a imagem `diretor360/mineru:3.4.5` existe; subir/validar MinerU, confirmar o acesso do worker ao parser e somente então publicar WF-11 e executar o teste Telegram ponta a ponta.
 
-#### Bloqueio de reinicialização do Windows — 01/09/2026 11:46
+#### Migração para Docker Engine nativo no Ubuntu/WSL2 — 01/09/2026 13:12
 
 - [x] Ler e auditar `STATUS_E_MIGRACAO_DOCKER_DIRETOR_360.md` da Área de Trabalho.
 - [x] Confirmar `.wslconfig`: 6 GB RAM, 4 CPUs, 2 GB swap e `autoMemoryReclaim=gradual`.
 - [x] Confirmar backups `backup_visao360_postgres.sql` e `backup_n8n_data/`; o dump SQL é confidencial e inclui hashes de credenciais.
 - [x] Preservar o VHDX em `G:\Docker\wsl\disk\docker_data.vhdx` (54.572.089.344 bytes no diagnóstico).
 - [x] Corrigir sockets temporários presos arquivando os diretórios `run` e `docker-secrets-engine`, sem tocar no VHDX.
-- [ ] Reiniciar o Windows para liberar o reparse point `C:\Users\fael\AppData\Local\Docker\wsl`, atualmente desconectado do volume de destino.
-- [ ] Após reiniciar, abrir Docker Desktop e confirmar `docker version`, `wsl -l -v` e acesso ao VHDX em `G:`.
-- [ ] Se o ponto continuar quebrado após reiniciar, remover apenas o reparse point com elevação e recriar a junção para `G:\Docker\wsl`; não restaurar nem resetar dados antes de nova inspeção.
-- [ ] Continuar M5.11 com healthchecks, GPU, bancos, workflows e pipeline OCR.
+- [x] Reiniciar o Windows e confirmar que o VHDX e os backups permaneceram íntegros.
+- [x] Abandonar o reparo do Docker Desktop e adotar Docker Engine nativo no Ubuntu/WSL2 para reduzir consumo de RAM.
+- [x] Corrigir `.wslconfig`: 6 GB RAM, 4 CPUs, 2 GB swap e `autoMemoryReclaim=gradual` em `[experimental]`.
+- [x] Mover Ubuntu 26.04 para `G:\Docker\Ubuntu` antes de baixar imagens pesadas.
+- [x] Instalar Docker Engine 29.1.3, Compose 2.40.3 e NVIDIA Container Toolkit 1.20.0.
+- [x] Validar GPU em contêiner: RTX 4060 Ti, 8.188 MiB.
+- [x] Restaurar dump PostgreSQL: 129 tabelas n8n e 8 tabelas visao360.
+- [x] Restaurar `.n8n` e confirmar 13 workflows e 2 credenciais.
+- [x] Validar PostgreSQL, n8n e `document-worker` saudáveis; smoke test de extração aprovado.
+- [x] Atualizar scripts de iniciar/parar para usar WSL e manter o Ubuntu ativo somente durante a operação.
+- [ ] Reconstruir ou importar `diretor360/mineru:3.4.5` no novo Engine, sem build concorrente.
+- [ ] Validar MinerU com GPU e configurar operação sob demanda para liberar RAM quando ocioso.
+- [ ] Publicar/ativar WF-11 e executar Telegram → OCR → Performance → Telegram.
+- [ ] Executar os ensaios de reutilização e conflito do M5.10.
 
-**HARD BLOCKER:** o Windows retornou erro de reparse point desconectado e recusou `mountvol`/`fsutil` inclusive elevados. Reinicialização do sistema requer autorização explícita de Rafael.
+**Estado:** bloqueio do Docker Desktop superado por mudança arquitetural. O único componente pendente do runtime é o MinerU pesado; dados e serviços leves estão recuperados.

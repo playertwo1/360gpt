@@ -7,7 +7,6 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
-Clear-Host
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host '   DIRETOR 360 - INICIADOR EXECUTIVO DE 1-CLIQUE (PILOTO HIBRIDO)       ' -ForegroundColor Yellow
@@ -15,19 +14,39 @@ Write-Host '   Autoridade: Rafael (fael@live.de) | Release v2.4.1               
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''
 
-# 1. Conferir Docker Desktop
-Write-Host '[1/6] Verificando Docker Desktop...' -ForegroundColor Yellow
-try {
-    $dockerInfo = docker info 2>$null
-    Write-Host '  [OK] Docker Engine ativo e pronto.' -ForegroundColor Green
-} catch {
-    Write-Host '  [!] Certifique-se de que o Docker Desktop esta aberto.' -ForegroundColor Yellow
+# Docker Engine nativo no Ubuntu/WSL2. O Docker Desktop nao e necessario.
+function Invoke-WslDocker {
+    param([Parameter(Mandatory = $true)][string[]]$Arguments)
+    & wsl.exe -d Ubuntu -u root --cd $PSScriptRoot -- docker @Arguments
 }
+
+# 1. Iniciar Ubuntu, keepalive e Docker Engine
+Write-Host '[1/6] Iniciando Docker Engine leve no Ubuntu/WSL2...' -ForegroundColor Yellow
+$localState = Join-Path $PSScriptRoot '.local'
+$keepAlivePid = Join-Path $localState 'wsl-engine-keepalive.pid'
+$keepAlive = $null
+if (Test-Path -LiteralPath $keepAlivePid) {
+    $savedPid = Get-Content -LiteralPath $keepAlivePid -ErrorAction SilentlyContinue
+    $keepAlive = Get-Process -Id $savedPid -ErrorAction SilentlyContinue
+}
+if (-not $keepAlive) {
+    $keepAlive = Start-Process -FilePath 'wsl.exe' `
+        -ArgumentList @('-d', 'Ubuntu', '-u', 'root', '--', 'sleep', 'infinity') `
+        -WindowStyle Hidden -PassThru
+    New-Item -ItemType Directory -Path $localState -Force | Out-Null
+    Set-Content -LiteralPath $keepAlivePid -Value $keepAlive.Id -Encoding ascii
+}
+& wsl.exe -d Ubuntu -u root -- systemctl start docker
+$dockerVersion = Invoke-WslDocker @('version', '--format', '{{.Server.Version}}') 2>$null
+if (-not $dockerVersion) {
+    throw 'Docker Engine do Ubuntu nao respondeu.'
+}
+Write-Host "  [OK] Docker Engine $dockerVersion ativo no Ubuntu; Docker Desktop dispensado." -ForegroundColor Green
 
 # 2. Iniciar PostgreSQL e n8n
 Write-Host ''
 Write-Host '[2/6] Inicializando banco PostgreSQL e orquestrador n8n...' -ForegroundColor Yellow
-docker compose -f compose.n8n.yaml --env-file .env.n8n up -d postgres n8n 2>$null | Out-Null
+Invoke-WslDocker @('compose', '-f', 'compose.n8n.yaml', '--env-file', '.env.n8n', 'up', '-d', 'postgres', 'n8n') 2>$null | Out-Null
 Write-Host '  [OK] Containers acionados.' -ForegroundColor Green
 
 
@@ -39,11 +58,11 @@ $dbReady = $false
 $n8nReady = $false
 
 for ($i = 1; $i -le $maxRetries; $i++) {
-    $pgStatus = docker ps --filter "name=postgres" --format "{{.Status}}"
+    $pgStatus = Invoke-WslDocker @('ps', '--filter', 'name=postgres', '--format', '{{.Status}}')
     if ($pgStatus -match "healthy" -or $pgStatus -match "Up") {
         $dbReady = $true
     }
-    $n8nStatus = docker ps --filter "name=n8n" --format "{{.Status}}"
+    $n8nStatus = Invoke-WslDocker @('ps', '--filter', 'name=n8n', '--format', '{{.Status}}')
     if ($n8nStatus -match "Up") {
         $n8nReady = $true
     }
@@ -52,7 +71,7 @@ for ($i = 1; $i -le $maxRetries; $i++) {
 }
 
 if ($dbReady) {
-    Write-Host '  [OK] PostgreSQL 16 (Porta 5432): SAUDAVEL' -ForegroundColor Green
+    Write-Host '  [OK] PostgreSQL 17.6 (Porta 5432): SAUDAVEL' -ForegroundColor Green
 } else {
     Write-Host '  [!] PostgreSQL ainda iniciando...' -ForegroundColor Yellow
 }
@@ -77,7 +96,7 @@ try {
         Write-Host "  [AVISO] Frontend Local: Inicie com 'npm run dev' se desejar rodar localmente." -ForegroundColor Yellow
     }
 } catch {
-    Write-Host "  [AVISO] Frontend Local rodando ou pronto para acesso." -ForegroundColor Yellow
+    Write-Host "  [AVISO] Frontend Local nao detectado; use 'npm run dev' quando necessario." -ForegroundColor Yellow
 }
 Write-Host "  [OK] Site Hospedado na Nuvem: $hostedSiteUrl" -ForegroundColor Green
 Write-Host '  [OK] Ponte Segura WF-09: PRONTA (Aguardando eventos)' -ForegroundColor Green
@@ -96,20 +115,19 @@ if ($lastBackup) {
     Write-Host '  [!] Nenhum arquivo de backup local detectado.' -ForegroundColor Yellow
 }
 
-# Verificar se ha pendencias sinteticas
-Write-Host '  [OK] Fila de Revisao Humana: 1 pendencia pronta para despacho de Rafael.' -ForegroundColor Green
+Write-Host '  [INFO] Consulte a fila real pelo Telegram com /pendencias.' -ForegroundColor Cyan
 
 # 6. Painel Resumo e Abertura do Navegador
 Write-Host ''
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host '   PAINEL DE ESTADO DO SISTEMA (DIRETOR 360 PILOTO HIBRIDO)             ' -ForegroundColor Yellow
 Write-Host '========================================================================' -ForegroundColor Cyan
-Write-Host '   * Docker Engine:      ATIVO [OK]' -ForegroundColor Green
+Write-Host '   * Docker Engine WSL:  ATIVO [OK]' -ForegroundColor Green
 Write-Host '   * Banco PostgreSQL:   ATIVO (Porta 5432) [OK]' -ForegroundColor Green
 Write-Host '   * Orquestrador n8n:   ATIVO (Porta 5678) [OK]' -ForegroundColor Green
 Write-Host '   * Site Hospedado:     CONECTADO [OK]' -ForegroundColor Green
 Write-Host '   * Ponte WF-09:        AUTENTICADA & SEGURA [OK]' -ForegroundColor Green
-Write-Host '   * Telegram Ingest:    ATIVO VIA WEBHOOK HOSPEDADO [OK]' -ForegroundColor Green
+Write-Host '   * Telegram Ingest:    WF-11 INATIVO ATE VALIDAR MINERU' -ForegroundColor Yellow
 
 Write-Host '========================================================================' -ForegroundColor Cyan
 Write-Host ''

@@ -60,10 +60,15 @@
 ## [Unreleased]
 
 ### Infrastructure
+- Docker Desktop substituído por Docker Engine 29.1.3 no Ubuntu 26.04/WSL2, com Compose 2.40.3 e NVIDIA Container Toolkit 1.20.0.
+- Distribuição Ubuntu movida para `G:\Docker\Ubuntu`; `.wslconfig` corrigido para devolver memória ociosa.
+- Scripts de um clique atualizados para manter WSL ativo somente enquanto o projeto roda e liberar RAM ao parar.
 - Docker Desktop migrado para `G:\Docker`, com disco virtual em `G:\Docker\wsl\disk\docker_data.vhdx` e redirecionamento legado administrado pelo próprio Docker.
 - Confirmados os volumes persistentes `visao-360_n8n_data` e `visao-360_postgres_data`, além dos bind mounts versionados de workflows e scripts de inicialização.
 
 ### Operations
+- PostgreSQL restaurado do dump com 129 tabelas n8n e 8 tabelas visao360; `.n8n`, 13 workflows e 2 credenciais confirmados.
+- GPU RTX 4060 Ti validada em contêiner; `document-worker` reconstruído e smoke test aprovado.
 - Registrado checkpoint recuperável: PostgreSQL saudável, build único de `document-worker`/MinerU em andamento e n8n pendente de estabilização após contenção de I/O.
 - Formalizado que scripts de inicialização do PostgreSQL não substituem backup lógico e que o VHDX não deve ser copiado enquanto Docker/WSL estiver gravando.
 - Runtime local reconstruído no volume novo: 13 workflows canônicos e 2 credenciais locais importados; arquivo temporário de credenciais removido.

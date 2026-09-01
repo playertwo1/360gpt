@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 1 de setembro de 2026, 11:46 (America/Sao_Paulo)
+**Data do status:** 1 de setembro de 2026, 13:12 (America/Sao_Paulo)
 **Versão Atual da Release:** `v3.7.0-mvp-conhecimento-supervisionado`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
-**Saúde do Projeto:** 🔴 **DOCKER BLOQUEADO POR REPARSE POINT DO VHDX; REINICIALIZAÇÃO DO WINDOWS NECESSÁRIA**
+**Saúde do Projeto:** 🟡 **RUNTIME LEVE RECUPERADO NO UBUNTU/WSL2; MINERU PENDENTE NO NOVO ENGINE**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -22,14 +22,14 @@
 **Worker e agenda:** `document-worker` saudável; WF-12/WF-13 publicados; WF-11 permanece deliberadamente inativo até o MinerU terminar o build e passar no healthcheck.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** reiniciar o Windows, validar a ligação do caminho local do Docker ao VHDX preservado em `G:`, iniciar Docker Desktop e somente depois retomar os healthchecks e o WF-11.
+**Próximo passo exato:** reconstruir/importar MinerU 3.4.5 no Docker Engine do Ubuntu, validar GPU/healthcheck sob demanda e então publicar WF-11 para o teste Telegram ponta a ponta.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
 
-**Persistência Docker confirmada:** `visao-360_n8n_data` e `visao-360_postgres_data` ficam no armazenamento gerenciado pelo Docker em `G:\Docker`; `./n8n/workflows` e `./infra/postgres/init` permanecem bind mounts do repositório. Não apagar volumes nem copiar o VHDX durante gravação.
+**Persistência Docker confirmada:** Docker Desktop foi substituído pelo Engine nativo no Ubuntu/WSL2. A distribuição e seus volumes ficam em `G:\Docker\Ubuntu`; `./n8n/workflows` e `./infra/postgres/init` permanecem bind mounts do repositório.
 
-**Reconstrução após VHDX novo:** 13 workflows e 2 credenciais locais restaurados; o histórico operacional anterior do n8n não está presente no banco novo. n8n, PostgreSQL e `document-worker` passaram nos healthchecks.
+**Reconstrução WSL:** dump completo restaurado com 129 tabelas n8n e 8 tabelas visao360; 13 workflows e 2 credenciais confirmados. n8n, PostgreSQL e `document-worker` passaram nos healthchecks; GPU validada.
 
 ---
 
