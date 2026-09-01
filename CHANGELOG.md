@@ -68,6 +68,8 @@
 - Formalizado que scripts de inicialização do PostgreSQL não substituem backup lógico e que o VHDX não deve ser copiado enquanto Docker/WSL estiver gravando.
 - Runtime local reconstruído no volume novo: 13 workflows canônicos e 2 credenciais locais importados; arquivo temporário de credenciais removido.
 - n8n, PostgreSQL e `document-worker` validados como saudáveis; WF-12/WF-13 publicados e WF-11 mantido inativo até a conclusão do MinerU.
+- Registrado bloqueio pós-otimização WSL: Docker Desktop não consegue abrir o VHDX por reparse point desconectado em `AppData\Local\Docker\wsl`; VHDX e backups permanecem preservados.
+- Sockets temporários corrompidos foram isolados em diretórios `.stale`, sem remoção de volumes, imagens ou bancos; correção final requer reinicialização do Windows.
 
 ### Fixed
 - Importador local de credenciais compatibilizado com Windows PowerShell 5.1 e PowerShell 7 ao serializar explicitamente o array JSON sem depender de `-AsArray`.

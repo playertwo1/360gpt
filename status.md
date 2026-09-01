@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 1 de setembro de 2026, 07:37 (America/Sao_Paulo)
+**Data do status:** 1 de setembro de 2026, 11:46 (America/Sao_Paulo)
 **Versão Atual da Release:** `v3.7.0-mvp-conhecimento-supervisionado`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
-**Saúde do Projeto:** 🟡 **N8N, POSTGRESQL E WORKER SAUDÁVEIS; BUILD DO MINERU PENDENTE**
+**Saúde do Projeto:** 🔴 **DOCKER BLOQUEADO POR REPARSE POINT DO VHDX; REINICIALIZAÇÃO DO WINDOWS NECESSÁRIA**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -22,7 +22,7 @@
 **Worker e agenda:** `document-worker` saudável; WF-12/WF-13 publicados; WF-11 permanece deliberadamente inativo até o MinerU terminar o build e passar no healthcheck.
 **Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** concluir e validar MinerU, testar sua integração com o worker, publicar WF-11 e executar um teste Telegram ponta a ponta; depois retomar o ensaio M5.10 de reutilização auditada.
+**Próximo passo exato:** reiniciar o Windows, validar a ligação do caminho local do Docker ao VHDX preservado em `G:`, iniciar Docker Desktop e somente depois retomar os healthchecks e o WF-11.
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
 **Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.

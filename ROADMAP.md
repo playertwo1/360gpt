@@ -823,3 +823,17 @@ Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões perma
 **Checkpoint de pausa — 01/09/2026 07:37:** n8n, PostgreSQL e `document-worker` saudáveis; 13 workflows e 2 credenciais presentes; WF-12/WF-13 publicados; WF-11 inativo; build do MinerU ainda em segundo plano.
 
 **Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram e se a imagem `diretor360/mineru:3.4.5` existe; subir/validar MinerU, confirmar o acesso do worker ao parser e somente então publicar WF-11 e executar o teste Telegram ponta a ponta.
+
+#### Bloqueio de reinicialização do Windows — 01/09/2026 11:46
+
+- [x] Ler e auditar `STATUS_E_MIGRACAO_DOCKER_DIRETOR_360.md` da Área de Trabalho.
+- [x] Confirmar `.wslconfig`: 6 GB RAM, 4 CPUs, 2 GB swap e `autoMemoryReclaim=gradual`.
+- [x] Confirmar backups `backup_visao360_postgres.sql` e `backup_n8n_data/`; o dump SQL é confidencial e inclui hashes de credenciais.
+- [x] Preservar o VHDX em `G:\Docker\wsl\disk\docker_data.vhdx` (54.572.089.344 bytes no diagnóstico).
+- [x] Corrigir sockets temporários presos arquivando os diretórios `run` e `docker-secrets-engine`, sem tocar no VHDX.
+- [ ] Reiniciar o Windows para liberar o reparse point `C:\Users\fael\AppData\Local\Docker\wsl`, atualmente desconectado do volume de destino.
+- [ ] Após reiniciar, abrir Docker Desktop e confirmar `docker version`, `wsl -l -v` e acesso ao VHDX em `G:`.
+- [ ] Se o ponto continuar quebrado após reiniciar, remover apenas o reparse point com elevação e recriar a junção para `G:\Docker\wsl`; não restaurar nem resetar dados antes de nova inspeção.
+- [ ] Continuar M5.11 com healthchecks, GPU, bancos, workflows e pipeline OCR.
+
+**HARD BLOCKER:** o Windows retornou erro de reparse point desconectado e recusou `mountvol`/`fsutil` inclusive elevados. Reinicialização do sistema requer autorização explícita de Rafael.
