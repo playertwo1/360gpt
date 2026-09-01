@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { boundedString, readBoundedJson, requestErrorResponse, requireBridge } from '../../shared';
 import { sendTelegramText } from '../../../../../lib/telegram-messages';
+import { repairMojibake } from '../../../../../lib/clarification-ai';
 
 export const runtime = 'edge';
 
@@ -47,8 +48,8 @@ export async function POST(request: Request) {
       '',
       'O arquivo não será concluído enquanto estas dúvidas materiais não forem esclarecidas:',
       ...questions.map((item, index) => {
-        const label = item.indicator ? `Indicador: ${item.indicator}` : item.field !== 'unknown' ? `Campo: ${item.field}` : 'Indicador não identificado no arquivo';
-        return `${index + 1}. ${label}\n   Pergunta: ${item.question}${item.evidence ? `\n   Evidência: ${item.evidence}` : ''}`;
+        const label = item.indicator ? `Indicador: ${repairMojibake(item.indicator)}` : item.field !== 'unknown' ? `Campo: ${repairMojibake(item.field)}` : 'Indicador não identificado no arquivo';
+        return `${index + 1}. ${label}\n   Pergunta: ${repairMojibake(item.question)}${item.evidence ? `\n   Evidência: ${repairMojibake(item.evidence)}` : ''}`;
       }),
       '',
       'Responda diretamente a esta mensagem em linguagem natural. Se houver mais de um arquivo pendente, use sempre o botão Responder.',

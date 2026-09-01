@@ -17,8 +17,8 @@ Host baseline:
 Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
-Last validation: 2026-09-01 — npm lint PASS; npm build PASS; versão Sites 42 salva e deploy público iniciado; confirmação final bloqueada porque a conta Sites conectada deixou de enxergar o projeto de `fael@live.de`
-Last commit: cab1740 (`fix: stop telegram clarification question loops`)
+Last validation: 2026-09-01 — npm lint PASS; npm build PASS; correção local de codificação, baixa confiança, mensagem vazia e feedback conversacional validada; publicação ainda exige acesso Sites da conta proprietária
+Last commit: pending checkpoint desta correção
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
@@ -35,7 +35,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 20:31
+Last update: 2026-09-01 20:55
 
 Resume instruction:
 1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.

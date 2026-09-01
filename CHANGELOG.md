@@ -9,6 +9,7 @@
 - `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
 
 ### Changed
+- Conversa Telegram agora repara mojibake comum em português, mantém perguntas com respostas de baixa confiança, rejeita reclamações/perguntas como valores e registra feedback conversacional auditável para melhoria supervisionada.
 - Pedidos de contexto no Telegram (`qual indicador?`, `não sei`, perguntas com `?`) não são mais aceitos como resposta de negócio; o bot reapresenta indicador, campo e evidência, e campos numéricos exigem valor numérico.
 - Clarificações Telegram persistem apenas perguntas ainda pendentes e exibem indicador/campo no texto de follow-up, evitando loops quando Rafael pede identificação das lacunas.
 - Clarificações Telegram agora aceitam respostas parciais numeradas e valores diretos como “Total de pontos 51,04”, preservando somente as perguntas ainda pendentes e evitando loops de confirmação.

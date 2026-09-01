@@ -76,13 +76,23 @@ function parseOwnerAnswerLocally(questions: ClarificationQuestion[], text: strin
 
 function isContextRequest(text: string) {
   const normalized = String(text ?? '').trim().toLowerCase();
-  return normalized.includes('?') || /\b(qual|quais|quem|onde|como|não sei|nao sei|não entendi|nao entendi)\b/.test(normalized);
+  return normalized.includes('?') || /\b(qual|quais|quem|onde|como|não sei|nao sei|não entendi|nao entendi|cortad[oa]|errad[oa]|de novo|não respondeu|nao respondeu)\b/.test(normalized);
 }
 
 function formatQuestionWithContext(question: ClarificationQuestion) {
-  const indicator = question.indicator?.trim();
-  const field = question.field?.trim();
+  const indicator = repairMojibake(question.indicator?.trim() ?? '');
+  const field = repairMojibake(question.field?.trim() ?? '');
   const label = indicator ? `Indicador: ${indicator}` : field && field !== 'unknown' ? `Campo: ${field}` : 'Indicador não identificado no arquivo';
-  const evidence = question.evidence ? ` | Evidência: ${question.evidence}` : '';
-  return `${label} — ${question.question}${evidence}`;
+  const evidence = question.evidence ? ` | Evidência: ${repairMojibake(question.evidence)}` : '';
+  return `${label} — ${repairMojibake(question.question)}${evidence}`;
+}
+
+export function repairMojibake(value: string) {
+  const replacements: Record<string, string> = {
+    '├á': 'à', '├í': 'á', '├ó': 'â', '├ú': 'ã', '├º': 'ç', '├®': 'é',
+    '├¬': 'ê', '├¡': 'í', '├│': 'ó', '├┤': 'ô', '├Á': 'õ', '├║': 'ú',
+    'Ã¡': 'á', 'Ã ': 'à', 'Ã¢': 'â', 'Ã£': 'ã', 'Ã§': 'ç', 'Ã©': 'é',
+    'Ãª': 'ê', 'Ã­': 'í', 'Ã³': 'ó', 'Ã´': 'ô', 'Ãµ': 'õ', 'Ãº': 'ú',
+  };
+  return Object.entries(replacements).reduce((text, [broken, corrected]) => text.split(broken).join(corrected), String(value ?? ''));
 }
