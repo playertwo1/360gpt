@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Documentation
+- Princípio central do `AGENTS.md` ampliado para formalizar aprendizado supervisionado a partir das trocas e correções de Rafael, com preservação do histórico de conversas, decisões e aprendizados.
 - `ROADMAP.md` promovido a única fonte de planejamento e checklist, reconciliando arquitetura histórica, Shadow/canary, MVP n8n N0–N9, Docling, conversa supervisionada, Telegram e ativação gradual dos quatro Gerentes.
 - Removidos nove roadmaps, planos e checklists concorrentes após absorção do conteúdo ainda válido.
 - `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
