@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Documentation
+- `ROADMAP.md` promovido a única fonte de planejamento e checklist, reconciliando arquitetura histórica, Shadow/canary, MVP n8n N0–N9, Docling, conversa supervisionada, Telegram e ativação gradual dos quatro Gerentes.
+- Removidos nove roadmaps, planos e checklists concorrentes após absorção do conteúdo ainda válido.
+- `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
+
 ### Changed
 - Docling Serve CPU consolidado como único OCR de PDF/JPG/PNG; PyMuPDF permanece apenas para texto digital nativo e XLSX/CSV continuam nativos.
 - Falha do Docling em imagem ou PDF escaneado agora gera retry/revisão, sem fallback OCR silencioso.

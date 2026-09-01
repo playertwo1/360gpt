@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 1 de setembro de 2026, 14:02 (America/Sao_Paulo)
-**Versão Atual da Release:** `v3.7.0-mvp-conhecimento-supervisionado`
+**Versão Atual da Release:** `v3.8.0-docling-only`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** canal Telegram real ativo; análise interna mantida em `OFFLINE_EVAL`  
 **Saúde do Projeto:** 🟡 **DOCLING IMPLEMENTADO; WF-11 PAUSADO; HOMOLOGAÇÃO POBJ PENDENTE**
@@ -10,6 +10,8 @@
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`); `360.git` preservado como remoto legado.  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
+
+> Este arquivo é um relatório humano de status, não uma fila de tarefas. Toda sequência, checklist e próximo passo oficial residem exclusivamente em `ROADMAP.md`.
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
@@ -27,7 +29,7 @@
 **Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
 
 **Checkpoint local:** commit `1ba30c0` (`feat: add Docling CPU OCR candidate`).
-**Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
+**Roadmap canônico:** `ROADMAP.md`; planejamento e checklist foram unificados, e o n8n controla todo o ciclo operacional.
 **Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
 
@@ -169,7 +171,7 @@ Melhorias de governança permanecem no backlog:
 
 ### Atualização 28/08/2026 — Documentação dos Gerentes Gerais
 - Cabeçalho do GG Conta padronizado com versão aprovada e `runtime: INACTIVE`.
-- Criado `docs/CHECKLIST_ATIVACAO_GERENTES_GERAIS.md` com pré-requisitos, limites e promoção gradual de Conta, Performance, Financeiro e Relacionamento.
+- O checklist de ativação dos Gerentes Gerais foi absorvido no `ROADMAP.md`, preservando pré-requisitos, limites e promoção gradual.
 - Nenhum gerente foi promovido para `ACTIVE`; rollback disponível no backup `backup/pre-gg-documentation-20260828-004612`.
 
 ### Atualização 28/08/2026 — Ponte hospedada autenticada

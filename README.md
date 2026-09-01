@@ -2,7 +2,7 @@
 
 Assistente executivo para gestão de carteira empresarial. O Telegram recebe mensagens e documentos; um agente Diretor entende a solicitação, encaminha a especialistas e consolida riscos, oportunidades, tarefas e evidências em um cockpit privado.
 
-O acompanhamento atual do piloto local + site hospedado está em [ROADMAP_HIBRIDO.md](ROADMAP_HIBRIDO.md). O cronograma histórico até o Telegram permanece em [docs/PLANO-ATE-TELEGRAM.md](docs/PLANO-ATE-TELEGRAM.md).
+Todo o planejamento, checklist, histórico reconciliado e caminho até o Telegram está no [ROADMAP.md](ROADMAP.md), única fonte oficial de próximas tarefas.
 
 ## Fluxo do produto
 

@@ -1,711 +1,607 @@
-# Roadmap Oficial — Diretor 360
+# ROADMAP UNIFICADO — DIRETOR 360
 
-## Status Atual da Infraestrutura e Execução (01/09/2026) — MARCO 3.5.0 CONCLUÍDO
+**Versão do planejamento:** 4.0
 
-1. **Memória e Host:** WSL limitado a 6 GB no Ryzen 5 5600X, liberando permanentemente >10 GB de RAM para o Windows.
-2. **Motor de Containers:** Docker Desktop removido; Docker Engine nativo (docker.io + docker-compose-v2) rodando no WSL 2 (Ubuntu 24.04).
-3. **Gerenciador Visual:** Lazydocker configurado e operacional via atalho `lazydocker.bat` na Área de Trabalho.
-4. **Leitura documental:** MinerU e Tesseract removidos integralmente. Docling CPU/TableFormer é o único OCR; PyMuPDF lê PDF digital e XLSX/CSV seguem nativos.
-5. **Persistência e Segurança:** Backups completos mantidos em `C:\Users\fael\Desktop` (`backup_visao360_postgres.sql` e `backup_n8n_data/`). Containers `visao-360-postgres-1` e `visao-360-n8n-1` ativos e saudáveis.
-6. **Baseline do Host:** AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti e Windows 11 23H2; WSL limitado a 6 GB; G: 763 GB livres e C: 233 GB livres.
+**Atualizado em:** 1º de setembro de 2026
 
----
+**Autoridade e proprietário:** Rafael
 
-## Reconstrução do MVP real — EM ANDAMENTO
+**Repositório oficial:** `https://github.com/playertwo1/360gpt.git` — branch `main`
 
-O roteiro canônico para o processamento assíncrono e entrega ponta a ponta está em:
+**Estado atual:** `IN_PROGRESS`
 
-[`docs/ROADMAP_N8N_MVP_REAL.md`](docs/ROADMAP_N8N_MVP_REAL.md)
+**Fase atual:** MVP mínimo `Telegram → n8n → Docling → Diretor → GG Performance → Estado 360 → Telegram`
 
-Ordem de entrega do primeiro corte ponta a ponta:
+**Marco atual:** `N2 — homologação objetiva do leitor documental`
 
-`N0 intake → N1 controlador n8n → N2 Docling/worker → N3 Diretor → N4 Performance → N5 Estado 360 → N6 revisão → N7 Telegram`.
+**Próxima tarefa:** corrigir e validar células materialmente unidas nos PDFs POBJ reais, sem inferência silenciosa
 
-Próximo passo oficial: concluir o gate N2 corrigindo a associação das células POBJ no Docling. WF-11 permanece despublicado até o benchmark real atingir 100% dos campos críticos e pelo menos 98% das demais células.
+> Este é o único arquivo de planejamento e checklist do projeto. Em caso de divergência com documentação histórica, prevalecem, nesta ordem: estado real do código e dos serviços, `AGENTS.md`, `PROJECT_STATE.md` e este `ROADMAP.md`.
 
 ---
 
-# 🔍 DOSSIÊ DE AUDITORIA INDEPENDENTE PELO CHATGPT CODEX
+## 1. Como qualquer IA deve usar este documento
 
-## MVP operacional orientado pelo uso — EM ANDAMENTO
+### 1.1 Ordem obrigatória de retomada
 
-Objetivo aprovado por Rafael: colocar o Diretor 360 em uso real pelo caminho mais curto e refinar regras, Gerentes e interface a partir das correções feitas durante o trabalho.
+1. Ler `AGENTS.md` integralmente.
+2. Ler `PROJECT_STATE.md`.
+3. Ler este `ROADMAP.md`.
+4. Ler as entradas recentes de `CHANGELOG.md`.
+5. Verificar `git status`, último commit, serviços e testes aplicáveis.
+6. Comparar o estado declarado com o estado real.
+7. Retomar a primeira tarefa elegível do marco atual.
+8. Após cada entrega: validar → atualizar roadmap → atualizar estado → atualizar changelog → checkpoint → continuar.
 
-- [x] Preservar upload autenticado, arquivo original, hash, auditoria e armazenamento existentes.
-- [x] Criar chamada única do Diretor IA para interpretar PDF, XLSX e CSV e devolver saída estruturada.
-- [x] Fazer o Diretor selecionar Conta, Performance, Financeiro e/ou Relacionamento conforme o conteúdo.
-- [x] Preencher automaticamente indicadores, metas, realizados e pontuação no painel como rascunho da IA.
-- [x] Reutilizar as últimas correções aprovadas por Rafael como exemplos nas próximas leituras.
-- [x] Manter edição e confirmação humana antes de transformar o rascunho em dado aprovado.
-- [x] Configurar `GEMINI_API_KEY` como segredo do site hospedado.
-- [ ] Executar o primeiro teste ponta a ponta com a planilha POBJ real já autorizada.
-- [x] Publicar a versão técnica do MVP com fallback automático Gemini 3.7 → 3.5 Flash (versão hospedada 32); homologação funcional depende do reenvio controlado da planilha.
-- [ ] Ligar o chat do Diretor às correções e consultas do Estado 360.
-- [ ] Estender o mesmo fluxo genérico aos demais documentos e Gerentes conforme surgirem casos reais.
+### 1.2 Legenda única
 
-**Decisão de simplificação:** no MVP uma única chamada inteligente executa interpretação, roteamento e pareceres dos Gerentes necessários. A separação em múltiplas chamadas/agentes será feita somente quando o uso demonstrar benefício concreto.
+- `[x]` — concluído e sustentado por evidência ou teste aplicável.
+- `[~]` — parcialmente implementado, historicamente testado ou aguardando revalidação no caminho atual.
+- `[ ]` — não concluído no caminho operacional atual.
+- `BLOCKED` — existe impedimento real documentado.
+- `PAUSED_BY_GATE` — implementação existe, mas não pode operar até passar pelo gate anterior.
+- `HISTORICAL` — marco preservado como histórico; não representa runtime atual.
 
-> **Data da Sessão:** 28 de agosto de 2026  
-> **Auditor Oficial Designado por Rafael:** ChatGPT Codex (OpenAI)  
-> **Objeto da Auditoria:** Revisão forense, ponto a ponto, de todas as alterações feitas pelo Antigravity na sessão de 28/08/2026 (Commits `c37cd10` até `HEAD`).
+### 1.3 Três estados que nunca podem ser confundidos
 
----
+Cada capacidade possui três dimensões independentes:
 
-## 🎯 Instruções Estritas para o ChatGPT Codex:
-O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atue como **auditor independente**. O Codex deve inspecionar cada arquivo listado, validar se o código é tecnicamente sólido, se há alucinações e se os testes passam, antes de dar qualquer passo adicional:
+1. `design_status`: desenho documentado e aprovado.
+2. `implementation_status`: código, workflow ou contrato construído e testado isoladamente.
+3. `runtime_status`: condição efetiva no fluxo atual (`INACTIVE`, `SHADOW`, `ACTIVE`).
 
-### 1. Itens Implementados no Código Local (Sujeitos a Auditoria do Codex):
-1. **Paralisação do Gerente de Conhecimento:**
-   - Conferir se `AGENTS.md`, `domains/GERENTES_GERAIS_BASE.md` e `policies/capability-registry.yaml` refletem a paralisação sem pendências ativas.
-2. **Fase A4 (Leitura Assistida Supervisionada):**
-   - Inspecionar `core/director_360_runtime.py` e rodar `scripts/test-phase-a4-read-only.ps1`.
-3. **Fase A5 (Efeitos Externos Autorizados):**
-   - Inspecionar `core/external_effects_executor.py`, `policies/external-effects-catalog.yaml` e `contracts/external-action-request.schema.json`. Rodar `scripts/test-phase-a5-external-effects.ps1`.
-4. **Marco C1 (Carteira PJ & Plano Diário):**
-   - Inspecionar `core/carteira_pj_engine.py`, `core/daily_action_plan_engine.py` e `test-data/carteira/carteira_pj_sample.json`. Rodar `scripts/test-phase-c1-daily-plan.ps1`.
-5. **Marco P2 (Motores Determinísticos dos 4 Domínios):**
-   - Inspecionar `core/performance_engine.py` (Curvas POBJ 70%-150%, Run-Rate, Nec Dia).
-   - Inspecionar `core/financeiro_engine.py` (GDAD Orçamento vs Realizado, Margem Líquida).
-   - Inspecionar `core/relacionamento_engine.py` (Aging 0-30d, 31-60d, 61-90d, >90d e Compromissos).
-   - Inspecionar `core/conta_engine.py` (Matriz de Restrições 1 a 7 e Ciclo D0-D120).
-   - Rodar `scripts/test-phase-p2-engines.ps1`.
-6. **Bateria Geral:**
-   - Executar `powershell -File scripts/run-all-hybrid-tests.ps1` (18 testes) e auditar os logs.
+Um teste aprovado não ativa runtime. Um workflow com `active: true` no JSON não é operacional se o controlador que o chama estiver inativo. Uma homologação sintética não comprova o fluxo real atual.
 
-### 2. Falhas e Não-Conformidades Apontadas por Rafael que o Codex Deve Corrigir:
-1. **Deploy no `chatgpt.site`:**
-   - O Antigravity alterou `app/page.tsx`, `app/api/ingest/telegram/route.ts` e criou `app/gate-p8/page.tsx`. Porém, o site `https://visao-360-diretor.fael360092.chatgpt.site/` NÃO foi atualizado remotamente (pois o deploy só é acionado pelo runtime do Codex). O Codex deve compilar e publicar o site oficial para que Rafael veja as telas online.
-2. **Gate P8:**
-   - O Gate P8 está **PENDENTE DE APROVAÇÃO HUMANA DE RAFAEL**. O Codex não deve tratá-lo como aprovado até que Rafael explicitamente assine o laudo.
+### 1.4 Definition of Done
+
+Uma tarefa somente muda para `[x]` quando, conforme o risco, possui:
+
+- código ou configuração versionados;
+- critérios de aceite satisfeitos;
+- testes com asserções reais;
+- contrato/schema validado nas fronteiras aplicáveis;
+- tratamento de erro sem `fail-open`;
+- telemetria ou evidência de execução;
+- segurança, idempotência e isolamento preservados;
+- rollback ou retorno seguro;
+- documentação, `PROJECT_STATE.md` e `CHANGELOG.md` atualizados;
+- nenhuma afirmação de produção baseada apenas em simulação.
 
 ---
 
-# ROADMAP DIRETOR 360 — EVOLUÇÃO ORIENTADA À CONFIANÇA
+## 2. Visão do produto e objetivo final
 
-**Base:** Consolidação e Governança do Diretor 360  
-**Versão:** 3.1.0-confianca  
-**Data:** 26 de agosto de 2026  
-**Objetivo:** Evoluir o Diretor 360 de um conjunto de funcionalidades para uma plataforma decisória confiável, testável, observável, auditável e segura.  
-**Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
-
-> **Princípio Central:**  
-> *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
-
-> **Premissa de Segurança Vigente:**  
-> Existe autorização institucional para dados reais, mas cada uso operacional depende de finalidade, escopo, minimização, auditoria e gate específico. Nenhuma fonte real está conectada; os novos agentes permanecem sem runtime e a homologação continua em `OFFLINE_EVAL`.
-
----
-
-## 🏆 Marco Histórico de Transição (28 de Agosto de 2026)
-- **Origem / Destino:** Transição de desenvolvimento concluída entre ChatGPT Codex (OpenAI) e Antigravity (Google).
-- **Homologação Concluída:** Fases A4 (`ACTIVE_READ_ONLY_SUPERVISED`) e A5 (`EFEITOS_EXTERNOS_AUTORIZADOS`) 100% testadas e aprovadas com 16/16 testes verdes.
-- **Backup de Marco:** `backup-MARCO-CODEX-PARA-ANTIGRAVITY-A4-A5-20260828.zip` registrado no Google Drive e repositório.
-- **Próximas Frentes Imediatas:** 
-  1. **Marco C1:** Ingestão da Base da Carteira PJ Real com triagem do GG Conta e GG Financeiro. (CONCLUÍDO)
-  2. **Marco C2:** Especialistas de Conta PJ (Cadastro, Restrições 1-7, Maturação D0-D120 e Elegibilidade de Produtos) 100% integrados (`scripts/test-phase-c2-carteira-specialists.ps1` PASS).
-  3. **Marco C3:** Radar Comercial & Entity Resolution (CNPJ, Grupos Econômicos, Matriz/Filiais, Sócios em Comum e Cache) 100% integrados (`scripts/test-phase-c3-entity-resolution.ps1` PASS).
-  4. **Evidence Graph Humanizado & Recibos de Ingestão:** Trilha Executiva em 5 Passos e Comprovante de Entrada/Processamento de Mensagens/Documentos 100% integrados (`scripts/test-phase-h-evidence-humanizer.ps1` PASS).
-  5. **Refinamento do Domínio Performance (Bloco 1):** 7 categorias POBJ, Curvas 70%-150%, Necessidade Diária, Provocação Executiva e Simulador de Negócios 100% integrados (`scripts/test-phase-perf-refinements.ps1` PASS).
-  6. **Pipeline Local Determinístico PDF -> NBA -> Planilha:** Leitura em 120ms de PDFs bancários com geração automática de CSV/Excel com NBAs e 0% timeout (`scripts/test-phase-pdf-pipeline.ps1` PASS).
-  2. **Plano Diário Integrado:** Cruzamento automático de Gaps do POBJ com empresas elegíveis da carteira.
-
----
-
-## Painel atual — Arquitetura dos Agentes
-
-**Atualizado em:** 27 de agosto de 2026  
-**Estado desta trilha:** Etapas A e B concluídas; Etapa C em andamento.  
-**Escopo atual:** Diretor, Gerentes Gerais, especialistas, contratos, roteamento, testes e governança. O site está fora desta trilha.
-
-| Etapa | Entrega | Estado | Critério para avançar |
-|---|---|---|---|
-| A | Reconciliar arquitetura e lifecycles | CONCLUÍDA | Manifesto, 4 gerentes, 21 especialistas, registro e roteamento coerentes |
-| B | Contratos, exemplos e testes por domínio | CONCLUÍDA | Gate homologado por Rafael em 27/08/2026 |
-| C | Motores determinísticos | EM ANDAMENTO | POBJ, GDAD, estados e datas calculados sem depender de LLM |
-| D | Orquestração Diretor–Gerentes | IMPLEMENTADA (AUDITORIA PENDENTE) | Handoffs de domínio, max 4 especialistas e detecção de conflitos (`scripts/test-phase-d-orchestration.ps1` PASS) |
-| E | Homologação sintética e shadow | CONCLUÍDA NO SINTÉTICO (AUDITORIA PENDENTE) | 20 casos sintéticos avaliados (L1=100%, L2=100%, L3=100%, L4=90%, Latência=0.39ms) |
-| F | Ativação controlada | BLOQUEADA | Autorização de dados resolvida, revisão humana e promoção explícita de lifecycle |
-| G | Evolução do site | ADIADA | Decisão futura de Rafael |
-
-### Baseline confirmado
-
-- Diretor Geral 360 v2.0: desenho aprovado, implementação apenas documental, runtime inativo.
-- Gerente Geral de Conta v4.38.0: seis especialistas aprovados, runtime inativo.
-- Gerente Geral de Performance v5.3: cinco especialistas aprovados, runtime inativo.
-- Gerente Geral Financeiro v2.0: cinco especialistas aprovados, runtime inativo.
-- Gerente Geral de Relacionamento v2.0: cinco especialistas aprovados, runtime inativo.
-- Conhecimento: capacidade transversal; o antigo quinto gerente permanece aposentado.
-- Runtime existente: somente oito fluxos legados com dados sintéticos.
-
-### Entregas concluídas na Etapa A
-
-- `registries/project-manifest.json` como fonte central da arquitetura aprovada.
-- `contracts/project-manifest.schema.json` para validar a estrutura.
-- `policies/capability-registry.yaml` com separação entre desenho e execução.
-- `policies/routing.yaml` com falha segura e bloqueio de agentes apenas aprovados.
-- Testes de manifesto e lifecycle.
-
-### Escopo da Etapa B
-
-- [x] Contratos de entrada e resposta para Performance.
-- [x] Contratos de entrada e resposta para Financeiro.
-- [x] Contratos de entrada e resposta para Relacionamento.
-- [x] Exemplos canônicos válidos para os seis contratos.
-- [x] Casos de borda: piso próximo, teto superado, fonte financeira parcial e compromisso vencido.
-- [x] Testes iniciais de comportamento e falha segura.
-- [x] Contrato do plano diário integrado Performance–Conta, sem empresa por ação na fase inicial.
-- [x] Gate de saída documentado.
-- [x] Gate de saída aprovado por Rafael.
-
-### Escopo inicial da Etapa C
-
-- [x] Motor POBJ v1: posição em piso, meta e teto.
-- [x] Separação entre oficial, pendente de reconhecimento e projeção.
-- [x] Pontuação zerada abaixo do piso e limitada no teto.
-- [x] Abstenção de pontuação intermediária sem curva oficial.
-- [x] Ranking inicial limitado a cinco indicadores.
-- [x] Regra geral oficial POBJ 2026 versionada com proveniência, piso de 70%, teto de 150% e multiplicadores.
-- [x] Exceções registradas separadamente, sem herdar silenciosamente a regra geral.
-- [ ] Curvas dedicadas das exceções implementadas somente onde houver evidência normativa completa.
-- [x] Motor inicial de reconciliação de `DT.BASE` por indicador e produção ainda não reconhecida.
-- [x] Criar política inicial de calibração por indicador/fonte, ainda proibida para ativação.
-- [x] Adicionar comparação preferencial com watermark esperado da fonte.
-- [ ] Observar ao menos um mês completo, validar OCR e homologar perfis de cadência com Rafael.
-- [x] Motor GDAD inicial para orçamento, realizado, variação e atribuição desconhecida; concentração permanece no adaptador financeiro.
-- [x] Motor inicial de compromissos, datas e vencimentos, mantendo vencido como aberto.
-- [~] Curvas oficiais de pontos versionadas a partir do manual vigente — Consórcio (Expert) registrado; Cartões, Seguros e demais aceleradores pendentes.
-- [ ] Motor determinístico do GDAD.
-- [ ] Motor de datas, compromissos e ausência de contato.
-
-### Regra de leitura do roadmap
-
-Uma entrega documental `APPROVED` não está implementada nem ativa. Os estados válidos são acompanhados separadamente:
-
-`design_status` → `implementation_status` → `runtime_status`
-
-Somente uma promoção explícita, testada e registrada pode mudar o runtime para `SHADOW` ou `ACTIVE`.
-
----
-
-## 1. Princípio de Evolução Orientada à Confiança
-
-A evolução da plataforma segue a hierarquia obrigatória:
-
-$$\text{Confiabilidade} \longrightarrow \text{Qualidade} \longrightarrow \text{Valor} \longrightarrow \text{Governança} \longrightarrow \text{Produção Controlada} \longrightarrow \text{Escala}$$
-
-### Regra de Sequenciamento
-$$\text{Implementar} \longrightarrow \text{Homologar com Dados Sintéticos} \longrightarrow \text{Medir Evals} \longrightarrow \text{Corrigir} \longrightarrow \text{Liberar Dados Reais Autorizados Gradualmente}$$
-
----
-
-# Fase 0 — Baseline, Governança de Entrega e Definition of Done
-
-## Objetivo
-Estabelecer critérios únicos e rigorosos para determinar quando um marco está realmente concluído e auditável.
-
-## Definition of Done (DoD)
-Todo marco, entrega ou funcionalidade deve possuir obrigatoriamente:
-1. **Código versionado** no Git com commit semântico e tag SemVer.
-2. **Testes automatizados aplicáveis** (com asserções reais sobre arquivos, schemas e execuções).
-3. **Telemetria** e métricas de execução registradas (latência, tokens, custo).
-4. **Evidência de homologação** verificável no Evidence Graph ou log de execução.
-5. **Tratamento de falhas** e caminhos explícitos de erro (sem fail-open).
-6. **Procedimento de rollback** transacional e documentado.
-7. **Documentação técnica e operacional** atualizada.
-8. **Changelog** versionado.
-9. **Versão identificável** nos contratos e schemas JSON.
-
-## Ciclo de Vida dos Marcos
-$$\text{PLANNED} \longrightarrow \text{IN\_PROGRESS} \longrightarrow \text{VALIDATING} \longrightarrow \text{HOMOLOGATED} \longrightarrow \text{RELEASED} \longrightarrow \text{MONITORED}$$
-
-*Regra de Ouro:* Um marco **nunca** é considerado concluído apenas porque funcionou uma vez manualmente.
-
----
-
-# Fase 1 — Reliability Foundation (Fundação de Confiabilidade)
-
-## Objetivo
-Garantir que toda entrada seja processada de forma confiável, idempotente e recuperável.
-Toda entrada deve:
-1. Ser processada exatamente uma vez do ponto de vista lógico; ou
-2. Terminar em um estado de erro conhecido, rastreável e recuperável.
-
-## 1.1 — Secure Channel Gateway
-- **Telegram Oficial:** Webhook protegido por header `x-telegram-bot-api-secret-token`.
-- **Allowlist Estrita:** Restrição ao `chat_id` autorizado de Rafael (`app/api/ingest/telegram/route.ts`).
-- **SMTP Dedicado:** Canal para resumos executivos e alertas preventivos.
-- **Postura Zero-Trust:** Secrets fora do Git, configurados exclusivamente via `.env`.
-- **Resiliência:** Rate limiting, timeout, retry com exponential backoff e sanitização de logs.
-- **Rastreabilidade:** Todo evento possui `request_id`, `correlation_id`, timestamp, origem e status.
-- *Regra Arquitetural:* Telegram e e-mail são **canais de trânsito**, não fontes de verdade. O estado interno e o Evidence Graph permanecem como fonte única da verdade.
-
-## 1.2 — Document Intake Gateway
-Fluxo obrigatório em pipeline:
-$$\text{Arquivo Original} \longrightarrow \text{Validação} \longrightarrow \text{Extração} \longrightarrow \text{Normalização} \longrightarrow \text{Validação Humana} \longrightarrow \text{Análise}$$
-
-*(Proibido: Injeção direta de `Arquivo Original → LLM` sem validação e normalização prévia).*
-
-### Metadados Contratuais Obrigatórios
-- `document_id`, `sha256`, `mime_type`, `size`, `received_at`, `parser_version`, `extraction_version`, `confidence`, `warnings[]`, `source`, `raw_preserved`, `normalized_payload`.
-
-### Requisitos Funcionais
-- Preservação do arquivo binário original imutável.
-- Identificação de PDF digital vs. digitalizado com OCR controlado.
-- Parser de planilhas XLSX/CSV com múltiplas abas, períodos e conciliação de faturamento.
-- Rejeição atômica de arquivos corrompidos ou vazios (`0 bytes` -> `invalid_file_size`).
-- Defesa ativa contra **Prompt Injection** em documentos (`UNTRUSTED_CONTENT` -> `MANUAL_REVIEW_REQUIRED`).
-
-## 1.3 — Durable Processing & DLQ (Fila Persistente)
-Toda entrada recebe uma `idempotency_key` única.
-
-### Máquina de Estados Finita
-$$\text{RECEIVED} \rightarrow \text{VALIDATED} \rightarrow \text{QUEUED} \rightarrow \text{PROCESSING} \rightarrow \text{COMPLETED}$$
-$$\text{PROCESSING} \rightarrow \text{FAILED\_RETRYABLE} \rightarrow \text{FAILED\_FINAL} \rightarrow \text{MANUAL\_REVIEW}$$
-
-### Dead Letter Queue (DLQ)
-Após 3 tentativas de retry com lease lock expirado, a entrada nunca é descartada silenciosamente. Ela é automaticamente encaminhada para `MANUAL_REVIEW` com:
-- Código do erro, contagem de tentativas, última execução, contexto técnico e ação recomendada de saneamento.
-
-## Gate de Saída da Fase 1
-- **Status:** ✅ **HOMOLOGADO (Fases H1 a H10 / Marcos 1 a 15)**
-- 5 jornadas sintéticas completas sem perda, sem duplicidade lógica e com persistência verificada após reinicialização de containers.
-
----
-
-# Fase 2 — Observability & Evals (Avaliação Contínua de Qualidade)
-
-## Objetivo
-Comprovar matematicamente que o Diretor 360 interpreta corretamente os dados antes de aumentar a quantidade de informações processadas.
-
-## Suíte Canônica de Evals (20 Casos Sintéticos)
-Criar e manter uma suíte versionada em `test-data/evals/` cobrindo:
-1. Conta (Identidade, Cadastro, Apontamentos, Restrições e Elegibilidade).
-2. Performance (Metas, Pontos, Produção, Esteiras e Prazos).
-3. Financeiro (DRE, Faturamento, Margem, Rentabilidade e Tarifas).
-4. Relacionamento (Histórico, Compromissos e Abordagem).
-5. Casos de borda: Conflitos de fontes, dados ausentes, certidões vencidas e ambiguidades.
-
-## Evals em Quatro Camadas
+O Diretor 360 é um sistema privado de Rafael para transformar arquivos, mensagens, metas, resultados e conversas em uma visão executiva rastreável. O objetivo final é:
 
 ```text
-┌──────────────────────────────────────────────────────────────────┐
-│ L4 — Decisão: Decision Agreement Rate (Aceita / Ajuste / Rejeita)│
-├──────────────────────────────────────────────────────────────────┤
-│ L3 — Raciocínio: 100% de afirmações ancoradas no Evidence Graph  │
-├──────────────────────────────────────────────────────────────────┤
-│ L2 — Extração: Precision, Recall, F1-Score e Cobertura de Dados  │
-├──────────────────────────────────────────────────────────────────┤
-│ L1 — Determinístico: Cálculos, deduplicação, estados e regras    │
-└──────────────────────────────────────────────────────────────────┘
+Telegram ou site
+  → entrada durável e arquivo original preservado
+  → n8n controla estado, fila, lease, retries e auditoria
+  → leitor local extrai texto, tabelas e evidências
+  → Diretor identifica intenção e domínios materiais
+  → Gerentes Gerais coordenam especialistas de seus domínios
+  → motores determinísticos calculam regras conhecidas
+  → Motor 360 reconcilia e publica Estado 360 imutável
+  → Rafael revisa, corrige, aprova e decide
+  → Dashboard e Telegram apresentam informação verificável
 ```
 
-### Metas por Camada
-- **L1 (Determinístico):** 100% de precisão em cálculos financeiros, deduplicação e transições de estado.
-- **L2 (Extração):** $F_1 > 0.95$ na extração de faturamento, sócios e débitos.
-- **L3 (Raciocínio):** 100% das afirmações materiais com nó rastreável no Evidence Graph.
-- **L4 (Decisão):** $\text{Decision Agreement Rate} \ge 90\%$ com revisores humanos.
+### 2.1 Princípio central
 
-*Regra de Bloqueio:* Qualquer regressão material na suíte de Evals impede o release em produção.
+> Fontes governam. Motores calculam. Especialistas investigam. Gerentes Gerais interpretam. O Diretor integra e desafia. Rafael decide.
 
----
+### 2.2 Propriedade, fontes e dados
 
-# Fase 3 — Radar Comercial e Entity Resolution
+- O projeto é privado, pessoal e pertencente a Rafael.
+- Rafael decide quais fontes podem ser utilizadas e quais dados podem ser guardados.
+- Regras institucionais limitam o uso de uma fonte quando forem aplicáveis a essa fonte; não transferem a propriedade do projeto.
+- Não armazenar segredos no Git.
+- Dados reais exigem finalidade, minimização, rastreabilidade, retenção e revisão compatíveis com a autorização dada por Rafael e com eventuais limites da fonte.
+- Política aprovada para POBJ: retenção detalhada por 24 meses, backups por até 90 dias e agregados não identificáveis por prazo indeterminado.
+- Efeitos externos continuam proibidos, exceto a resposta Telegram solicitada e ações individualmente autorizadas com Human-in-the-Loop.
 
-## Objetivo
-Transformar dados públicos em oportunidades comerciais qualificadas sem introduzir dados bancários sigilosos.
+### 2.3 Escopo congelado do MVP atual
 
-$$\text{Source Adapter} \longrightarrow \text{Raw Data} \longrightarrow \text{Normalização} \longrightarrow \text{Entity Resolution} \longrightarrow \text{Qualificação} \longrightarrow \text{NBA}$$
+Dentro do primeiro corte:
 
-## Conectores Públicos Autorizados
-- Consulta automatizada via APIs públicas/autorizadas (ReceitaWS, Serpro, Sintegra):
-  - CNPJ, Razão Social, Nome Fantasia, CNAE Primário/Secundários, Endereço, Município, Capital Social, Data de Abertura, Situação Cadastral e QSA (Quadro de Sócios e Administradores).
-- Implementação com cache local, TTL configurável, circuit breaker e rate-limiting.
+- Telegram como entrada e saída;
+- n8n como controlador exclusivo da jornada;
+- PDF, JPG, PNG, XLSX e CSV;
+- Docling CPU/TableFormer como único OCR de PDF/imagem;
+- PyMuPDF apenas para texto digital nativo;
+- Diretor limitado a classificar, rotear e integrar;
+- somente GG Performance e especialistas necessários;
+- POBJ, metas, atingimento, pontos, gaps, cenários e recomendações;
+- Estado 360 mínimo, evidências e revisão;
+- perguntas ao Rafael para dúvida material;
+- resposta rastreável no mesmo chat.
 
-## Entity Resolution & Deduplicação
-O grafo de entidades deve resolver e vincular:
-- Matriz $\leftrightarrow$ Filiais.
-- Sócios comuns em diferentes empresas (Grupo Econômico de Fato).
-- Cliente existente $\leftrightarrow$ Prospect $\leftrightarrow$ Lead inativo.
-- *Regra:* Uma empresa já analisada não pode retornar ciclicamente como "novo lead" sem fato novo material.
+Fora do MVP, até o gate N7:
 
----
-
-# Fase 4 — Decision Intelligence & Laudo Executivo
-
-## Objetivo
-Transformar informações consolidadas em decisões assistidas, explicáveis e auditáveis.
-
-## Segregação Ontológica Obrigatória
-O sistema separa explicitamente:
-$$\mathbf{FATO} \longrightarrow \mathbf{INFER\hat{E}NCIA} \longrightarrow \mathbf{RECOMENDA\c{C}\tilde{A}O} \longrightarrow \mathbf{DECIS\tilde{A}O}$$
-- Nenhuma inferência estatística pode ser apresentada como fato consumado.
-- Nenhuma recomendação do agente pode ser apresentada como decisão executada.
-
-## Decision Record Contratual (`contracts/decision-record.schema.json`)
-Toda recomendação material gera um registro imutável:
-- `decision_id`, `company_id`, `timestamp`, `facts[]`, `inferences[]`, `recommendation`, `evidence_ids[]`, `confidence`, `model_id`, `prompt_version`, `rule_version`, `human_decision`, `human_reason_code`.
-
-## Laudo Executivo 360 em PDF Diagramado
-- Geração com 1 clique de relatório PDF de 3 páginas para diretoria e comitês de crédito.
-- Ancoragem 100% rastreável ao Evidence Graph, com hash SHA-256 e carimbo temporal bitemporal.
+- GG Conta, Financeiro e Relacionamento no runtime real;
+- visão multidomínio completa;
+- contatos ou ações externas automáticas;
+- aprendizado autônomo sem aprovação;
+- VPS/alta disponibilidade;
+- expansão visual sem relação com o primeiro fluxo útil.
 
 ---
 
-# Fase 5 — LLMOps & FinOps
+## 3. Baseline técnico atual
 
-## Objetivo
-Otimizar simultaneamente qualidade, custo e latência, operando sob o **Princípio da Menor Autonomia e Capacidade Suficiente**.
+### 3.1 Hardware e sistema
 
-## Model Router Hierárquico (`policies/model-router.yaml`)
+- Host: AMD Ryzen 5 5600X, 6C/12T, 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
+- WSL2 Ubuntu 24.04 com limite de 6 GB via `.wslconfig`.
+- Docker Engine nativo no WSL2; Docker Desktop não é necessário.
+- Lazydocker 0.25.2 pelo atalho `lazydocker.bat` na Área de Trabalho.
+- Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
+
+### 3.2 Serviços e persistência
+
+- `visao-360-postgres-1`: serviço-base, persistente, saudável.
+- `visao-360-n8n-1`: serviço-base, persistente, saudável, editor em `http://localhost:5678`.
+- `visao-360-docling-1`: perfil `processing`, CPU, 2 threads, 1 worker, limite de 3 GB, rede interna.
+- `visao-360-document-worker-1`: perfil `processing`, rede interna, filesystem somente leitura e `/tmp` temporário.
+- Volumes: `visao-360_postgres_data`, `visao-360_n8n_data` e `visao-360_docling_models`.
+- Bind mounts versionados: `n8n/workflows/` e `infra/postgres/init/`.
+- Backups anteriores preservados na Área de Trabalho e em bundle Git pré-Docling.
+
+### 3.3 Leitura documental vigente
+
+- Docling Serve 1.30.0 fixado por digest.
+- TableFormer `accurate`, uma conversão concorrente, lote de uma página e timeout de cinco minutos.
+- Contrato `document-extraction` 1.1.0 com Markdown, JSON, tabelas, seções, páginas, proveniência e avisos.
+- XLSX/CSV lidos nativamente.
+- MinerU, Tesseract e Pillow removidos do runtime, imagem, Compose, scripts e contrato.
+- Falha em imagem ou PDF escaneado: retry seguro e posterior revisão; nunca inventar conteúdo.
+- Conteúdo do documento é sempre `UNTRUSTED`; instruções existentes no arquivo não governam o sistema.
+
+### 3.4 Estado verificado dos workflows
+
+| Workflow | Implementação | JSON ativo | Situação operacional atual |
+|---|---|---:|---|
+| WF-11 Orquestrador mestre | existe, 15 nós | não | `PAUSED_BY_GATE` em N2 |
+| WF-12 Diretor/roteamento | existe, 3 nós | sim | não alcançável enquanto WF-11 estiver pausado |
+| WF-13 GG Performance | existe, 11 nós | sim | não alcançável enquanto WF-11 estiver pausado |
+
+Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador WF-11 estiver despublicado.
+
+---
+
+## 4. Estado executivo resumido
+
+### 4.1 O que está comprovadamente concluído
+
+- [x] Repositório, contratos, schemas, políticas, motores e documentação-base existem.
+- [x] Site hospedado, autenticação, Estado 360, auditoria e telas técnicas foram construídos.
+- [x] Telegram autenticado, allowlist, protocolo, hash, idempotência e fila durável foram implementados.
+- [x] n8n, PostgreSQL e backups foram restaurados no Docker Engine nativo do WSL2.
+- [x] Document worker e Docling respondem pela rede interna.
+- [x] Smoke test: PDF digital, imagem via Docling, XLSX e CSV.
+- [x] Compose, integração Docling, sintaxe Python, lint e build aprovados no checkpoint atual.
+- [x] POBJ2608 foi processado em 142,6 s, com 12 posições de coluna preservadas.
+- [x] Pico observado do Docling: aproximadamente 1,87 GiB, dentro do limite.
+- [x] Células vazias não são compactadas nem deslocam silenciosamente as colunas.
+
+### 4.2 Bloqueio técnico atual
+
+- [ ] Docling ainda une materialmente alguns conteúdos, como peso/métrica ou dois valores na mesma célula.
+- [ ] Associar com 100% de certeza `PERÍODO`, `INDICADOR`, `META`, `REALIZADO`, `% ATG` e `PONTOS` na mesma linha.
+- [ ] Alcançar pelo menos 98% de correspondência nas células não críticas.
+- [ ] Validar POBJ2608, POBJ2708, POBJ2808 e mais dois arquivos reais.
+- [ ] Republicar WF-11 somente após o gate.
+
+### 4.3 Decisões pendentes de negócio
+
+- Regras dedicadas de Seguros e Cartões; até serem confirmadas, permanecem valores reportados pela fonte, sem herdar regra geral.
+
+---
+
+## 5. Histórico reconciliado — não confundir com runtime atual
+
+### 5.1 Arquitetura e confiança
+
+- [x] Fases históricas 0–1: baseline, contratos, idempotência, segurança e fila avaliados.
+- [x] Suíte sintética, Shadow 24/24 e gates de observação concluídos no ambiente da época.
+- [x] Motores de Performance, Conta, Financeiro e Relacionamento foram implementados/testados isoladamente.
+- [x] Canary sintético A1–A3 foi executado sem efeitos externos.
+- [x] A4/A5 tiveram testes de capacidade e políticas aprovados isoladamente.
+- [~] Esses resultados provam componentes e desenho; não significam que os quatro Gerentes estão ativos no MVP atual.
+
+### 5.2 Protótipo Telegram anterior
+
+- [x] Um fluxo anterior processou PDF real e devolveu resposta no Telegram.
+- [x] WF-12/WF-13 foram construídos e um POBJ real foi interpretado no protótipo.
+- [~] O protótipo utilizava leitores e configurações posteriormente substituídos.
+- [~] M0–M4 antigos permanecem evidência histórica, não gate atual.
+- [ ] O caminho atual com Docling deve ser re-homologado de N2 a N7.
+
+### 5.3 Arquiteturas substituídas
+
+- `ROADMAP_HIBRIDO`: cumpriu a transição site hospedado + processamento local.
+- `ROADMAP_POS_HOMOLOGACAO`: originou gates sintéticos e canary.
+- `ROADMAP_RECONSTRUCAO_MVP_REAL`: originou o corte vertical real.
+- `ROADMAP_N8N_MVP_REAL`: estabeleceu n8n como espinha dorsal e N0–N9.
+- MinerU, Tesseract, pipeline PDF de 120 ms e fallback Gemini do site são históricos, não a arquitetura documental atual.
+
+---
+
+## 6. Caminho canônico do MVP — N0 a N7
+
+### N0 — Intake durável — CONCLUÍDO
+
+Objetivo: receber sem depender de IA, n8n ou leitor disponível.
+
+- [x] Telegram/site validam origem e tipo de entrada.
+- [x] Allowlist do chat e proteção do webhook.
+- [x] Arquivo original preservado com protocolo, hash e proprietário.
+- [x] Idempotência impede documento lógico duplicado.
+- [x] Job durável criado.
+- [x] Confirmação imediata sem alegar conclusão antecipada.
+- [x] Estado público consultável e polling disponível.
+
+**Gate N0:** o arquivo entra uma única vez e recebe protocolo mesmo com processamento desligado.
+
+### N1 — Controlador mestre n8n — IMPLEMENTADO, REVALIDAÇÃO PENDENTE
+
+Objetivo: n8n controlar toda transição de estado.
+
+- [x] WF-11 criado como workflow canônico.
+- [x] Claim atômico, lease e download protegido implementados.
+- [x] Conclusão, retry, falha final e DLQ preparados.
+- [x] Terceira tentativa expirada transforma job órfão em `FAILED_FINAL`.
+- [x] Reabertura reinicia orçamento de tentativas sem novo upload.
+- [x] Progresso estimado e protocolo foram implementados.
+- [ ] Revalidar claim → download → worker Docling → resultado no runtime atual.
+- [ ] Manter WF-11 inativo até N2.
+- [ ] Ativar agenda somente após teste manual atual.
+- [ ] Desativar fluxo legado que concorra pela mesma fila.
+
+**Gate N1:** job atravessa o controlador atual com rastreabilidade e sem duplicidade.
+
+### N2 — Leitor documental subordinado — MARCO ATUAL
+
+Objetivo: produzir dados estruturados confiáveis antes de chamar agentes.
+
+#### N2.1 Serviço e segurança
+
+- [x] `document-worker` interno no Compose.
+- [x] Docling interno sem porta pública e sem interface web.
+- [x] CPU obrigatória, 2 threads, 1 worker e 1 conversão concorrente.
+- [x] Limites de 80 páginas, 20 MB, 5 minutos e 3 GB.
+- [x] Modelos persistidos em volume.
+- [x] Recursos externos desabilitados.
+- [x] Conteúdo marcado como não confiável.
+- [x] Zero efeitos externos no leitor.
+
+#### N2.2 Formatos e contrato
+
+- [x] PDF digital via Docling, com PyMuPDF apenas como leitura nativa segura.
+- [x] PDF escaneado, JPG e PNG via Docling OCR.
+- [x] XLSX via `openpyxl`.
+- [x] CSV via parser nativo.
+- [x] Markdown e JSON solicitados simultaneamente.
+- [x] `tables[]`, seções, páginas, headers, rows, locators e warnings.
+- [x] Métodos `DOCLING_TABLEFORMER` e `DOCLING_OCR` no contrato 1.1.0.
+- [x] Posições vazias preservadas; não compactar células.
+- [x] Avisos de célula mesclada, tabela incompleta, sobreposição e possível deslocamento.
+
+#### N2.3 Benchmark e qualidade
+
+- [x] Saúde, tempo, CPU e memória dentro dos limites.
+- [x] POBJ2608 reprocessado após correção de offsets.
+- [ ] Conferir manualmente todos os campos críticos de POBJ2608.
+- [ ] Reprocessar e conferir POBJ2708.
+- [ ] Reprocessar e conferir POBJ2808.
+- [ ] Adicionar dois documentos reais autorizados.
+- [ ] Validar PDF digital, PDF escaneado, JPG fotografado, XLSX e CSV no caminho final.
+- [ ] Testar cabeçalhos repetidos, rotação, células mescladas e tabela entre páginas.
+- [ ] Garantir que conflito ou ambiguidade material produza `AWAITING_OWNER_INPUT`.
+- [ ] 100% de campos críticos associados corretamente.
+- [ ] ≥98% das demais células.
+- [ ] Nenhuma troca silenciosa.
+- [ ] Tempo ≤5 minutos e pico dentro dos 6 GB do WSL.
+
+**Gate N2:** um arquivo POBJ real produz fatos localizáveis e corretos. Se houver célula materialmente unida, o sistema pergunta em vez de calcular.
+
+### N3 — Diretor como subworkflow — PAUSED_BY_GATE N2
+
+Objetivo: classificar e rotear sem interpretar PDF bruto.
+
+- [x] WF-12 implementado e testado historicamente.
+- [x] Entrada estruturada, nunca arquivo bruto.
+- [x] POBJ/metas roteiam exclusivamente a Performance.
+- [x] Justificativa, confiança, lacunas e evidências previstas.
+- [ ] Revalidar contrato 1.1.0 tables-first depois de N2.
+- [ ] Registrar inclusões e exclusões de domínios.
+- [ ] Confirmar que ambiguidades materiais pausam o protocolo.
+- [ ] Confirmar nenhum outro Gerente acionado no MVP.
+
+**Gate N3:** POBJ válido gera handoff exclusivo para Performance; incerteza material não vira fato.
+
+### N4 — GG Performance real — PAUSED_BY_GATE N2/N3
+
+Objetivo: transformar fatos extraídos em cálculo e parecer reproduzíveis.
+
+- [x] WF-13 implementado e testado historicamente.
+- [x] Entrada JSON validada.
+- [x] Separação entre fonte, cálculo, informação de Rafael, estimativa e pendência.
+- [x] Política `pobj-scoring-rules.2026-h2.json` versionada.
+- [x] Regra geral e regras explícitas de Consórcio/Open Finance testadas.
+- [x] Seguros e Cartões protegidos contra herança silenciosa.
+- [x] Ranking exclui métrica sem direção conhecida.
+- [x] Parecer detalhado com visão geral, forças, riscos, cenários e próxima ação.
+- [ ] Revalidar parsing tables-first depois de N2.
+- [ ] Reproduzir manualmente meta, realizado, `% ATG`, projeção e pontos.
+- [ ] Confirmar período e data-base por indicador.
+- [ ] Confirmar que valores externos ao arquivo exigem Rafael.
+- [ ] Validar 3–5 arquivos reais consecutivos.
+
+**Gate N4:** todos os números materiais do parecer podem ser reproduzidos pelo arquivo e por regra homologada.
+
+### N5 — Motor, Evidence Graph e Estado 360 — PARCIAL
+
+Objetivo: persistir uma versão imutável e explicável do resultado.
+
+- [x] Contratos de handoff e Evidence Graph existem.
+- [x] Estado 360 e rotas de consulta foram implementados.
+- [x] Site consegue apresentar estado persistido e auditoria.
+- [ ] Adaptar definitivamente o Motor às saídas atuais WF-12/WF-13.
+- [ ] Validar cada fronteira por JSON Schema Draft 2020-12.
+- [ ] Registrar fonte e locator por campo material.
+- [ ] Separar tempo efetivo, observado e registrado.
+- [ ] Preservar conflitos sem escolha silenciosa.
+- [ ] Publicar snapshot imutável após aprovação ou conclusão válida.
+- [ ] Reaparecer corretamente após reiniciar navegador, n8n e Docker.
+
+**Gate N5:** o mesmo resultado é recuperável, versionado e navegável até o artefato original.
+
+### N6 — Revisão, correção e conversa supervisionada — PARCIAL
+
+Objetivo: Rafael corrigir pelo celular e promover conhecimento com governança.
+
+- [x] Central de revisão e telas técnicas existem.
+- [x] Estado `AWAITING_OWNER_INPUT` e persistência de esclarecimentos foram projetados/implementados.
+- [x] Perguntas numeradas, protocolo e vínculo com chat foram implementados.
+- [x] Parecer multipartes e prevenção de duplicidade foram implementados.
+- [x] Comandos de correção, reabertura e consulta foram criados.
+- [ ] Executar aceite real: arquivo com lacuna → pergunta → resposta natural → reprocessamento → parecer corrigido.
+- [ ] Testar duas pendências simultâneas sem cruzar respostas.
+- [ ] Testar resposta ainda ambígua gerando nova pergunta.
+- [ ] Expirar após 7 dias como `INCOMPLETE_OWNER_INPUT_TIMEOUT`.
+- [ ] Permitir edição/aprovação no celular sem reenviar arquivo.
+- [ ] Promover evidência confirmada como conhecimento reutilizável somente após aprovação de Rafael.
+- [ ] Preservar original, correção, motivo, versão e impacto no Estado 360.
+
+**Gate N6:** Rafael confere, corrige e aprova um caso real pelo celular; o próximo arquivo reutiliza apenas conhecimento promovido.
+
+### N7 — Telegram ponta a ponta — PENDENTE NO CAMINHO ATUAL
+
+Objetivo: uso real sem terminal.
+
+- [x] Webhook, allowlist, protocolo e resposta básica existem.
+- [x] Catálogo de 26 comandos foi registrado historicamente.
+- [x] Divisão segura do parecer em mensagens foi implementada.
+- [ ] Subir perfil `processing` automaticamente quando necessário ou definir rotina operacional clara.
+- [ ] Enviar POBJ pelo celular.
+- [ ] Confirmar progresso de recebimento até conclusão.
+- [ ] Processar WF-11 → Docling → WF-12 → WF-13 → Estado 360.
+- [ ] Receber parecer completo no mesmo chat.
+- [ ] Confirmar que retry não duplica pergunta nem resposta.
+- [ ] Confirmar `/status`, `/ultimo`, `/protocolo`, `/pendencias` e `/duvidas`.
+- [ ] Confirmar comandos desconhecidos sugerem `/comandos`.
+- [ ] Confirmar ausência total de empresas ou contas fictícias.
+
+**Gate final do MVP:** Rafael envia um arquivo real pelo Telegram e recebe uma análise correta, útil e rastreável, sem PowerShell ou correção manual do pipeline.
+
+---
+
+## 7. Conversa supervisionada e comandos Telegram
+
+### 7.1 Fluxo obrigatório para dúvida material
+
 ```text
-Regra Determinística (Cálculos, CNAE, Elegibilidade)
-        ↓
-Modelo Econômico (Gemini Flash Lite — Triagem, OCR, Classificação Simples)
-        ↓
-Modelo Intermediário (Gemini 2.5 Flash — Extração e Raciocínio de Domínio)
-        ↓
-Modelo Avançado (Gemini 2.5 Pro / Claude 3.5 Sonnet — Síntese e Casos Complexos)
-        ↓
-Revisão Humana Obrigatória (Mesa do Revisor / Despacho de Rafael)
+arquivo → OCR → análise → dúvida material?
+  ├─ não → parecer final
+  └─ sim → AWAITING_OWNER_INPUT → pergunta agrupada → resposta de Rafael
+           → interpretação estruturada → reprocessamento → parecer versionado
 ```
 
-## Telemetria & Unit Economics
-- Registro contínuo em `/api/metrics/finops` de tokens, custo por análise ($< \text{R\$ } 0,15$), latência ($P_{95} < 30\text{s}$) e taxa de assertividade.
+- Somente dúvida capaz de mudar cálculo, prioridade, risco, conclusão ou recomendação bloqueia.
+- Resposta de Rafael é `OWNER_PROVIDED`, nunca conteúdo original do arquivo.
+- Se houver mais de uma pendência, exigir resposta à mensagem correta ou protocolo.
+- Nunca inferir silenciosamente resposta ambígua.
+- Timeout de 7 dias encerra como incompleto, com possibilidade de reabrir.
+
+### 7.2 Catálogo a validar no N7
+
+Geral: `/start`, `/comandos`, `/ajuda`, `/menu`, `/status`, `/ultimo`, `/protocolo`, `/pendencias`, `/duvidas`, `/cancelar`, `/tentar novamente`.
+
+Performance: `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios`, `/indicador`, `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje`, `/planodiario`.
+
+Governança: `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados`, `/excluir`.
+
+Ações críticas exigem confirmação vinculada ao protocolo e expiração segura.
 
 ---
 
-# Fase 6 — Security, LGPD & Production Readiness Review
+## 8. Ativação dos demais Gerentes — somente após N7
 
-## Objetivo
-Manter e comprovar continuamente a aderência do Diretor 360 à autorização institucional já concedida para uso de dados reais, garantindo segurança, LGPD, rastreabilidade e controles de produção.
+Ordem recomendada: Performance → Conta → Relacionamento → Financeiro. Cada domínio entra com uma capacidade por vez, dados autorizados, canary próprio e rollback.
 
-## Requisitos de Conformidade
-- Relatório de Impacto à Proteção de Dados (DPIA / RIPD).
-- Princípios da LGPD aplicados: Finalidade, Adequação, Necessidade (minimização), Livre Acesso, Qualidade dos Dados, Transparência, Segurança, Prevenção, Não Discriminação e Responsabilização.
-- Gestão estrita de segredos (Secrets Management).
-- Data Loss Prevention (DLP) com mascaramento e redação prévia de PII sensível em logs e dashboards.
+### N8.1 — GG Conta
 
-## Bateria de Testes de Segurança Obrigatórios
-1. **Prompt Injection Test:** Injeção de instruções adversárias em mensagens e documentos.
-2. **Data Exfiltration Test:** Tentativa de forçar saída de dados não autorizados fora do tenant.
-3. **Privilege Boundary Test:** Tentativa de um especialista de domínio atuar fora de seu escopo.
-4. **Kill-Switch Test:** Desligamento granular e atômico de canais (Telegram, SMTP, LLM, Conectores) sem indisponibilizar a base.
+- [ ] Identidade usa identificadores fortes.
+- [ ] Elegibilidade específica por produto/operação/ação.
+- [ ] Restrição divergente gera revisão, nunca veto genérico.
+- [ ] Não calcula POBJ ou rentabilidade.
+- [ ] Não transforma pré-aprovação em promessa.
+- [ ] Carteira real autorizada antes de citar empresas.
+- [ ] Canary limitado e aprovação explícita.
 
-## Gate de Autorização Contínua
-- Estados da autorização: `AUTORIZADO | AUTORIZADO_COM_RESTRICOES | AJUSTES_NECESSARIOS | SUSPENSO`.
-- Se o status for `SUSPENSO`, o processamento de dados reais afetado é interrompido imediatamente, preservando trilhas de auditoria.
+### N8.2 — GG Relacionamento
 
----
+- [ ] Conversas e compromissos possuem evidência textual.
+- [ ] Hipóteses permanecem rotuladas.
+- [ ] Responsável, prazo e follow-up rastreáveis.
+- [ ] Inferência não vira necessidade confirmada.
+- [ ] Redação ou contato externo exige autorização específica.
+- [ ] Canary limitado e aprovação explícita.
 
-# Fase 7 — Operação Real Supervisionada & Canary Rollout
+### N8.3 — GG Financeiro
 
-## Objetivo
-Expandir o uso dos dados reais já autorizados de maneira progressiva, mensurável e reversível, validando o comportamento do sistema em produção assistida.
+- [ ] Orçamento, realizado, estimativa e cenário separados.
+- [ ] Fórmula, escala, moeda, período e arredondamento reproduzíveis.
+- [ ] Ausência é `NOT_AVAILABLE`.
+- [ ] Nenhum retorno financeiro fabricado.
+- [ ] Nenhuma aprovação de crédito ou efeito financeiro.
+- [ ] Canary limitado e aprovação explícita.
 
-### Progressão em Canary
-$$\text{1 a 3 Casos Reais} \longrightarrow \text{5 Casos} \longrightarrow \text{10 Casos} \longrightarrow \text{Amostra Ampliada}$$
+### N8.4 — Integração 360
 
-## Human-in-the-Loop Mandatório
-- Nenhuma recomendação do Diretor 360 produz efeito transacional ou decisão final sem despacho humano explícito na Mesa do Revisor (`/reviews`).
+- [ ] Caso próprio validado por domínio.
+- [ ] Caso multidomínio com dependências pelo Diretor.
+- [ ] Máximo de quatro especialistas por domínio.
+- [ ] Gerentes não fazem chamadas laterais.
+- [ ] Motor registra convergência, complemento, trade-off e conflito.
+- [ ] Dashboard mostra visão 360 e evidências por domínio.
 
-## Critérios Automáticos de Rollback
-- Incidente de segurança ou exfiltração $\rightarrow$ **ROLLBACK IMEDIATO**.
-- Evidence Coverage $< 100\%$ em campos materiais $\rightarrow$ **PAUSAR OPERAÇÃO**.
-- Taxa de erro de extração $> 5\%$ $\rightarrow$ **PAUSAR & INVESTIGAR**.
-
----
-
-# Fase 8 — Escala e Alta Disponibilidade
-
-## Objetivo
-Migrar para infraestrutura 24/7 gerenciada somente quando existir necessidade operacional comprovada.
-
-- O modelo híbrido (Docker local + Site Cloudflare) permanece como padrão oficial de baixo custo e alta segurança.
-- Provisionamento automatizado de VPS Linux (Ubuntu 24.04 / Hetzner) via `scripts/provision-vps-server.sh` pronto para ativação sob demanda.
+**Gate N8:** os quatro Gerentes concluem casos reais sem misturar fontes, autoridades ou responsabilidades.
 
 ---
 
-# KPIs Executivos & Métricas de Sucesso
+## 9. N9 — Operação assistida, segurança e disponibilidade
 
-| KPI | Fórmula / Critério | Meta |
-|---|---|:---:|
-| **Decision Utility Rate** | $(\text{Aceitas} + \text{Aceitas com Ajustes}) / \text{Total Recomendações}$ | $\ge 85\%$ |
-| **Override Rate** | $\text{Recomendações Rejeitadas} / \text{Total Recomendações}$ | $\le 15\%$ |
-| **Evidence Coverage** | $\text{Afirmações com Linhagem PROV} / \text{Total Afirmações}$ | **100%** |
-| **False Critical Alert Rate** | $\text{Alertas Falsos} / \text{Total de Alertas Críticos}$ | $< 5\%$ |
-| **Time-to-Decision** | Tempo entre entrada da informação e despacho de Rafael | $< 15\text{ min}$ |
-| **Cost-per-Useful-Decision** | Custo total de LLM / Decisões Úteis | $< \text{R\$ } 0,20$ |
-| **Reliability** | Entradas processadas sem perda ou duplicidade | **100%** |
-| **Security Incident Rate** | Incidentes materiais de segurança ou vazamento | **0** |
+### 9.1 Observabilidade e qualidade
 
----
+- [ ] Métricas de duração, sucesso, retries, custo e correções.
+- [ ] Taxa de extração correta por formato e layout.
+- [ ] Evidence Coverage de 100% em afirmações materiais.
+- [ ] Override e utilidade das recomendações.
+- [ ] Alertas de fila parada, lease expirado e serviço indisponível.
+- [ ] Sete dias de operação assistida sem perda ou duplicidade.
 
-# 12 Regras Arquiteturais Permanentes
+### 9.2 Segurança e privacidade
 
-1. **Motor determinístico primeiro:** Cálculos e regras conhecidas nunca dependem desnecessariamente de LLM.
-2. **Evidence First:** Nenhuma afirmação material existe sem evidência verificável no Evidence Graph.
-3. **Human-in-the-Loop:** Decisões materiais permanecem sob responsabilidade humana exclusiva.
-4. **Fail-Safe & Safe Defaults:** Erro desconhecido gera `MANUAL_REVIEW_REQUIRED`, nunca decisão automática.
-5. **Idempotência Absoluta:** O reenvio do mesmo payload nunca duplica efeitos ou tarefas.
-6. **Imutabilidade da Origem:** O artefato original recebido nunca é alterado ou sobrescrito.
-7. **Observabilidade Total:** Nenhuma automação crítica opera como caixa-preta.
-8. **Versionamento Semântico:** Modelos, prompts, regras, parsers e contratos são identificáveis por versão.
-9. **Least Privilege:** Cada agente e conector acessa estritamente os dados necessários para sua tarefa.
-10. **Progressive Delivery:** Novas capacidades são liberadas gradualmente em fases controladas.
-11. **Rollback Transacional:** Todo componente crítico possui procedimento de retorno rápido e seguro.
-12. **Dados Reais no Escopo Autorizado:** Toda operação real segue estritamente a autorização institucional vigente.
+- [ ] Prompt injection em documento e Telegram.
+- [ ] Tentativa de exfiltração e acesso cruzado.
+- [ ] Fronteira de privilégios entre domínios.
+- [ ] Kill switches de Telegram, IA, capacidade e sistema.
+- [ ] Segredos fora de Git e logs.
+- [ ] Retenção, exclusão e revogação testadas.
+- [ ] Zero efeitos externos não autorizados.
 
----
+### 9.3 Backup e recuperação
 
-# Plano operacional de preparação e ativação
+- [ ] Backup verificável de PostgreSQL, n8n e artefatos essenciais.
+- [ ] Restauração isolada testada.
+- [ ] RPO/RTO medidos no ambiente atual.
+- [ ] Rollback por workflow, capacidade, domínio e release.
+- [ ] Manifesto de release e hashes.
 
-**Aprovado por Rafael em:** 28 de agosto de 2026
-**Regra de separação:** a Trilha S é exclusivamente observacional. As trilhas P e A não podem modificar scripts, casos, métricas, critérios, registros ou configuração do Shadow enquanto a janela estiver aberta.
+### 9.4 Disponibilidade futura
 
----
-
-## TRILHA S — Shadow sintético isolado
-
-### S1 — Observação automática — CONCLUÍDO
-
-- [x] Completar 24 medições horárias no monitor remoto: 24/24.
-- [x] Manter 20 casos sintéticos por medição.
-- [x] Manter escopo `SYNTHETIC_ONLY` e efeitos externos proibidos.
-- [x] Aguardar as medições restantes sem executar medições adicionais manualmente.
-
-**Ocorrência registrada em 2026-08-28 18:53 BRT:** a medição local agendada concluiu 20/20 casos com métricas saudáveis, porém o upload ao monitor remoto falhou com `status: 0`. Diagnóstico de conectividade posterior confirmou que o endpoint HTTPS está alcançável e responde `401` sem credencial, comportamento esperado. Aguardar a próxima medição automática para recuperar a persistência; não executar replay manual, nem alterar escopo, scripts, fixtures, métricas ou critérios do Shadow.
-
-### S2 — Consolidação somente após 24/24 — CONCLUÍDO
-
-- [x] Consolidar `test-data/shadow/observations/`.
-- [x] Verificar lacunas e intervalos horários.
-- [x] Confirmar conclusão mínima de 99%.
-- [x] Confirmar divergência máxima de 10%.
-- [x] Confirmar zero mutações de Estado 360.
-- [x] Confirmar zero efeitos externos.
-- [x] Gerar o parecer técnico do Gate Shadow em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
-- [x] Submeter o Gate Shadow à aprovação de Rafael em 2026-08-28.
-
-### Proibições durante a janela
-
-- Não modificar scripts, fixtures, métricas ou critérios do Shadow.
-- Não antecipar, repetir ou preencher artificialmente medições.
-- Não promover agentes com base em resultado parcial.
-- Não ativar dados reais ou efeitos externos.
+- [ ] Medir necessidade real de funcionamento com computador desligado.
+- [ ] Avaliar VPS somente após estabilidade local.
+- [ ] Migrar com backup, criptografia e rollback.
+- [ ] Não adicionar complexidade de nuvem antes de existir necessidade comprovada.
 
 ---
 
-## TRILHA P — Preparação independente para ativação
+## 10. KPIs e gates permanentes
 
-Tudo nesta trilha deve usar dados sintéticos, ambientes locais ou documentação. Nenhuma tarefa depende de alterar o Shadow.
+| Indicador | Meta |
+|---|---:|
+| Campos críticos do POBJ corretamente associados | 100% |
+| Demais células no benchmark documental | ≥98% |
+| Tempo de documento típico | ≤5 min |
+| Memória total do WSL | ≤6 GB |
+| GPU no caminho Docling | 0 |
+| Evidence Coverage material | 100% |
+| Perda/duplicidade lógica | 0 |
+| Efeitos externos não autorizados | 0 |
+| Incidente material de segurança | 0 |
+| Decision Utility Rate futuro | ≥85% |
+| Override Rate futuro | ≤15% |
 
-### P0 — Reconciliar roadmap, checklist e estado real — CONCLUÍDO
+Condições automáticas de pausa:
 
-- [x] Comparar cada item do `checklist.md` com código, testes e evidências.
-- [x] Confirmar quais itens estão realmente homologados.
-- [x] Corrigir itens marcados como concluídos sem evidência suficiente.
-- [x] Fechar no roadmap tarefas já comprovadamente concluídas.
-- [x] Unificar nomenclatura de fases, marcos, lifecycles e versões.
-- [x] Definir `ROADMAP.md` como planejamento oficial e `checklist.md` como aceite operacional.
-- [x] Sincronizar `PROJECT_STATE.md`, `status.md`, `checklist.md` e `CHANGELOG.md` com o resultado da reconciliação.
-
-**Evidência:** `docs/audits/RECONCILIACAO_P0_2026-08-28.md`.
-
-**Gate P0:** todos os documentos representam o mesmo estado comprovado por código, testes e Git.
-
-### P1 — Base técnica e bateria de regressão — CONCLUÍDO
-
-- [x] Executar os 14 testes gerais.
-- [x] Executar lint e build de produção.
-- [x] Validar contratos JSON Schema Draft 2020-12.
-- [x] Validar ponte autenticada, idempotência, fila, retries, lease e DLQ.
-- [x] Validar Estado 360 persistido e Evidence Graph append-only.
-- [x] Validar Central de Revisão.
-- [x] Validar backup e restauração isolada.
-- [x] Criar relatório único de regressão.
-
-**Evidência:** `docs/audits/REGRESSAO_P1_2026-08-28.md`.
-
-**Gate P1:** todas as validações aplicáveis aprovadas com dados sintéticos e zero efeitos externos.
-
-### P2 — Fechar motores determinísticos — EM ANDAMENTO
-
-#### P2.1 — Performance
-
-- [x] Inventariar indicadores POBJ suportados.
-- [x] Confirmar piso, teto, peso, multiplicadores e versões de política.
-- [~] Versionar as curvas oficiais disponíveis após receber evidência normativa — Consórcio (Expert) versionado para POBJ/PADE; exceções restantes pendentes.
-- [ ] Manter exceções sem norma completa como `UNDETERMINED`.
-- [x] Validar produção oficial, pendente e projetada.
-- [x] Testar ranking, gaps e prioridades reproduzíveis.
-- [x] Impedir escolha de empresa sem participação do GG Conta.
-
-#### P2.2 — Financeiro
-
-- [x] Concluir o motor determinístico do GDAD.
-- [x] Separar orçamento, realizado, cenário e projeção.
-- [x] Registrar moeda, período, escala e arredondamento.
-- [x] Representar ausência como `NOT_AVAILABLE`.
-- [x] Impedir fabricação de retorno financeiro.
-
-#### P2.3 — Relacionamento
-
-- [x] Concluir o motor de compromissos e datas.
-- [x] Definir estados aberto, vencido, concluído e cancelado.
-- [x] Calcular ausência de contato conforme regra versionada — faixas 0–30, 31–60, 61–90 e >90 dias implementadas e testadas.
-- [x] Exigir evidência textual para compromissos.
-- [x] Manter hipóteses separadas de fatos.
-
-#### P2.4 — Conta
-
-- [x] Validar resolução por identificadores fortes.
-- [x] Validar elegibilidade específica por ação, produto ou operação.
-- [x] Testar divergências cadastrais e revisão manual.
-- [x] Garantir que restrição não produza veto genérico.
-- [x] Impedir promessa baseada em pré-aprovação.
-
-**Evidência:** `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md`.
-
-**Gate P2:** cálculos reproduzíveis e testes sintéticos aprovados por domínio.
-
-### P3 — Contratos dos quatro Gerentes Gerais — CONCLUÍDO
-
-- [x] Validar entradas e respostas de Conta, Performance, Financeiro e Relacionamento.
-- [x] Confirmar máximo de quatro especialistas por domínio.
-- [x] Validar dependências entre gerentes e proibição de chamadas laterais.
-- [x] Confirmar que especialistas não produzem efeitos externos.
-- [x] Validar o parecer executivo padronizado.
-- [x] Confirmar versão, escopo, fontes, limites, rollback e `runtime: INACTIVE` de cada gerente.
-
-**Evidência:** `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
-
-**Gate P3:** cada gerente possui contrato e evidência de teste sem promoção de runtime.
-
-### P4 — Orquestração Diretor → Gerentes → Motor 360 — CONCLUÍDO
-
-- [x] Testar roteamento por intenção e capacidade.
-- [x] Acionar somente domínios necessários e registrar inclusões e exclusões.
-- [x] Testar a parceria Conta–Performance.
-- [x] Validar pacotes de contexto e dependências entre abas.
-- [x] Validar conflitos entre domínios sem decisão automática.
-- [x] Confirmar que o Diretor recomenda, mas não executa.
-- [x] Validar publicação de snapshot imutável no Estado 360.
-- [x] Validar respostas do Assessor ancoradas no mesmo snapshot.
-
-**Evidência:** `docs/audits/P4_ORQUESTRACAO_2026-08-28.md`.
-
-**Gate P4:** jornada sintética completa, determinística nas regras conhecidas e auditável.
-
-### P5 — Segurança, LGPD e autorização operacional documental — CONCLUÍDO
-
-- [x] Registrar finalidade e escopo permitido — finalidade Performance/POBJ, acesso por e-mail/convite e planilha POBJ limitada a meta, realizado e período registrados; CPF e campos pessoais desnecessários proibidos. Rafael aprova individualmente qualquer fonte, campo ou ampliação de retenção.
-- [x] Identificar responsável de negócio e responsável técnico — Rafael é proprietário, responsável de negócio e responsável técnico permanente; qualquer delegação futura será opcional e registrada, sem transferência de propriedade.
-- [x] Definir retenção, descarte e mascaramento — detalhados por 24 meses, backups por até 90 dias e agregados não identificáveis por prazo indeterminado.
-- [x] Validar isolamento por usuário e tenant.
-- [x] Validar allowlists e gestão de segredos.
-- [x] Executar testes de prompt injection, exfiltração e fronteira de privilégios.
-- [x] Testar kill switches.
-- [x] Criar modelo de registro de autorização por operação.
-
-**Decisão humana concluída:** Rafael confirmou finalidade, acessos, responsáveis, escopo e retenção em 28/08/2026. Esta fase não conecta nenhuma fonte real; a fonte concreta ainda exige cadastro, validação e gate técnico.
-
-**Evidência:** `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md` e `docs/REGISTRO_AUTORIZACAO_DADOS_REAIS.md`.
-
-### P6 — Preparação operacional para ativação — CONCLUÍDO
-
-- [x] Criar checklists de inicialização e encerramento seguro.
-- [x] Definir monitoramento, SLOs, orçamento e critérios de pausa.
-- [x] Definir e testar rollback por capacidade, gerente e sistema.
-- [x] Revalidar restauração do PostgreSQL, n8n, site e ponte.
-- [x] Preparar pacote de release, manifesto com versões e hashes e backup pré-ativação.
-
-**Evidência:** `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md`.
-
-**Gate P6:** operação observável, recuperável e pronta para uma liberação limitada.
-
-### P7 — Preparar canary individual — CONCLUÍDO (EXECUÇÃO BLOQUEADA PELO GATE)
-
-- [x] Recomendar o GG Performance como primeiro gerente candidato; seleção final permanece com Rafael.
-- [x] Preparar seleção de uma única capacidade.
-- [x] Preparar lotes de 1–3, 5 e 10 casos sintéticos.
-- [x] Definir concordância, override, custo, latência e cobertura de evidências.
-- [x] Definir pausa automática e rollback para `INACTIVE`.
-- [x] Confirmar efeitos externos bloqueados.
-
-**Evidência:** `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
-
-**Gate P7:** canary pronto, mas não executado antes do Gate geral.
-
-### P8 — Gate geral de prontidão — APROVADO PARA CANARY SINTÉTICO
-
-- [ ] Gates P0–P7 concluídos.
-- [ ] Bateria, build, lint, contratos, segurança, backup e restauração aprovados.
-- [x] Registro de autorização operacional preenchido.
-- [x] Gate Shadow aprovado por Rafael em 2026-08-28.
-- [x] Primeiro canary autorizado por Rafael em 2026-08-29; execução sintética concluída e revisão humana permanece obrigatória.
-
-**Resultados permitidos:** `READY_FOR_CANARY | ADJUSTMENTS_REQUIRED | BLOCKED`.
-
-**Pré-verificação:** `docs/audits/P8_PRE_GATE_READINESS_2026-08-28.md` — estado atual `NOT_READY` por dependências legítimas, não por falha técnica.
+- coluna, indicador ou período ambíguo;
+- conflito entre fonte e regra;
+- Evidence Coverage material abaixo de 100%;
+- erro de extração acima do limite homologado;
+- identidade, autorização ou tenant incertos;
+- tentativa de efeito externo não autorizado;
+- incidente de segurança ou integridade;
+- retry esgotado.
 
 ---
 
-## TRILHA A — Ativação gradual do projeto
+## 11. Próximos passos exatos — fila executável
 
-Esta trilha só começa após `READY_FOR_CANARY` e aprovação explícita de Rafael.
+### Agora — N2
 
-### A1 — Canary sintético individual
+1. [ ] Capturar a estrutura bruta das células Docling nos três POBJ sem persistir conteúdo sensível no Git.
+2. [ ] Mapear cada célula unida por página, linha, coluna e `bbox`.
+3. [ ] Implementar reconstrução determinística apenas quando posição e separação forem comprováveis.
+4. [ ] Se a separação não for comprovável, emitir `AWAITING_OWNER_INPUT` com trecho e pergunta objetiva.
+5. [ ] Criar testes de regressão para vazio, merge, cabeçalho repetido, rotação e quebra entre páginas.
+6. [ ] Reprocessar POBJ2608, POBJ2708 e POBJ2808.
+7. [ ] Rafael confere os campos críticos.
+8. [ ] Adicionar mais dois arquivos reais autorizados.
+9. [ ] Registrar benchmark, memória, tempo, precisão e falhas.
+10. [ ] Aprovar ou reprovar formalmente o Gate N2.
 
-- [x] Executar 1–3 casos e revisar todos manualmente — Onda 1 aprovada por Rafael; 3/3 cálculos válidos. Evidência: `docs/audits/A1_ONDA1_PERFORMANCE_2026-08-28.md`.
-- [x] Corrigir divergências antes da expansão — nenhuma divergência identificada nas três ondas sintéticas.
-- [x] Executar 5 casos e medir overrides, custo e latência — Onda 2 aprovada por Rafael; 5/5 cálculos válidos, zero efeitos externos. Evidência: `docs/audits/A1_ONDA2_PERFORMANCE_2026-08-28.md`.
-- [x] Executar 10 casos e confirmar SLOs e evidências — Onda 3 aprovada por Rafael pela aba `/canary`; 10/10 cálculos válidos, custo zero, zero mutações e zero efeitos externos. Evidência: `docs/audits/A1_ONDA3_PERFORMANCE_2026-08-28.md` e registro D1 imutável.
-- [x] Disponibilizar revisão A1 no site sem alterar o painel existente — rota `/canary` publicada, dados exclusivamente sintéticos e decisão auditável imutável registrada por Rafael.
-- [x] Registrar decisão de retorno ou avanço — A1 aprovado para encerrar a homologação sintética; A2 continua exigindo autorização explícita e não promoveu nenhuma capacidade.
+### Depois do Gate N2
 
-### A2 — Ativação somente leitura supervisionada
+1. [ ] Rebuild e regressão do worker.
+2. [ ] Testes WF-11, WF-12 e WF-13 com contrato 1.1.0.
+3. [ ] Execução manual do WF-11.
+4. [ ] Ativação controlada da agenda.
+5. [ ] Teste de lacuna e conversa supervisionada.
+6. [ ] Piloto com 3–5 documentos.
+7. [ ] Gate N7 no celular.
 
-- [x] Promover uma única capacidade de um gerente — `PERFORMANCE_SCORING_STATE` em `SHADOW`; o gerente e todas as outras capacidades permanecem `INACTIVE`.
-- [x] Liberar somente fontes e campos autorizados — fixtures sintéticas, com `meta`, `realizado` e `periodo`; POBJ real permanece desconectado.
-- [x] Aplicar minimização, segregação e auditoria de toda leitura — política A2 versionada e testes específicos aprovados.
-- [x] Manter revisão humana e efeitos externos bloqueados — condições técnicas codificadas; nenhum efeito externo é permitido.
-- [x] Monitorar erros, divergências, custo e latência — janela A2 3/3 aprovada: 30/30 casos, 0 erro, 0% divergência, custo US$ 0,00, zero mutações e zero efeitos externos.
-- [x] Voltar para `INACTIVE` diante de violação de gate — kill switch testado contra desativação, fonte/campo não autorizado e tentativa de efeito externo.
+### Regra de continuidade
 
-### A3 — Expansão por gerente
+Concluir uma tarefa não encerra o trabalho. Continuar enquanto houver tarefa segura, independente e elegível. Parar apenas diante de HARD BLOCKER real ou quando todos os itens elegíveis estiverem concluídos.
 
-**Ordem recomendada:** Performance → Conta → Relacionamento → Financeiro.
+---
 
-- [x] Expandir uma capacidade por vez — `PERFORMANCE_GAP_SCENARIOS` e `PERFORMANCE_EXECUTABILITY_PLAN` avaliadas isoladamente em `SHADOW` sintético; nenhuma fonte real ou agente `ACTIVE` foi usado.
-- [x] Exigir janela supervisionada estável e evidência completa — gap e plano executável concluíram 3/3 medições cada: 30/30 casos por capacidade, zero erro, divergência, custo, mutação e efeito externo.
-- [x] Confirmar ausência de incidente material e rollback testado — A2 encerrou sem incidente e o kill switch bloqueia fonte, campo, efeito ou capacidade inativa.
-- [x] Exigir aprovação explícita de Rafael para cada expansão — autorizações para gap e plano executável registradas; qualquer nova capacidade permanece bloqueada.
+## 12. Referências que permanecem separadas por função
 
-### A4 — Projeto ativo em leitura assistida — CONCLUÍDO & HOMOLOGADO
+Estes arquivos não são roadmaps concorrentes:
 
-- [x] Quatro gerentes autorizados e estáveis no escopo aprovado (`core/director_360_runtime.py`).
-- [x] Diretor integrando pareceres sem substituir Rafael (Despacho obrigatório verificado).
-- [x] Estado 360, Evidence Graph e Dashboard consistentes.
-- [x] Telegram operando com revisão humana.
-- [x] Backup, recuperação e auditoria comprovados.
-- [x] Dados reais limitados à autorização aplicável.
-- [x] Nenhuma recomendação produz efeito automático.
+- `AGENTS.md`: regras de execução e governança.
+- `PROJECT_STATE.md`: estado operacional e instrução de retomada.
+- `CHANGELOG.md`: histórico permanente de alterações.
+- `status.md`: relatório humano detalhado do projeto.
+- `CODEX_HANDOFF.md`: contexto de transferência entre assistentes.
+- `SESSION_STATE.json`: estado legível por automação.
+- `compliance/PRR_CHECKLIST.md`: evidência de prontidão/compliance.
+- `docs/ROLLBACK_PLAN_PRODUCAO.md`: procedimento de recuperação.
+- `docs/audits/`: evidências imutáveis de gates e testes.
+- `docs/LIVRO_MESTRE_DO_PROJETO_DIRETOR_360.md`: visão de negócio e arquitetura.
+- `docs/arquitetura-agentes-360/`: contratos e desenhos dos agentes.
 
-**Estado-alvo homologado:** `ACTIVE_READ_ONLY_SUPERVISED` (Teste `scripts/test-phase-a4-read-only.ps1` PASS).
+Documentos históricos podem mencionar roadmaps antigos para preservar a trilha da época. Eles não governam próximas tarefas.
 
-### A5 — Efeitos externos autorizados com Human-in-the-Loop — CONCLUÍDO & HOMOLOGADO
+---
 
-- [x] Criar catálogo fechado de ações e canais permitidos (`policies/external-effects-catalog.yaml`).
-- [x] Exigir autorização específica por ação, alvo, canal e validade (`contracts/external-action-request.schema.json`).
-- [x] Testar idempotência, retry, auditoria e rollback (`core/external_effects_executor.py`).
-- [x] Começar por ação interna reversível (Despacho Telegram/E-mail/PDF autorizado).
-- [x] Expandir somente mediante novo gate e aprovação explícita (Teste `scripts/test-phase-a5-external-effects.ps1` PASS).
+## 13. Critério de conclusão do projeto utilizável
 
-## Ordem de execução vigente
+O MVP será declarado utilizável quando:
 
-Enquanto o Shadow permanece isolado: `P0 → P1 → P2 → P3 → P4 → P5 documental → P6 → P7`.
+1. Rafael enviar pelo celular um PDF, imagem ou planilha real autorizada.
+2. O Telegram confirmar protocolo e mostrar progresso compreensível.
+3. n8n controlar todas as etapas sem terminal.
+4. Docling/worker extrair fatos e evidências corretamente.
+5. Dúvidas materiais gerarem pergunta, não inferência.
+6. GG Performance produzir cálculos reproduzíveis e parecer útil.
+7. Estado 360 persistir versão e proveniência.
+8. Rafael conseguir conferir, corrigir e aprovar pelo celular.
+9. O Telegram entregar o parecer final sem duplicidade.
+10. O mesmo fluxo se repetir em 3–5 arquivos dentro dos limites de qualidade, tempo, memória e segurança.
 
-Após 24/24: `S2 → aprovação do Gate Shadow → P8 → A1 → A2 → A3 → A4`.
-
-Nenhum gerente entra em `ACTIVE`, nenhuma fonte real é conectada e nenhum efeito externo é liberado antes dos respectivos gates e da aprovação explícita de Rafael.
+Depois disso, o projeto avança de modo gradual para Conta, Relacionamento, Financeiro, integração 360 e operação assistida.

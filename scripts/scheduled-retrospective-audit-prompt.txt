@@ -2,7 +2,7 @@ Olá, Codex! Estou retomando o projeto Diretor 360 v3.1.0 com você.
 
 Por favor, siga a ordem canônica:
 
-1. Leia o SESSION_STATE.json, o status.md, o checklist.md e o CODEX_HANDOFF.md.
+1. Leia o AGENTS.md, o PROJECT_STATE.md, o ROADMAP.md, o CHANGELOG.md recente, o SESSION_STATE.json e o CODEX_HANDOFF.md.
 2. Execute a bateria geral para conferir que os 13 testes estão 100% aprovados:
 
 powershell -File scripts/run-all-hybrid-tests.ps1

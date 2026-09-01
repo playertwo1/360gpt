@@ -22,7 +22,7 @@ $timestamp = Get-Date -Format "yyyy-MM-dd_HHmmss"
 $backupName = "backup-$timestamp-handoff-sync.zip"
 $gdriveFolders = @('C:\Users\fael\Google Drive\360', 'C:\Users\fael\Meu Drive\360')
 
-$itemsToZip = @('AGENTS.md', 'README.md', 'status.md', 'implementacao.md', 'QUICKSTART.md', 'CODEX_HANDOFF.md', 'ROADMAP.md', 'checklist.md', 'SESSION_STATE.json', 'iniciar-diretor-360.ps1', 'iniciar-diretor-360.bat', 'parar-diretor-360.ps1', 'parar-diretor-360.bat', 'package.json', 'tsconfig.json', 'vite.config.ts', 'next.config.ts', 'drizzle.config.ts', 'compose.n8n.yaml', 'app', 'compliance', 'contracts', 'db', 'docs', 'drizzle', 'evidence', 'infra', 'n8n', 'policies', 'public', 'registries', 'release', 'scripts', 'test-data')
+$itemsToZip = @('AGENTS.md', 'README.md', 'status.md', 'PROJECT_STATE.md', 'CHANGELOG.md', 'QUICKSTART.md', 'CODEX_HANDOFF.md', 'ROADMAP.md', 'SESSION_STATE.json', 'iniciar-diretor-360.ps1', 'iniciar-diretor-360.bat', 'parar-diretor-360.ps1', 'parar-diretor-360.bat', 'package.json', 'tsconfig.json', 'vite.config.ts', 'next.config.ts', 'drizzle.config.ts', 'compose.n8n.yaml', 'app', 'compliance', 'contracts', 'db', 'docs', 'drizzle', 'evidence', 'infra', 'n8n', 'policies', 'public', 'registries', 'release', 'scripts', 'test-data')
 
 Compress-Archive -Path $itemsToZip -DestinationPath $backupName -Force -CompressionLevel Optimal
 Write-Host "  [OK] Backup local criado: $backupName" -ForegroundColor Green

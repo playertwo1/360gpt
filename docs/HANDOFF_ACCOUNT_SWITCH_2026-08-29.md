@@ -5,8 +5,8 @@
 - Repositório oficial: `https://github.com/playertwo1/360gpt.git`, branch `main`.
 - Repositório anterior: `https://github.com/playertwo1/360.git`, remoto local `360-legacy`.
 - Site: versão 36 publicada em `https://visao-360-diretor.fael360092.chatgpt.site`.
-- Roadmap canônico: `docs/ROADMAP_N8N_MVP_REAL.md`.
-- Fase: `N1 — Controlador mestre no n8n`.
+- Roadmap canônico: `ROADMAP.md`.
+- Fase atual reconciliada: `N2 — homologação objetiva do leitor documental`.
 - Status: `IN_PROGRESS`.
 
 ## Componentes prontos
@@ -38,7 +38,7 @@ Executar manualmente o WF-11 com um arquivo já autorizado, inspecionar a extra�
 1. Ler `AGENTS.md`.
 2. Ler `SESSION_STATE.json`.
 3. Ler `PROJECT_STATE.md`.
-4. Ler `docs/ROADMAP_N8N_MVP_REAL.md`.
+4. Ler `ROADMAP.md`.
 5. Ler `status.md` e `CHANGELOG.md`.
 6. Ler este handoff.
 7. Executar `git status` e preservar alterações paralelas.

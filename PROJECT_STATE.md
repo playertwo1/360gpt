@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: MinerU e Tesseract removidos integralmente do caminho operacional; Docling consolidado como único OCR de PDF/imagem
+Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
-Last validation: Compose PASS; Docling integration PASS; document-worker smoke PASS; lint PASS; build PASS; POBJ2608 real em 142,6 s preservou 12 posições, mas manteve células materialmente unidas
+Last validation: inventário documental e referências do roadmap PASS; validação técnica anterior: Compose, Docling, worker, lint e build PASS; POBJ2608 em 142,6 s preservou 12 posições, mas manteve células unidas
 Last commit: 86139cf (`feat: consolidate Docling-only document pipeline`)
 
 Blockers:
@@ -34,13 +34,14 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 18:30
+Last update: 2026-09-01 18:45
 
 Resume instruction:
-1. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
-2. Repetir POBJ2708/2808 e acrescentar dois documentos reais quando disponíveis.
-3. Executar regressão WF-11/WF-13 após fechar a regra estrutural.
-4. Somente após passar o gate, importar/publicar WF-11 e retomar M5.9/M5.10.
+1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.
+2. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
+3. Repetir POBJ2708/2808 e acrescentar dois documentos reais quando disponíveis.
+4. Executar regressão WF-11/WF-13 após fechar a regra estrutural.
+5. Somente após passar o gate, publicar WF-11 e avançar N3–N7.
 
 Evidence:
 - `docs/audits/DOCLING_MIGRATION_2026-09-01.md`

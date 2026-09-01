@@ -17,9 +17,9 @@ Permitir que Rafael alterne o desenvolvimento entre o **Antigravity (Google)** e
 | Arquivo | Finalidade | Como Usar |
 |---|---|---|
 | **`SESSION_STATE.json`** | Estado de máquina leve e legível por IA em 1 chamada rápida | Lido no início de cada sessão para saber fase, tarefa e commit atual |
-| **`checklist.md`** | Lista granular de tarefas por marco com status `[ ]`, `[~]`, `[x]` | Marcado conforme o avanço de cada entrega |
+| **`ROADMAP.md`** | Planejamento e checklist granular únicos, com status `[ ]`, `[~]`, `[x]` | Fonte oficial de sequência e aceite |
+| **`PROJECT_STATE.md`** | Estado operacional validado e instrução de retomada | Conferido contra código, testes e Git |
 | **`status.md`** | Relatório executivo com KPIs, saúde e matriz de workflows | Visão macro de alto nível para Rafael |
-| **`ROADMAP.md`** | Mapa mestre de arquitetura (Fases 0 a 8) e regras permanentes | Consulta das diretrizes técnicas e DoD |
 | **`CODEX_HANDOFF.md`** | Guia textual detalhado com o que existe vs. o que não existe | Referência rápida para o ChatGPT Codex |
 | **`trocar-de-agente.bat`** | Script de 1 clique para fechar a sessão, testar e salvar | Executado por Rafael antes de mudar de ferramenta |
 
@@ -29,7 +29,7 @@ Permitir que Rafael alterne o desenvolvimento entre o **Antigravity (Google)** e
 
 ### 🔹 Passo 1: Antes de Sair do Assistente Atual (Fechar a Sessão)
 Diga para a IA atual:
-> *"Vou alternar para o outro assistente. Execute o script de handoff, faça o backup no Google Drive, suba para o GitHub com tag SemVer e atualize o checklist.md e status.md."*
+> *"Vou alternar para o outro assistente. Execute o script de handoff, faça o backup no Google Drive, suba para o GitHub e atualize ROADMAP.md, PROJECT_STATE.md, CHANGELOG.md e status.md."*
 
 Ou simplesmente dê duplo clique no arquivo:
 ```powershell
@@ -43,18 +43,19 @@ Copie e cole um dos **Prompts Prontos** abaixo no chat do novo assistente:
 ```text
 Olá, Codex! Estou retomando o projeto Diretor 360 v3.1.0.
 Por favor, leia os arquivos nesta ordem:
-1. SESSION_STATE.json
-2. status.md
-3. checklist.md
-4. CODEX_HANDOFF.md
-Me informe em qual marco estamos e qual o próximo passo da Fase 2 (Observability & Evals).
+1. AGENTS.md
+2. PROJECT_STATE.md
+3. ROADMAP.md
+4. CHANGELOG.md recente
+5. SESSION_STATE.json e CODEX_HANDOFF.md
+Valide contra Git e me informe o marco atual e o próximo passo exato.
 ```
 
 #### 📝 Prompt para colar no Antigravity:
 ```text
 Olá, Antigravity! Trabalhei pelo Codex e estou voltando por aqui.
-Por favor, leia o SESSION_STATE.json, o status.md e o checklist.md.
-Confirme os testes rodando scripts/run-all-hybrid-tests.ps1 e vamos avançar para o próximo item do checklist.
+Por favor, leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente.
+Valide o estado contra Git e avance para o próximo item elegível do roadmap.
 ```
 
 ---

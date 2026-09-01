@@ -21,7 +21,7 @@
 | **G7: FinOps & LLMOps** | Roteamento por menor custo suficiente e proteção contra estouro de orçamento. | `policies/model-router.yaml` comprovando **79.1% de redução de custos**. | 🟢 CONFORME |
 | **G8: Inicialização e Parada em 1-Clique** | Operação sem dependência de comandos manuais no terminal. | Scripts `iniciar-diretor-360.bat` e `parar-diretor-360.bat` certificados. | 🟢 CONFORME |
 | **G9: Isolamento Zero-Trust** | Nenhum segredo ou credencial real versionada no repositório Git. | `.gitignore` blindado e teste `test-h8-security-privacy.ps1` com aprovação 100%. | 🟢 CONFORME |
-| **G10: Alternância Fluida Multi-IA** | Handoff imediato e sincronizado entre Antigravity e ChatGPT Codex. | `SESSION_STATE.json`, `checklist.md`, `trocar-de-agente.bat` e backups no Google Drive. | 🟢 CONFORME |
+| **G10: Alternância Fluida Multi-IA** | Handoff imediato e sincronizado entre Antigravity e ChatGPT Codex. | `SESSION_STATE.json`, checklist unificado em `ROADMAP.md`, `trocar-de-agente.bat` e backups no Google Drive. | 🟢 CONFORME |
 
 ---
 

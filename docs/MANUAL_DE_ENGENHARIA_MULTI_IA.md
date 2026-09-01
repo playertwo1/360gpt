@@ -12,12 +12,12 @@
 ## ⚡ 1. Inicialização Rápida & Invariantes de Máquina (Machine Context)
 
 Se você é uma Inteligência Artificial assumindo este repositório, execute esta ordem canônica de leitura:
-1. **`SESSION_STATE.json`** $\rightarrow$ Estado atual de execução, versão, commit, backup e próxima missão.
-2. **`checklist.md`** $\rightarrow$ Tarefas concluídas (`[x]`) e tarefas planejadas (`[ ]`).
-3. **`status.md`** $\rightarrow$ Matriz dos 10 workflows n8n e KPIs de saúde do sistema.
-4. **`CODEX_HANDOFF.md`** $\rightarrow$ Roteiro detalhado da missão atual e acordos entre IAs.
-5. **`ROADMAP.md`** $\rightarrow$ As 9 fases do Roadmap Canônico de Confiança.
-6. **`AGENTS.md`** $\rightarrow$ O Contrato Mestre de Orquestração Multiagente v1.11.
+1. **`AGENTS.md`** $\rightarrow$ Contrato mestre e regras de execução.
+2. **`PROJECT_STATE.md`** $\rightarrow$ Estado operacional e ponto exato de retomada.
+3. **`ROADMAP.md`** $\rightarrow$ Único planejamento e checklist, com caminho N0–N9.
+4. **`CHANGELOG.md`** $\rightarrow$ Histórico permanente de mudanças.
+5. **`SESSION_STATE.json`** $\rightarrow$ Estado leve para automações e alternância.
+6. **`CODEX_HANDOFF.md`** $\rightarrow$ Contexto complementar de transferência.
 
 ---
 
@@ -57,7 +57,7 @@ Se você é uma Inteligência Artificial assumindo este repositório, execute es
 ├── scripts/                    # 13 testes automatizados em PowerShell e scripts de infraestrutura
 ├── test-data/                  # 20 casos sintéticos de avaliação, fixtures multimodais e payloads de Red Teaming
 ├── SESSION_STATE.json          # Estado instantâneo de máquina para alternância multi-IA
-├── checklist.md                # Checklist compartilhado de evolução do roadmap
+├── ROADMAP.md                  # Planejamento e checklist unificados
 ├── status.md                   # Relatório executivo de status e matriz de workflows
 ├── CODEX_HANDOFF.md            # Guia de transição e orientações para o ChatGPT Codex
 ├── trocar-de-agente.bat        # Automação de 1-clique para teste, backup no Google Drive, Git commit/push
@@ -103,7 +103,7 @@ Sempre que concluir qualquer modificação ou melhoria:
    *Certifique-se de obter `ALL_HYBRID_TESTS_PASS` (13/13 testes aprovados).*
 2. **Atualizar o Estado de Sessão:**
    - Atualize `SESSION_STATE.json` (com o último commit e timestamp).
-   - Atualize `checklist.md` (marcando `[x]` nos itens homologados).
+   - Atualize o checklist dentro de `ROADMAP.md` (marcando `[x]` somente nos itens homologados).
 3. **Executar a Sincronização em 1-Clique:**
    ```cmd
    .\trocar-de-agente.bat

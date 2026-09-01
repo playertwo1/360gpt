@@ -5,6 +5,8 @@
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
 **Status Atual da Infraestrutura:** LEVE, OTIMIZADA, COM PERSISTÊNCIA 100% PRESERVADA
 
+**Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. Arquivos de planejamento concorrentes foram absorvidos e removidos em 01/09/2026. O marco vigente é N2 — homologação Docling/POBJ.
+
 ---
 
 ## 📌 Contexto Executivo para o ChatGPT Codex (Onde Estamos e O que Mudou):

@@ -26,6 +26,6 @@ O go-live real não foi executado nesta estação porque domínio, VPS e credenc
 
 ## Decisão posterior ao Marco 24
 
-Rafael optou por adiar a VPS e avançar com uma arquitetura híbrida: site, fila e último Estado 360 hospedados; processamento por Docker, PostgreSQL, n8n e agentes no computador local. A execução e as evidências das próximas fases devem ser registradas em `ROADMAP_HIBRIDO.md`, começando por H1 — acesso privado ao site.
+Rafael optou por adiar a VPS e avançar com uma arquitetura híbrida: site, fila e último Estado 360 hospedados; processamento por Docker, PostgreSQL, n8n e agentes no computador local. O histórico desse marco foi absorvido no `ROADMAP.md`, única fonte vigente de planejamento e checklist.
 
 H1, H2 e H3 foram concluídas em 26 de agosto de 2026. As duas contas autorizadas acessaram o site, a persistência permaneceu disponível com Docker desligado e a ponte processou um novo caso sintético após rotação coordenada do segredo. O Telegram permaneceu desativado. A próxima fase é H4 — inicialização local com um clique.
