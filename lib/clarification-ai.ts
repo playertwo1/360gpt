@@ -17,6 +17,11 @@ const responseSchema = {
 };
 
 export async function interpretClarification(questions: ClarificationQuestion[], userAnswer: string) {
+  // Primeiro tenta uma interpretação determinística para respostas numeradas ou
+  // respostas diretas de valor. Isso evita loop quando Rafael responde apenas
+  // parte da lista (por exemplo, “Total de pontos 51,04” e “2. 0”).
+  const local = parseOwnerAnswerLocally(questions, userAnswer);
+  if (local.answers.length) return local;
   if (!env.GEMINI_API_KEY) return { resolved: false, answers: [] as ClarificationAnswer[], follow_up: ['Não consegui interpretar automaticamente. Responda indicando o número de cada pergunta e o valor correto.'], model: 'not_configured' };
   const prompt = [
     'Você estrutura respostas de Rafael para perguntas do Diretor 360.',
@@ -42,4 +47,24 @@ export async function interpretClarification(questions: ClarificationQuestion[],
     } catch { continue; }
   }
   return { resolved: false, answers: [] as ClarificationAnswer[], follow_up: ['Não consegui interpretar com segurança. Responda novamente, numerando cada resposta.'], model: 'unavailable' };
+}
+
+function parseOwnerAnswerLocally(questions: ClarificationQuestion[], text: string) {
+  const answers: ClarificationAnswer[] = [];
+  const lines = String(text ?? '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  for (const line of lines) {
+    const numbered = line.match(/^(\d+)\s*[.)\-:]\s*(.+)$/);
+    let index = numbered ? Number(numbered[1]) - 1 : -1;
+    const valueText = numbered?.[2] ?? line;
+    if (index < 0 && /total\s+de\s+pontos?/i.test(line)) index = questions.findIndex((q) => /pontos?/i.test(`${q.field} ${q.question}`));
+    if (index < 0 || index >= questions.length) continue;
+    const question = questions[index];
+    const numeric = valueText.replace(/\./g, '').replace(',', '.').match(/-?\d+(?:\.\d+)?/);
+    const value: number | string = numeric ? Number(numeric[0]) : valueText;
+    if (answers.some((item) => item.question_id === question.id)) continue;
+    answers.push({ question_id: question.id, field: question.field, indicator: question.indicator ?? null, value, unit: null, answer: valueText, confidence: 1 });
+  }
+  const answered = new Set(answers.map((item) => item.question_id));
+  const follow_up = questions.filter((q) => !answered.has(q.id)).map((q) => q.question);
+  return { resolved: answers.length === questions.length, answers, follow_up, model: 'deterministic_owner_parser' };
 }
