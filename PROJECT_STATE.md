@@ -18,7 +18,7 @@ Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove docu
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
 Last validation: inventário documental e referências do roadmap PASS; validação técnica anterior: Compose, Docling, worker, lint e build PASS; POBJ2608 em 142,6 s preservou 12 posições, mas manteve células unidas
-Last commit: 86139cf (`feat: consolidate Docling-only document pipeline`)
+Last commit: 320ea9c (`docs: unify project roadmap and checklists`)
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
