@@ -65,6 +65,6 @@ function parseOwnerAnswerLocally(questions: ClarificationQuestion[], text: strin
     answers.push({ question_id: question.id, field: question.field, indicator: question.indicator ?? null, value, unit: null, answer: valueText, confidence: 1 });
   }
   const answered = new Set(answers.map((item) => item.question_id));
-  const follow_up = questions.filter((q) => !answered.has(q.id)).map((q) => q.question);
+  const follow_up = questions.filter((q) => !answered.has(q.id)).map((q) => `${q.indicator ? `${q.indicator} — ` : q.field ? `${q.field} — ` : ''}${q.question}`);
   return { resolved: answers.length === questions.length, answers, follow_up, model: 'deterministic_owner_parser' };
 }

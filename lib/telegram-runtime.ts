@@ -104,9 +104,17 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
   const interpretation = await interpretClarification(questions, text);
   const now = Date.now();
   if (!interpretation.resolved) {
-    await db.prepare(`UPDATE clarification_requests SET status = 'NEEDS_FOLLOW_UP', answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1 WHERE id = ?`)
-      .bind(text, String(messageId), JSON.stringify(interpretation), String(row.id)).run();
-    await sendTelegramText(token, chatId, ['Ainda preciso confirmar:', ...interpretation.follow_up.map((item, index) => `${index + 1}. ${item}`), '', `Protocolo: ${row.document_id}`].join('\n'), messageId);
+    const answeredIds = new Set((interpretation.answers ?? []).map((answer) => answer.question_id));
+    const remaining = questions.filter((question) => !answeredIds.has(question.id));
+    const followUp = remaining.map((question) => {
+      const label = question.indicator ? `${question.indicator} — ` : question.field ? `${question.field} — ` : '';
+      return `${label}${question.question}`;
+    });
+    const nextQuestions = remaining.length ? remaining : questions;
+    const persisted = { ...interpretation, follow_up: followUp };
+    await db.prepare(`UPDATE clarification_requests SET status = 'NEEDS_FOLLOW_UP', questions_json = ?, answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1 WHERE id = ?`)
+      .bind(JSON.stringify(nextQuestions), text, String(messageId), JSON.stringify(persisted), String(row.id)).run();
+    await sendTelegramText(token, chatId, ['Ainda preciso confirmar:', ...followUp.map((item, index) => `${index + 1}. ${item}`), '', `Protocolo: ${row.document_id}`].join('\n'), messageId);
     return true;
   }
   await db.batch([
