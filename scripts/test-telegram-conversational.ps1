@@ -20,11 +20,13 @@ $wf11 = Get-Content (Join-Path $repo 'n8n/workflows/wf-11-diretor-360-orquestrad
 $wf13 = Get-Content (Join-Path $repo 'n8n/workflows/wf-13-gg-performance-mvp.json') -Raw
 
 Write-Host '=== TELEGRAM CONVERSACIONAL SUPERVISIONADO ==='
-foreach ($command in @('/comandos','/status','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/explicar','/privacidade','/meusdados','/excluir')) {
+foreach ($command in @('/comandos','/status','/progresso','/andamento','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/destravar','/reprocessartodos','/explicar','/privacidade','/meusdados','/excluir')) {
   Assert-True ($messages.Contains($command) -or $runtime.Contains($command)) "Comando documentado: $command"
 }
 Assert-True ($runtime -match 'toLowerCase\(\)' -and $runtime -match 'replace\(/\\s\+\/g') 'Comandos toleram caixa e espaços extras'
 Assert-True ($runtime -match 'command_confirmations' -and $runtime -match '/confirmar') 'Ações críticas exigem confirmação temporária'
+Assert-True ($runtime -match '/reprocessartodos' -and $runtime -match 'documents WHERE owner_id = \?' -and $runtime -match 'lease_expires_at, 0\) < \?') 'Reprocessamento em massa limitado ao proprietário e a leases expirados/falhas'
+Assert-True ($runtime -match 'renderProgressBar' -and $runtime -match 'Progresso por etapa \(estimado\)' -and $runtime -match 'subetapa detalhada ainda não instrumentada') 'Progresso é identificado como estimativa e não fabrica subetapa'
 Assert-True ($request -match 'AWAITING_OWNER_INPUT' -and $wf11 -match 'AWAITING_OWNER_INPUT') 'Dúvida material pausa o mesmo job'
 Assert-True ($runtime -match 'clarification_resolved' -and $runtime -match "status = 'QUEUED'") 'Resposta natural reabre e reenfileira o mesmo protocolo'
 Assert-True ($claim -match 'OWNER_PROVIDED' -and $wf13 -match 'OWNER_PROVIDED') 'Resposta do Rafael preserva proveniência explícita'

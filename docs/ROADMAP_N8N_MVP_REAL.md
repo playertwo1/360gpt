@@ -127,6 +127,8 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 - [ ] Publicar a correção da ponte e reclassificar os sete jobs órfãos.
 - [ ] Reprocessar primeiro um arquivo distinto de forma controlada; só então avançar pelos demais.
 
+**Saneamento de 2026-09-01:** alterações paralelas do Antigravity que contornavam WF-11/n8n, continham credenciais e apresentavam dados fictícios foram rejeitadas. Os comandos de progresso e recuperação foram preservados com isolamento por proprietário, confirmação e proteção de leases ativos. O menu Telegram registra 26 comandos; a validação ponta a ponta aguarda Docker/n8n.
+
 **Gate:** fluxo repetível e útil; Rafael aprova iniciar a evolução pós-MVP.
 
 ## Evolução somente após o MVP

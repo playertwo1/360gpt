@@ -42,6 +42,19 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
   if (!row) { await sendTelegramText(token, chatId, 'Confirmação inválida ou expirada. Repita o comando original.'); return; }
   const args = safeJson<string[]>(row.arguments_json, []); const protocol = args[0]; const now = Date.now();
   if (!protocol) { await sendTelegramText(token, chatId, 'Ação sem protocolo válido.'); return; }
+  if (row.command === '/reprocessartodos' && protocol === 'todos') {
+    await db.batch([
+      db.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, completed_at = NULL, last_error_code = NULL, attempt_count = 0, lease_token = NULL, lease_expires_at = NULL
+        WHERE document_id IN (SELECT id FROM documents WHERE owner_id = ?)
+          AND (status IN ('FAILED_RETRYABLE','FAILED_FINAL','INCOMPLETE_OWNER_INPUT_TIMEOUT','CANCELLED')
+            OR (status = 'PROCESSING' AND COALESCE(lease_expires_at, 0) < ?))`).bind(now, ownerId, now),
+      db.prepare(`UPDATE documents SET status = 'ready_for_processing' WHERE owner_id = ? AND status NOT IN ('processed','revoked')
+        AND id IN (SELECT document_id FROM agent_runs WHERE status = 'QUEUED')`).bind(ownerId),
+    ]);
+    await db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id).run();
+    await sendTelegramText(token, chatId, 'Falhas e leases expirados dos seus documentos foram reabertos. Jobs com lease ainda válido não foram interrompidos.');
+    return;
+  }
   if (row.command === '/cancelar') {
     await db.batch([
       db.prepare(`UPDATE agent_runs SET status = 'CANCELLED', completed_at = ?, lease_token = NULL, lease_expires_at = NULL WHERE document_id = ? AND status NOT IN ('SUCCEEDED','CANCELLED')`).bind(now, protocol),
@@ -92,6 +105,107 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
   return true;
 }
 
+function renderProgressBar(percent: number): string {
+  const totalBlocks = 10;
+  const filledBlocks = Math.min(10, Math.max(0, Math.round(percent / 10)));
+  const emptyBlocks = totalBlocks - filledBlocks;
+  return `[${'█'.repeat(filledBlocks)}${'░'.repeat(emptyBlocks)}] ${percent}%`;
+}
+
+function formatDuration(ms: number): string {
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `${sec}s`;
+  const min = Math.floor(sec / 60);
+  const remainingSec = sec % 60;
+  return `${min}m${remainingSec > 0 ? ` ${remainingSec}s` : ''}`;
+}
+
+type DetailedProgressRow = {
+  id: string;
+  original_name: string | null;
+  document_status: string;
+  job_id: string | null;
+  job_status: string | null;
+  attempt_count: number | null;
+  started_at: number | null;
+  available_at: number | null;
+  lease_expires_at: number | null;
+  last_error_code: string | null;
+  completed_at: number | null;
+  received_at: number | null;
+};
+
+function formatProgressReport(row: DetailedProgressRow | null, queueSummary?: string): string {
+  if (!row) {
+    return `STATUS DE PROCESSAMENTO\n\nNenhum arquivo em processamento ou na fila no momento.${queueSummary ? `\n\nFila:\n${queueSummary}` : ''}`;
+  }
+  const now = Date.now();
+  const status = String(row.job_status ?? row.document_status ?? 'RECEIVED').toUpperCase();
+  const attempt = row.attempt_count ?? 1;
+
+  let progress = 10;
+  let stage = '📥 Recebido pelo bot — aguardando início do processamento';
+  let health = '🟢 Normal';
+  let isStuck = false;
+
+  const startedTime = row.started_at || row.available_at || row.received_at || now;
+  const elapsedMs = Math.max(0, now - startedTime);
+  const elapsedStr = formatDuration(elapsedMs);
+
+  if (status === 'SUCCEEDED' || status === 'COMPLETED' || status === 'PROCESSED') {
+    progress = 100;
+    stage = '✅ Concluído com sucesso e parecer enviado ao Telegram';
+    health = '🟢 Finalizado com sucesso';
+  } else if (status === 'AWAITING_OWNER_INPUT') {
+    progress = 75;
+    stage = '⏸️ Pausado — Aguardando resposta de Rafael para dúvida material';
+    health = '🟡 Aguardando resposta (/responder)';
+  } else if (status === 'PROCESSING') {
+    if (row.lease_expires_at && now > row.lease_expires_at) {
+      isStuck = true;
+      progress = 55;
+      stage = '⚠️ Tempo limite do worker expirado (possível travamento)';
+      const expiredMs = now - row.lease_expires_at;
+      health = `🔴 TRAVADO / LEASE EXPIRADO há ${formatDuration(expiredMs)}`;
+    } else {
+      progress = 50;
+      stage = '⚙️ OCR/análise em execução — subetapa detalhada ainda não instrumentada';
+      health = `🟢 Em processamento há ${elapsedStr} (no prazo)`;
+    }
+  } else if (status === 'QUEUED') {
+    progress = 20;
+    stage = '⏳ Na fila de espera (aguardando worker assumir o job)';
+    health = `🟢 Na fila há ${elapsedStr}`;
+  } else if (status.startsWith('FAILED') || status === 'CANCELLED') {
+    progress = 0;
+    stage = `❌ Interrompido — Erro: ${row.last_error_code || 'Falha na execução'}`;
+    health = `🔴 Falha registrada (use /tentar novamente ${row.id})`;
+  }
+
+  const lines = [
+    '📊 ANDAMENTO DO PROCESSAMENTO',
+    '',
+    `📄 Arquivo: ${row.original_name ?? 'mensagem de texto / documento'}`,
+    `🔢 Protocolo: ${row.id}`,
+    `⏳ Status: ${status} (Tentativa ${attempt}/3)`,
+    `📈 Progresso por etapa (estimado): ${renderProgressBar(progress)}`,
+    '',
+    `📍 Etapa Atual: ${stage}`,
+    `⏱️ Tempo Decorrido: ${elapsedStr}`,
+    `🚦 Diagnóstico: ${health}`,
+  ];
+
+  if (isStuck) {
+    lines.push('', '👉 Dica: Envie /destravar para reabrir este e outros jobs travados.');
+  }
+
+  if (queueSummary) {
+    lines.push('', '📋 Visão da Fila:', queueSummary);
+  }
+
+  return lines.join('\n');
+}
+
 export async function handleTelegramCommand(db: D1Database, token: string, chatId: number, ownerId: string, text: string): Promise<InteractionResult> {
   const { command, args, rawArgs } = commandParts(text);
   if (!command.startsWith('/')) return { handled: false };
@@ -100,6 +214,19 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     await sendTelegramText(token, chatId, telegramCommandMenu()); return { handled: true, kind: 'menu' };
   }
   if (command === '/confirmar') { await executeConfirmation(db, token, chatId, ownerId, args[0] ?? ''); return { handled: true, kind: 'confirmation' }; }
+  if (['/reprocessartodos', '/destravar'].includes(command) || (['/reabrir', '/tentar', '/reprocessar'].includes(command) && (args[0]?.toLowerCase() === 'todos' || (args[0]?.toLowerCase() === 'novamente' && args[1]?.toLowerCase() === 'todos')))) {
+    const countRow = await db.prepare(`SELECT count(*) as total FROM agent_runs ar JOIN documents d ON d.id = ar.document_id
+      WHERE d.owner_id = ? AND (ar.status IN ('FAILED_RETRYABLE','FAILED_FINAL','INCOMPLETE_OWNER_INPUT_TIMEOUT','CANCELLED')
+        OR (ar.status = 'PROCESSING' AND COALESCE(ar.lease_expires_at, 0) < ?))`).bind(ownerId, Date.now()).first<{ total: number }>();
+    const total = countRow?.total ?? 0;
+    if (total === 0) {
+      await sendTelegramText(token, chatId, 'Nenhum job em processamento ou com falha encontrado para reprocessar.');
+      return { handled: true, kind: 'reprocess-all' };
+    }
+    await sendTelegramText(token, chatId, `${total} job(s) recuperável(is) encontrado(s). Jobs ativos não serão interrompidos.`);
+    await createConfirmation(db, token, chatId, ownerId, '/reprocessartodos', ['todos']);
+    return { handled: true, kind: 'critical' };
+  }
   if (['/cancelar','/reabrir','/excluir','/corrigir'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
     const normalizedArgs = command === '/tentar' ? args.slice(1) : args;
     const normalizedCommand = command === '/tentar' ? '/tentar' : command;
@@ -118,14 +245,18 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const summary = (counts.results ?? []).map((item) => `• ${item.status}: ${item.total}`).join('\n') || 'Fila vazia.';
     await sendTelegramText(token, chatId, `STATUS DIRETOR 360\n\nServiços locais são monitorados pelo n8n.\n\nFila persistida:\n${summary}`); return { handled: true, kind: 'status' };
   }
-  if (command === '/protocolo') {
+  if (['/progresso','/andamento','/atual','/proximo','/protocolo'].includes(command)) {
     const protocol = args[0];
-    const row = protocol ? await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, ar.status AS job_status, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE d.id = ? AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, ownerId).first<Record<string, unknown>>() : null;
-    const status = String(row?.job_status ?? row?.document_status ?? 'RECEIVED').toUpperCase();
-    const progress = status === 'SUCCEEDED' || status === 'COMPLETED' ? 100 : status === 'PROCESSING' ? 60 : status === 'AWAITING_OWNER_INPUT' ? 80 : status.startsWith('FAILED') ? 0 : 10;
-    const stage = status === 'SUCCEEDED' ? 'parecer enviado' : status === 'PROCESSING' ? 'OCR e análise em execução' : status === 'AWAITING_OWNER_INPUT' ? 'aguardando sua resposta' : status.startsWith('FAILED') ? 'erro — tente novamente' : 'recebido e aguardando o worker';
-    await sendTelegramText(token, chatId, row ? `PROTOCOLO ${row.id}\nArquivo: ${row.original_name ?? 'sem nome'}\nProgresso: ${progress}%\nEtapa: ${stage}\nDocumento: ${row.document_status}\nProcessamento: ${row.job_status ?? 'não iniciado'}${row.last_error_code ? `\nErro: ${row.last_error_code}` : ''}` : 'Protocolo não encontrado ou não informado.');
-    return { handled: true, kind: 'protocol' };
+    const counts = await db.prepare(`SELECT status, count(*) AS total FROM agent_runs GROUP BY status`).all<{ status: string; total: number }>();
+    const queueSummary = (counts.results ?? []).map((item) => `• ${item.status}: ${item.total}`).join('\n') || 'Fila vazia.';
+    let row: DetailedProgressRow | null = null;
+    if (protocol) {
+      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE d.id = ? AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, ownerId).first<DetailedProgressRow>();
+    } else {
+      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d JOIN agent_runs ar ON ar.document_id = d.id WHERE d.owner_id = ? ORDER BY CASE WHEN ar.status = 'PROCESSING' THEN 1 WHEN ar.status = 'AWAITING_OWNER_INPUT' THEN 2 WHEN ar.status = 'QUEUED' THEN 3 ELSE 4 END ASC, ar.started_at DESC, d.received_at DESC LIMIT 1`).bind(ownerId).first<DetailedProgressRow>();
+    }
+    await sendTelegramText(token, chatId, formatProgressReport(row, queueSummary));
+    return { handled: true, kind: 'progress' };
   }
   if (command === '/pendencias' || command === '/duvidas') {
     const rows = command === '/duvidas'

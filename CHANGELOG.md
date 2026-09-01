@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.6.2] - 2026-09-01
+
+### Added
+- Comandos `/progresso`, `/andamento`, `/destravar` e `/reprocessartodos`, com menu oficial validado em 26 comandos.
+
+### Fixed
+- Recuperação em massa limitada ao proprietário e somente a falhas ou leases expirados; jobs ativos não são interrompidos.
+- Progresso passou a ser rotulado como estimativa por etapa, sem fabricar a subetapa interna do OCR/análise.
+
+### Security
+- Removidos scripts e workflow paralelo com credenciais embutidas, envio direto e dados fictícios; nove backups contendo `.env` foram retirados do repositório para quarentena local.
+- Restaurados o worker Telegram e o workflow canônico anteriores, preservando webhook, allowlist, fila n8n, contratos e auditoria.
+
 ## [3.6.1] - 2026-08-31
 
 ### Fixed
