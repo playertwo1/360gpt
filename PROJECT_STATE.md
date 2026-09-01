@@ -6,11 +6,11 @@ Current milestone: M5 — Piloto curto e correção de rota
 Current task: M5.10 — ensaio real de reutilização do conhecimento POBJ homologado
 Status: IN_PROGRESS
 
-Last completed: Persistência, API, site, comandos Telegram e contrato n8n do conhecimento POBJ implementados; valores mensais excluídos da reutilização
+Last completed: Persistência, API, site, comandos Telegram e contrato n8n do conhecimento POBJ implementados e publicados na versão hospedada 41; valores mensais excluídos da reutilização
 Next task: Homologar seletivamente um indicador no site, enviar novo arquivo do mesmo layout e comprovar a aplicação registrada
 
 Last validation: PASS — lint, build e teste estrutural dedicado; ensaio real permanece dependente do Docker/MinerU
-Last commit: 13d0acd (`fix(telegram): secure recovery and progress commands`)
+Last commit: 072bc65 (`feat(pobj): add owner-approved reusable knowledge`)
 
 Blockers:
 - Docker Desktop/WSL foi reiniciado em 2026-09-01, mas o pipe `dockerDesktopLinuxEngine` não foi criado; n8n, document-worker e MinerU permanecem indisponíveis até o Docker concluir a inicialização pela interface.

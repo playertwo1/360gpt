@@ -14,6 +14,9 @@
 ### Validated
 - Lint, build e teste estrutural dedicado do conhecimento POBJ aprovados.
 
+### Deployed
+- Versão hospedada 41 publicada com migração 0009, aba `/knowledge` e APIs de conhecimento supervisionado.
+
 ## [3.6.2] - 2026-09-01
 
 ### Added
