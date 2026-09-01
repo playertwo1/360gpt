@@ -796,3 +796,25 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 **Gate M5.10:** conhecimento só vira oficial por decisão explícita de Rafael, não contém valores mensais e pode ser rastreado, substituído ou revogado.
 
 Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.
+
+### M5.11 — Estabilização do runtime Docker após migração para `G:` — EM ANDAMENTO
+
+**Estado confirmado em 01/09/2026 07:22 (America/Sao_Paulo):**
+
+- [x] Docker Desktop operacional com `DataFolder` em `G:\Docker` e VHDX em `G:\Docker\wsl\disk\docker_data.vhdx`.
+- [x] Caminho legado em `C:\Users\fael\AppData\Local\Docker\wsl` mantido pelo Docker como ponto de redirecionamento; não representa uma segunda cópia independente.
+- [x] Persistência confirmada nos volumes gerenciados `visao-360_n8n_data` e `visao-360_postgres_data`.
+- [x] Bind mounts confirmados: `./n8n/workflows` em `/files/workflows:ro` e `./infra/postgres/init` em `/docker-entrypoint-initdb.d:ro`.
+- [x] PostgreSQL iniciado e saudável.
+- [ ] Aguardar o build único já iniciado de `document-worker` e MinerU; não iniciar build concorrente.
+- [ ] Após o build, diagnosticar e recuperar o n8n, atualmente com processo Node bloqueado em I/O e healthcheck recusando a porta 5678.
+- [ ] Confirmar workflows, credenciais, ativações e agenda do WF-11 sem recriar `visao-360_n8n_data`.
+- [ ] Confirmar tabelas e registros do projeto sem recriar `visao-360_postgres_data`; os scripts de `infra/postgres/init` não substituem backup lógico.
+- [ ] Subir `document-worker` e MinerU separadamente, com concorrência 1 e perfil híbrido de menor memória.
+- [ ] Validar saúde de PostgreSQL, n8n, worker, OCR leve e fallback MinerU.
+- [ ] Executar teste controlado Telegram → fila → OCR → Diretor → Performance → resposta Telegram.
+- [ ] Depois da validação, executar o ensaio M5.10 de reutilização e conflito do conhecimento POBJ.
+
+**Proteções obrigatórias:** não remover/recriar volumes; não limpar cache durante o build; não copiar o VHDX com Docker/WSL gravando; para backup, combinar repositório, exportação lógica do PostgreSQL e backup controlado dos dados do n8n.
+
+**Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram; em seguida validar `docker compose ... ps`, recuperar somente o serviço n8n se necessário e continuar a lista acima na primeira caixa não concluída.

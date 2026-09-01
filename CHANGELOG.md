@@ -59,6 +59,14 @@
 
 ## [Unreleased]
 
+### Infrastructure
+- Docker Desktop migrado para `G:\Docker`, com disco virtual em `G:\Docker\wsl\disk\docker_data.vhdx` e redirecionamento legado administrado pelo próprio Docker.
+- Confirmados os volumes persistentes `visao-360_n8n_data` e `visao-360_postgres_data`, além dos bind mounts versionados de workflows e scripts de inicialização.
+
+### Operations
+- Registrado checkpoint recuperável: PostgreSQL saudável, build único de `document-worker`/MinerU em andamento e n8n pendente de estabilização após contenção de I/O.
+- Formalizado que scripts de inicialização do PostgreSQL não substituem backup lógico e que o VHDX não deve ser copiado enquanto Docker/WSL estiver gravando.
+
 ### Deployed
 - Versão hospedada 39 publicada com rotas de esclarecimento e migração conversacional; WF-11/WF-13 atualizados, publicados e reiniciados no n8n local.
 
