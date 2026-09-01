@@ -13,7 +13,7 @@ Last validation: PASS parcial — teste conversacional, lint, build, varredura d
 Last commit: 13d0acd (`fix(telegram): secure recovery and progress commands`)
 
 Blockers:
-- Docker Desktop recusou inicialização automática em 2026-08-31; n8n, document-worker e MinerU estão indisponíveis até o runtime local voltar.
+- Docker Desktop/WSL foi reiniciado em 2026-09-01, mas o pipe `dockerDesktopLinuxEngine` não foi criado; n8n, document-worker e MinerU permanecem indisponíveis até o Docker concluir a inicialização pela interface.
 - Sete jobs reais permanecem órfãos em PROCESSING/terceira tentativa; a versão 40 pode recuperá-los, mas o Docker/n8n precisa estar operacional antes de executar `/destravar`.
 - Imagem MinerU ocupa aproximadamente 13 GB; usa cerca de 2,4 GB após pipeline e 5,8 GB após híbrido; concorrência e janela limitadas a 1.
 - Imagem oficial herdada apresenta conflitos não bloqueantes de `pip check` entre o runtime VLLM e dependências fixadas pelo MinerU.
@@ -25,4 +25,4 @@ Pending decisions:
 Last update: 2026-09-01 05:26
 
 Resume instruction:
-Confirme Docker/n8n saudável, use `/destravar` com confirmação e reprocese um único arquivo real antes de liberar os demais.
+Abra o Docker Desktop e resolva/registre a mensagem exibida até aparecer “Engine running”; depois valide `docker ps`, use `/destravar` com confirmação e reprocesse um único arquivo real.
