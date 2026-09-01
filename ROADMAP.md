@@ -797,53 +797,11 @@ Até o primeiro uso real ser comprovado, a ordem passa a ser:
 
 Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.
 
-### M5.11 — Estabilização do runtime Docker após migração para `G:` — EM ANDAMENTO
+### Próxima sequência do roadmap original
 
-**Estado confirmado em 01/09/2026 07:22 (America/Sao_Paulo):**
+1. Concluir o gate M5.9 com os casos de aceite ainda não cobertos.
+2. Executar no M5.10 a reutilização de conhecimento homologado em relatório do mesmo layout.
+3. Executar no M5.10 o conflito controlado de layout/regra e confirmar `AWAITING_OWNER_INPUT`.
+4. Processar 3–5 arquivos reais e comparar o resultado com a leitura humana de Rafael.
 
-- [x] Docker Desktop operacional com `DataFolder` em `G:\Docker` e VHDX em `G:\Docker\wsl\disk\docker_data.vhdx`.
-- [x] Caminho legado em `C:\Users\fael\AppData\Local\Docker\wsl` mantido pelo Docker como ponto de redirecionamento; não representa uma segunda cópia independente.
-- [x] Persistência confirmada nos volumes gerenciados `visao-360_n8n_data` e `visao-360_postgres_data`.
-- [x] Bind mounts confirmados: `./n8n/workflows` em `/files/workflows:ro` e `./infra/postgres/init` em `/docker-entrypoint-initdb.d:ro`.
-- [x] PostgreSQL iniciado e saudável.
-- [ ] Aguardar o build único já iniciado de `document-worker` e MinerU; não iniciar build concorrente.
-- [x] n8n recuperado e validado em `/healthz` com HTTP 200, sem recriar volumes.
-- [x] Restaurar do repositório 13 workflows canônicos e regenerar 2 credenciais locais a partir de `.env.n8n`, removendo o arquivo temporário ao final.
-- [x] Confirmar bancos `n8n` e `visao360`, com 129 e 8 tabelas respectivamente; os scripts de `infra/postgres/init` não substituem backup lógico.
-- [x] Subir `document-worker` isoladamente com `--no-build --no-deps`; healthcheck aprovado.
-- [x] Publicar WF-12 e WF-13 como subworkflows internos.
-- [ ] Aguardar o build do MinerU terminar e validar sua imagem/healthcheck com concorrência 1 e perfil híbrido de menor memória.
-- [ ] Publicar/ativar a agenda do WF-11 somente depois de MinerU e worker estarem saudáveis; WF-11 permanece inativo neste checkpoint.
-- [ ] Validar saúde de PostgreSQL, n8n, worker, OCR leve e fallback MinerU.
-- [ ] Executar teste controlado Telegram → fila → OCR → Diretor → Performance → resposta Telegram.
-- [ ] Depois da validação, executar o ensaio M5.10 de reutilização e conflito do conhecimento POBJ.
-
-**Proteções obrigatórias:** não remover/recriar volumes; não limpar cache durante o build; não copiar o VHDX com Docker/WSL gravando; para backup, combinar repositório, exportação lógica do PostgreSQL e backup controlado dos dados do n8n.
-
-**Checkpoint de pausa — 01/09/2026 07:37:** n8n, PostgreSQL e `document-worker` saudáveis; 13 workflows e 2 credenciais presentes; WF-12/WF-13 publicados; WF-11 inativo; build do MinerU ainda em segundo plano.
-
-**Instrução de retomada:** verificar se os processos `docker compose ... up -d`/BuildKit terminaram e se a imagem `diretor360/mineru:3.4.5` existe; subir/validar MinerU, confirmar o acesso do worker ao parser e somente então publicar WF-11 e executar o teste Telegram ponta a ponta.
-
-#### Migração para Docker Engine nativo no Ubuntu/WSL2 — 01/09/2026 13:12
-
-- [x] Ler e auditar `STATUS_E_MIGRACAO_DOCKER_DIRETOR_360.md` da Área de Trabalho.
-- [x] Confirmar `.wslconfig`: 6 GB RAM, 4 CPUs, 2 GB swap e `autoMemoryReclaim=gradual`.
-- [x] Confirmar backups `backup_visao360_postgres.sql` e `backup_n8n_data/`; o dump SQL é confidencial e inclui hashes de credenciais.
-- [x] Preservar o VHDX em `G:\Docker\wsl\disk\docker_data.vhdx` (54.572.089.344 bytes no diagnóstico).
-- [x] Corrigir sockets temporários presos arquivando os diretórios `run` e `docker-secrets-engine`, sem tocar no VHDX.
-- [x] Reiniciar o Windows e confirmar que o VHDX e os backups permaneceram íntegros.
-- [x] Abandonar o reparo do Docker Desktop e adotar Docker Engine nativo no Ubuntu/WSL2 para reduzir consumo de RAM.
-- [x] Corrigir `.wslconfig`: 6 GB RAM, 4 CPUs, 2 GB swap e `autoMemoryReclaim=gradual` em `[experimental]`.
-- [x] Mover Ubuntu 26.04 para `G:\Docker\Ubuntu` antes de baixar imagens pesadas.
-- [x] Instalar Docker Engine 29.1.3, Compose 2.40.3 e NVIDIA Container Toolkit 1.20.0.
-- [x] Validar GPU em contêiner: RTX 4060 Ti, 8.188 MiB.
-- [x] Restaurar dump PostgreSQL: 129 tabelas n8n e 8 tabelas visao360.
-- [x] Restaurar `.n8n` e confirmar 13 workflows e 2 credenciais.
-- [x] Validar PostgreSQL, n8n e `document-worker` saudáveis; smoke test de extração aprovado.
-- [x] Atualizar scripts de iniciar/parar para usar WSL e manter o Ubuntu ativo somente durante a operação.
-- [ ] Reconstruir ou importar `diretor360/mineru:3.4.5` no novo Engine, sem build concorrente.
-- [ ] Validar MinerU com GPU e configurar operação sob demanda para liberar RAM quando ocioso.
-- [ ] Publicar/ativar WF-11 e executar Telegram → OCR → Performance → Telegram.
-- [ ] Executar os ensaios de reutilização e conflito do M5.10.
-
-**Estado:** bloqueio do Docker Desktop superado por mudança arquitetural. O único componente pendente do runtime é o MinerU pesado; dados e serviços leves estão recuperados.
+**Pré-condição operacional:** confirmar OCR/worker saudável e WF-11 disponível antes dos ensaios reais. A configuração de infraestrutura permanece documentada no código e nos scripts oficiais, fora da trilha funcional do roadmap.

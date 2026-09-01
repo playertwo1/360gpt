@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased] - 2026-09-01
+
+### Changed
+
+- Removida do planejamento funcional a trilha temporária de migração do Docker; o roadmap volta a priorizar os gates M5.9 e M5.10 do MVP Telegram → Performance.
+- Mantida a saúde de OCR/worker/WF-11 como pré-condição operacional, sem misturar manutenção de infraestrutura com entregas funcionais.
+
+### Removed
+
+- Retirados arquivos temporários de passagem e scripts obsoletos de reparo do Docker Desktop; backups, volumes, VHDX e scripts oficiais do runtime WSL foram preservados.
+
 ## [3.7.0] - 2026-09-01
 
 ### Added
