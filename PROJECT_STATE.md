@@ -17,8 +17,8 @@ Host baseline:
 Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
-Last validation: inventário documental e referências do roadmap PASS; validação técnica anterior: Compose, Docling, worker, lint e build PASS; POBJ2608 em 142,6 s preservou 12 posições, mas manteve células unidas
-Last commit: 320ea9c (`docs: unify project roadmap and checklists`)
+Last validation: 2026-09-01 — teste oficial do document-worker PASS (container saudável, comunicação n8n→worker e smoke Docling); probe POBJ2708/2808 não concluído por reinício do container durante a cópia temporária, sem alteração de código
+Last commit: 051f49e (`docs: formalize supervised conversational learning`)
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
@@ -34,14 +34,14 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 18:45
+Last update: 2026-09-01 19:15
 
 Resume instruction:
 1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.
-2. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
-3. Repetir POBJ2708/2808 e acrescentar dois documentos reais quando disponíveis.
-4. Executar regressão WF-11/WF-13 após fechar a regra estrutural.
-5. Somente após passar o gate, publicar WF-11 e avançar N3–N7.
+2. Rafael deve conferir os campos críticos do POBJ2608 e autorizar a conferência dos POBJ2708/2808.
+3. Reprocessar POBJ2708/2808 com os arquivos disponibilizados e registrar benchmark sem persistir conteúdo sensível no Git.
+4. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
+5. Somente após passar o gate, executar regressão WF-11/WF-13 e avançar N3–N7.
 
 Evidence:
 - `docs/audits/DOCLING_MIGRATION_2026-09-01.md`
