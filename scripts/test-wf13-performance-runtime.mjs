@@ -33,7 +33,7 @@ let current = {
     handoff_target: 'GERENTE_GERAL_PERFORMANCE',
     extracted_text: html,
     capabilities: ['PERFORMANCE_SOURCES_RECONCILIATION', 'PERFORMANCE_SCORING_STATE', 'PERFORMANCE_GAP_SCENARIOS'],
-    source: { mime_type: 'application/pdf', content_hash: 'sha256:test', extraction_method: 'MINERU_HYBRID' },
+    source: { mime_type: 'application/pdf', content_hash: 'sha256:test', extraction_method: 'DOCLING_TABLEFORMER' },
     evidence: [{ locator: 'page://1' }],
     security: { external_effects_allowed: false },
   },

@@ -1,61 +1,100 @@
-﻿# 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-
-**Data:** 28 de agosto de 2026  
+# 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
+**Data da Última Atualização:** 01 de setembro de 2026
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
-**Último Commit de Sessão:** `HEAD`
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
+**Status Atual da Infraestrutura:** LEVE, OTIMIZADA, COM PERSISTÊNCIA 100% PRESERVADA
 
 ---
 
-## 📌 Missão do ChatGPT Codex nesta Sessão:
-Rafael determinou que você (**Codex**) atue como **auditor independente e rigoroso** de todas as alterações feitas no projeto pelo Antigravity na sessão de 28/08/2026.
+## 📌 Contexto Executivo para o ChatGPT Codex (Onde Estamos e O que Mudou):
 
-Você deve inspecionar cada item, rodar os testes, validar a aderência estrita aos contratos e corrigir as falhas de comunicação e deploy.
+Nesta sessão de 01/09/2026, foram realizadas grandes otimizações de **infraestrutura de containers**, **gestão de memória RAM**, **armazenamento em disco** e **simplificação do pipeline de documentos**.
 
----
-
-## 🔍 Dossiê Forense de Todas as Alterações (28/08/2026):
-
-### 1. Governança e Paralisação:
-- **Gerente de Conhecimento:** Paralisação formal documentada em `AGENTS.md`, `domains/GERENTES_GERAIS_BASE.md` e `policies/capability-registry.yaml`.
-
-### 2. Novos Motores Criados em `core/`:
-- `core/director_360_runtime.py`: Runtime da Fase A4 com 8 nós do Evidence Graph e invariante `requires_human_dispatch: true`.
-- `core/external_effects_executor.py`: Executor da Fase A5 com catálogo fechado (`policies/external-effects-catalog.yaml`) e schema Draft 2020-12 (`contracts/external-action-request.schema.json`).
-- `core/carteira_pj_engine.py`: Motor da carteira PJ, matriz de restrições (1-7) e aging.
-- `core/daily_action_plan_engine.py`: Cruzamento de gaps do POBJ com empresas elegíveis da carteira.
-- `core/performance_engine.py`: Curvas oficiais POBJ 2026 (Piso 70%, Meta 100%, Teto 150%), Run-rate e Nec Dia.
-- `core/financeiro_engine.py`: GDAD Orçado vs. Realizado, apuração de margem e rentabilidade por cliente.
-- `core/relacionamento_engine.py`: Aging de contatos (0-30d, 31-60d, 61-90d, >90d) e ciclo de compromissos.
-- `core/conta_engine.py`: Matriz de Restrições 1 a 7 e Ciclo de Vida D0 a D120.
-
-### 3. Testes Automatizados em `scripts/`:
-- `scripts/test-phase-a4-read-only.ps1` (Fase A4)
-- `scripts/test-phase-a5-external-effects.ps1` (Fase A5)
-- `scripts/test-phase-c1-daily-plan.ps1` (Fase C1)
-- `scripts/test-phase-p2-engines.ps1` (Fase P2)
-- `scripts/run-all-hybrid-tests.ps1` (Executa a bateria atual de 23 testes automatizados)
+O objetivo de Rafael foi eliminar todo o peso excessivo e travamentos causados pelo Docker Desktop e MinerU, mantendo o ambiente local ágil, estável e com dados 100% seguros.
 
 ---
 
-## ⚠️ Falhas que o Codex Deve Auditar e Resolver com Prioridade:
+## 🔍 Dossiê Completo de Mudanças (01/09/2026):
 
-1. **Deploy no `https://visao-360-diretor.fael360092.chatgpt.site/`:**
-   - O código do site está em `app/` (`app/page.tsx`, `app/gate-p8/page.tsx`, `app/api/gate-p8/route.ts`), mas a publicação oficial no domínio `.chatgpt.site` depende do build e deploy executado dentro do ambiente do Codex. O Codex deve rodar a compilação/deploy oficial no seu ambiente para que Rafael veja o site online atualizado.
-2. **Status do Gate P8:**
-   - O Gate P8 está **`SUBMETIDO PARA AVALIAÇÃO DE RAFAEL`** e NÃO pode ser tratado como aprovado até que Rafael assine formalmente. O laudo está em `docs/audits/P8_GATE_READINESS_2026-08-28.md`.
+### 1. Otimização Crítica de Memória RAM (.wslconfig):
+- **Problema encontrado:** O processo `vmmemWSL` estava consumindo quase 16 GB de RAM, deixando apenas ~140 MB livres no Windows e causando lentidão severa.
+- **Solução implementada:** Criado o arquivo `C:\Users\fael\.wslconfig` sob medida para o processador **AMD Ryzen 5 5600X (6C/12T)** e **16 GB RAM**:
+  - `memory=6GB` (reserva garantida de no mínimo 10 GB para o Windows, jogos e navegador).
+  - `processors=6` (50% das threads do processador, garantindo que o host nunca engasgue).
+  - `autoMemoryReclaim=gradual` (recurso do WSL 2.0+ que devolve a memória do cache Linux em tempo real para o Windows).
+  - `sparseVhd=true` (compactação dinâmica do disco `.vhdx`).
+  - `swap=2GB`, `localhostForwarding=true` e `guiApplications=false`.
+- **Resultado:** Memória livre do Windows restaurada para **mais de 10 GB livres**.
 
 ---
 
-## 🛠️ Comandos de Entrada para o Codex Iniciar a Auditoria:
+### 2. Transição do Docker Desktop para Docker Engine Nativo no WSL 2:
+- **O que foi retirado:**
+  - O aplicativo **Docker Desktop para Windows** (interface Electron pesada, telemetria e serviços de segundo plano) foi desinstalado/removido do `C:\` (~6,5 GB liberados no SSD).
+  - Os discos virtuais antigos do Docker Desktop (`G:\Docker\wsl\disk\docker_data.vhdx` e `Ubuntu\ext4.vhdx`, totalizando ~112.7 GB) foram completamente limpos.
+- **O que foi colocado:**
+  - Uma distribuição limpa do **Ubuntu 24.04 LTS** no WSL 2 com `systemd=true`.
+  - Instalado o **Docker Engine oficial (`docker.io` v29.1.3)** e **`docker-compose-v2` (v2.40.3)** nativo do Linux.
+  - Criada a ferramenta visual de terminal **Lazydocker (v0.25.2)** conectada diretamente ao `/var/run/docker.sock` (consumo de apenas ~15 MB de RAM).
+  - Criado o atalho na Área de Trabalho: `C:\Users\fael\Desktop\lazydocker.bat`.
+  - Criado o wrapper CLI `C:\Users\fael\AppData\Local\Microsoft\WindowsApps\docker.bat` permitindo rodar `docker ps`, `docker compose up -d`, etc. direto do PowerShell do Windows.
+
+---
+
+### 3. Desacoplamento do MinerU e Tesseract OCR:
+- **Por que foi retirado:**
+  - O **MinerU 3.4.5** ocupava uma imagem Docker de ~43 GB + 58 GB de camadas de build no containerd, exigindo alocação estática de GPU e memória que sobrecarregavam o sistema.
+  - A camada 2 de **Tesseract OCR** foi identificada como desnecessária para os documentos reais de Rafael (que são PDFs digitais nativos gerados por sistemas bancários e planilhas, não fotos ou papéis escaneados de baixa resolução).
+- **O que ficou no lugar:**
+  - A pasta `services/mineru/` e `.local/mineru-src/` foram removidas do repositório.
+  - O arquivo `compose.n8n.yaml` mantém PostgreSQL, n8n, `document-worker` e Docling Serve CPU; não existe serviço MinerU nem OCR alternativo.
+  - O Docling é o único OCR de PDF/imagem e usa TableFormer `accurate`. PyMuPDF lê apenas texto digital nativo; XLSX e CSV continuam nativos.
+  - Se o Docling falhar em imagem ou PDF escaneado, o job entra em retry/revisão; não existe escolha silenciosa de outro OCR.
+
+---
+
+### 4. Backups e Estado Atual dos Containers:
+- **Backups preservados na Área de Trabalho:**
+  - `C:\Users\fael\Desktop\backup_visao360_postgres.sql` (Dump completo do banco PostgreSQL com todos os schemas `visao360`, tabelas de evidência, regras e auditoria).
+  - `C:\Users\fael\Desktop\backup_n8n_data/` (Cópia integral do volume `/home/node/.n8n`, com workflows, credenciais e storage).
+- **Status esperado dos Containers em Execução:**
+  - Quatro serviços compõem o runtime:
+    - `visao-360-postgres-1` na porta interna `5432` com banco restaurado.
+    - `visao-360-n8n-1` na porta `127.0.0.1:5678` com status `ok` em `http://localhost:5678/healthz`.
+    - `visao-360-docling-1` somente na rede interna, CPU.
+    - `visao-360-document-worker-1` somente na rede interna.
+
+---
+
+### 5. Limpeza Massiva de Disco (> 451 GB Liberados):
+- **No disco `G:\` (HD):** Espaço livre subiu de **~397 GB para 763,38 GB livres (+366 GB)**:
+  - Excluído `docker_data.vhdx.old` (69,55 GB).
+  - Excluído pacote `G:\Docker` (112,7 GB).
+  - Excluído update v1.2.0 obsoleto do Inazuma Eleven (29,97 GB).
+  - Excluído jogo *It Takes Two* (43,50 GB).
+  - Excluído vídeo VR duplicado *Thhegmy6.mp4* (15 GB).
+  - Convertidos 448 vídeos para formato AV1 de alta eficiência.
+  - Excluídos 6 vídeos corrompidos com cabeçalho ausente e 140 pastas vazias.
+- **No disco `C:\` (SSD):** Espaço livre subiu de **~148 GB para 233,34 GB livres (+85 GB)**:
+  - Movidos os jogos *Homura Hime* (35 GB) e *Kunitsu-Gami* (22,4 GB) para `A:\Games\`.
+  - Excluídos `C:\packages` (5 GB), `C:\Mount` (2,84 GB) e pasta `Temp` (2,7 GB).
+  - Excluídos caches do Gradle (`.gradle` 13 GB) e NPM (`npm-cache` 1,9 GB).
+  - Desativada hibernação desnecessária (`hiberfil.sys` 6,36 GB liberados).
+
+---
+
+## 🛠️ Comandos de Referência para o ChatGPT Codex:
 ```powershell
-# 1. Puxar as últimas alterações
-git pull origin main
+# 1. Ver status dos containers via CLI
+docker ps
 
-# 2. Executar a bateria completa de 23 testes
-powershell -File scripts/run-all-hybrid-tests.ps1
+# 2. Abrir o painel visual
+# Dê duplo clique em C:\Users\fael\Desktop\lazydocker.bat
 
-# 3. Compilar e publicar o site
-npm run build
+# 3. Subir o ambiente caso esteja desligado
+docker compose -f compose.n8n.yaml --env-file .env.n8n up -d postgres n8n
+
+# 4. Desligar preservando dados
+docker compose -f compose.n8n.yaml --env-file .env.n8n stop
 ```

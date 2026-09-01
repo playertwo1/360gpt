@@ -12,30 +12,18 @@ from typing import Annotated, Any
 
 import fitz
 import httpx
-import pytesseract
 from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
 from openpyxl import load_workbook
-from PIL import Image, ImageOps
 from pydantic import BaseModel, ConfigDict, Field
 
 MAX_FILE_BYTES = int(os.getenv("DOCUMENT_MAX_BYTES", str(20 * 1024 * 1024)))
 MAX_PDF_PAGES = int(os.getenv("DOCUMENT_MAX_PDF_PAGES", "80"))
 MAX_TEXT_CHARS = int(os.getenv("DOCUMENT_MAX_TEXT_CHARS", "200000"))
 MIN_NATIVE_TEXT_CHARS = int(os.getenv("DOCUMENT_MIN_NATIVE_TEXT_CHARS", "80"))
-OCR_LANGUAGE = os.getenv("DOCUMENT_OCR_LANGUAGE", "por+eng")
 DOCLING_ENABLED = os.getenv("DOCUMENT_DOCLING_ENABLED", "true").lower() == "true"
 DOCLING_API_URL = os.getenv("DOCLING_API_URL", "http://docling:5001").rstrip("/")
 DOCLING_TIMEOUT_SECONDS = float(os.getenv("DOCLING_TIMEOUT_SECONDS", "300"))
 DOCLING_POLL_INTERVAL_SECONDS = float(os.getenv("DOCLING_POLL_INTERVAL_SECONDS", "2"))
-MINERU_ENABLED = os.getenv("DOCUMENT_MINERU_ENABLED", "false").lower() == "true"
-MINERU_API_URL = os.getenv("MINERU_API_URL", "http://mineru:8000").rstrip("/")
-MINERU_PDF_PRIMARY_BACKEND = os.getenv("MINERU_PDF_PRIMARY_BACKEND", "pipeline")
-MINERU_IMAGE_BACKEND = os.getenv("MINERU_IMAGE_BACKEND", "hybrid-engine")
-MINERU_HYBRID_ESCALATION_ENABLED = os.getenv("MINERU_HYBRID_ESCALATION_ENABLED", "true").lower() == "true"
-MINERU_COMPLEX_TABLE_MIN_ROWS = int(os.getenv("MINERU_COMPLEX_TABLE_MIN_ROWS", "8"))
-MINERU_COMPLEX_TABLE_MIN_CELLS = int(os.getenv("MINERU_COMPLEX_TABLE_MIN_CELLS", "40"))
-MINERU_EFFORT = os.getenv("MINERU_EFFORT", "medium")
-MINERU_TIMEOUT_SECONDS = float(os.getenv("MINERU_TIMEOUT_SECONDS", "330"))
 SUPPORTED_MIME_TYPES = {
     "application/pdf",
     "image/jpeg",
@@ -116,7 +104,6 @@ def health() -> dict[str, str | bool]:
         "service": "document-worker",
         "version": "1.2.0",
         "docling_enabled": DOCLING_ENABLED,
-        "mineru_enabled": MINERU_ENABLED,
     }
 
 
@@ -176,19 +163,19 @@ async def extract_pdf_routed(content: bytes, file_name: str, digest: str) -> Ext
         except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError, TimeoutError) as error:
             fallback = extract_pdf(content, file_name, digest)
             fallback.warnings.insert(0, f"docling_fallback:{type(error).__name__}")
-            return fallback
+            if fallback.evidence:
+                return fallback
+            raise HTTPException(503, "docling_required_for_scanned_pdf") from error
     return extract_pdf(content, file_name, digest)
 
 
 async def extract_image_routed(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
-    if DOCLING_ENABLED:
-        try:
-            return await extract_with_docling(content, file_name, mime, digest)
-        except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError, TimeoutError) as error:
-            fallback = extract_image(content, file_name, mime, digest)
-            fallback.warnings.insert(0, f"docling_fallback:{type(error).__name__}")
-            return fallback
-    return extract_image(content, file_name, mime, digest)
+    if not DOCLING_ENABLED:
+        raise HTTPException(503, "docling_required_for_image")
+    try:
+        return await extract_with_docling(content, file_name, mime, digest)
+    except (httpx.HTTPError, KeyError, TypeError, ValueError, json.JSONDecodeError, TimeoutError) as error:
+        raise HTTPException(503, "docling_image_processing_failed") from error
 
 
 async def extract_with_docling(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
@@ -273,7 +260,7 @@ def parse_docling_tables(doc_json: dict[str, Any]) -> list[ExtractedTable]:
         row_count = int(data.get("num_rows") or raw.get("num_rows") or 0)
         col_count = int(data.get("num_cols") or raw.get("num_cols") or 0)
         warnings: list[str] = []
-        logical_rows: dict[int, list[tuple[int, str, bool]]] = {}
+        logical_cells: list[tuple[int, int, int, int, str, bool]] = []
         for cell in cells:
             if not isinstance(cell, dict):
                 continue
@@ -282,15 +269,31 @@ def parse_docling_tables(doc_json: dict[str, Any]) -> list[ExtractedTable]:
             if re_ - rs > 1 or ce - cs > 1:
                 warnings.append("docling_merged_cells")
             text = str(cell.get("text") or "").strip()
-            logical_rows.setdefault(rs, []).append((cs, text, bool(cell.get("column_header"))))
-        compact_rows = [[text for _, text, _ in sorted(row)] for _, row in sorted(logical_rows.items())]
+            logical_cells.append((rs, re_, cs, ce, text, bool(cell.get("column_header"))))
+        if logical_cells:
+            row_count = max(row_count, max(cell[1] for cell in logical_cells))
+            col_count = max(col_count, max(cell[3] for cell in logical_cells))
+        # Preserve physical offsets. Removing empty cells silently shifts the
+        # business columns whenever Docling reports a merge or an empty cell.
+        # Merged content stays at its first column and covered columns remain
+        # blank, so downstream validation can ask Rafael instead of guessing.
+        grid = [["" for _ in range(col_count)] for _ in range(row_count)]
+        for rs, _re, cs, _ce, text, _is_header in logical_cells:
+            if rs >= row_count or cs >= col_count:
+                warnings.append("docling_incomplete_table")
+                continue
+            if grid[rs][cs] and text and grid[rs][cs] != text:
+                warnings.append("docling_overlapping_cells")
+                continue
+            grid[rs][cs] = text
+        compact_rows = grid
         if not compact_rows:
             warnings.append("docling_incomplete_table")
         header_index = next((row_index for row_index, row in enumerate(compact_rows)
             if sum(1 for value in row if normalize_header(value) in {"produto", "indicador", "peso", "metrica", "meta", "realizado", "%ating", "pontos"}) >= 3), None)
         headers = compact_rows[header_index] if header_index is not None else []
         rows = compact_rows[header_index + 1:] if header_index is not None else compact_rows
-        common_width = max((len(row) for row in rows), default=len(headers))
+        common_width = col_count or max((len(row) for row in rows), default=len(headers))
         if headers:
             headers_by_width[common_width] = headers
         elif common_width in headers_by_width:
@@ -299,6 +302,18 @@ def parse_docling_tables(doc_json: dict[str, Any]) -> list[ExtractedTable]:
         if rows and any(abs(len(row) - common_width) > 1 for row in rows):
             warnings.append("docling_incomplete_table")
         normalized_headers = {normalize_header(value) for value in headers}
+        normalized_header_list = [normalize_header(value) for value in headers]
+        date_index = next((position for position, value in enumerate(normalized_header_list) if value in {"dtbase", "database"}), None)
+        metric_index = next((position for position, value in enumerate(normalized_header_list) if value == "metrica"), None)
+        for row in rows:
+            if headers and headers[0].strip() == "+" and len(row) > 1 and row[0] and not row[1]:
+                warnings.append("docling_possible_column_shift")
+            if date_index is not None and date_index > 0 and len(row) > date_index:
+                if not row[date_index] and re.fullmatch(r"\d{2}/\d{2}/\d{4}", row[date_index - 1].strip()):
+                    warnings.append("docling_possible_column_shift")
+            if metric_index is not None and len(row) > metric_index:
+                if re.fullmatch(r"\d{2}/\d{2}/\d{4}", row[metric_index].strip()):
+                    warnings.append("docling_possible_column_shift")
         critical = {"meta", "realizado"}
         pobj_like = any(len(row) >= 9 and any(normalize_header(value) in {"qtd", "prod", "perc", "pont"} for value in row) for row in rows)
         if (normalized_headers & critical and not critical.issubset(normalized_headers)) or (pobj_like and not headers):
@@ -342,105 +357,6 @@ def table_to_markdown(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
-async def extract_with_mineru(
-    content: bytes, file_name: str, mime: str, digest: str, backend: str
-) -> Extraction:
-    if backend not in {"pipeline", "hybrid-engine"}:
-        raise ValueError("unsupported_mineru_backend")
-    request_data = {
-        "backend": backend,
-        "effort": MINERU_EFFORT,
-        "parse_method": "auto",
-        "formula_enable": "false",
-        "table_enable": "true",
-        "image_analysis": "false",
-        "return_md": "true",
-        "return_middle_json": "false",
-        "return_model_output": "false",
-        "return_content_list": "true",
-        "return_images": "false",
-        "response_format_zip": "false",
-    }
-    timeout = httpx.Timeout(MINERU_TIMEOUT_SECONDS, connect=10.0)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.post(
-            f"{MINERU_API_URL}/file_parse",
-            data=request_data,
-            files=[("files", (file_name, content, mime))],
-        )
-        response.raise_for_status()
-        payload = response.json()
-    if payload.get("status") != "completed" or payload.get("error"):
-        raise ValueError("mineru_processing_failed")
-    results = payload.get("results")
-    if not isinstance(results, dict) or not results:
-        raise ValueError("mineru_result_missing")
-    result = next(iter(results.values()))
-    if not isinstance(result, dict):
-        raise TypeError("mineru_result_invalid")
-    markdown_warnings: list[str] = []
-    markdown = bounded_text(str(result.get("md_content") or ""), markdown_warnings)
-    content_list = result.get("content_list") or []
-    if isinstance(content_list, str):
-        content_list = json.loads(content_list)
-    if not isinstance(content_list, list):
-        raise TypeError("mineru_content_list_invalid")
-
-    method = "MINERU_HYBRID" if backend == "hybrid-engine" else "MINERU_PIPELINE"
-    evidence: list[Evidence] = []
-    page_indexes: list[int] = []
-    for index, block in enumerate(content_list):
-        if not isinstance(block, dict):
-            continue
-        page_index = int(block.get("page_idx", 0))
-        page_indexes.append(page_index)
-        block_text = str(block.get("text") or block.get("table_body") or "").strip()
-        if not block_text:
-            continue
-        evidence.append(
-            Evidence(
-                locator=f"page:{page_index + 1};block:{index + 1};type:{block.get('type', 'unknown')}",
-                text=block_text,
-                extraction_method=method,
-                confidence=None,
-            )
-        )
-    warnings: list[str] = list(markdown_warnings)
-    if not markdown:
-        warnings.append("mineru_without_useful_text")
-    if not evidence:
-        warnings.append("mineru_without_structured_evidence")
-    page_count = max(page_indexes) + 1 if page_indexes else (1 if mime.startswith("image/") else None)
-    return Extraction(
-        document_type="PDF" if mime == "application/pdf" else "IMAGE",
-        mime_type=mime,
-        file_name=file_name,
-        content_hash=digest,
-        text=markdown,
-        markdown=markdown,
-        tables=[],
-        sections=[],
-        parser=ParserInfo(name="MINERU", version=None, processing_ms=None),
-        page_count=page_count,
-        extraction_method=method,
-        evidence=evidence,
-        warnings=warnings,
-    )
-
-
-def requires_hybrid_escalation(extraction: Extraction) -> bool:
-    if not extraction.text.strip() or not extraction.evidence:
-        return True
-    for item in extraction.evidence:
-        if "type:table" not in item.locator:
-            continue
-        rows = len(re.findall(r"<tr\b", item.text, flags=re.IGNORECASE))
-        cells = len(re.findall(r"<(?:td|th)\b", item.text, flags=re.IGNORECASE))
-        if rows >= MINERU_COMPLEX_TABLE_MIN_ROWS or cells >= MINERU_COMPLEX_TABLE_MIN_CELLS:
-            return True
-    return False
-
-
 def parse_metadata(value: str) -> dict[str, Any]:
     try:
         parsed = json.loads(value)
@@ -476,7 +392,6 @@ def extract_pdf(content: bytes, file_name: str, digest: str) -> Extraction:
         raise HTTPException(422, "pdf_page_limit_exceeded")
     evidence: list[Evidence] = []
     warnings: list[str] = []
-    methods: set[str] = set()
     for page_number, page in enumerate(document, start=1):
         native_text = normalize_text(page.get_text("text"))
         if len(native_text) >= MIN_NATIVE_TEXT_CHARS:
@@ -484,13 +399,10 @@ def extract_pdf(content: bytes, file_name: str, digest: str) -> Extraction:
             method = "PDF_NATIVE_TEXT"
             confidence = None
         else:
-            pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-            image = Image.open(io.BytesIO(pixmap.tobytes("png")))
-            text, confidence = ocr_image(image)
-            method = "OCR_TESSERACT"
-            if not text:
-                warnings.append(f"page_{page_number}_without_useful_text")
-        methods.add(method)
+            text = ""
+            method = "PDF_NATIVE_TEXT"
+            confidence = None
+            warnings.append(f"page_{page_number}_requires_docling_ocr")
         if text:
             evidence.append(Evidence(locator=f"page:{page_number}", text=text, extraction_method=method, confidence=confidence))
     full_text = bounded_text("\n\n".join(item.text for item in evidence), warnings)
@@ -498,19 +410,9 @@ def extract_pdf(content: bytes, file_name: str, digest: str) -> Extraction:
         document_type="PDF", mime_type="application/pdf", file_name=file_name, content_hash=digest,
         text=full_text, markdown=full_text, tables=[], sections=[],
         parser=ParserInfo(name="NATIVE", version=fitz.VersionBind, processing_ms=None), page_count=document.page_count,
-        extraction_method="HYBRID" if len(methods) > 1 else (next(iter(methods)) if methods else "NO_TEXT"),
+        extraction_method="PDF_NATIVE_TEXT" if evidence else "NO_TEXT",
         evidence=evidence, warnings=warnings,
     )
-
-
-def extract_image(content: bytes, file_name: str, mime: str, digest: str) -> Extraction:
-    image = Image.open(io.BytesIO(content))
-    text, confidence = ocr_image(image)
-    warnings = [] if text else ["image_without_useful_text"]
-    evidence = [Evidence(locator="image:1", text=text, extraction_method="OCR_TESSERACT", confidence=confidence)] if text else []
-    return Extraction(document_type="IMAGE", mime_type=mime, file_name=file_name, content_hash=digest, text=text,
-                      markdown=text, tables=[], sections=[], parser=ParserInfo(name="TESSERACT", version=None, processing_ms=None),
-                      page_count=1, extraction_method="OCR_TESSERACT", evidence=evidence, warnings=warnings)
 
 
 def extract_csv(content: bytes, file_name: str, digest: str) -> Extraction:
@@ -558,26 +460,6 @@ def extract_xlsx(content: bytes, file_name: str, digest: str) -> Extraction:
                       file_name=file_name, content_hash=digest, text=text, markdown="\n\n".join(table.markdown for table in tables),
                       tables=tables, sections=[], parser=ParserInfo(name="NATIVE", version=None, processing_ms=None), extraction_method="XLSX_NATIVE",
                       evidence=evidence, warnings=warnings)
-
-
-def ocr_image(image: Image.Image) -> tuple[str, float | None]:
-    normalized = ImageOps.autocontrast(ImageOps.grayscale(image))
-    data = pytesseract.image_to_data(normalized, lang=OCR_LANGUAGE, config="--psm 6", output_type=pytesseract.Output.DICT)
-    words: list[str] = []
-    confidences: list[float] = []
-    for word, raw_confidence in zip(data.get("text", []), data.get("conf", [])):
-        word = str(word).strip()
-        try:
-            confidence = float(raw_confidence)
-        except (TypeError, ValueError):
-            confidence = -1
-        if word:
-            words.append(word)
-            if confidence >= 0:
-                confidences.append(confidence)
-    text = normalize_text(" ".join(words))
-    average = round(sum(confidences) / len(confidences) / 100, 4) if confidences else None
-    return text, average
 
 
 def bounded_text(value: str, warnings: list[str]) -> str:

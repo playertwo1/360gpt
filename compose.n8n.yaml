@@ -87,47 +87,8 @@ services:
       - frontend
       - data
 
-  document-worker:
-    build:
-      context: ./services/document-worker
-    restart: unless-stopped
-    environment:
-      DOCUMENT_MAX_BYTES: 20971520
-      DOCUMENT_MAX_PDF_PAGES: 80
-      DOCUMENT_MAX_TEXT_CHARS: 200000
-      DOCUMENT_OCR_LANGUAGE: por+eng
-      DOCUMENT_DOCLING_ENABLED: "true"
-      DOCLING_API_URL: http://docling:5001
-      DOCLING_TIMEOUT_SECONDS: 300
-      DOCLING_POLL_INTERVAL_SECONDS: 2
-      DOCUMENT_MINERU_ENABLED: "false"
-      MINERU_API_URL: http://mineru:8000
-      MINERU_PDF_PRIMARY_BACKEND: pipeline
-      MINERU_IMAGE_BACKEND: hybrid-engine
-      MINERU_HYBRID_ESCALATION_ENABLED: "true"
-      MINERU_COMPLEX_TABLE_MIN_ROWS: 8
-      MINERU_COMPLEX_TABLE_MIN_CELLS: 40
-      MINERU_EFFORT: medium
-      MINERU_TIMEOUT_SECONDS: 330
-    expose:
-      - "8787"
-    read_only: true
-    tmpfs:
-      - /tmp:size=268435456,mode=1777
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/health', timeout=3)"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 20s
-    networks:
-      - frontend
-
   docling:
+    profiles: ["processing"]
     image: ghcr.io/docling-project/docling-serve@sha256:0ccbc00b5f8b443334a7c4f36a5c6ff89c684c6fbe18ff7c1bc41e00b8e01657
     restart: unless-stopped
     environment:
@@ -164,35 +125,37 @@ services:
     networks:
       - frontend
 
-  mineru:
-    profiles: ["mineru-manual"]
-    image: diretor360/mineru:3.4.5
+  document-worker:
+    profiles: ["processing"]
     build:
-      context: ./services/mineru
-    restart: "no"
+      context: ./services/document-worker
+    restart: unless-stopped
+    depends_on:
+      docling:
+        condition: service_healthy
     environment:
-      MINERU_MODEL_SOURCE: local
-      MINERU_API_MAX_CONCURRENT_REQUESTS: 1
-      MINERU_PROCESSING_WINDOW_SIZE: 1
-      MINERU_API_ENABLE_FASTAPI_DOCS: 0
-    entrypoint: mineru-api
-    command: ["--host", "0.0.0.0", "--port", "8000"]
+      DOCUMENT_MAX_BYTES: 20971520
+      DOCUMENT_MAX_PDF_PAGES: 80
+      DOCUMENT_MAX_TEXT_CHARS: 200000
+      DOCUMENT_DOCLING_ENABLED: "true"
+      DOCLING_API_URL: http://docling:5001
+      DOCLING_TIMEOUT_SECONDS: 300
+      DOCLING_POLL_INTERVAL_SECONDS: 2
     expose:
-      - "8000"
-    shm_size: 2gb
+      - "8787"
+    read_only: true
+    tmpfs:
+      - /tmp:size=268435456,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health || exit 1"]
-      interval: 15s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/health', timeout=3)"]
+      interval: 10s
       timeout: 5s
-      retries: 20
-      start_period: 45s
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ["0"]
-              capabilities: [gpu]
+      retries: 12
+      start_period: 20s
     networks:
       - frontend
 

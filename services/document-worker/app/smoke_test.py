@@ -7,25 +7,9 @@ import urllib.request
 import uuid
 
 import fitz
-from PIL import Image, ImageDraw, ImageFont
 from openpyxl import Workbook
 
-from app.main import extract_csv, extract_image, extract_pdf, extract_xlsx, parse_docling_result
-
-
-def test_ocr_image() -> None:
-    image = Image.new("RGB", (1500, 320), "white")
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 72)
-    draw.text((40, 80), "META 100 REALIZADO 75", fill="black", font=font)
-    buffer = io.BytesIO()
-    image.save(buffer, format="JPEG", quality=95)
-    content = buffer.getvalue()
-    digest = f"sha256:{hashlib.sha256(content).hexdigest()}"
-    result = extract_image(content, "ocr-smoke.jpg", "image/jpeg", digest)
-    normalized = result.text.upper()
-    assert "META" in normalized and "100" in normalized and "75" in normalized, result.text
-    assert result.evidence[0].locator == "image:1"
+from app.main import extract_csv, extract_pdf, extract_xlsx, parse_docling_result
 
 
 def test_native_pdf() -> None:
@@ -59,6 +43,22 @@ def test_docling_structured_table() -> None:
     assert result.tables[0].page_number == 2
 
 
+def test_docling_preserves_merged_column_offsets() -> None:
+    payload = {"version": "1.30.0", "document": {"md_content": "", "json_content": {
+        "tables": [{"data": {"num_rows": 2, "num_cols": 4, "table_cells": [
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 0, "end_col_offset_idx": 1, "text": "PRODUTO"},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 1, "end_col_offset_idx": 2, "text": "META"},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 2, "end_col_offset_idx": 3, "text": "REALIZADO"},
+            {"start_row_offset_idx": 0, "end_row_offset_idx": 1, "start_col_offset_idx": 3, "end_col_offset_idx": 4, "text": "% ATG"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 0, "end_col_offset_idx": 1, "text": "Crédito"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 1, "end_col_offset_idx": 3, "text": "100 90"},
+            {"start_row_offset_idx": 1, "end_row_offset_idx": 2, "start_col_offset_idx": 3, "end_col_offset_idx": 4, "text": "90%"}
+        ]}}]}}}
+    result = parse_docling_result(payload, "pobj.pdf", "application/pdf", "sha256:" + "1" * 64, "success", 50)
+    assert result.tables[0].rows[0] == ["Crédito", "100 90", "", "90%"]
+    assert "docling_merged_cells" in result.tables[0].warnings
+
+
 def test_native_tabular_formats() -> None:
     csv_content = b"INDICADOR,META,REALIZADO\nConsorcio,100,80\n"
     csv_result = extract_csv(csv_content, "pobj.csv", f"sha256:{hashlib.sha256(csv_content).hexdigest()}")
@@ -77,25 +77,22 @@ def test_native_tabular_formats() -> None:
 
 
 def test_http_endpoint() -> None:
-    image = Image.new("RGB", (1200, 260), "white")
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 58)
-    draw.text((30, 70), "PONTUACAO 42 META 100", fill="black", font=font)
-    image_buffer = io.BytesIO()
-    image.save(image_buffer, format="JPEG", quality=95)
-    content = image_buffer.getvalue()
+    document = fitz.open()
+    page = document.new_page(width=1200, height=260)
+    page.insert_text((30, 120), "PONTUACAO 42 META 100", fontsize=48)
+    content = page.get_pixmap(alpha=False).tobytes("png")
     digest = f"sha256:{hashlib.sha256(content).hexdigest()}"
     job_id = "smoke-http-job"
     metadata = json.dumps({
         "job_id": job_id,
-        "document": {"content_hash": digest, "file_name": "http-smoke.jpg"},
+        "document": {"content_hash": digest, "file_name": "http-smoke.png"},
         "security": {"external_effects_allowed": False},
     })
     boundary = f"----diretor360{uuid.uuid4().hex}"
     body = (
         f"--{boundary}\r\nContent-Disposition: form-data; name=\"metadata\"\r\n\r\n{metadata}\r\n"
-        f"--{boundary}\r\nContent-Disposition: form-data; name=\"document\"; filename=\"http-smoke.jpg\"\r\n"
-        "Content-Type: image/jpeg\r\n\r\n"
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"document\"; filename=\"http-smoke.png\"\r\n"
+        "Content-Type: image/png\r\n\r\n"
     ).encode() + content + f"\r\n--{boundary}--\r\n".encode()
     request = urllib.request.Request(
         "http://127.0.0.1:8787/v1/process",
@@ -115,9 +112,9 @@ def test_http_endpoint() -> None:
 
 
 if __name__ == "__main__":
-    test_ocr_image()
     test_native_pdf()
     test_docling_structured_table()
+    test_docling_preserves_merged_column_offsets()
     test_native_tabular_formats()
     test_http_endpoint()
     print("DOCUMENT_WORKER_EXTRACTION: PASS")

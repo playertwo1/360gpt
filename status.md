@@ -15,7 +15,7 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Docling Serve 1.30.0 integrado em CPU como leitor principal candidato, com contrato 1.1.0, tabelas estruturadas e fallback leve; MinerU preservado e desligado.
+**Último marco concluído:** Docling Serve 1.30.0 integrado em CPU como único OCR de PDF/imagem, com contrato 1.1.0 e tabelas estruturadas; MinerU e Tesseract removidos integralmente.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
@@ -24,7 +24,7 @@
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
 **Próximo passo exato:** corrigir a associação das células mescladas nos PDFs POBJ e repetir o benchmark de 3–5 arquivos. Somente com 100% dos campos críticos corretos republicar WF-11 e retomar M5.9/M5.10.
 
-**Regressão técnica:** 32/32 testes gerais aprovados após a migração candidata. Esse resultado valida contratos e proteções, mas não substitui o gate funcional dos PDFs reais, que permanece pendente.
+**Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
 
 **Checkpoint local:** commit `1ba30c0` (`feat: add Docling CPU OCR candidate`).
 **Roadmap canônico:** `docs/ROADMAP_N8N_MVP_REAL.md`; o n8n passa a controlar todo o ciclo operacional.
@@ -32,6 +32,8 @@
 **Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
 
 **Persistência Docker confirmada:** Docker Desktop foi substituído pelo Engine nativo no Ubuntu/WSL2. A distribuição e seus volumes ficam em `G:\Docker\Ubuntu`; `./n8n/workflows` e `./infra/postgres/init` permanecem bind mounts do repositório.
+
+**Baseline do host:** AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2, WSL limitado a 6 GB, Lazydocker 0.25.2 e mais de 451 GB recuperados (G: 763 GB livres; C: 233 GB livres).
 
 **Reconstrução WSL:** dump completo restaurado com 129 tabelas n8n e 8 tabelas visao360; 13 workflows e 2 credenciais confirmados. n8n, PostgreSQL e `document-worker` passaram nos healthchecks; GPU validada.
 

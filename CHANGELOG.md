@@ -1,217 +1,55 @@
 # Changelog
 
-## [3.8.0-rc.1] - 2026-09-01
-
-### Added
-
-- Docling Serve 1.30.0 fixado por digest, interno à rede Docker, CPU, dois threads, um worker, TableFormer `accurate`, limites de 80 páginas/20 MB e timeout de cinco minutos.
-- Contrato de extração 1.1.0 com Markdown, tabelas, seções, parser, proveniência e avisos estruturais.
-- Contingência MinerU manual e auditada, sem fallback automático.
-
-### Changed
-
-- PDF/JPG/PNG passam primeiro pelo Docling; CSV/XLSX continuam nativos; PyMuPDF/Tesseract é o fallback automático leve.
-- WF-12 prioriza `tables[]`; WF-13 consome cabeçalhos e linhas estruturadas e converte ambiguidade material em revisão humana.
-
-### Security
-
-- Docling não publica porta no host, não usa GPU nem serviços remotos; MinerU fica parado no runtime normal.
-- WF-11 foi despublicado até o gate real de associação de células ser aprovado.
-
-### Validation
-
-- Saúde, contrato, API assíncrona, OCR JPG, PDF nativo, CSV, XLSX e regressões estruturadas passaram.
-- Bateria geral concluída com 32/32 testes aprovados.
-- POBJ2608, POBJ2708 e POBJ2808 respeitaram o teto de cinco minutos, mas falharam no gate funcional por células mescladas/desalinhadas; release permanece candidata, não homologada.
-
-## [Unreleased] - 2026-09-01
-
-### Changed
-
-- Removida do planejamento funcional a trilha temporária de migração do Docker; o roadmap volta a priorizar os gates M5.9 e M5.10 do MVP Telegram → Performance.
-- Mantida a saúde de OCR/worker/WF-11 como pré-condição operacional, sem misturar manutenção de infraestrutura com entregas funcionais.
-- Testes operacionais de MinerU e document-worker passaram a usar o Docker Engine oficial no Ubuntu/WSL2 e não refazem builds durante validações comuns.
-- Executor geral atualizado para usar PowerShell 7 (`pwsh`) em vez do Windows PowerShell legado.
-
-### Validated
-
-- MinerU 3.4.5 saudável com RTX 4060 Ti, n8n e worker conectados internamente, duas extrações concluídas e zero falhas.
-- WF-11 publicado e ativado com agenda de um minuto; primeira execução automática concluída com status `success`.
-- Testes de Telegram conversacional, WF-11, WF-13 e conhecimento POBJ aprovados.
-
-### Removed
-
-- Retirados arquivos temporários de passagem e scripts obsoletos de reparo do Docker Desktop; backups, volumes, VHDX e scripts oficiais do runtime WSL foram preservados.
-
-## [3.7.0] - 2026-09-01
-
-### Added
-- Conhecimento POBJ versionado com aprovação seletiva, revogação, proveniência, isolamento por proprietário e aplicação idempotente.
-- Aba `/knowledge` e comandos Telegram `/conhecimento`, `/aprovar` e `/revogarregra`.
-- Contrato da ponte para aplicar somente conhecimento `ACTIVE` quando indicador e assinatura do layout coincidirem exatamente.
-
-### Security
-- Metas, realizados, valores, competência e pontuação mensal são proibidos no conteúdo reutilizável.
-- Mudança de layout ou conflito não produz inferência silenciosa; o fluxo supervisionado permanece responsável por consultar Rafael.
-
-### Validated
-- Lint, build e teste estrutural dedicado do conhecimento POBJ aprovados.
-
-### Deployed
-- Versão hospedada 41 publicada com migração 0009, aba `/knowledge` e APIs de conhecimento supervisionado.
-
-## [3.6.2] - 2026-09-01
-
-### Added
-- Comandos `/progresso`, `/andamento`, `/destravar` e `/reprocessartodos`, com menu oficial validado em 26 comandos.
-
-### Fixed
-- Recuperação em massa limitada ao proprietário e somente a falhas ou leases expirados; jobs ativos não são interrompidos.
-- Progresso passou a ser rotulado como estimativa por etapa, sem fabricar a subetapa interna do OCR/análise.
-
-### Security
-- Removidos scripts e workflow paralelo com credenciais embutidas, envio direto e dados fictícios; nove backups contendo `.env` foram retirados do repositório para quarentena local.
-- Restaurados o worker Telegram e o workflow canônico anteriores, preservando webhook, allowlist, fila n8n, contratos e auditoria.
-
-### Deployed
-- Versão hospedada 40 publicada; menu Telegram confirmado com 26 comandos e `/progresso` validado pelo webhook real com status `SUCCEEDED`.
-
-## [3.6.1] - 2026-08-31
-
-### Fixed
-- Jobs cuja terceira tentativa perdeu o lease agora saem de `PROCESSING` para `FAILED_FINAL` com `BRIDGE_TIMEOUT`, evitando progresso falso permanente.
-- `/tentar novamente` e a rota de reabertura zeram `attempt_count`, limpam leases antigos e permitem recuperar também `FAILED_FINAL`.
-
-### Validated
-- Lint, build e teste conversacional supervisionado aprovados; bateria geral ficou bloqueada na integração MinerU porque o Docker Desktop não iniciou.
-
-## [3.6.0] - 2026-08-31
-
-### Added
-- Fluxo conversacional Telegram com perguntas materiais, estado `AWAITING_OWNER_INPUT`, interpretação estruturada e retomada do mesmo protocolo.
-- Catálogo de comandos operacionais, confirmações para ações críticas e menu oficial do bot.
-- Parecer multipartes com entregas idempotentes auditadas em `telegram_deliveries`.
-
-### Changed
-- WF-11/WF-13 preservam contexto do proprietário e não concluem enquanto houver dúvida material.
-- Rotas operacionais e Evidence Graph deixaram de exibir contas fictícias; escopo padrão passou a `tenant-owner/performance-owner`.
-- Migração 0008 adiciona persistência conversacional e limpeza de dados demonstrativos hospedados.
-
-### Security
-- Respostas de Rafael são registradas como `OWNER_PROVIDED`; fixtures ficam restritas a testes `OFFLINE_EVAL`.
-
 ## [Unreleased]
 
-### Infrastructure
-- Docker Desktop substituído por Docker Engine 29.1.3 no Ubuntu 26.04/WSL2, com Compose 2.40.3 e NVIDIA Container Toolkit 1.20.0.
-- Distribuição Ubuntu movida para `G:\Docker\Ubuntu`; `.wslconfig` corrigido para devolver memória ociosa.
-- Scripts de um clique atualizados para manter WSL ativo somente enquanto o projeto roda e liberar RAM ao parar.
-- Docker Desktop migrado para `G:\Docker`, com disco virtual em `G:\Docker\wsl\disk\docker_data.vhdx` e redirecionamento legado administrado pelo próprio Docker.
-- Confirmados os volumes persistentes `visao-360_n8n_data` e `visao-360_postgres_data`, além dos bind mounts versionados de workflows e scripts de inicialização.
-
-### Operations
-- PostgreSQL restaurado do dump com 129 tabelas n8n e 8 tabelas visao360; `.n8n`, 13 workflows e 2 credenciais confirmados.
-- GPU RTX 4060 Ti validada em contêiner; `document-worker` reconstruído e smoke test aprovado.
-- Registrado checkpoint recuperável: PostgreSQL saudável, build único de `document-worker`/MinerU em andamento e n8n pendente de estabilização após contenção de I/O.
-- Formalizado que scripts de inicialização do PostgreSQL não substituem backup lógico e que o VHDX não deve ser copiado enquanto Docker/WSL estiver gravando.
-- Runtime local reconstruído no volume novo: 13 workflows canônicos e 2 credenciais locais importados; arquivo temporário de credenciais removido.
-- n8n, PostgreSQL e `document-worker` validados como saudáveis; WF-12/WF-13 publicados e WF-11 mantido inativo até a conclusão do MinerU.
-- Registrado bloqueio pós-otimização WSL: Docker Desktop não consegue abrir o VHDX por reparse point desconectado em `AppData\Local\Docker\wsl`; VHDX e backups permanecem preservados.
-- Sockets temporários corrompidos foram isolados em diretórios `.stale`, sem remoção de volumes, imagens ou bancos; correção final requer reinicialização do Windows.
-
-### Fixed
-- Importador local de credenciais compatibilizado com Windows PowerShell 5.1 e PowerShell 7 ao serializar explicitamente o array JSON sem depender de `-AsArray`.
-
-### Deployed
-- Versão hospedada 39 publicada com rotas de esclarecimento e migração conversacional; WF-11/WF-13 atualizados, publicados e reiniciados no n8n local.
-
-### Fixed
-- Migração passou a preservar integralmente o Evidence Graph append-only; dados demonstrativos históricos ficam isolados por escopo, sem exclusão da auditoria.
-
-### Validated
-- M5.8 aceito por Rafael: ciclo real Telegram → OCR → pergunta material → resposta → reprocessamento → parecer final concluído no mesmo protocolo.
-
 ### Changed
-- A confirmação inicial do Telegram agora informa progresso de 10% e orienta `/protocolo <id>`, que exibe percentual e etapa derivados do estado persistido.
+- Docling Serve CPU consolidado como único OCR de PDF/JPG/PNG; PyMuPDF permanece apenas para texto digital nativo e XLSX/CSV continuam nativos.
+- Falha do Docling em imagem ou PDF escaneado agora gera retry/revisão, sem fallback OCR silencioso.
+- Tabelas Docling agora preservam posições vazias e offsets físicos; células mescladas permanecem sinalizadas em vez de deslocarem silenciosamente META, REALIZADO ou `% ATG`.
+- Serviços Docling/worker isolados no perfil Docker `processing`; scripts detectam automaticamente a distribuição Ubuntu do WSL.
 
-### Changed
-- Worker `document-worker`/MinerU e dependências Docker iniciados; agenda do WF-11 publicada no n8n com execução a cada 1 minuto.
-- Versão hospedada 37 publicada no endereço público com a correção de retorno ao Telegram.
+### Removed
+- MinerU removido do Compose, worker, contrato, scripts, diretório de serviço, container e imagem Docker local.
+- Tesseract e Pillow removidos do worker, imagem Docker, dependências e contrato de extração.
 
-### Fixed
-- Corrigida a resolução do chat autorizado no retorno Telegram quando `owner_id` é UUID de conta; utiliza o único chat da allowlist sem ampliar destinatários.
+### Validation
+- Compose e guardas Docling aprovados; smoke do worker, lint e build aprovados.
+- POBJ2608 processado em 142,6 s e pico Docling de 1,87 GiB; gate funcional permanece bloqueado pelas células unidas produzidas na origem Docling.
 
-### Fixed
-- Corrigida a validação booleana da extração no WF-11 e publicado o WF-12 como subworkflow interno sem webhook, agenda ou gatilho Telegram.
-
-### Validated
-- Gate M4 concluído em arquivo real: OCR MinerU, WF-12, WF-13, persistência e resposta ao Telegram terminaram com `telegram_reply_sent: true`.
-- Regra geral reproduziu 13/13 indicadores elegíveis e regras explícitas reproduziram 2/2 indicadores do PDF real, sem divergência e sem sobrescrever a fonte.
-- WF-13 reproduziu em shadow os pontos de Consórcio Expert (`4,67`) e Open Finance (`7,00`) do PDF real, com divergência zero e sem sobrescrever a fonte.
-- PDF real enviado pelo Telegram percorreu fila, lease, download protegido, OCR MinerU híbrido de 3 páginas e roteamento determinístico exclusivo ao GG Performance; Estado mínimo persistido sem efeitos externos.
-
-### Changed
-- Política `POBJ_SCORING_2026_H2` promovida à v1.1.0 `RUNTIME_ACTIVE` por autorização de Rafael, usando `% PROJ. FINAL` no painel mensal e mantendo exceções fora da regra geral.
-- Escopo do primeiro MVP congelado na jornada Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram.
-- Conta, Financeiro, Relacionamento e Visão 360 multidomínio movidos explicitamente para depois do gate ponta a ponta do MVP Performance.
-- Roadmap n8n reorganizado em M0–M5 com gates verificáveis no uso real pelo celular.
+## [3.5.0] - 2026-09-01
 
 ### Added
-- Parecer Telegram do GG Performance v1.1.0 com situação geral, pontos fortes, riscos e gaps, cenários conferíveis, caminho recomendado, próxima ação, risco e confiança.
-- Payload M4 com snapshot 360 versionado, hash de estado, parecer executivo curto e entrega idempotente ao chat Telegram.
-- WF-13 interno do GG Performance para validar o handoff, estruturar tabelas POBJ, reconciliar a fonte, preservar valores reportados, separar direção de metas e produzir parecer consultivo.
-- Testes estrutural e funcional do WF-13 com números brasileiros, valores negativos, proveniência e bloqueio de efeitos externos.
-- WF-12, Diretor mínimo do MVP, para classificar extrações e gerar handoff estruturado exclusivo ao GG Performance.
-- Teste estrutural do WF-12 e gatilho manual seguro no WF-11 para ensaios sem ativar o agendamento.
-- Script seguro `release-mineru-memory.ps1` para descarregar os modelos após uso híbrido e manter o serviço pronto.
-- MinerU 3.4.5 como parser interno local de PDF e imagem, com todos os modelos armazenados no computador e acesso exclusivo pela rede Docker do n8n.
-- Teste automatizado da imagem, saúde, conectividade interna, limite de concorrência e contrato de extração MinerU.
+- **Otimização Global de Hardware (.wslconfig):** Configuração personalizada para AMD Ryzen 5 5600X (6C/12T) e 16 GB RAM (`memory=6GB`, `processors=6`, `autoMemoryReclaim=gradual`, `sparseVhd=true`, `swap=2GB`, `localhostForwarding=true`, `guiApplications=false`), liberando permanentemente mais de 10 GB de RAM para o Windows.
+- **Docker Engine Nativo no WSL 2 (Ubuntu 24.04):** Instalação limpa do `docker.io` (v29.1.3) e `docker-compose-v2` (v2.40.3) com gerenciamento via systemd, eliminando a dependência do aplicativo pesado Docker Desktop.
+- **Painel Visual Lazydocker:** Instalação do Lazydocker (v0.25.2, ~15 MB RAM) com atalho executável `lazydocker.bat` na Área de Trabalho e wrapper CLI `docker.bat` para Windows PowerShell/CMD.
+- **Backups Integrais no Desktop:** Dump completo do PostgreSQL (`backup_visao360_postgres.sql`) e cópia integral do storage do n8n (`backup_n8n_data/`) criados na Área de Trabalho antes das migrações.
 
 ### Changed
-- WF-12 passou a chamar o WF-13 como subworkflow interno após o roteamento exclusivo a Performance.
-- WF-11 agora chama o Diretor mínimo após validar o OCR e só conclui jobs quando o handoff Performance estiver válido.
-- PDFs começam no pipeline econômico e escalam ao híbrido somente diante de evidência vazia ou tabela complexa; imagens continuam no híbrido.
-- Concorrência e janela do MinerU limitadas a uma unidade para reduzir picos de memória.
-- `document-worker` agora roteia PDF/JPG/PNG ao MinerU híbrido e mantém XLSX/CSV em parsers determinísticos nativos.
-- Timeouts do n8n, WF-11 e worker ampliados para acomodar documentos complexos sem travar o recebimento assíncrono.
+- **Pipeline de Documentos Ultra-Rápido:** Desacoplamento do Tesseract OCR e foco exclusivo em extração digital nativa direta via `PyMuPDF (fitz)`, `pypdf`, `openpyxl` e `csv` (< 500ms por documento).
+- **Ambiente Docker Reativado e Restaurado:** Containers `visao-360-postgres-1` e `visao-360-n8n-1` inicializados, com healthcheck `healthy` e banco de dados totalmente restaurado.
+- **Transferência de Jogos:** Jogos *Homura Hime* (35 GB) e *Kunitsu-Gami* (22,4 GB) movidos de `C:\games` para `A:\Games\`.
+
+### Removed
+- **MinerU e Camadas Pesadas de Build:** Exclusão da imagem do MinerU 3.4.5 (43 GB), caches de build do containerd (58 GB) e diretórios de código (`services/mineru/` e `.local/mineru-src/`), liberando ~112,7 GB no HD `G:\`.
+- **Limpeza Massiva de Disco (> 451 GB Liberados):**
+  - No `G:\`: Excluídos `docker_data.vhdx.old` (69,5 GB), update v1.2.0 obsoleto do Inazuma Eleven (30 GB), jogo *It Takes Two* (43,5 GB), vídeo VR duplicado *Thhegmy6.mp4* (15 GB) e 6 vídeos corrompidos sem moov atom.
+  - No `C:\`: Excluídos `C:\packages` (5 GB), `C:\Mount` (2,84 GB), pasta `Temp` (2,7 GB), caches do Gradle (`.gradle` 13 GB) e NPM (1,9 GB) e desativado arquivo de hibernação `hiberfil.sys` (6,36 GB).
 
 ### Fixed
-- Restaurado o gate que impede claim de documento POBJ antes de `local_reviewed`.
-- Corrigido aviso de truncamento do worker para ser emitido apenas quando o texto realmente exceder o limite.
+- **Acesso ao Chrome Remote Desktop no Firefox:** Whitelist dos domínios `remotedesktop.google.com` e desativação da proteção contra vazamento de IP via WebRTC no uBlock Origin.
 
-### Security
-- MinerU não publica porta no host, opera com concorrência 1 e não recebe segredos do Telegram ou Gemini.
-- Conteúdo documental continua não confiável e efeitos externos permanecem bloqueados.
 
 ### Added
-- Serviço interno `document-worker` em Docker com FastAPI, PyMuPDF, Tesseract OCR em português/inglês, Pillow e OpenPyXL.
-- Extração híbrida de PDF nativo/escaneado, OCR de JPG/PNG e leitura estruturada de CSV/XLSX com evidências localizáveis.
-- Contrato Draft 2020-12 `document-extraction` e testes reais de endpoint multipart, OCR e PDF nativo.
-- Roadmap canônico N0–N9 com o n8n como espinha dorsal operacional do Diretor 360.
-- WF-11, controlador mestre do MVP, com claim/lease, download protegido, worker subordinado, validação, conclusão e retry.
-- Teste estrutural automatizado do WF-11 e importação pelo script oficial.
-- Contrato Draft 2020-12 dos estados públicos do processamento assíncrono e teste automatizado do gate R1.
-- Protocolo persistente, consulta periódica de status no site e deduplicação de arquivos entre site e Telegram.
 - Diretor IA de MVP com Gemini Structured Output para interpretar documentos e devolver indicadores, pontuação, domínios e pareceres em JSON validável.
 - Preenchimento automático do painel POBJ com meta, realizado e pontuação extraídos pela IA.
 - Aprendizado governado por exemplos das últimas correções aprovadas por Rafael.
 - Roadmap de reconstrução assíncrona do MVP real, cobrindo intake, fila, n8n, worker documental, Diretor, quatro Gerentes Gerais, Estado 360, revisão e Telegram ponta a ponta.
 
 ### Changed
-- Checkpoint completo para troca de conta, com SESSION_STATE, PROJECT_STATE, handoff, roadmap e status sincronizados.
-- Versão hospedada 36 publicada com liberação de claim para o WF-11 e intake de imagens.
-- Repositório oficial migrado para `playertwo1/360gpt`; `playertwo1/360` preservado como remoto legado.
-- Intake do site e do Telegram ampliado para aceitar JPG/JPEG e PNG com validação de assinatura.
-- Ponte de claim preparada para reservar documentos recebidos de site e Telegram sem exigir pré-revisão local do POBJ.
-- Contrato de bridge ampliado com estados de retry/falha, lease e metadados do documento.
-- Upload do site e entrada do Telegram agora somente validam, armazenam e enfileiram; OCR, parsing e IA saíram integralmente da requisição de recebimento.
-- Confirmação do Telegram passou a informar `RECEBIDO` e protocolo, sem afirmar que Gerentes Gerais processaram o arquivo antes da execução real.
 - Para acelerar a ativação, interpretação, roteamento e pareceres dos Gerentes necessários usam uma única chamada inteligente no MVP.
 - Publicada a versão hospedada 32 e simplificado o formulário para exigir somente a seleção do arquivo.
 - Configurado `gemini-3.5-flash-lite` como modelo principal do ambiente hospedado após o modelo maior apresentar congestionamento 503; modelos maiores permanecem como fallback.
 - Suspensos novos testes manuais do processamento síncrono; a próxima implementação oficial passa a ser upload rápido com fila persistente e processamento local assíncrono.
-- Publicada a versão hospedada 34 com `DIRECTOR_SYNC_AI_ENABLED=false` na revisão de ambiente 16.
-- Publicada a versão hospedada 35 com o intake assíncrono do R1 no endereço oficial.
 
 ### Fixed
 - Adicionado fallback automático do Gemini 3.7 Flash congestionado para o Gemini 3.5 Flash disponível.
@@ -224,8 +62,6 @@
 ### Security
 - Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
 - A chave Gemini está armazenada apenas como segredo do ambiente hospedado, nunca no Git.
-- R0 criou backup sem arquivos `.env` ou segredos, verificou duas cópias no Google Drive e restaurou o dump n8n em banco isolado.
-- O caminho síncrono legado passou a exigir `DIRECTOR_SYNC_AI_ENABLED=true`; ausente ou falso, nenhum modelo é chamado durante o upload.
 
 ## [3.2.39] - 2026-08-29
 

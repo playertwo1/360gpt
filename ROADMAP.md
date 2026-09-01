@@ -1,18 +1,27 @@
 # Roadmap Oficial — Diretor 360
 
-## Reconstrução do MVP real com n8n — EM ANDAMENTO
+## Status Atual da Infraestrutura e Execução (01/09/2026) — MARCO 3.5.0 CONCLUÍDO
 
-O roteiro canônico para substituir o processamento síncrono e chegar ao primeiro arquivo real processado pelo Telegram está em:
+1. **Memória e Host:** WSL limitado a 6 GB no Ryzen 5 5600X, liberando permanentemente >10 GB de RAM para o Windows.
+2. **Motor de Containers:** Docker Desktop removido; Docker Engine nativo (docker.io + docker-compose-v2) rodando no WSL 2 (Ubuntu 24.04).
+3. **Gerenciador Visual:** Lazydocker configurado e operacional via atalho `lazydocker.bat` na Área de Trabalho.
+4. **Leitura documental:** MinerU e Tesseract removidos integralmente. Docling CPU/TableFormer é o único OCR; PyMuPDF lê PDF digital e XLSX/CSV seguem nativos.
+5. **Persistência e Segurança:** Backups completos mantidos em `C:\Users\fael\Desktop` (`backup_visao360_postgres.sql` e `backup_n8n_data/`). Containers `visao-360-postgres-1` e `visao-360-n8n-1` ativos e saudáveis.
+6. **Baseline do Host:** AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti e Windows 11 23H2; WSL limitado a 6 GB; G: 763 GB livres e C: 233 GB livres.
+
+---
+
+## Reconstrução do MVP real — EM ANDAMENTO
+
+O roteiro canônico para o processamento assíncrono e entrega ponta a ponta está em:
 
 [`docs/ROADMAP_N8N_MVP_REAL.md`](docs/ROADMAP_N8N_MVP_REAL.md)
 
 Ordem de entrega do primeiro corte ponta a ponta:
 
-`N0 intake → N1 controlador n8n → N2 leitor → N3 Diretor → N4 Performance → N5 Estado 360 → N6 revisão → N7 Telegram`.
+`N0 intake → N1 controlador n8n → N2 Docling/worker → N3 Diretor → N4 Performance → N5 Estado 360 → N6 revisão → N7 Telegram`.
 
-R0 concluído e documentado em [`docs/baselines/R0_BASELINE_2026-08-29.md`](docs/baselines/R0_BASELINE_2026-08-29.md). R1 concluído localmente com intake assíncrono único, protocolo, deduplicação entre canais, estados formais e polling no site.
-
-Próximo passo oficial: homologar o Docling nos layouts POBJ reais antes de republicar o WF-11. A migração técnica N2 está implementada, mas o gate objetivo de associação de células ainda não passou.
+Próximo passo oficial: concluir o gate N2 corrigindo a associação das células POBJ no Docling. WF-11 permanece despublicado até o benchmark real atingir 100% dos campos críticos e pelo menos 98% das demais células.
 
 ---
 
@@ -78,7 +87,7 @@ O usuário e decisor soberano Rafael (`fael@live.de`) determinou que o Codex atu
 **Data:** 26 de agosto de 2026  
 **Objetivo:** Evoluir o Diretor 360 de um conjunto de funcionalidades para uma plataforma decisória confiável, testável, observável, auditável e segura.  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*
@@ -700,126 +709,3 @@ Enquanto o Shadow permanece isolado: `P0 → P1 → P2 → P3 → P4 → P5 docu
 Após 24/24: `S2 → aprovação do Gate Shadow → P8 → A1 → A2 → A3 → A4`.
 
 Nenhum gerente entra em `ACTIVE`, nenhuma fonte real é conectada e nenhum efeito externo é liberado antes dos respectivos gates e da aprovação explícita de Rafael.
-
----
-
-## Trilha n8n do MVP real — atualização 2026-08-31
-
-O detalhamento canônico está em `docs/ROADMAP_N8N_MVP_REAL.md`.
-
-- [x] N0 — intake durável.
-- [ ] N1 — controlador mestre WF-11: estrutura homologada; falta ensaio manual ponta a ponta e decisão de agendamento.
-- [ ] N2 — leitor subordinado: Docling CPU/TableFormer implementado como principal, contrato 1.1.0 e fallback leve validados; homologação real bloqueada por células mescladas/desalinhadas em 3 PDFs POBJ. MinerU preservado e desligado como contingência manual.
-- [ ] N3–N9 — permanecem na ordem canônica depois do gate N1/N2.
-
-**Próxima tarefa elegível:** ajustar e comparar a reconstrução das tabelas POBJ até associar 100% de META, REALIZADO, % ATG, pontos e período; então republicar o WF-11 e executar o job controlado ponta a ponta.
-
-### Prioridade absoluta aprovada — MVP mínimo Performance
-
-Até o primeiro uso real ser comprovado, a ordem passa a ser:
-
-`M0 Telegram → M1 OCR → M2 Orquestrador → M3 GG Performance + especialistas → M4 resposta Telegram → M5 piloto curto`.
-
-- [x] M0 intake Telegram durável.
-- [ ] M1 leitor em nova homologação: Docling CPU é o caminho principal candidato; MinerU permanece parado como reserva manual. Três PDFs reais ficaram abaixo do gate de associação de células, portanto o WF-11 foi despublicado preventivamente.
-- [x] M2 roteamento mínimo exclusivo para Performance: WF-11/WF-12 reconheceram POBJ com confiança alta e persistiram o Estado mínimo.
-- [x] M3 análise e cálculos do GG Performance — 106 indicadores reais; 15/15 validações de regras elegíveis sem divergência; exceções sem regra protegidas.
-- [x] M4 resposta final no mesmo chat — ensaio real concluído com `telegram_reply_sent: true`.
-- [ ] M5 validação com 3–5 arquivos reais.
-
-#### M5.1 — Backup e isolamento sintético — CONCLUÍDO
-
-- [x] Criar backup pré-implementação local e no Google Drive.
-- [x] Remover empresas, contatos, limites e oportunidades fictícias do runtime Telegram/site.
-- [x] Remover fallbacks operacionais `cust-demo-001` e impedir fixtures no runtime real.
-- [x] Preservar dados sintéticos somente em `test-data` e `OFFLINE_EVAL`.
-
-**Gate:** nenhuma saída operacional cita conta ou oportunidade fictícia.
-
-#### M5.2 — Menu e comandos Telegram — CONCLUÍDO
-
-- [x] Implementar `/comandos` com aliases `/ajuda` e `/menu`.
-- [x] Implementar acompanhamento: `/status`, `/ultimo`, `/protocolo`, `/pendencias`, `/duvidas`, `/cancelar` e `/tentar novamente`.
-- [x] Implementar Performance: `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios`, `/indicador`, `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario`.
-- [x] Implementar governança: `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir`.
-- [x] Exigir confirmação para cancelar, corrigir, reabrir ou excluir.
-
-**Gate:** comandos consultam somente dados persistidos autorizados e o menu oficial do bot lista as capacidades.
-
-#### M5.3 — Parecer completo multipartes — CONCLUÍDO
-
-- [x] Remover o corte interno de 1.500 caracteres.
-- [x] Dividir o parecer em 2–3 mensagens numeradas e auditadas.
-- [x] Rotular `FONTE`, `CÁLCULO`, `INFORMADO POR RAFAEL`, `ESTIMATIVA` e `PENDENTE`.
-- [x] Impedir duplicidade parcial ou total em retry.
-
-**Gate:** parecer detalhado chega integralmente e com rastreabilidade.
-
-#### M5.4–M5.7 — Conversa supervisionada — IMPLEMENTADO, PENDENTE ENSAIO REAL
-
-- [x] Criar `AWAITING_OWNER_INPUT`, tabelas de perguntas/respostas e timeout de sete dias.
-- [x] Criar endpoints autenticados para perguntar, consultar, responder, reabrir e reenfileirar.
-- [x] Correlacionar resposta Telegram por mensagem ou protocolo e interpretar linguagem natural com JSON estruturado.
-- [x] Marcar respostas como `OWNER_PROVIDED` e perguntar novamente diante de ambiguidade.
-- [x] Integrar caminhos `READY` e `AWAITING_OWNER_INPUT` nos WF-11/WF-13.
-- [x] Reprocessar o mesmo protocolo e produzir novo Estado 360 versionado.
-
-**Gate:** lacuna material pausa; Rafael responde naturalmente; o fluxo retoma sem misturar protocolos ou inventar fatos.
-
-#### M5.8 — Ensaio real controlado — CONCLUÍDO
-
-- [x] Arquivo real enviado pelo Telegram e processado em segundo plano.
-- [x] Protocolo acompanhado pelo comando `/protocolo`.
-- [x] Pergunta material respondida por Rafael e protocolo reprocessado.
-- [x] Parecer final recebido no mesmo chat, sem duplicidade ou efeito externo.
-
-#### M5.9 — Homologação e piloto real — PRÓXIMO
-
-- [ ] Cobrir documento completo, ausência material, OCR incerto, conflito, resposta ambígua, concorrência, retry, timeout e reabertura.
-- [ ] Validar ações críticas, multipartes, ausência de contas fictícias, bateria geral, build e lint.
-- [ ] Processar 3–5 arquivos reais e comparar com a leitura humana.
-
-**Gate final:** Telegram conversacional utilizável e aprovado por Rafael antes da expansão multidomínio.
-
-#### M5.10 — Conhecimento POBJ homologado e reutilizável — IMPLEMENTADO, PENDENTE ENSAIO REAL
-
-- [x] Separar valores mensais do conhecimento reutilizável; meta, realizado, competência e pontuação do documento nunca são promovidos.
-- [x] Persistir mapeamentos/regras como itens versionados, vinculados ao proprietário, indicador, evidência e assinatura exata do layout.
-- [x] Permitir homologação seletiva pelo site e aprovação/revogação com confirmação pelo Telegram.
-- [x] Expor ao n8n somente itens `ACTIVE`; aplicação exige mesmo proprietário, indicador e assinatura de layout.
-- [x] Registrar aplicações idempotentes e preservar auditoria de aprovação, substituição e revogação.
-- [x] Diante de layout diferente, regra conflitante ou ausência de correspondência, não aplicar silenciosamente e manter o fluxo de pergunta ao Rafael.
-- [ ] Executar ensaio real: homologar um indicador, enviar novo relatório do mesmo layout e comprovar reutilização sem nova conferência.
-- [ ] Executar ensaio de conflito: alterar layout/regra e comprovar `AWAITING_OWNER_INPUT` sem sobrescrita.
-- [ ] Revisar e promover seletivamente aprovações históricas; nenhuma aprovação antiga recebe promoção automática.
-
-**Gate M5.10:** conhecimento só vira oficial por decisão explícita de Rafael, não contém valores mensais e pode ser rastreado, substituído ou revogado.
-
-Conta, Financeiro, Relacionamento, Visão 360 completa e outras expansões permanecem fora do caminho crítico até Rafael aprovar o Gate M4. A especificação completa e os critérios de aceite estão em `docs/ROADMAP_N8N_MVP_REAL.md` v2.0.
-
-### Próxima sequência do roadmap original
-
-1. Concluir o gate M5.9 com os casos de aceite ainda não cobertos.
-2. Executar no M5.10 a reutilização de conhecimento homologado em relatório do mesmo layout.
-3. Executar no M5.10 o conflito controlado de layout/regra e confirmar `AWAITING_OWNER_INPUT`.
-4. Processar 3–5 arquivos reais e comparar o resultado com a leitura humana de Rafael.
-
-**Pré-condição operacional:** confirmar OCR/worker saudável e WF-11 disponível antes dos ensaios reais. A configuração de infraestrutura permanece documentada no código e nos scripts oficiais, fora da trilha funcional do roadmap.
-
-### Migração Docling — checkpoint de retomada de 01/09/2026
-
-- [x] Backup Git bundle anterior à mudança criado na Área de Trabalho e hash registrado no `PROJECT_STATE.md`.
-- [x] Docling Serve 1.30.0 fixado por digest e isolado na rede Docker.
-- [x] CPU, dois threads, um worker, lote por página, 80 páginas, 20 MB, timeout de cinco minutos e TableFormer `accurate` configurados.
-- [x] Volume persistente de modelos criado; GPU e serviços remotos desabilitados.
-- [x] Worker 1.2.0 e contrato de extração 1.1.0 implementados com Markdown, tabelas, seções, parser, duração, proveniência e avisos.
-- [x] PDF/JPG/PNG roteados ao Docling; XLSX/CSV permanecem nativos; PyMuPDF/Tesseract é o fallback leve.
-- [x] MinerU retirado do caminho automático, colocado no perfil `mineru-manual` e protegido por comando auditado.
-- [x] WF-12 atualizado para transportar `tables[]`; WF-13 atualizado para priorizar tabelas e bloquear ambiguidade material.
-- [x] Regressão técnica: 32/32, lint e build aprovados.
-- [x] Benchmark real executado em POBJ2608, POBJ2708 e POBJ2808 dentro de cinco minutos e abaixo do limite de memória.
-- [ ] Gate funcional: corrigir células unidas/deslocadas e demonstrar 100% de associação dos campos críticos e pelo menos 98% das demais células em 3–5 arquivos.
-- [ ] Validar adicionalmente PDF escaneado, fotografia JPG, página rotacionada, tabela entre páginas e documento sem tabela.
-- [ ] Republicar WF-11 somente depois do gate funcional; executar o aceite Telegram ponta a ponta e retomar M5.9/M5.10.
-
-**Estado seguro atual:** Docling e worker saudáveis; MinerU parado; WF-11 despublicado. Nenhum dado ambíguo deve ser promovido automaticamente.

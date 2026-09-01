@@ -3,17 +3,19 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
+$wslDistro = @(wsl.exe --list --quiet 2>$null | ForEach-Object { ($_ -replace "`0", '').Trim() } | Where-Object { $_ -match '^Ubuntu' }) | Select-Object -First 1
+if (-not $wslDistro) { throw 'Ubuntu WSL distribution not found' }
 
 function Invoke-WslDocker {
     param([Parameter(Mandatory = $true)][string[]]$Arguments)
-    & wsl.exe -d Ubuntu -u root --cd $repo -- docker @Arguments
+    & wsl.exe -d $wslDistro -u root --cd $repo -- docker @Arguments
 }
 
 Write-Host '=== DOCUMENT WORKER OCR ==='
 python -m py_compile (Join-Path $repo 'services/document-worker/app/main.py')
 if ($LASTEXITCODE -ne 0) { throw 'Python syntax validation failed' }
 
-Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'up', '-d', '--no-build', 'document-worker')
+Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', '--profile', 'processing', 'up', '-d', '--no-build', 'docling', 'document-worker')
 if ($LASTEXITCODE -ne 0) { throw 'Document worker start failed' }
 
 $healthy = $false
@@ -33,5 +35,5 @@ if ($LASTEXITCODE -ne 0) { throw 'OCR or native PDF extraction smoke test failed
 Write-Host '[PASS] Python syntax'
 Write-Host '[PASS] Container healthy'
 Write-Host '[PASS] n8n reaches worker over internal Docker network'
-Write-Host '[PASS] OCR image and native PDF extraction'
+Write-Host '[PASS] Docling image processing and native PDF extraction'
 Write-Host 'DOCUMENT_WORKER_OCR: PASS'

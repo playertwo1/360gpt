@@ -12,7 +12,7 @@ O primeiro produto utilizável possui uma única jornada obrigatória:
 Arquivo enviado pelo Telegram
   → n8n recebe, registra e reserva o job
   → document-worker lê PDF/JPG/PNG/XLSX
-  → Docling CPU/TableFormer extrai texto, tabelas e evidências; fallback leve usa PyMuPDF/Tesseract
+  → Docling CPU/TableFormer extrai texto, tabelas e evidências; PyMuPDF lê somente texto digital nativo
   → Orquestrador identifica que o conteúdo pertence a Performance
   → GG Performance consulta somente seus especialistas necessários
   → regras determinísticas calculam metas, realizado, atingimento, pontos e gaps
@@ -57,9 +57,9 @@ O MVP estará concluído somente quando Rafael enviar um arquivo real pelo celul
 
 - [x] `document-worker` interno com PDF, JPG/PNG, XLSX e CSV.
 - [ ] Docling Serve 1.30.0 em CPU como OCR/parser principal: implementação concluída, homologação POBJ real pendente por desalinhamento de células.
-- [x] MinerU 3.4.5 preservado, desligado e acessível somente por contingência administrativa auditada.
+- [x] MinerU removido integralmente do Compose, worker, scripts, container e imagens locais por decisão de Rafael.
 - [x] Pipeline econômico com escalada automática para híbrido em layout complexo.
-- [x] Fallback PyMuPDF/Tesseract quando Docling falhar ou exceder o timeout.
+- [x] PyMuPDF preservado apenas para PDF digital nativo; imagem e PDF escaneado dependem do Docling e entram em retry/revisão quando ele falha.
 - [x] Evidências por página, bloco ou célula em contrato validado.
 - [x] Concorrência e janela limitadas a 1; reinício seguro disponível para liberar RAM após uso híbrido.
 - [x] PDF/JPG/XLSX reais testados diretamente pelo worker.
@@ -196,8 +196,8 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 - [x] Retornar JSON Draft 2020-12 com evidência por página/célula.
 - [x] Implementar timeout, custo local zero, retry e fallback de provedor.
 - [ ] Homologar Docling Serve 1.30.0 em CPU como parser principal de PDF/imagem, TableFormer `accurate`, uma execução concorrente, dois threads e timeout de cinco minutos. A implementação passou saúde/tempo/memória, mas 3 PDFs POBJ reais ainda apresentaram células unidas.
-- [x] Preservar PyMuPDF/Tesseract como fallback automático leve quando o Docling estiver indisponível.
-- [x] Preservar MinerU desligado em perfil manual, sem fallback automático e com evento local de auditoria obrigatório para inicialização.
+- [x] Preservar PyMuPDF somente para texto digital nativo; não aplicar OCR alternativo silencioso.
+- [x] Remover MinerU e Tesseract integralmente; Docling é o único OCR de PDF/imagem.
 - [x] Validar PDF, JPG e XLSX reais diretamente pelo worker e validar acesso interno a partir do n8n.
 - [ ] Validar o arquivo real `metas1708.pdf` através do WF-11.
 
@@ -272,4 +272,4 @@ O WF-11 consulta a fila, reserva o job com lease, baixa o original, aciona o lei
 
 ## Próximo passo exato
 
-Rafael envia um arquivo POBJ pelo Telegram. Em seguida, executar WF-11 e comprovar claim → download → document-worker/MinerU → WF-12 → primeiro handoff estruturado exclusivamente para o GG Performance. Não desenvolver outros Gerentes antes do Gate final de M4.
+Rafael envia um arquivo POBJ pelo Telegram. Em seguida, executar WF-11 e comprovar claim → download → document-worker/Docling → WF-12 → primeiro handoff estruturado exclusivamente para o GG Performance. Não desenvolver outros Gerentes antes do Gate final de M4.

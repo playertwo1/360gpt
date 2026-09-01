@@ -17,7 +17,16 @@ Write-Host ''
 # Docker Engine nativo no Ubuntu/WSL2. O Docker Desktop nao e necessario.
 function Invoke-WslDocker {
     param([Parameter(Mandatory = $true)][string[]]$Arguments)
-    & wsl.exe -d Ubuntu -u root --cd $PSScriptRoot -- docker @Arguments
+    & wsl.exe -d $script:WslDistro -u root --cd $PSScriptRoot -- docker @Arguments
+}
+
+$script:WslDistro = @(
+    wsl.exe --list --quiet 2>$null |
+        ForEach-Object { ($_ -replace "`0", '').Trim() } |
+        Where-Object { $_ -match '^Ubuntu' }
+) | Select-Object -First 1
+if (-not $script:WslDistro) {
+    throw 'Nenhuma distribuicao Ubuntu foi encontrada no WSL.'
 }
 
 # 1. Iniciar Ubuntu, keepalive e Docker Engine
@@ -31,12 +40,12 @@ if (Test-Path -LiteralPath $keepAlivePid) {
 }
 if (-not $keepAlive) {
     $keepAlive = Start-Process -FilePath 'wsl.exe' `
-        -ArgumentList @('-d', 'Ubuntu', '-u', 'root', '--', 'sleep', 'infinity') `
+        -ArgumentList @('-d', $script:WslDistro, '-u', 'root', '--', 'sleep', 'infinity') `
         -WindowStyle Hidden -PassThru
     New-Item -ItemType Directory -Path $localState -Force | Out-Null
     Set-Content -LiteralPath $keepAlivePid -Value $keepAlive.Id -Encoding ascii
 }
-& wsl.exe -d Ubuntu -u root -- systemctl start docker
+& wsl.exe -d $script:WslDistro -u root -- systemctl start docker
 $dockerVersion = Invoke-WslDocker @('version', '--format', '{{.Server.Version}}') 2>$null
 if (-not $dockerVersion) {
     throw 'Docker Engine do Ubuntu nao respondeu.'
@@ -45,8 +54,8 @@ Write-Host "  [OK] Docker Engine $dockerVersion ativo no Ubuntu; Docker Desktop 
 
 # 2. Iniciar PostgreSQL, n8n, Docling e worker
 Write-Host ''
-Write-Host '[2/6] Inicializando PostgreSQL, n8n, Docling CPU e document-worker...' -ForegroundColor Yellow
-Invoke-WslDocker @('compose', '-f', 'compose.n8n.yaml', '--env-file', '.env.n8n', 'up', '-d', 'postgres', 'n8n', 'docling', 'document-worker') 2>$null | Out-Null
+Write-Host '[2/6] Inicializando PostgreSQL, n8n e processamento Docling sob demanda...' -ForegroundColor Yellow
+Invoke-WslDocker @('compose', '-f', 'compose.n8n.yaml', '--env-file', '.env.n8n', '--profile', 'processing', 'up', '-d', 'postgres', 'n8n', 'docling', 'document-worker') 2>$null | Out-Null
 Write-Host '  [OK] Containers acionados.' -ForegroundColor Green
 
 
@@ -126,7 +135,6 @@ Write-Host '   * Docker Engine WSL:  ATIVO [OK]' -ForegroundColor Green
 Write-Host '   * Banco PostgreSQL:   ATIVO (Porta 5432) [OK]' -ForegroundColor Green
 Write-Host '   * Orquestrador n8n:   ATIVO (Porta 5678) [OK]' -ForegroundColor Green
 Write-Host '   * OCR Docling CPU:    ATIVO (rede interna) [OK]' -ForegroundColor Green
-Write-Host '   * MinerU reserva:     DESLIGADO (perfil manual) [OK]' -ForegroundColor Green
 Write-Host '   * Site Hospedado:     CONECTADO [OK]' -ForegroundColor Green
 Write-Host '   * Ponte WF-09:        AUTENTICADA & SEGURA [OK]' -ForegroundColor Green
 Write-Host '   * Telegram Ingest:    WF-11 PAUSADO ATE HOMOLOGAR DOCLING [SEGURO]' -ForegroundColor Yellow

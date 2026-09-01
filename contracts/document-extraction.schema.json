@@ -68,13 +68,13 @@
           "additionalProperties": false,
           "required": ["name", "version", "processing_ms"],
           "properties": {
-            "name": { "enum": ["DOCLING", "NATIVE", "TESSERACT", "MINERU"] },
+            "name": { "enum": ["DOCLING", "NATIVE"] },
             "version": { "type": ["string", "null"] },
             "processing_ms": { "type": ["integer", "null"], "minimum": 0 }
           }
         },
         "page_count": { "type": ["integer", "null"], "minimum": 1 },
-        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "OCR_TESSERACT", "HYBRID", "DOCLING_TABLEFORMER", "DOCLING_OCR", "MINERU_PIPELINE", "MINERU_HYBRID", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
+        "extraction_method": { "enum": ["PDF_NATIVE_TEXT", "DOCLING_TABLEFORMER", "DOCLING_OCR", "CSV_NATIVE", "XLSX_NATIVE", "NO_TEXT"] },
         "evidence": {
           "type": "array",
           "items": {

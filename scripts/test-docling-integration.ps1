@@ -4,22 +4,22 @@ param()
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $schema = Join-Path $repo 'contracts/document-extraction.schema.json'
+$wslDistro = @(wsl.exe --list --quiet 2>$null | ForEach-Object { ($_ -replace "`0", '').Trim() } | Where-Object { $_ -match '^Ubuntu' }) | Select-Object -First 1
+if (-not $wslDistro) { throw 'Ubuntu WSL distribution not found' }
 
 function Invoke-WslDocker {
     param([Parameter(Mandatory = $true)][string[]]$Arguments)
-    & wsl.exe -d Ubuntu -u root --cd $repo -- docker @Arguments
+    & wsl.exe -d $wslDistro -u root --cd $repo -- docker @Arguments
 }
 
 Write-Host '=== DOCLING CPU PRIMARY PARSER ==='
-Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'config', '--quiet')
+Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', '--profile', 'processing', 'config', '--quiet')
 if ($LASTEXITCODE -ne 0) { throw 'Invalid Docker Compose configuration' }
 
 $doclingHealth = Invoke-WslDocker @('inspect', '--format', '{{.State.Health.Status}}', 'visao-360-docling-1') 2>$null
 if ($doclingHealth -ne 'healthy') { throw 'Docling is not healthy' }
-$mineruRunning = Invoke-WslDocker @('inspect', '--format', '{{.State.Running}}', 'visao-360-mineru-1') 2>$null
-if ($mineruRunning -eq 'true') { throw 'MinerU must remain stopped during normal operation' }
 
-$config = Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', 'config') | Out-String
+$config = Invoke-WslDocker @('compose', '--env-file', '.env.n8n', '-f', 'compose.n8n.yaml', '--profile', 'processing', 'config') | Out-String
 foreach ($required in @('DOCLING_DEVICE: cpu','DOCLING_NUM_THREADS: "2"','DOCLING_SERVE_ENG_LOC_NUM_WORKERS: "1"','DOCLING_SERVE_MAX_NUM_PAGES: "80"','DOCLING_SERVE_MAX_FILE_SIZE: "20971520"')) {
     if ($config -notmatch [regex]::Escape($required)) { throw "Missing Docling guard: $required" }
 }
@@ -34,6 +34,5 @@ $stats = Invoke-WslDocker @('stats', '--no-stream', '--format', '{{.Name}} {{.Me
 Write-Host "[INFO] $stats"
 Write-Host '[PASS] Pinned Docling image and internal-only service'
 Write-Host '[PASS] CPU, 2 threads, one worker, 80 pages and 20 MB guards'
-Write-Host '[PASS] MinerU stopped as manual reserve'
 Write-Host '[PASS] Extraction contract 1.1.0'
 Write-Host 'DOCLING_INTEGRATION: PASS'

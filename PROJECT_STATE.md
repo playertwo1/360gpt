@@ -1,40 +1,47 @@
 # PROJECT STATE
 
-Version: 3.8.0-docling-candidate
+Version: 3.8.0-docling-only
 Current phase: MVP mínimo Telegram → Performance → Telegram
 Current milestone: N2/M1 — homologação objetiva do leitor documental
-Current task: corrigir desalinhamentos de células Docling nos layouts POBJ reais antes de republicar WF-11
+Current task: corrigir desalinhamentos de células Docling nos layouts POBJ reais
 Status: IN_PROGRESS
 
-Last completed: migração técnica para Docling CPU, contrato 1.1.0, tabelas estruturadas, fallback leve, reserva manual MinerU e proteção de ambiguidade implementados
-Next task: comparar e corrigir a estrutura das 3 tabelas POBJ até passar o gate de 100% dos campos críticos; depois republicar WF-11 e retomar M5.9/M5.10
+Host baseline:
+- AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
+- WSL limitado a 6 GB via `.wslconfig`, preservando mais de 10 GB para o Windows.
+- Docker Engine nativo no WSL2 Ubuntu 24.04, sem Docker Desktop.
+- Lazydocker 0.25.2 pelo atalho `lazydocker.bat` na Área de Trabalho.
+- Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
+- Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last validation: 32/32 regressões PASS; gate funcional Docling PARTIAL — saudável em CPU, pico observado 1,96 GiB/3 GiB e PDFs em 124–198 s, mas células unidas/desalinhadas em POBJ2608, POBJ2708 e POBJ2808
-Last commit: 1ba30c0 (`feat: add Docling CPU OCR candidate`)
+Last completed: MinerU e Tesseract removidos integralmente do caminho operacional; Docling consolidado como único OCR de PDF/imagem
+Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
+
+Last validation: Compose PASS; Docling integration PASS; document-worker smoke PASS; lint PASS; build PASS; POBJ2608 real em 142,6 s preservou 12 posições, mas manteve células materialmente unidas
+Last commit: 9bc1c2f (`docs: checkpoint Docling validation state`)
 
 Blockers:
-- Docker Desktop foi abandonado em favor do Docker Engine nativo no Ubuntu/WSL2 para reduzir RAM; não tentar reparar ou iniciar o Desktop.
-- Ubuntu 26.04 foi movido para `G:\Docker\Ubuntu`; Engine, imagens e volumes novos ficam no VHDX dessa distribuição.
-- Dump PostgreSQL restaurado com 129 tabelas n8n e 8 tabelas visao360; 13 workflows e 2 credenciais confirmados.
-- WF-11 está despublicado preventivamente; WF-12/WF-13 atualizados no n8n, sem ativação externa, até a homologação do leitor.
-- Sete jobs reais permanecem órfãos em PROCESSING/terceira tentativa; a versão 40 pode recuperá-los, mas o Docker/n8n precisa estar operacional antes de executar `/destravar`.
-- Docling reconstruiu corretamente uma parte das tabelas, mas uniu peso/métrica e alguns valores nas páginas complexas; nenhuma dessas associações pode ser oficializada silenciosamente.
-- MinerU está preservado e parado; uso exige `scripts/start-mineru-manual.ps1 -Protocol ... -Reason ...` e gera auditoria local.
-- Benchmark detalhado: `docs/audits/DOCLING_MIGRATION_2026-09-01.md`.
-- Backup anterior à migração: `C:\Users\fael\Desktop\backup-diretor360-pre-docling-20260901-141052.bundle` (SHA-256 `F07F8764A83795948DCF67EFBD1E623F0053E591119018F9054575F48F20D5CB`).
+- WF-11 permanece despublicado preventivamente até o gate funcional Docling.
+- Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
+- Não republicar o Telegram automático enquanto META, REALIZADO, % ATG, pontos e período não estiverem 100% associados.
+
+Decisions:
+- Docling Serve 1.30.0 em CPU é o único OCR.
+- PyMuPDF pode extrair somente texto digital nativo; XLSX/CSV permanecem nativos.
+- MinerU e Tesseract não possuem fallback, container, imagem, scripts ou dependências.
+- Falha do Docling em imagem/PDF escaneado gera retry e posterior revisão humana.
 
 Pending decisions:
-- Fornecer/confirmar as regras dedicadas oficiais de Seguros e Cartões; até lá, permanecem somente como valores reportados pela fonte.
-- Efeitos externos continuam fora do escopo.
+- Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 14:55
+Last update: 2026-09-01 18:30
 
 Resume instruction:
-Continue o `ROADMAP.md` pelo gate N2/M1: melhorar a reconstrução das tabelas POBJ e repetir o benchmark real. Não republicar WF-11 enquanto os campos críticos não atingirem 100% de associação correta.
+1. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
+2. Repetir POBJ2708/2808 e acrescentar dois documentos reais quando disponíveis.
+3. Executar regressão WF-11/WF-13 após fechar a regra estrutural.
+4. Somente após passar o gate, importar/publicar WF-11 e retomar M5.9/M5.10.
 
-Resume commands:
-- `pwsh -NoProfile -File scripts/test-docling-integration.ps1`
-- `pwsh -NoProfile -File scripts/test-document-worker.ps1`
-- `node scripts/test-wf13-performance-runtime.mjs`
-- Depois do ajuste, repetir POBJ2608, POBJ2708 e POBJ2808 com `python -m app.real_file_probe` no container de teste.
-- Somente após o gate real: importar WF-11/WF-12/WF-13, publicar WF-11 e reiniciar n8n.
+Evidence:
+- `docs/audits/DOCLING_MIGRATION_2026-09-01.md`
+- Backup anterior: `C:\Users\fael\Desktop\backup-diretor360-pre-docling-20260901-141052.bundle`

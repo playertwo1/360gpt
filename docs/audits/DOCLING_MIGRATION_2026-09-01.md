@@ -4,7 +4,7 @@
 
 Implementação técnica concluída; homologação funcional POBJ não aprovada.
 
-O Docling Serve 1.30.0 está fixado por digest, opera apenas na rede Docker, usa CPU, dois threads, um worker, TableFormer em modo `accurate` e volume persistente de modelos. O MinerU permanece instalado, parado e fora do fallback automático.
+O Docling Serve 1.30.0 está fixado por digest, opera apenas na rede Docker, usa CPU, dois threads, um worker, TableFormer em modo `accurate` e volume persistente de modelos. MinerU e Tesseract foram removidos integralmente por decisão posterior de Rafael.
 
 ## Medições reais
 
@@ -12,9 +12,9 @@ O Docling Serve 1.30.0 está fixado por digest, opera apenas na rede Docker, usa
 |---|---:|---:|---|---|
 | POBJ2808.pdf | 3 | 198 s na primeira execução; 125–127 s aquecido | DOCLING_TABLEFORMER | 3 tabelas; página final bem alinhada; células unidas nas anteriores |
 | POBJ2708.pdf | 3 | 129 s | DOCLING_TABLEFORMER | tabela principal majoritariamente alinhada; cabeçalhos/células secundárias incompletos |
-| POBJ2608.pdf | 3 | 125 s | DOCLING_TABLEFORMER | células de peso/métrica e alguns valores unidas; possível deslocamento |
+| POBJ2608.pdf | 3 | 142,6 s após rebuild | DOCLING_TABLEFORMER | 12 posições preservadas; células de peso/métrica continuam unidas e bloqueadas para revisão |
 
-Pico observado do serviço: aproximadamente 1,84 GiB dentro do limite de 3 GiB do container e do WSL de 6 GiB. Logs confirmaram dispositivo `cpu`; o MinerU ficou parado.
+Pico observado do serviço: aproximadamente 1,84 GiB dentro do limite de 3 GiB do container e do WSL de 6 GiB. Logs confirmaram dispositivo `cpu`; nenhum OCR alternativo permanece no runtime.
 
 ## Gate
 
@@ -27,11 +27,11 @@ Pico observado do serviço: aproximadamente 1,84 GiB dentro do limite de 3 GiB d
 
 ## Retomada
 
-Melhorar a normalização das células mescladas sem inventar valores; comparar novamente com os três PDFs e dois arquivos adicionais. Não publicar o WF-11 até o gate funcional passar.
+Os offsets físicos já são preservados, eliminando o deslocamento causado pela compactação de células vazias. O próximo passo é reconstruir ou esclarecer células materialmente unidas sem inventar valores; comparar novamente com os três PDFs e dois arquivos adicionais. Não publicar o WF-11 até o gate funcional passar.
 
 ### Arquivos centrais
 
-- `compose.n8n.yaml`: serviço Docling e perfil manual MinerU.
+- `compose.n8n.yaml`: serviço Docling interno, sem serviço OCR alternativo.
 - `services/document-worker/app/main.py`: cliente assíncrono, parsing e fallback.
 - `contracts/document-extraction.schema.json`: contrato 1.1.0.
 - `n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json`: gate do contrato, atualmente despublicado.
