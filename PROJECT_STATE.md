@@ -18,7 +18,7 @@ Last completed: MinerU e Tesseract removidos integralmente do caminho operaciona
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
 Last validation: Compose PASS; Docling integration PASS; document-worker smoke PASS; lint PASS; build PASS; POBJ2608 real em 142,6 s preservou 12 posições, mas manteve células materialmente unidas
-Last commit: 9bc1c2f (`docs: checkpoint Docling validation state`)
+Last commit: 86139cf (`feat: consolidate Docling-only document pipeline`)
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
