@@ -81,7 +81,9 @@ function isContextRequest(text: string) {
 
 function formatQuestionWithContext(question: ClarificationQuestion) {
   const indicator = repairMojibake(question.indicator?.trim() ?? '');
-  const field = repairMojibake(question.field?.trim() ?? '');
+  const rawField = repairMojibake(question.field?.trim() ?? '');
+  const fieldLabels: Record<string, string> = { 'summary:final_points': 'Resultado final / total de pontos', 'summary:period': 'Período ou competência', 'summary:base_date': 'Data-base' };
+  const field = fieldLabels[rawField] ?? rawField.replace(/^indicator:[^:]+:/, '').replace(/^gap:/, '').replaceAll('_', ' ');
   const label = indicator ? `Indicador: ${indicator}` : field && field !== 'unknown' ? `Campo: ${field}` : 'Indicador não identificado no arquivo';
   const evidence = question.evidence ? ` | Evidência: ${repairMojibake(question.evidence)}` : '';
   return `${label} — ${repairMojibake(question.question)}${evidence}`;

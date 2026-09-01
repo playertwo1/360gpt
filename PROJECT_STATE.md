@@ -17,7 +17,7 @@ Host baseline:
 Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
 Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
 
-Last validation: 2026-09-01 — npm lint PASS; npm build PASS; correção local de codificação, baixa confiança, mensagem vazia e feedback conversacional validada; publicação ainda exige acesso Sites da conta proprietária
+Last validation: 2026-09-01 — npm lint PASS; npm build PASS; codificação, baixa confiança, mensagem vazia, memória cumulativa e feedback conversacional validados localmente; publicação ainda exige acesso Sites da conta proprietária
 Last commit: pending checkpoint desta correção
 
 Blockers:
@@ -35,7 +35,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 20:55
+Last update: 2026-09-01 21:05
 
 Resume instruction:
 1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.

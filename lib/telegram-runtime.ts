@@ -102,18 +102,22 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
   if (!row) return false;
   const questions = safeJson<ClarificationQuestion[]>(String(row.questions_json ?? '[]'), []);
   const interpretation = await interpretClarification(questions, text);
+  const previousInterpretation = safeJson<{ answers?: typeof interpretation.answers }>(String(row.interpretation_json ?? '{}'), {});
+  const answerMap = new Map<string, (typeof interpretation.answers)[number]>();
+  for (const answer of [...(previousInterpretation.answers ?? []), ...(interpretation.answers ?? [])]) answerMap.set(answer.question_id, answer);
+  const combinedAnswers = [...answerMap.values()];
   const now = Date.now();
   if (!interpretation.resolved) {
     const answeredIds = new Set((interpretation.answers ?? []).filter((answer) => Number(answer.confidence) >= 0.8 && answer.value !== null && answer.value !== undefined).map((answer) => answer.question_id));
     const remaining = questions.filter((question) => !answeredIds.has(question.id));
     const followUp = remaining.map((question) => {
       const indicator = repairMojibake(question.indicator ?? '');
-      const field = repairMojibake(question.field ?? '');
+      const field = friendlyFieldLabel(repairMojibake(question.field ?? ''));
       const label = indicator ? `Indicador: ${indicator} — ` : field ? `Campo: ${field} — ` : '';
       return `${label}${repairMojibake(question.question)}`;
     });
     const nextQuestions = remaining.length ? remaining : questions;
-    const persisted = { ...interpretation, follow_up: followUp };
+    const persisted = { ...interpretation, answers: combinedAnswers, follow_up: followUp };
     await db.prepare(`UPDATE clarification_requests SET status = 'NEEDS_FOLLOW_UP', questions_json = ?, answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1 WHERE id = ?`)
       .bind(JSON.stringify(nextQuestions), text, String(messageId), JSON.stringify(persisted), String(row.id)).run();
     if (interpretation.model === 'deterministic_context_request') {
@@ -125,14 +129,23 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
   }
   await db.batch([
     db.prepare(`UPDATE clarification_requests SET status = 'RESOLVED', answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1, resolved_at = ? WHERE id = ?`)
-      .bind(text, String(messageId), JSON.stringify(interpretation), now, String(row.id)),
+      .bind(text, String(messageId), JSON.stringify({ ...interpretation, answers: combinedAnswers }), now, String(row.id)),
     db.prepare(`UPDATE agent_runs SET status = 'QUEUED', available_at = ?, output_json = NULL, completed_at = NULL WHERE id = ? AND status = 'AWAITING_OWNER_INPUT'`).bind(now, String(row.job_id)),
     db.prepare(`UPDATE documents SET status = 'ready_for_processing' WHERE id = ? AND owner_id = ?`).bind(String(row.document_id), ownerId),
     db.prepare(`INSERT INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'clarification_resolved', 'clarification', ?, ?, ?)`)
-      .bind(`clarification-answer-${row.id}`, ownerId, `telegram:${chatId}`, String(row.id), JSON.stringify({ model: interpretation.model, answerCount: interpretation.answers.length }), now),
+      .bind(`clarification-answer-${row.id}`, ownerId, `telegram:${chatId}`, String(row.id), JSON.stringify({ model: interpretation.model, answerCount: combinedAnswers.length }), now),
   ]);
   await sendTelegramText(token, chatId, `Resposta vinculada ao protocolo ${row.document_id}. O mesmo arquivo voltou para a fila e será reprocessado.`, messageId);
   return true;
+}
+
+function friendlyFieldLabel(field: string) {
+  const labels: Record<string, string> = {
+    'summary:final_points': 'Resultado final / total de pontos',
+    'summary:period': 'Período ou competência',
+    'summary:base_date': 'Data-base',
+  };
+  return labels[field] ?? field.replace(/^indicator:[^:]+:/, '').replace(/^gap:/, '').replaceAll('_', ' ');
 }
 
 function renderProgressBar(percent: number): string {
