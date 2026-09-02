@@ -49,6 +49,21 @@ export async function POST(request: Request) {
     } : null;
     const approvedKnowledge = await env.DB.prepare(`SELECT id, indicator_key, indicator_name, layout_signature, knowledge_type, version, content_json, content_hash
       FROM pobj_knowledge_items WHERE owner_id = ? AND status = 'ACTIVE' ORDER BY indicator_key, version DESC LIMIT 100`).bind(job.owner_id).all();
+    const directiveRows = await env.DB.prepare(`SELECT id, directive, scope, failure_type, version, content_hash FROM bot_directives
+      WHERE owner_id = ? AND status = 'ACTIVE' ORDER BY updated_at DESC LIMIT 15`).bind(job.owner_id).all<Record<string, unknown>>();
+    const activeDirectives: Array<Record<string, unknown>> = [];
+    let directiveChars = 0;
+    for (const item of directiveRows.results ?? []) {
+      const directive = String(item.directive ?? '');
+      if (!directive || directiveChars + directive.length > 2000) continue;
+      directiveChars += directive.length;
+      activeDirectives.push({ id: item.id, directive, scope: item.scope, failure_type: item.failure_type, version: item.version, content_hash: item.content_hash });
+    }
+    if (activeDirectives.length) {
+      await env.DB.batch(activeDirectives.map((item) => env.DB.prepare(`INSERT OR IGNORE INTO bot_directive_applications
+        (id, directive_id, directive_version, owner_id, execution_ref, protocol, outcome, created_at) VALUES (?, ?, ?, ?, ?, ?, 'APPLIED', ?)`)
+        .bind(`directive-app-${job.id}-${item.id}`, item.id, item.version, job.owner_id, job.id, job.document_id, now)));
+    }
     const subjectRef = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'performance-owner' : 'subject-not-resolved';
     const purpose = job.source === 'telegram' || job.source === 'pobj_mobile' ? 'pobj_performance_analysis' : 'document_classification';
 
@@ -58,6 +73,7 @@ export async function POST(request: Request) {
       source_event_id: `${job.source}-${job.source_message_id ?? job.document_id}`, tenant_id: 'tenant-owner', subject_ref: subjectRef,
       actor_id: `${job.source}:${job.owner_id}`, purpose, data_classification: 'INTERNAL', text: job.raw_text ?? '', owner_context: ownerContext,
       approved_knowledge: (approvedKnowledge.results ?? []).map((item) => ({ ...item, content: safeJson(String(item.content_json ?? '{}')), content_json: undefined, applicability: 'REQUIRE_EXACT_INDICATOR_AND_LAYOUT_SIGNATURE' })),
+      active_conversation_directives: activeDirectives,
       document: job.storage_key ? { file_name: job.original_name, mime_type: job.mime_type, content_hash: job.content_hash, download_path: `/api/bridge/file?job_id=${encodeURIComponent(job.id)}` } : null,
       security: { content_trust: 'UNTRUSTED', external_effects_allowed: false },
     }, { headers: { 'Cache-Control': 'no-store' } });

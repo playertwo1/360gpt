@@ -1,6 +1,6 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.0
+**Versão do planejamento:** 4.1
 
 **Atualizado em:** 1º de setembro de 2026
 
@@ -12,9 +12,9 @@
 
 **Fase atual:** MVP mínimo `Telegram → n8n → Docling → Diretor → GG Performance → Estado 360 → Telegram`
 
-**Marco atual:** `N2 — homologação objetiva do leitor documental`
+**Marco atual:** `P0 — blindagem conversacional, estabilidade e aprendizado supervisionado`
 
-**Próxima tarefa:** corrigir e validar células materialmente unidas nos PDFs POBJ reais, sem inferência silenciosa
+**Próxima tarefa:** concluir P0.0–P0.10 antes de retomar a homologação documental N2
 
 > Este é o único arquivo de planejamento e checklist do projeto. Em caso de divergência com documentação histórica, prevalecem, nesta ordem: estado real do código e dos serviços, `AGENTS.md`, `PROJECT_STATE.md` e este `ROADMAP.md`.
 
@@ -227,7 +227,95 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 ---
 
-## 6. Caminho canônico do MVP — N0 a N7
+## 6. Marco prioritário P0 — blindagem do Telegram
+
+> Este marco precede temporariamente o N2. Ele consolida três planejamentos aprovados: estabilidade Telegram/n8n/LLM, blindagem de entrada e memória, e aprendizado supervisionado de diretrizes.
+
+### P0.0 — Checkpoint e baseline
+
+- [x] Backup Git completo e patch binário das alterações preexistentes criados na Área de Trabalho.
+- [x] Alterações anteriores do usuário identificadas e preservadas fora do escopo do checkpoint P0.
+- [x] Registrar bateria baseline do Telegram, ponte e n8n antes da publicação.
+
+### P0.1 — Texto seguro e entregas
+
+- [x] Adotar texto simples em todos os emissores operacionais e remover Markdown padrão residual.
+- [x] Divisão semântica defensiva existente em até 3.600 caracteres.
+- [x] Entregas finais possuem índice, hash e idempotência por parte.
+- [x] Validar acentos, caracteres especiais, mensagens extensas e retry de parte.
+
+### P0.2 — Confirmação rápida e fila de entrada
+
+- [x] Deduplicação atômica existente por `update_id`.
+- [x] Filtro de mensagens produzidas por bot.
+- [~] Criar `telegram_inbound_events` e retirar processamento conversacional pesado do webhook (implementado atrás de `TELEGRAM_ASYNC_INTERACTIONS_ENABLED`).
+- [~] Responder HTTP 200 antes de OCR, LLM ou interpretação conversacional (aguarda publicação/canário).
+- [x] Reivindicar eventos com lease e recuperação idempotente.
+
+### P0.3 — Debounce e concorrência
+
+- [x] Criar lotes duráveis por `chat_id`, com janela de 2,5 segundos.
+- [x] Preservar ordem, `update_id` e `message_id` das partes.
+- [ ] Comandos, arquivos e respostas diretas a esclarecimentos não aguardam debounce.
+- [x] Impedir duas execuções de alterarem a mesma pendência simultaneamente.
+
+### P0.4 — Roteamento e IA estruturada
+
+- [~] Roteamento determinístico já cobre respostas numéricas, perguntas contextuais, reclamações e `não sei`; ampliar testes e contrato.
+- [x] Interpretação Gemini já exige JSON estruturado quando o parser determinístico não resolve.
+- [ ] Formalizar contrato de intenção, respostas, contexto, feedback e confiança.
+- [ ] Calcular pendências somente por diferença determinística.
+- [ ] Reproduzir e eliminar integralmente os loops do protocolo atual.
+
+### P0.5 — Memória deslizante e estado persistido
+
+- [x] Perguntas, respostas, correções, conhecimento POBJ e Estado 360 possuem persistência estruturada.
+- [ ] Limitar contexto textual a oito interações recentes.
+- [ ] Resumir histórico antigo preservando referências auditáveis.
+- [ ] Confirmar que nenhuma execução usa conversa livre como fonte oficial de indicador.
+
+### P0.6 — Digitação e progresso
+
+- [x] Criar endpoint autenticado `/api/bridge/telegram/action` sem expor token ao n8n.
+- [~] Chamar `typing` depois do claim e antes de etapas demoradas (endpoint pronto; WF-11 aguardando canário).
+- [x] Configurar endpoint com timeout de 3 s; retries e tolerância ficam no nó n8n.
+- [x] Progresso explícito e protocolo já existem para documentos demorados.
+
+### P0.7 — Contingência global
+
+- [x] Criar WF-99 com Error Trigger e correlação de workflow, job, protocolo e chat (inativo até publicação).
+- [ ] Diferenciar falha recuperável de definitiva e impedir aviso duplicado.
+- [ ] Persistir diagnóstico sanitizado sem segredos, prompts ou stack trace integral.
+
+### P0.8 — Retenção do n8n
+
+- [x] Pruning e limite máximo de 10.000 execuções já ativos.
+- [x] Alterar retenção operacional para 24 horas.
+- [x] Salvar sucessos e erros durante a janela e desativar progresso intermediário.
+- [ ] Preservar falhas relevantes na auditoria própria antes do pruning.
+
+### P0.9 — Aprendizado supervisionado
+
+- [x] Criar persistência hospedada de feedbacks, candidatas, versões e aplicações.
+- [ ] Registrar reclamação imediatamente sem chamar IA no webhook.
+- [x] Criar workflow separado de extração estruturada de lições (`WF-98`, inativo até publicação).
+- [ ] Toda regra inicia `CANDIDATE`; somente Rafael aprova, rejeita ou revoga.
+- [x] Adicionar `/diretrizes`, `/aprovardiretriz`, `/rejeitardiretriz` e `/revogardiretriz`.
+- [x] Injetar no máximo 15 regras ativas e aproximadamente 2.000 caracteres, abaixo de políticas e contratos.
+
+### P0.10 — Gate de homologação
+
+- [ ] Testar duplicidade, concorrência, UTF-8, mensagens longas, falha de IA e pruning.
+- [ ] Testar criação, aprovação, aplicação e revogação de diretriz.
+- [ ] Executar migrations, lint, build e regressões WF-11/WF-13/WF-99.
+- [ ] Publicar canário com a conta proprietária `fael@live.de` e reabrir o protocolo com estado limpo.
+- [ ] Atualizar controles e criar checkpoint Git final.
+
+**Gate P0:** nenhuma mensagem vazia, cortada, duplicada ou em loop; erros possuem contingência; aprendizado exige aprovação explícita.
+
+---
+
+## 7. Caminho canônico do MVP — N0 a N7
 
 ### N0 — Intake durável — CONCLUÍDO
 

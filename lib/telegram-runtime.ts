@@ -71,6 +71,19 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
     await db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id).run();
     await sendTelegramText(token, chatId, result.meta.changes ? `Conhecimento ${protocol} revogado para usos futuros.` : 'Item não encontrado ou já inativo.'); return;
   }
+  if (row.command === '/aprovardiretriz') {
+    const result = await db.prepare(`UPDATE bot_directives SET status = 'ACTIVE', approved_by = ?, approved_at = ?, updated_at = ?
+      WHERE id = ? AND owner_id = ? AND status = 'CANDIDATE'`).bind(`telegram:${chatId}`, now, now, protocol, ownerId).run();
+    await db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id).run();
+    await sendTelegramText(token, chatId, result.meta.changes ? `Diretriz ${protocol} aprovada para conversas futuras.` : 'Diretriz não encontrada ou já decidida.'); return;
+  }
+  if (row.command === '/rejeitardiretriz' || row.command === '/revogardiretriz') {
+    const nextStatus = row.command === '/rejeitardiretriz' ? 'REJECTED' : 'REVOKED';
+    const result = await db.prepare(`UPDATE bot_directives SET status = ?, revoked_at = CASE WHEN ? = 'REVOKED' THEN ? ELSE revoked_at END, updated_at = ?
+      WHERE id = ? AND owner_id = ? AND status IN ('CANDIDATE','ACTIVE')`).bind(nextStatus, nextStatus, now, now, protocol, ownerId).run();
+    await db.prepare(`UPDATE command_confirmations SET status = 'CONFIRMED', confirmed_at = ? WHERE id = ?`).bind(now, row.id).run();
+    await sendTelegramText(token, chatId, result.meta.changes ? `Diretriz ${protocol}: ${nextStatus}.` : 'Diretriz não encontrada ou já inativa.'); return;
+  }
   if (row.command === '/cancelar') {
     await db.batch([
       db.prepare(`UPDATE agent_runs SET status = 'CANCELLED', completed_at = ?, lease_token = NULL, lease_expires_at = NULL WHERE document_id = ? AND status NOT IN ('SUCCEEDED','CANCELLED')`).bind(now, protocol),
@@ -122,8 +135,14 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
     await db.prepare(`UPDATE clarification_requests SET status = 'NEEDS_FOLLOW_UP', questions_json = ?, answer_text = ?, answer_message_id = ?, interpretation_json = ?, attempt_count = attempt_count + 1 WHERE id = ?`)
       .bind(JSON.stringify(nextQuestions), text, String(messageId), JSON.stringify(persisted), String(row.id)).run();
     if (interpretation.model === 'deterministic_context_request') {
-      await db.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'clarification_conversation_feedback', 'clarification', ?, ?, ?)`)
-        .bind(`clarification-feedback-${row.id}-${messageId}`, ownerId, `telegram:${chatId}`, String(row.id), JSON.stringify({ feedback: text, protocol: row.document_id }), now).run();
+      const feedbackHash = await hashText(`${ownerId}|${row.id}|${text.trim().toLowerCase()}`);
+      await db.batch([
+        db.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'clarification_conversation_feedback', 'clarification', ?, ?, ?)`)
+          .bind(`clarification-feedback-${row.id}-${messageId}`, ownerId, `telegram:${chatId}`, String(row.id), JSON.stringify({ feedback: text, protocol: row.document_id }), now),
+        db.prepare(`INSERT OR IGNORE INTO bot_feedback_events (id, owner_id, chat_id, protocol, user_message_id, bot_message_id, bot_text, feedback_text, original_question_json, failure_type, status, content_hash, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONVERSATION_FEEDBACK', 'QUEUED', ?, ?)`)
+          .bind(`feedback-${crypto.randomUUID()}`, ownerId, String(chatId), String(row.document_id ?? ''), String(messageId), String(row.telegram_message_id ?? ''), followUp.join('\n'), text, JSON.stringify(questions), feedbackHash, now),
+      ]);
     }
     await sendTelegramText(token, chatId, ['Ainda preciso confirmar:', ...followUp.map((item, index) => `${index + 1}. ${item}`), '', `Protocolo: ${row.document_id}`].join('\n'), messageId);
     return true;
@@ -147,6 +166,11 @@ function friendlyFieldLabel(field: string) {
     'summary:base_date': 'Data-base',
   };
   return labels[field] ?? field.replace(/^indicator:[^:]+:/, '').replace(/^gap:/, '').replaceAll('_', ' ');
+}
+
+async function hashText(value: string) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 function renderProgressBar(percent: number): string {
@@ -271,7 +295,7 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     await createConfirmation(db, token, chatId, ownerId, '/reprocessartodos', ['todos']);
     return { handled: true, kind: 'critical' };
   }
-  if (['/cancelar','/reabrir','/excluir','/corrigir','/aprovar','/revogarregra'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
+  if (['/cancelar','/reabrir','/excluir','/corrigir','/aprovar','/revogarregra','/aprovardiretriz','/rejeitardiretriz','/revogardiretriz'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
     const normalizedArgs = command === '/tentar' ? args.slice(1) : args;
     const normalizedCommand = command === '/tentar' ? '/tentar' : command;
     if (!normalizedArgs[0]) await sendTelegramText(token, chatId, `Informe o protocolo. Exemplo: ${command} telegram-...`);
@@ -320,6 +344,12 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const rows = await db.prepare(`SELECT id, indicator_name, knowledge_type, version, status FROM pobj_knowledge_items WHERE owner_id = ? AND status IN ('CANDIDATE','ACTIVE','CONTESTED') ORDER BY created_at DESC LIMIT 30`).bind(ownerId).all<Record<string, unknown>>();
     const lines = (rows.results ?? []).map((row) => `• ${row.id}\n  ${row.indicator_name} · ${row.knowledge_type} v${row.version} · ${row.status}`);
     await sendTelegramText(token, chatId, lines.length ? `CONHECIMENTO POBJ\n\n${lines.join('\n')}\n\nCandidatos exigem /aprovar <id>. Itens ativos podem ser removidos com /revogarregra <id>.` : 'Nenhum conhecimento POBJ cadastrado.'); return { handled: true, kind: 'knowledge' };
+  }
+  if (command === '/diretrizes') {
+    const rows = await db.prepare(`SELECT id, directive, scope, status, version FROM bot_directives WHERE owner_id = ? AND status IN ('CANDIDATE','ACTIVE') ORDER BY updated_at DESC LIMIT 30`).bind(ownerId).all<Record<string, unknown>>();
+    const lines = (rows.results ?? []).map((row) => `• ${row.id}\n  ${row.status} · ${row.scope} · v${row.version}\n  ${row.directive}`);
+    await sendTelegramText(token, chatId, lines.length ? `DIRETRIZES CONVERSACIONAIS\n\n${lines.join('\n\n')}\n\nUse /aprovardiretriz, /rejeitardiretriz ou /revogardiretriz com o identificador.` : 'Nenhuma diretriz candidata ou ativa.');
+    return { handled: true, kind: 'directives' };
   }
   const state = await latestState(db);
   if (['/ultimo','/pobj','/metas','/prioridades','/riscos','/cenarios','/hoje','/planodiario'].includes(command)) {

@@ -75,6 +75,10 @@ export const TELEGRAM_COMMANDS = [
   { command: 'conhecimento', description: 'Ver regras e mapeamentos homologados' },
   { command: 'aprovar', description: 'Aprovar candidato de conhecimento' },
   { command: 'revogarregra', description: 'Revogar conhecimento homologado' },
+  { command: 'diretrizes', description: 'Ver diretrizes conversacionais' },
+  { command: 'aprovardiretriz', description: 'Aprovar diretriz candidata' },
+  { command: 'rejeitardiretriz', description: 'Rejeitar diretriz candidata' },
+  { command: 'revogardiretriz', description: 'Revogar diretriz ativa' },
 ] as const;
 
 export function telegramCommandMenu() {
@@ -115,6 +119,10 @@ export function telegramCommandMenu() {
     '/conhecimento — listar conhecimento POBJ homologado',
     '/aprovar <id> — aprovar candidato selecionado',
     '/revogarregra <id> — revogar regra ou mapeamento',
+    '/diretrizes — listar candidatas e diretrizes ativas',
+    '/aprovardiretriz <id> — aprovar uma diretriz candidata',
+    '/rejeitardiretriz <id> — rejeitar uma diretriz candidata',
+    '/revogardiretriz <id> — revogar uma diretriz ativa',
     '',
     'Ações críticas exigem /confirmar <código>.',
   ].join('\n');

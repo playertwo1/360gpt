@@ -1,0 +1,31 @@
+import { readFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+
+const route = await readFile('app/api/ingest/telegram/route.ts', 'utf8');
+const messages = await readFile('lib/telegram-messages.ts', 'utf8');
+const runtime = await readFile('lib/telegram-runtime.ts', 'utf8');
+const claim = await readFile('app/api/bridge/claim/route.ts', 'utf8');
+const inbound = await readFile('app/api/bridge/inbound/claim/route.ts', 'utf8');
+const inboundProcess = await readFile('app/api/bridge/inbound/process/route.ts', 'utf8');
+const compose = await readFile('compose.n8n.yaml', 'utf8');
+const workflow98 = JSON.parse(await readFile('n8n/workflows/wf-98-aprendizado-supervisionado-diretrizes.json', 'utf8'));
+const workflow99 = JSON.parse(await readFile('n8n/workflows/wf-99-tratamento-global-erros.json', 'utf8'));
+const workflow97 = JSON.parse(await readFile('n8n/workflows/wf-97-telegram-inbound-async.json', 'utf8'));
+
+assert.match(route, /is_bot/);
+assert.match(route, /sendTelegramText/);
+assert.doesNotMatch(route, /parse_mode/);
+assert.match(messages, /TELEGRAM_SAFE_LIMIT = 3600/);
+assert.match(runtime, /bot_feedback_events/);
+assert.match(runtime, /aprovardiretriz/);
+assert.match(claim, /active_conversation_directives/);
+assert.match(claim, /bot_directive_applications/);
+assert.match(inbound, /telegram_message_batches/);
+assert.match(inboundProcess, /handleClarificationReply/);
+assert.match(compose, /EXECUTIONS_DATA_MAX_AGE: 24/);
+assert.match(compose, /EXECUTIONS_DATA_SAVE_ON_PROGRESS: "false"/);
+assert.equal(workflow98.active, false);
+assert.equal(workflow99.active, false);
+assert.equal(workflow97.active, false);
+assert.equal(workflow99.nodes.some((node) => node.type === 'n8n-nodes-base.errorTrigger'), true);
+console.log('P0 Telegram hardening: PASS');

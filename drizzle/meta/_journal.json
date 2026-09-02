@@ -64,6 +64,20 @@
       "when": 1788209768334,
       "tag": "0008_closed_mandrill",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1788306945600,
+      "tag": "0009_strong_sasquatch",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1788307496687,
+      "tag": "0010_classy_hiroim",
+      "breakpoints": true
     }
   ]
 }

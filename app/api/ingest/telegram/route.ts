@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 import { handleClarificationReply, handleTelegramCommand } from '../../../../lib/telegram-runtime';
+import { sendTelegramText } from '../../../../lib/telegram-messages';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
 type TelegramUpdate = { update_id: number; message?: { message_id: number; date: number; text?: string; caption?: string; document?: TelegramDocument; reply_to_message?: { message_id: number }; chat: { id: number; type: string }; from?: { id: number; username?: string; first_name?: string; is_bot?: boolean } } };
@@ -102,6 +103,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, duplicate: true, protocol: documentId, documentId, updateId, status: reservation.status });
   }
 
+  // Modo assíncrono opcional: persiste texto antes de qualquer LLM e deixa o n8n
+  // consumir a fila. O padrão permanece desligado até o canário ser publicado.
+  if (!document && text && env.TELEGRAM_ASYNC_INTERACTIONS_ENABLED === 'true') {
+    const bypassDebounce = text.startsWith('/') || Boolean(message.reply_to_message?.message_id);
+    const availableAt = bypassDebounce ? receivedAt : receivedAt + 2500;
+    const eventId = `telegram-event-${updateId}`;
+    const batchId = bypassDebounce ? null : await reserveTextBatch(ownerId, chatId, text, receivedAt, availableAt);
+    await env.DB.prepare(`INSERT OR IGNORE INTO telegram_inbound_events
+      (id, update_id, owner_id, chat_id, message_id, reply_to_message_id, event_kind, text, payload_json, batch_id, status, available_at, attempt_count, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'QUEUED', ?, 0, ?)`)
+      .bind(eventId, updateId, ownerId, chatId, String(message.message_id), message.reply_to_message?.message_id ? String(message.reply_to_message.message_id) : null,
+        bypassDebounce ? (text.startsWith('/') ? 'COMMAND' : 'CLARIFICATION_REPLY') : 'TEXT_BATCH', text, JSON.stringify({ update_id: update.update_id, message_id: message.message_id }), batchId, availableAt, receivedAt).run();
+    await env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`).bind(Date.now(), updateId).run();
+    return NextResponse.json({ ok: true, queued: true, updateId, status: 'QUEUED', availableAt }, { status: 202 });
+  }
+
   if (!document && text) {
     try {
       const clarificationHandled = await handleClarificationReply(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, message.message_id, text, message.reply_to_message?.message_id);
@@ -166,20 +183,20 @@ export async function POST(request: Request) {
     let ackSent = false;
     if (Boolean(env.TELEGRAM_BOT_TOKEN)) {
       if (document) {
-        const docConfirm = `✅ *DOCUMENTO RECEBIDO E ENFILEIRADO!*
+        const docConfirm = `DOCUMENTO RECEBIDO E ENFILEIRADO
 
 ` +
-          `📄 *Arquivo:* \`${document.file_name ?? 'documento'}\`
+          `Arquivo: ${document.file_name ?? 'documento'}
 ` +
-          `🧾 *Protocolo:* \`${canonicalDocumentId}\`
+          `Protocolo: ${canonicalDocumentId}
 ` +
-          `📥 *Status:* \`RECEBIDO\`
+          `Status: RECEBIDO
 ` +
-          `📊 *Tamanho:* \`${Math.round((document.file_size ?? 0) / 1024)} KB\`
+          `Tamanho: ${Math.round((document.file_size ?? 0) / 1024)} KB
 ` +
-          `🔒 *Hash SHA-256:* \`${contentHash?.slice(0, 20)}...\`
+          `Hash SHA-256: ${contentHash?.slice(0, 20)}...
 ` +
-          `🛡️ *Linhagem W3C PROV:* Registrado no Evidence Graph.
+          `Linhagem: registrada no Evidence Graph.
 
 ` +
           `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Progresso: 10% (recebido). Consulte /protocolo ${canonicalDocumentId} para acompanhar. Não reenvie o arquivo.`;
@@ -195,6 +212,20 @@ export async function POST(request: Request) {
       .bind(retryable ? 'FAILED_RETRYABLE' : 'FAILED_FINAL', errorCode, retryable ? null : Date.now(), updateId).run();
     return NextResponse.json({ ok: false, error: errorCode, retryable }, { status: errorCode === 'bot_not_configured' ? 503 : retryable ? 502 : 422 });
   }
+}
+
+async function reserveTextBatch(ownerId: string, chatId: string, text: string, firstAt: number, dueAt: number) {
+  const existing = await env.DB.prepare(`SELECT id, combined_text FROM telegram_message_batches WHERE owner_id = ? AND chat_id = ? AND status = 'OPEN' AND due_at >= ? ORDER BY created_at DESC LIMIT 1`)
+    .bind(ownerId, chatId, firstAt - 2500).first<{ id: string; combined_text: string }>();
+  if (existing) {
+    await env.DB.prepare(`UPDATE telegram_message_batches SET combined_text = ?, message_count = message_count + 1, last_message_at = ?, due_at = ? WHERE id = ? AND status = 'OPEN'`)
+      .bind(`${existing.combined_text}\n${text}`, firstAt, dueAt, existing.id).run();
+    return existing.id;
+  }
+  const id = `batch-${crypto.randomUUID()}`;
+  await env.DB.prepare(`INSERT INTO telegram_message_batches (id, owner_id, chat_id, status, message_count, combined_text, first_message_at, last_message_at, due_at, created_at)
+    VALUES (?, ?, ?, 'OPEN', 1, ?, ?, ?, ?, ?)`).bind(id, ownerId, chatId, text, firstAt, firstAt, dueAt, firstAt).run();
+  return id;
 }
 
 async function reserveUpdate(updateId: string, chatId: string, messageId: string, documentId: string, receivedAt: number): Promise<Reservation> {
@@ -238,23 +269,9 @@ async function downloadTelegramFile(document: TelegramDocument) {
   return { bytes };
 }
 
-async function sendTelegramMessage(chatId: number, text: string, parseMode = 'Markdown') {
+async function sendTelegramMessage(chatId: number, text: string) {
   try {
-    const response = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ chat_id: chatId, text, parse_mode: parseMode }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!response.ok) {
-      // Fallback sem Markdown se houver erro de sintaxe
-      await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json; charset=utf-8' },
-        body: JSON.stringify({ chat_id: chatId, text }),
-        signal: AbortSignal.timeout(10000),
-      });
-    }
+    await sendTelegramText(env.TELEGRAM_BOT_TOKEN ?? '', chatId, text);
   } catch (err) {
     console.error('Falha ao enviar mensagem no Telegram:', err);
   }

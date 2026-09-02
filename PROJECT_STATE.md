@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 3.8.0-docling-only
-Current phase: MVP mínimo Telegram → Performance → Telegram
-Current milestone: N2/M1 — homologação objetiva do leitor documental
-Current task: corrigir desalinhamentos de células Docling nos layouts POBJ reais
+Version: 3.9.0-telegram-hardening
+Current phase: MVP Telegram resiliente
+Current milestone: P0 — blindagem conversacional, estabilidade e aprendizado supervisionado
+Current task: P0.2/P0.3 — validar fila assíncrona e debounce no canário hospedado
 Status: IN_PROGRESS
 
 Host baseline:
@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: planejamento e checklist consolidados no `ROADMAP.md`; nove documentos concorrentes removidos e referências ativas atualizadas
-Next task: reconstruir corretamente as tabelas de POBJ2608, POBJ2708 e POBJ2808 e repetir o benchmark objetivo
+Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99 e retenção n8n implementados e validados localmente
+Next task: validar o modo assíncrono no canário sem alterar o caminho síncrono atual
 
-Last validation: 2026-09-01 — npm lint PASS; npm build PASS; Compose PASS; Docling integration PASS; quatro containers saudáveis; filtro is_bot, UTF-8 estrito, mensagem vazia, memória cumulativa e feedback conversacional validados localmente
+Last validation: 2026-09-01 — npm lint PASS; npm build PASS; teste P0 Telegram hardening PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; filtro is_bot, UTF-8 estrito, filas, debounce e diretrizes validados localmente
 Last commit: pending checkpoint desta correção
 
 Blockers:
@@ -35,14 +35,13 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 21:30
+Last update: 2026-09-01 21:48
 
 Resume instruction:
-1. Ler somente `ROADMAP.md` como planejamento/checklist e retomar N2.
-2. Rafael deve conferir os campos críticos do POBJ2608 e autorizar a conferência dos POBJ2708/2808.
-3. Reprocessar POBJ2708/2808 com os arquivos disponibilizados e registrar benchmark sem persistir conteúdo sensível no Git.
-4. Evoluir a reconstrução de células POBJ sem dividir conteúdo por suposição.
-5. Somente após passar o gate, executar regressão WF-11/WF-13 e avançar N3–N7.
+1. Continuar `ROADMAP.md` a partir de P0.2/P0.3 e validar o canário assíncrono.
+2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
+3. Não publicar enquanto a conta proprietária do Sites não estiver conectada.
+4. Após P0, retomar N2 sem alterar o gate objetivo do Docling.
 
 Evidence:
 - `docs/audits/DOCLING_MIGRATION_2026-09-01.md`

@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### P0 Telegram hardening
+- Criadas persistência hospedada para feedbacks, candidatas, aplicações e auditoria de erros, endpoints protegidos de `sendChatAction` e workflows n8n WF-98/WF-99.
+- Telegram passou a usar texto simples; retenção de execuções n8n foi ajustada para 24 horas, com progresso intermediário desativado.
+- Comandos `/diretrizes`, `/aprovardiretriz`, `/rejeitardiretriz` e `/revogardiretriz` exigem confirmação e nunca ativam regras automaticamente.
+- Adicionados fila inbound e lotes de debounce duráveis atrás de flag, endpoints de claim/processamento e WF-97 para canário assíncrono.
+- Claims de feedback receberam lease token para impedir concorrência; migrations 0009/0010 foram geradas e inspecionadas.
+
 ### Documentation
 - Princípio central do `AGENTS.md` ampliado para formalizar aprendizado supervisionado a partir das trocas e correções de Rafael, com preservação do histórico de conversas, decisões e aprendizados.
 - `ROADMAP.md` promovido a única fonte de planejamento e checklist, reconciliando arquitetura histórica, Shadow/canary, MVP n8n N0–N9, Docling, conversa supervisionada, Telegram e ativação gradual dos quatro Gerentes.
@@ -1054,3 +1061,14 @@
 
 ### Security
 - Exercício isolado não escreve no banco de origem e remove automaticamente o contêiner temporário.
+## [3.9.0] - 2026-09-01
+
+### Added
+- Marco prioritário P0 para blindagem conversacional, estabilidade do Telegram/n8n e aprendizado supervisionado.
+- Checkpoint Git e patch das alterações preexistentes antes da implementação.
+
+### Changed
+- Homologação documental N2 temporariamente sucedida pelo gate P0, sem alterar seus critérios.
+
+### Security
+- Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
