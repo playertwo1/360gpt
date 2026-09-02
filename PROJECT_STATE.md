@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 5.1.0-pilot-active-with-briefing-and-outreach
-Current phase: Piloto Operacional Ativo no Celular (Agência 6895) — Briefing Matinal Proativo (08h30) e Motor de Abordagem Comercial (/abordar)
-Current milestone: Piloto Assistido Iniciado em Campo + WF-102 Ativo no n8n + Disparos Reais no Telegram Entregues com Sucesso (200 OK)
-Current task: Operação diária assistida com recebimento matinal automático e geração de propostas executivas personalizadas para os decisores da carteira.
+Version: 5.2.0-gate-a0-canonical-cutover
+Current phase: Piloto Operacional Ativo + Gate A0 Homologado (Arquitetura Canônica Exclusiva n8n + PostgreSQL local)
+Current milestone: Gate A0 Aprovado (Zero Exceções Legadas, core/telegram_bot_worker.py Aposentado e Rotas Bridge Descontinuadas)
+Current task: Operação diária do piloto de 7 dias com Briefing Matinal Proativo (WF-102) e abordagem executiva via celular.
 Status: READY
 
 Host baseline:
@@ -15,27 +15,22 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: 
-1. Implementado o motor de abordagem comercial (`engines/relationship/outreach-draft-engine.mjs`) gerando rascunhos para WhatsApp e E-mail com autoridade soberana de Rafael (`requires_owner_approval: true`).
-2. Implementado o motor do Briefing Matinal Proativo (`engines/orchestration/morning-briefing-engine.mjs`) e o workflow n8n `WF-102 — Briefing Matinal Proativo 360` (`9eb8e86a-84b8-4aa9-97e4-360000000102`) agendado para as 08h30 nos dias úteis.
-3. Conectados os comandos `/briefing` e `/abordar` no Telegram runtime e validados com testes automatizados.
-4. Realizado disparo real de teste no Telegram de Rafael (`chat_id: 5281600644`) com entrega confirmada (HTTP 200).
+1. Marco A0 (Cutover Canônico): Aposentadoria de `core/telegram_bot_worker.py` (arquivado em `legacy/core-prototype/`) e descontinuação das rotas de transição `/api/bridge/*`.
+2. Política `policies/n8n-canonical-architecture.yaml`: 4 exceções legadas resolvidas (`legacy_exceptions_count: 0`).
+3. Gate A0 Desbloqueado e Homologado: `runtimeGate: "CANONICAL_LOCAL_ACTIVE"` validado em `test:local-core`.
+4. Ativação do Briefing Matinal Proativo (`WF-102`) e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`), com testes reais entregues com HTTP 200 no Telegram de Rafael.
 Next task: Acompanhamento da operação do piloto de 7 dias e suporte consultivo contínuo na agência.
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade. 100% CONCLUÍDO E HOMOLOGADO.
 
-Last validation: 2026-09-02 19:14 — Bateria completa de 19 suítes aprovada com 100% PASS (reconciliation, adaptive-response, efficiency-engine, dlp-guard, golden-dataset, knowledge-promotion, simulation-engine, progressive-router, contextual-reference, advanced-commands, financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, test:p0, test:local-core e build).
-Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
+Last validation: 2026-09-02 20:10 — Bateria completa de 21 suítes aprovada com 100% PASS (`test:local-core` exibindo CANONICAL_LOCAL_ACTIVE, `test:p0`, build limpo).
+Last implementation checkpoint: 362dc59 feat(pilot): activate proactive morning briefing WF-102 and outreach draft engine
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
-- O gateway hospedado ainda contém lógica operacional legada que será removida após WF-101/WF-102.
-- WF-11 permanece despublicado e é legado de transição enquanto depender de `/api/bridge/*` hospedado.
-- Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
-- O Sites ainda contém lógica operacional legada; deve ser reduzido a transporte somente depois do shadow local.
-- Quatro exceções legadas fora do n8n estão inventariadas e congeladas; o Gate A0 exige removê-las ou reduzi-las a transporte puro.
-- O WF-101 possui edição local ainda não homologada para incorporar comandos e entrega; deve ser reconciliada no M0 antes de importação.
+- Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas (reconciliação mitigada pela Fase 6).
 
 Decisions:
 - Nenhuma capacidade operacional pode ser implementada ou alterada fora do n8n; código externo é apenas adaptador, extrator, persistência, interface ou operação técnica.

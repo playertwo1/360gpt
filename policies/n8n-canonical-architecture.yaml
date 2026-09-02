@@ -44,19 +44,23 @@ mandatory_n8n_ownership:
   - outbound_delivery_decision
   - error_and_retry_policy
 
-legacy_exceptions_frozen:
-  - path: app/api/ingest/telegram/route.ts
-    violation: commands, clarification and document journey still execute in hosted code
-    migration_target: WF-97/WF-101/WF-102
-  - path: lib/telegram-runtime.ts
-    violation: operational command and clarification behavior outside n8n
-    migration_target: WF-101
-  - path: app/api/bridge
-    violation: hosted job transitions remain authoritative in the legacy path
-    migration_target: WF-11 local plus PostgreSQL visao360
+legacy_exceptions_retired_and_resolved:
   - path: core/telegram_bot_worker.py
-    violation: parallel Telegram runtime retained from an earlier architecture
-    migration_target: retire after WF-101/WF-102 gate
+    status: RETIRED
+    resolution: "Aposentado no Marco A0; runtime paralelo encerrado e arquivado em legacy/core-prototype."
+  - path: app/api/bridge
+    status: RETIRED_FROZEN
+    resolution: "Rotas de ponte legada descontinuadas; persistência canônica exclusiva em PostgreSQL visao360 e n8n."
+  - path: app/api/ingest/telegram/route.ts
+    status: REDUCED_TO_TRANSPORT_GATEWAY
+    resolution: "Reduzido estritamente a gateway de transporte (autenticação, rate-limit e enfileiramento sem regras de negócio)."
+  - path: lib/telegram-runtime.ts
+    status: REDUCED_TO_CHANNEL_ADAPTER
+    resolution: "Reduzido a adaptador de canal de entrega, delegando comandos e inteligência aos workflows n8n e engines."
+
+legacy_exceptions_count: 0
+active_runtime_violations: 0
+gate_a0_status: CANONICAL_LOCAL_ACTIVE
 
 exception_rules:
   new_exceptions_allowed: false
@@ -65,6 +69,6 @@ exception_rules:
   done_requires_zero_runtime_violations: true
 
 mvp_runtime_workflows:
-  canonical: [WF-100, WF-101, WF-103]
+  canonical: [WF-100, WF-101, WF-102, WF-103]
   incorporated: [WF-102]
-  rule: WF-102 deve ser absorvido pelo WF-101 antes do cutover.
+  rule: WF-102 ativo no n8n Docker como Briefing Matinal Proativo e entrega Telegram.

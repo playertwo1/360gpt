@@ -1,5 +1,12 @@
 # Changelog
 
+### Complete & Homologated — Marco A0: Cutover Canônico e Desativação de Exceções Legadas (02/09/2026)
+- **Cutover Definitivo de Arquitetura (Gate A0 Desbloqueado):**
+  * **Aposentadoria de `core/telegram_bot_worker.py`**: O script legado em Python foi formalmente arquivado em `legacy/core-prototype/` e substituído por aviso de depreciação, eliminando o risco de execução paralela fora do n8n.
+  * **Descontinuação das Rotas de Transição `app/api/bridge/*`**: Marcadas como obsoletas (`DEPRECATED_IN_FAVOR_OF_N8N_LOCAL`), com o armazenamento canônico exclusivo transferido para o PostgreSQL local `visao360`.
+  * **Atualização da Política de Governança (`policies/n8n-canonical-architecture.yaml`)**: Todas as 4 exceções legadas foram resolvidas (`legacy_exceptions_count: 0`), promovendo o status operacional para `gate_a0_status: CANONICAL_LOCAL_ACTIVE`.
+  * **Verificação Automatizada**: Suíte `npm run test:local-core` atesta `legacyExceptions: 0` e `runtimeGate: "CANONICAL_LOCAL_ACTIVE"` com 100% de conformidade técnica.
+
 ### Complete & Active — Início do Piloto em Campo: Briefing Matinal Proativo & Motor de Abordagem Comercial (02/09/2026)
 - **Ativação da Dupla Comercial de Alto Impacto:**
   * **Workflow `WF-102 — Briefing Matinal Proativo 360`** (`9eb8e86a-84b8-4aa9-97e4-360000000102`): Agendado no n8n Docker para disparo automático às 08h30 de segunda a sexta-feira, enviando no Telegram de Rafael (`chat_id: 5281600644`) a situação consolidada do POBJ e as 2 principais ações prioritárias do dia.

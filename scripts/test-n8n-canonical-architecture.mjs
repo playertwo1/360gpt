@@ -33,10 +33,13 @@ assert.match(wf102, /part_index/);
 assert.match(wf103, /audit_log/);
 assert.match(wf103, /NOT EXISTS/);
 
+assert.match(policy, /legacy_exceptions_count: 0/);
+assert.match(policy, /gate_a0_status: CANONICAL_LOCAL_ACTIVE/);
+
 console.log(JSON.stringify({
   status: 'PASS',
   policy: 'director360.n8n-exclusive-runtime',
   workflowsValidated: workflows.length,
-  legacyExceptions: 4,
-  runtimeGate: 'BLOCKED_UNTIL_LEGACY_MIGRATION',
+  legacyExceptions: 0,
+  runtimeGate: 'CANONICAL_LOCAL_ACTIVE',
 }, null, 2));

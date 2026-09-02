@@ -942,6 +942,14 @@ Ordem recomendada: Performance → Conta → Relacionamento → Financeiro. Cada
 - [x] Rollback por workflow, capacidade, domínio e release.
 - [x] Manifesto de release e hashes SHA-256 gerados (`backups/latest_backup_manifest.json`).
 
+### 9.3.1 Cutover de Legado & Arquitetura Canônica (Gate A0) — CONCLUÍDO (02/09/2026)
+
+- [x] Aposentadoria de `core/telegram_bot_worker.py` (arquivado em `legacy/core-prototype/telegram_bot_worker.py`).
+- [x] Congelamento e descontinuação das rotas de ponte hospedada `app/api/bridge/*` em favor do PostgreSQL `visao360` e n8n Docker.
+- [x] Redução do webhook de ingestão e do adaptador de Telegram a transporte limpo de envelopes.
+- [x] Liquidação de todas as 4 exceções legadas em `policies/n8n-canonical-architecture.yaml` (`legacy_exceptions_count: 0`).
+- [x] Desbloqueio e aprovação do **Gate A0**: `runtimeGate: "CANONICAL_LOCAL_ACTIVE"` validado em `test:local-core`.
+
 ### 9.4 Disponibilidade futura
 
 - [ ] Medir necessidade real de funcionamento com computador desligado.

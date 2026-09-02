@@ -1,11 +1,11 @@
 {
   "report_title": "Golden Dataset Replay — Agência 6895 (VJ-SAO FIDELIS)",
-  "execution_timestamp": "2026-09-02T22:22:34.967Z",
+  "execution_timestamp": "2026-09-02T23:09:52.257Z",
   "overall_status": "PILOT_READY",
   "total_scenarios": 10,
   "scenarios_passed": 10,
   "scenarios_failed": 0,
-  "duration_ms": 14,
+  "duration_ms": 18,
   "results": [
     {
       "scenario_id": "SCENARIO-01",

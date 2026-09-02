@@ -1,3 +1,8 @@
+// ==============================================================================
+// DEPRECATED / LEGACY BRIDGE — Marco A0 (02/09/2026)
+// As rotas /api/bridge/* pertencem ao caminho hospedado legado de transição.
+// A autoridade operacional canônica definitiva é o n8n local e PostgreSQL visao360.
+// ==============================================================================
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
 
