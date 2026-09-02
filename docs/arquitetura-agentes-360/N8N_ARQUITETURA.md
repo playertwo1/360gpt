@@ -10,11 +10,11 @@ O n8n é o barramento de eventos e executor de workflows. Ele recebe entradas, c
 2. `postgres-n8n`: banco interno do n8n.
 3. `postgres-360`: fonte oficial de dados de negócio, conversas, handoffs, casos e auditoria; usa o mesmo servidor PostgreSQL com banco e usuário separados.
 4. `docling`: extração documental subordinada, em CPU e sob demanda.
-5. `telegram-poller`: adaptador de transporte por long polling, sem regra de negócio e sem porta pública.
+5. `gateway Telegram/Sites`: webhook HTTPS hospedado com fila temporária; WF-97 no n8n local consome por conexão de saída.
 6. `object-storage`: documentos, áudios, imagens e exportações; pode começar por storage local referenciado e evoluir para MinIO.
 7. `backup`: cópias programadas dos bancos, volume n8n, objetos e chave de criptografia.
 
-O MVP não exige reverse proxy nem HTTPS: o Telegram é consumido por long polling e todos os webhooks do n8n permanecem internos. O editor continua acessível apenas em `127.0.0.1:5678`. A decisão completa está em `ADR-002-N8N-NUCLEO-LOCAL.md`.
+O MVP não exige reverse proxy local: o HTTPS termina no gateway hospedado, e o Docker apenas inicia conexões de saída para buscar a fila. Todos os webhooks do n8n permanecem internos. O editor continua acessível apenas em `127.0.0.1:5678`. A decisão completa está em `ADR-002-N8N-NUCLEO-LOCAL.md`.
 
 Para o volume doméstico inicial, começar sem Redis reduz complexidade. Quando houver concorrência ou processamento pesado, ativar queue mode com Redis e workers. Em queue mode, os workers devem receber as mesmas credenciais e chave de criptografia; task runners acompanham os workers quando usados.
 

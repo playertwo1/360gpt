@@ -17,7 +17,8 @@
   "last_completed": [
     "ADR-002 aprovado: Telegram e Sites são canais; n8n/PostgreSQL local são o núcleo",
     "Esquema local de canais, jobs, conversa, esclarecimentos, diretrizes, entregas e handoffs aplicado",
-    "telegram-poller criado e saudável com polling desligado",
+    "Webhook Telegram confirmado no gateway estável; Docker consumirá a fila pelo WF-97",
+    "telegram-poller preservado apenas como contingência desligada",
     "WF-100 importado e aprovado com intake/deduplicação sintéticos, depois despublicado",
     "R1 intake assíncrono publicado",
     "WF-11 Orquestrador Mestre criado, validado e importado no n8n local, ainda inativo",
@@ -43,7 +44,7 @@
     "canonical_business_database": "PostgreSQL visao360"
   },
   "security": {"external_effects_allowed": false, "document_content_trust": "UNTRUSTED", "secrets_committed": false},
-  "blockers": ["Webhook remoto ainda ativo; polling local não pode ser ligado antes do corte", "WF-11 ainda depende do Sites hospedado", "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"],
+  "blockers": ["WF-11 ainda depende da lógica hospedada além do transporte", "WF-101/WF-102 locais ainda precisam assumir comandos e respostas", "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"],
   "pending_decisions": ["Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"],
   "next_exact_step": "Implementar A0.2 no n8n local: claim/lease, roteamento de comandos antes de esclarecimentos, histórico e saída pelo adaptador.",
   "resume_order": ["AGENTS.md", "PROJECT_STATE.md", "ROADMAP.md", "CHANGELOG.md", "SESSION_STATE.json", "CODEX_HANDOFF.md", "git status"],

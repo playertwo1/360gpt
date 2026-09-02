@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed — webhook Telegram preservado
+- Por decisão de Rafael, o Telegram permanece em webhook; o gateway hospedado será reduzido a fila de transporte e o Docker consumirá os eventos pelo WF-97.
+- Quick Tunnel gratuito foi testado e ficou acessível, mas o Telegram recusou o subdomínio temporário por resolução DNS; o experimento foi interrompido sem deixar o bot indisponível.
+- Webhook estável restaurado e confirmado em `https://visao-360-diretor.fael360092.chatgpt.site/api/ingest/telegram`, sem erro ou updates pendentes.
+
 ### Added — núcleo local n8n/PostgreSQL
 - Registrada a decisão arquitetural ADR-002: Telegram e Sites passam a ser canais; n8n orquestra e PostgreSQL local mantém o estado oficial.
 - Criado esquema PostgreSQL idempotente para updates, fila inbound, documentos, jobs, conversas, esclarecimentos, diretrizes, entregas, confirmações e handoffs.

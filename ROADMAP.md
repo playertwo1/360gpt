@@ -132,12 +132,12 @@ Fora do MVP, até o gate N7:
 
 ### 2.4 Regra de arquitetura vigente
 
-- Telegram local usa long polling; não exige HTTPS, domínio, túnel ou webhook público.
+- Telegram continua em webhook HTTPS estável no gateway hospedado; WF-97 entrega a fila ao Docker por conexão de saída.
 - O editor n8n permanece somente em `127.0.0.1:5678`.
 - Sites e Telegram são portas de entrada/saída; regras e estado pertencem ao n8n/PostgreSQL.
 - Docling é um serviço técnico subordinado ao n8n, assim como o adaptador de transporte.
 - O WF-11 que chama `/api/bridge/*` hospedado é legado de transição e não pode ser reativado como controlador canônico.
-- O corte do bot exige pausar o webhook remoto antes de ativar `getUpdates`; os dois modos nunca operam simultaneamente.
+- O Sites/D1 no canal Telegram é somente fila de transporte; comandos, IA, cálculos e Estado 360 migram para n8n/PostgreSQL.
 
 ---
 
@@ -248,15 +248,15 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 ### A0.0 — Decisão e fronteiras
 
 - [x] Registrar ADR-002 com n8n como orquestrador, PostgreSQL local como verdade e canais como transporte.
-- [x] Formalizar Telegram por long polling sem HTTPS e Sites remoto como caixa postal mínima.
-- [x] Proibir exposição pública do editor n8n e operação simultânea de webhook/polling.
+- [x] Formalizar Telegram por webhook no gateway hospedado e entrega ao Docker pelo WF-97.
+- [x] Proibir exposição pública do editor n8n e do PostgreSQL.
 - [x] Identificar WF-11 e `/api/bridge/*` hospedados como caminho legado de transição.
 
 ### A0.1 — Fundação local segura
 
 - [x] Criar esquema PostgreSQL canônico para updates, eventos, documentos, jobs, conversas, perguntas, diretrizes, entregas e handoffs.
-- [x] Criar adaptador `telegram-poller` sem regra de negócio, token fora dos workflows e offset avançado somente após persistência.
-- [x] Isolar o serviço na rede Docker, sem porta pública, sob perfil `telegram-local` e com polling desligado por padrão.
+- [x] Manter `telegram-poller` isolado e desligado como contingência, não como caminho principal.
+- [x] Restaurar e verificar o webhook estável no Sites, sem pendências ou erro reportado pelo Telegram.
 - [x] Criar WF-100 para validar, deduplicar e persistir updates no PostgreSQL local.
 - [x] Executar teste sintético do WF-100: primeira entrada aceita e enfileirada; repetição reconhecida como duplicata; uma única linha persistida.
 - [x] Deixar WF-100 despublicado e `TELEGRAM_POLLING_ENABLED=false` após o teste.
@@ -299,12 +299,12 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Comparar caminho hospedado legado × núcleo local em mensagens, comandos, arquivo e esclarecimento sintéticos.
 - [ ] Validar UTF-8, idempotência, debounce, lease, retry, exclusão por cadeia e entrega multipartes.
 - [ ] Criar backup verificável de PostgreSQL, n8n e configuração antes do corte.
-- [ ] Pausar o webhook remoto do Telegram.
-- [ ] Publicar WF-100/WF-101/WF-102 e ativar `TELEGRAM_POLLING_ENABLED=true` em uma única janela controlada.
+- [ ] Ativar o modo assíncrono de transporte no gateway hospedado após validar WF-97/WF-101/WF-102.
+- [ ] Promover o consumo local sem trocar a URL do webhook.
 - [ ] Executar teste real pelo celular e manter rollback documentado.
 - [ ] Somente depois do gate, revogar a lógica operacional hospedada duplicada.
 
-**Gate A0:** uma mensagem e um arquivo enviados pelo Telegram entram por polling, percorrem o n8n/PostgreSQL e retornam pelo adaptador; comandos não entram em esclarecimento; duplicatas não reprocessam; Sites não governa o estado.
+**Gate A0:** uma mensagem e um arquivo enviados ao webhook entram na fila de transporte, percorrem o n8n/PostgreSQL no Docker e retornam ao Telegram; comandos não entram em esclarecimento; duplicatas não reprocessam; Sites não governa o estado.
 
 ---
 
@@ -719,7 +719,7 @@ Condições automáticas de pausa:
 5. [ ] Criar WF-102 de saída Telegram pelo adaptador e WF-103 de contingência.
 6. [ ] Migrar documento, esclarecimentos, diretrizes e Estado 360 do Sites/D1 para o PostgreSQL local.
 7. [ ] Executar shadow completo e backup.
-8. [ ] Realizar corte controlado webhook → polling e teste real pelo celular.
+8. [ ] Promover o consumo local mantendo o webhook e executar teste real pelo celular.
 
 ### Depois do Gate A0 — retomar N2
 

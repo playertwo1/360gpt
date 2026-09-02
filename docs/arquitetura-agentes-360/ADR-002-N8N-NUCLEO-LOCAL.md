@@ -29,17 +29,18 @@ Sites ────┘                              │             ├─ GG Con
 - PostgreSQL `visao360` é a fonte oficial de documentos, conversas, jobs, perguntas, diretrizes, handoffs e Estado 360.
 - O banco interno `n8n` continua restrito à configuração e às execuções da ferramenta.
 
-## Telegram sem HTTPS
+## Telegram por webhook
 
-O canal Telegram usará `getUpdates` por long polling. Um adaptador mínimo local:
+O Telegram continuará usando webhook. Como o Telegram exige um destino HTTPS público, a entrada estável será o Sites já hospedado, reduzido a gateway de transporte:
 
-1. busca updates;
-2. respeita allowlist;
-3. entrega o update ao webhook interno do n8n;
-4. avança o offset somente depois da persistência confirmada;
-5. oferece `sendMessage` e `sendChatAction` na rede Docker, mantendo o token fora dos workflows.
+1. valida o segredo, tipo, tamanho, identidade e allowlist;
+2. registra `update_id` e devolve HTTP rapidamente;
+3. mantém o envelope em fila durável enquanto o computador estiver desligado;
+4. WF-97 no Docker reivindica o evento por HTTPS de saída, com lease e idempotência;
+5. n8n processa e registra o estado oficial no PostgreSQL local;
+6. a resposta volta pelo gateway, sem expor token aos workflows.
 
-Esse caminho não exige domínio, certificado, túnel ou exposição do editor n8n. O adaptador não possui regra de negócio. O serviço nasce desativado e só será promovido após desligar o webhook remoto do bot, porque Telegram não permite webhook e `getUpdates` simultaneamente.
+O computador não recebe conexões públicas e o editor n8n continua em `127.0.0.1`. Um Quick Tunnel gratuito foi avaliado em 02/09/2026, mas o Telegram recusou o subdomínio recém-gerado por falha de resolução DNS. Por estabilidade, ele não é o caminho canônico. O `telegram-poller` permanece desligado apenas como contingência futura.
 
 ## Sites acessível fora de casa
 
@@ -57,7 +58,7 @@ Se Rafael optar por site exclusivamente local, essa caixa postal poderá ser ret
 | Componente | Pode | Não pode |
 |---|---|---|
 | Telegram/Sites | transportar entrada e saída | decidir, calcular, completar lacunas |
-| Adaptador Telegram | polling, allowlist, enviar mensagem/action | interpretar conteúdo |
+| Gateway Telegram | validar, enfileirar e transportar mensagens | interpretar conteúdo ou manter Estado 360 oficial |
 | n8n | orquestrar e registrar transições | inventar regra de negócio |
 | Docling | extrair com proveniência | corrigir célula ambígua |
 | Agentes | interpretar dentro do escopo | executar efeito externo não autorizado |
@@ -73,12 +74,12 @@ Se Rafael optar por site exclusivamente local, essa caixa postal poderá ser ret
 6. migrar documentos, perguntas e diretrizes;
 7. comparar resultados antigo × novo em shadow;
 8. fazer backup;
-9. desligar webhook Telegram e ativar polling local;
+9. ativar o consumo local WF-97/WF-101 e a entrega WF-102;
 10. reduzir Sites/D1 a transporte e revogar a lógica duplicada.
 
-Rollback: reativar o webhook remoto somente após pausar o polling, mantendo registros locais e trilha de auditoria. Nunca operar ambos simultaneamente.
+Rollback: pausar o claim local preservando a fila hospedada e os registros locais. O webhook permanece estável durante a migração.
 
 ## Consequências
 
-- Benefícios: uma fonte de verdade, menos looping por estados divergentes, operação local sem HTTPS, token isolado e fluxos visíveis no n8n.
+- Benefícios: uma fonte de verdade, menos looping por estados divergentes, computador sem porta pública, token isolado e fluxos visíveis no n8n.
 - Limites: Telegram e o site dependem de a máquina estar ligada para processamento; o site remoto ainda precisa de uma caixa postal hospedada mínima; a migração precisa de shadow antes do corte.

@@ -7,7 +7,7 @@
 
 **Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O marco vigente é A0 — recentralização no n8n/PostgreSQL local. Telegram e Sites são somente canais; o WF-11 hospedado é legado de transição. Ler `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md` antes de alterar o runtime.
 
-**Ponto exato de retomada:** A0.2 — criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência. O `telegram-poller` está saudável, porém `TELEGRAM_POLLING_ENABLED=false`; o WF-100 foi testado sinteticamente e ficou despublicado. Não ativar polling antes de pausar o webhook remoto.
+**Ponto exato de retomada:** A0.2 — criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência. O Telegram permanece no webhook estável do Sites, confirmado sem erro; WF-97 deve transportar a fila ao Docker. `telegram-poller` fica desligado como contingência.
 
 ---
 

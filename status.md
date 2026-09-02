@@ -3,7 +3,7 @@
 **Data do status:** 2 de setembro de 2026, 06:32 (America/Sao_Paulo)
 **Versão Atual da Release:** `v3.10.0-n8n-local-core`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
-**Modo de Execução:** canal hospedado legado ativo; novo núcleo local em `SHADOW`, polling desligado
+**Modo de Execução:** webhook hospedado estável; núcleo local em `SHADOW`; polling desligado
 **Saúde do Projeto:** 🟡 **RECENTRALIZAÇÃO N8N EM CURSO; INTAKE LOCAL VALIDADO; CUTOVER NÃO EXECUTADO**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
@@ -17,7 +17,7 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** fundação A0.1 criada: ADR-002, esquema local, adaptador Telegram por polling e WF-100 de intake idempotente.
+**Último marco concluído:** fundação A0.1 criada e webhook confirmado no gateway estável, sem erro ou pendência.
 **Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
 **Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
 **Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
@@ -26,7 +26,7 @@
 **Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
 **Próximo passo exato:** A0.2 — criar WF-101 para comandos/conversa com claim/lease locais e WF-102 para entrega pelo adaptador. Depois migrar o WF-11 para filas e estado PostgreSQL antes de retomar N2.
 
-**Decisão arquitetural vigente:** Telegram e Sites são somente interfaces. n8n controla todo o fluxo; Docling extrai; Diretor/Gerentes/especialistas interpretam; PostgreSQL local guarda o histórico e o Estado 360. O Telegram usará long polling sem HTTPS após o gate de corte.
+**Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
 
 **Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
 

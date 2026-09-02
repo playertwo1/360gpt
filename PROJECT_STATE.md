@@ -14,7 +14,7 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: ADR-002, esquema PostgreSQL local, adaptador Telegram por polling e WF-100 com intake/deduplicação sintética aprovados
+Last completed: webhook Telegram restaurado no gateway estável, esquema PostgreSQL local e intake/deduplicação sintética aprovados
 Next task: criar WF-101 com claim/lease, comandos antes de esclarecimentos e histórico local; depois WF-102 de entrega pelo adaptador
 
 Last validation: 2026-09-02 — WF-100 sintético: primeira entrega `accepted=true/queued=true`, repetição `duplicate=true`, 1 update e 1 evento; `test:local-core`, `test:p0`, lint e build PASS; poller saudável e desativado.
@@ -22,14 +22,14 @@ Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
-- O webhook remoto do Telegram ainda precisa ser pausado antes do futuro cutover; polling local permanece desligado.
+- O gateway hospedado ainda contém lógica operacional legada que será removida após WF-101/WF-102.
 - WF-11 permanece despublicado e é legado de transição enquanto depender de `/api/bridge/*` hospedado.
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - O Sites ainda contém lógica operacional legada; deve ser reduzido a transporte somente depois do shadow local.
 
 Decisions:
 - n8n e PostgreSQL local são o núcleo canônico; Telegram e Sites são somente canais.
-- Telegram usará long polling e não exige HTTPS; editor n8n continua privado em localhost.
+- Telegram permanece em webhook HTTPS no gateway; Docker consome a fila por conexão de saída; editor n8n continua privado.
 - Sites remoto pode manter somente caixa postal temporária, nunca Estado 360 oficial.
 - Docling Serve 1.30.0 em CPU é o único OCR.
 - PyMuPDF pode extrair somente texto digital nativo; XLSX/CSV permanecem nativos.
@@ -44,7 +44,7 @@ Last update: 2026-09-02 06:32
 Resume instruction:
 1. Continuar `ROADMAP.md` em A0.2: WF-101 dispatcher local, WF-102 entrega e WF-103 contingência.
 2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
-3. Não ativar polling nem publicar WF-100 enquanto o webhook remoto estiver ativo.
+3. Manter polling desligado; avançar WF-97/WF-101/WF-102 sem trocar o webhook.
 4. Após o Gate A0, retomar N2 sem alterar o gate objetivo do Docling.
 
 Evidence:
