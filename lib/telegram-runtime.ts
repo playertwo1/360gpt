@@ -297,6 +297,12 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     await createConfirmation(db, token, chatId, ownerId, '/reprocessartodos', ['todos']);
     return { handled: true, kind: 'critical' };
   }
+  if (command === '/excluirultimo') {
+    const latest = await db.prepare(`SELECT id FROM documents WHERE owner_id = ? AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`).bind(ownerId).first<{ id: string }>();
+    if (!latest) await sendTelegramText(token, chatId, 'Nenhum documento encontrado para excluir.');
+    else await createConfirmation(db, token, chatId, ownerId, '/excluir', [latest.id]);
+    return { handled: true, kind: 'critical' };
+  }
   if (['/cancelar','/reabrir','/excluir','/corrigir','/aprovar','/revogarregra','/aprovardiretriz','/rejeitardiretriz','/revogardiretriz'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
     const normalizedArgs = command === '/tentar' ? args.slice(1) : args;
     const normalizedCommand = command === '/tentar' ? '/tentar' : command;

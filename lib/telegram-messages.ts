@@ -47,6 +47,7 @@ export async function sendTelegramParts(token: string, chatId: number, text: str
 
 export const TELEGRAM_COMMANDS = [
   { command: 'comandos', description: 'Ver todos os comandos' },
+  { command: 'excluirultimo', description: 'Solicitar exclusão do último documento' },
   { command: 'ajuda', description: 'Abrir ajuda e comandos' },
   { command: 'menu', description: 'Abrir menu geral' },
   { command: 'status', description: 'Saúde do sistema e da fila' },
