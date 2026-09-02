@@ -147,7 +147,7 @@ export async function POST(request: Request) {
       const file = await downloadTelegramFile(document);
       validateFileContent(file.bytes, document.mime_type?.toLowerCase() ?? '');
       contentHash = `sha256:${await sha256Hex(file.bytes)}`;
-      const existing = await env.DB.prepare(`SELECT id FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile', 'telegram') ORDER BY received_at DESC LIMIT 1`)
+      const existing = await env.DB.prepare(`SELECT id FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile', 'telegram') AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`)
         .bind(ownerId, contentHash).first<{ id: string }>();
       if (existing) {
         canonicalDocumentId = existing.id;
