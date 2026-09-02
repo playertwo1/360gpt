@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 3.15.0-n2.1-telegram-conversation-approved
-Current phase: Pós-Marco N2.1 — Entrada Conversacional Telegram Homologada
-Current milestone: N8.2 — GG Relacionamento (WF-30 e inteligência de contatos e sócios)
-Current task: Ativar o GG Relacionamento (WF-30), motor de compromissos e inteligência comercial para as 20 contas corporativas da agência 6895.
+Version: 3.16.0-n8.2-gg-relacionamento-active
+Current phase: Pós-Marco N8.2 — GG Relacionamento Ativo no n8n e Diretor 360
+Current milestone: N8.3 — GG Financeiro (cálculos de impacto financeiro, margem e viabilidade)
+Current task: Especificar e estruturar o GG Financeiro no n8n (WF-40), delimitando margens e impacto de receita sem fabricar retornos.
 Status: READY
 
 Host baseline:
@@ -14,14 +14,14 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Marco N2.1 concluído e homologado em 02/09/2026. Os 5 comportamentos conversacionais (Pergunta simples, Fato simples, Fato + pergunta, Correção simples e Parecer longo estruturado) foram implementados no motor determinístico (`conversation-intent-engine.mjs`), no WF-101 do n8n local e no runtime do Telegram, com 100% de cobertura nos testes de contrato e integração.
-Next task: Marco N8.2 — Ativação do GG Relacionamento (WF-30).
+Last completed: Marco N8.2 concluído e ativado em 02/09/2026. O GG Relacionamento (`WF-30`) foi implementado no n8n Docker, a tabela `pj_account_contacts` criada e populada no PostgreSQL local, e o motor `relationship-engine.mjs` validado contra o contrato `relationship-specialist-response.schema.json` com 100% de testes automatizados aprovados.
+Next task: Marco N8.3 — GG Financeiro.
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente implementados e validados.
+MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados a Performance, Conta e Relacionamento.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
 
-Last validation: 2026-09-02 17:05 — Bateria completa de testes automatizados (test:p0, test:local-core, conversation-intent, conta-engine, conta-contracts e vinext build) aprovada com 100% PASS.
+Last validation: 2026-09-02 17:39 — Bateria completa aprovada (tests/relationship-engine, tests/conversation-intent, tests/conta-engine, test:p0, test:local-core e build) com 100% PASS.
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:

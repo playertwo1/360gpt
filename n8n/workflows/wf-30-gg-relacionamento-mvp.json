@@ -1,0 +1,86 @@
+{
+  "name": "WF-30 — GG Relacionamento — Inteligência de Contato e Abordagem",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "trigger-relacionamento",
+      "name": "01 Receber demanda GG Relacionamento",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT a.cnpj, a.razao_social, a.employees_count, a.months_revenue_12m, a.payroll_active, a.billing_active, a.pix_active, c.id as contact_id, c.contact_name, c.role as contact_role, c.phone, c.email, c.is_decision_maker, c.key_interests, c.known_objections, c.last_contact_at FROM pj_accounts a LEFT JOIN pj_account_contacts c ON a.cnpj = c.cnpj ORDER BY a.months_revenue_12m DESC;",
+        "options": {}
+      },
+      "id": "fetch-contacts",
+      "name": "02 Consultar contas e contatos PJ",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -150,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const rows = $input.all().map(item => item.json);\nconst request = $('01 Receber demanda GG Relacionamento').first()?.json ?? {};\n\n// Agrupar contatos por CNPJ\nconst accountMap = new Map();\nfor (const r of rows) {\n  if (!accountMap.has(r.cnpj)) {\n    accountMap.set(r.cnpj, {\n      cnpj: r.cnpj,\n      razao_social: r.razao_social,\n      employees_count: Number(r.employees_count || 0),\n      months_revenue_12m: Number(r.months_revenue_12m || 0),\n      payroll_active: r.payroll_active,\n      billing_active: r.billing_active,\n      pix_active: r.pix_active,\n      contacts: []\n    });\n  }\n  if (r.contact_name) {\n    accountMap.get(r.cnpj).contacts.push({\n      id: r.contact_id,\n      contact_name: r.contact_name,\n      role: r.contact_role,\n      phone: r.phone,\n      email: r.email,\n      is_decision_maker: r.is_decision_maker,\n      key_interests: r.key_interests || [],\n      known_objections: r.known_objections || [],\n      last_contact_at: r.last_contact_at\n    });\n  }\n}\n\nconst accounts = Array.from(accountMap.values());\nconst approaches = [];\n\nfor (const acc of accounts) {\n  const mainContact = acc.contacts.find(c => c.is_decision_maker) || acc.contacts[0] || null;\n  const contactName = mainContact?.contact_name || 'Decisor Financeiro';\n\n  // Prioridade Folha\n  if (acc.employees_count >= 20 && !acc.payroll_active) {\n    approaches.push({\n      account_ref: acc.cnpj,\n      razao_social: acc.razao_social,\n      target_product: 'FOLHA_DE_PAGAMENTO',\n      contact_name: contactName,\n      role: mainContact?.role || 'Diretor',\n      approach: {\n        objective: 'Apresentar plano de portabilidade da folha de pagamento (' + acc.employees_count + ' vidas) com suporte presencial da agência 6895.',\n        opening: 'Olá, ' + contactName + '! Estruturei um formato sob medida para a folha do ' + acc.razao_social + ', onde a agência assume todo o suporte de abertura das contas.',\n        questions: [\n          'Qual o principal ponto de atrito do RH com o banco atual?',\n          'Os colaboradores teriam interesse em crédito consignado exclusivo da agência?'\n        ],\n        next_step: 'Agendar reunião técnica com o RH para validação de layout CNAB.',\n        requires_owner_approval: true\n      },\n      decision_authority: 'RAFAEL'\n    });\n  }\n  // Prioridade Cobrança\n  else if (acc.months_revenue_12m >= 1000000 && (!acc.billing_active || !acc.pix_active)) {\n    approaches.push({\n      account_ref: acc.cnpj,\n      razao_social: acc.razao_social,\n      target_product: 'COBRANCA_PIX',\n      contact_name: contactName,\n      role: mainContact?.role || 'Diretor',\n      approach: {\n        objective: 'Implantar pacote integrado de Cobrança e PIX Dinâmico com liquidação D+0 e redução de tarifas.',\n        opening: 'Olá, ' + contactName + '! Preparamos uma condição de cobrança integrada para a ' + acc.razao_social + ' com liquidação D+0 e menor custo por boleto.',\n        questions: [\n          'Qual o percentual atual de recebimento via PIX versus boleto tradicional?',\n          'O ERP da empresa já suporta boleto com QR Code PIX híbrido?'\n        ],\n        next_step: 'Enviar simulação de tarifas e agendar homologação de arquivo.',\n        requires_owner_approval: true\n      },\n      decision_authority: 'RAFAEL'\n    });\n  }\n}\n\nconst output = {\n  schema_version: '1.0.0',\n  request_id: request.request_id || ('req-rel-' + Date.now()),\n  provided_by: 'GERENTE_GERAL_RELACIONAMENTO',\n  operating_phase: 'CONTACT_LEVEL_ACTIVE',\n  total_accounts_analyzed: accounts.length,\n  contacts_mapped: rows.filter(r => r.contact_name).length,\n  prioritized_approaches: approaches,\n  summary: {\n    folha_approaches_count: approaches.filter(a => a.target_product === 'FOLHA_DE_PAGAMENTO').length,\n    cobranca_approaches_count: approaches.filter(a => a.target_product === 'COBRANCA_PIX').length,\n    top_priority: approaches[0] || null\n  },\n  compliance_rule: 'Contato externo ou envio de mensagens exige autorização expressa de Rafael.',\n  decision_authority: 'RAFAEL'\n};\n\nreturn [{ json: output }];"
+      },
+      "id": "evaluate-approaches",
+      "name": "03 Formular estratégia de abordagem e compromissos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "01 Receber demanda GG Relacionamento": {
+      "main": [
+        [
+          {
+            "node": "02 Consultar contas e contatos PJ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Consultar contas e contatos PJ": {
+      "main": [
+        [
+          {
+            "node": "03 Formular estratégia de abordagem e compromissos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000030"
+}

@@ -85,5 +85,6 @@ assert.equal(lRes.behavior_type, "OWNER_ANALYSIS");
 assert.match(lRes.safe_response, /Parecer Executivo 360/i);
 assert.match(lRes.safe_response, /Hospital São Lucas/i);
 assert.match(lRes.safe_response, /Metalúrgica Forja Sul/i);
+assert.ok(lRes.consulted_domains.includes("relacionamento"));
 
 console.log("\nTODOS OS 5 COMPORTAMENTOS DO MARCO N2.1 PASSARAM COM SUCESSO! 🟢");

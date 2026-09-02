@@ -203,7 +203,7 @@ export function processConversationInput({ text, stateSnapshot = null, pjAccount
     }
 
     case 'OWNER_ANALYSIS': {
-      consultedDomains.push('conta');
+      consultedDomains.push('conta', 'relacionamento');
       const gaps = [
         { indicator: 'CONQUISTA_FOLHA_PAGAMENTO', weight: 4.0, attainment_pct: snapshot.folha_pct },
         { indicator: 'FATURAMENTO_BOLETO_PIX', weight: 4.0, attainment_pct: snapshot.boleto_pix_pct },
@@ -217,17 +217,17 @@ export function processConversationInput({ text, stateSnapshot = null, pjAccount
       safeResponse =
         `🏛️ <b>Parecer Executivo 360 — Recepção e Cruzamento Estruturado</b>\n\n` +
         `• <b>Entrada Recebida:</b> Análise situacional de fechamento de Agosto/2026 recebida integralmente e registrada sob <code>OWNER_PROVIDED</code>.\n` +
-        `• <b>Domínios Ativados:</b> GG Performance (Metas) e GG Conta (Carteira 6895).\n\n` +
+        `• <b>Domínios Ativados:</b> GG Performance (Metas), GG Conta (Carteira 6895) e GG Relacionamento (Sócios & Decisores).\n\n` +
         `📊 <b>Conferência de Metas e Gaps (Performance):</b>\n` +
         `  - Pontuação: <b>${fmt(snapshot.current_points)} pts atingidos + ${fmt(snapshot.accelerator_points)} acel. = ${fmt(snapshot.total_points)} pts</b>.\n` +
         `  - Indicadores batidos: <b>${snapshot.beaten_indicators} de ${snapshot.total_indicators}</b>.\n` +
         `  - Gaps críticos confirmados: Conquista Folha (0/4 pts) e Boleto/PIX (0/4 pts).\n` +
         `  - Blindagem necessária: Vencidos Até 59d (${fmt(snapshot.vencidos_59d_pct, 1)}% atingido, ${fmt(snapshot.vencidos_59d_points)} pts em risco).\n\n` +
-        `🏢 <b>Encaminhamento Prático na Carteira PJ (GG Conta):</b>\n` +
-        `  1. <b>Folha de Pagamento:</b> <i>Hospital São Lucas</i> (180 vidas ativas, convênio pronto para portabilidade).\n` +
-        `  2. <b>Boleto + PIX:</b> <i>Metalúrgica Forja Sul</i> (R$ 420 mil em cobrança bancária externa) e <i>Transportadora Transvale</i>.\n` +
-        `  3. <b>Blindagem de Crédito:</b> Regularizar faturas em atraso recente na <i>Metalúrgica Forja Sul</i> para proteger o limiar de 70% dos vencidos.\n\n` +
-        `⚖️ <b>Decisão Soberana:</b> Submetido para condução comercial de Rafael.`;
+        `🏢 <b>Encaminhamento Prático na Carteira PJ (Conta & Relacionamento):</b>\n` +
+        `  1. <b>Folha de Pagamento:</b> <i>Hospital São Lucas</i> (180 vidas) → Contato: <b>Dr. Arnaldo Silveira</b> (Dir. Financeiro). Pauta: Suporte presencial da agência sem sobrecarga do RH.\n` +
+        `  2. <b>Boleto + PIX:</b> <i>Metalúrgica Forja Sul</i> (R$ 420 mil em cobrança) → Contato: <b>Sr. Cláudio Mendes</b> (Sócio) e <b>Sra. Renata Dias</b> (Financeiro). Pauta: Cobrança híbrida D+0 com tarifas reduzidas.\n` +
+        `  3. <b>Blindagem de Crédito:</b> <i>Metalúrgica Forja Sul</i> → Contato: <b>Sr. Cláudio Mendes</b> para regularização preventiva e proteção dos 9,34 pts de vencidos.\n\n` +
+        `⚖️ <b>Decisão Soberana:</b> Toda abordagem externa e rascunho de proposta depende de autorização expressa de Rafael.`;
       break;
     }
 

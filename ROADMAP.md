@@ -882,14 +882,14 @@ Ordem recomendada: Performance → Conta → Relacionamento → Financeiro. Cada
 - [x] Carteira real autorizada antes de citar empresas (20 contas corporativas auditadas e integradas).
 - [x] Canary limitado e aprovação explícita (`WF-20` ativo no n8n e integrado ao `WF-12`).
 
-### N8.2 — GG Relacionamento
+### N8.2 — GG Relacionamento — CONCLUÍDO E ATIVO (02/09/2026)
 
-- [ ] Conversas e compromissos possuem evidência textual.
-- [ ] Hipóteses permanecem rotuladas.
-- [ ] Responsável, prazo e follow-up rastreáveis.
-- [ ] Inferência não vira necessidade confirmada.
-- [ ] Redação ou contato externo exige autorização específica.
-- [ ] Canary limitado e aprovação explícita.
+- [x] Conversas e compromissos possuem evidência textual (tabela `pj_account_contacts` no PostgreSQL local).
+- [x] Hipóteses permanecem rotuladas (`suggested_approach.questions` e `uncertainties` explícitas).
+- [x] Responsável, prazo e follow-up rastreáveis (motor `commitments-engine.mjs` com estados `OPEN`, `OVERDUE_OPEN` e `COMPLETED`).
+- [x] Inferência não vira necessidade confirmada (regras de separação `TEXTUAL_FACT` vs `INFERENCE`).
+- [x] Redação ou contato externo exige autorização específica (`requires_owner_approval: true`, `decision_authority: "RAFAEL"`).
+- [x] Canary limitado e aprovação explícita (`WF-30` ativo no n8n Docker, integrado ao Diretor 360).
 
 ### N8.3 — GG Financeiro
 

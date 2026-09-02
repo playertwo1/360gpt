@@ -1,5 +1,15 @@
 # Changelog
 
+### Complete & Active — Marco N8.2: Ativação do GG Relacionamento (02/09/2026)
+- **Ativação do 3º Gerente Geral de Negócio:**
+  * Implementado o workflow **`WF-30 — GG Relacionamento — Inteligência de Contato e Abordagem`** (`9eb8e86a-84b8-4aa9-97e4-360000000030`), ativo no n8n Docker.
+  * Criada e populada a tabela `pj_account_contacts` no PostgreSQL local `visao360`, mapeando os sócios, diretores financeiros e RH das contas corporativas da agência 6895 (ex: Dr. Arnaldo e Dra. Helena no *Hospital São Lucas*, Sr. Cláudio e Sra. Renata na *Metalúrgica Forja Sul*).
+  * Criado o motor determinístico [`engines/relationship/relationship-engine.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/relationship/relationship-engine.mjs) que integra o motor de compromissos (`commitments-engine.mjs`), gera abordagens consultivas estruturadas (`objective`, `opening`, `questions`, `next_step`), impõe a flag mandatória `requires_owner_approval: true` e preserva a autoridade soberana de Rafael (`decision_authority: "RAFAEL"`).
+- **Integração Executiva 360:**
+  * O parecer executivo do Diretor 360 e o despachante local (`WF-101`) agora cruzam **Metas (Performance) + Empresa (Conta) + Abordagem Comercial (Relacionamento)**.
+  * Testes automatizados [`tests/relationship-engine.test.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/tests/relationship-engine.test.mjs) validando conformidade estrita com `contracts/relationship-specialist-response.schema.json`.
+  * 100% de aprovação em toda a suite de regressão operacional.
+
 ### Complete & Homologated — Marco N2.1: Entrada Textual Conversacional pelo Telegram (02/09/2026)
 - **Implementação dos 5 Comportamentos Prioritários:**
   1. *Pergunta simples:* Consulta direta ao snapshot consolidado do POBJ (Agosto/2026), retornando 70,71 pts normativos + 10 pts acel. = 80,71 pts totais (100,65% atingido), 7/22 batidos e esteiras zeradas (Folha e Boleto/PIX).
