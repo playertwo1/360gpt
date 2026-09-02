@@ -18,7 +18,7 @@ Last completed: ADR-002, esquema PostgreSQL local, adaptador Telegram por pollin
 Next task: criar WF-101 com claim/lease, comandos antes de esclarecimentos e histórico local; depois WF-102 de entrega pelo adaptador
 
 Last validation: 2026-09-02 — WF-100 sintético: primeira entrega `accepted=true/queued=true`, repetição `duplicate=true`, 1 update e 1 evento; `test:local-core`, `test:p0`, lint e build PASS; poller saudável e desativado.
-Last commit: 2130ab2 feat(n8n): establish local orchestration core
+Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
