@@ -263,7 +263,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 - [~] Roteamento determinístico já cobre respostas numéricas, perguntas contextuais, reclamações e `não sei`; ampliar testes e contrato.
 - [x] Interpretação Gemini já exige JSON estruturado quando o parser determinístico não resolve.
-- [ ] Formalizar contrato de intenção, respostas, contexto, feedback e confiança; próximo trabalho local elegível.
+- [x] Formalizar contrato versionado `contracts/telegram-intent.schema.json` para intenção, respostas, contexto, feedback, confiança e pendências.
 - [ ] Calcular pendências somente por diferença determinística.
 - [ ] Reproduzir e eliminar integralmente os loops do protocolo atual.
 
