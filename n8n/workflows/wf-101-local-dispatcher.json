@@ -1,6 +1,11 @@
-{
+﻿{
+  "updatedAt": "2026-09-02T14:22:54.859Z",
+  "createdAt": "2026-09-02T10:41:53.932Z",
   "id": "9eb8e86a-84b8-4aa9-97e4-360000000101",
   "name": "WF-101 — Dispatcher local n8n (INATIVO ATE CUTOVER)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -13,7 +18,10 @@
       "name": "01 Disparo webhook imediato",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-520, 0],
+      "position": [
+        -520,
+        0
+      ],
       "webhookId": "d360-dispatcher-trigger-v1"
     },
     {
@@ -24,15 +32,30 @@
       "name": "01 Disparo direto",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
-      "position": [-520, 80]
+      "position": [
+        -520,
+        80
+      ]
     },
     {
-      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 1 }] } },
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
       "id": "trigger",
       "name": "01 Disparar dispatcher",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-520, -80]
+      "position": [
+        -520,
+        -80
+      ]
     },
     {
       "parameters": {
@@ -43,8 +66,16 @@
       "name": "02 Claim com lease",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [-260, 0],
-      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+      "position": [
+        -260,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
     },
     {
       "parameters": {
@@ -55,56 +86,302 @@
       "name": "03 Roteamento determinístico",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [0, 0]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
         "query": "WITH thread AS (INSERT INTO conversation_threads (thread_id, tenant_id, owner_id, channel, chat_id) VALUES (md5($1 || '|' || $2 || '|' || $3 || '|' || $4)::uuid, $1, $2, $3, $4) ON CONFLICT (tenant_id, owner_id, channel, chat_id) DO UPDATE SET updated_at=now() RETURNING thread_id), message AS (INSERT INTO conversation_messages (conversation_message_id, thread_id, direction, actor_role, external_message_id, content, content_hash) SELECT md5($5 || '|INBOUND')::uuid, thread_id, 'INBOUND', 'OWNER', $5, $6, 'sha256:' || encode(sha256(convert_to($6, 'UTF8')), 'hex') FROM thread ON CONFLICT (thread_id, direction, external_message_id) DO NOTHING RETURNING conversation_message_id) SELECT (SELECT thread_id FROM thread) AS thread_id, EXISTS (SELECT 1 FROM message) AS message_created, $7 AS route, $8 AS command, $9::uuid AS inbound_event_id, $10::uuid AS lease_token, $4 AS chat_id;",
-        "options": { "queryBatching": "single", "queryReplacement": "={{[$json.tenant_id,$json.owner_id,$json.channel,$json.chat_id,$json.external_update_id,$json.text_content,$json.route,$json.command,$json.inbound_event_id,$json.lease_token]}}" }
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{[$json.tenant_id,$json.owner_id,$json.channel,$json.chat_id,$json.external_update_id,$json.text_content,$json.route,$json.command,$json.inbound_event_id,$json.lease_token]}}"
+        }
       },
       "id": "persist-conversation",
       "name": "04 Persistir conversa antes de interpretar",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [280, 0],
-      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+      "position": [
+        280,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
     },
     {
-      "parameters": {"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; if(x.route!=='COMMAND') return []; const menu='<b>Diretor Geral 360 — Agência 6895 (VJ-SAO FIDELIS)</b>\\n\\n<b>Comandos do MVP:</b>\\n/start — Apresentação executiva\\n/comandos ou /menu — Esta lista de comandos\\n/status — Saúde dos motores locais\\n/protocolo &lt;n&gt; — Consultar status de documento\\n/pendencias — Dúvidas aguardando resposta\\n\\n<i>Envie seu PDF do POBJ a qualquer momento para análise executiva imediata.</i>'; const replies={'/start':'<b>Diretor 360</b> operacional na agência <b>6895 - VJ-SAO FIDELIS</b>.\\nEnvie /comandos para ver o menu ou envie seu arquivo POBJ a qualquer momento.','/comandos':menu,'/ajuda':menu,'/menu':menu,'/status':'🟢 <b>Saúde Operacional 360 (Núcleo Local):</b>\\n• PostgreSQL: <b>ONLINE (Local Docker)</b>\\n• n8n Core: <b>ONLINE (Local Docker)</b>\\n• Docling TableFormer: <b>ONLINE (CPU Local)</b>\\n• Adaptador Telegram: <b>ONLINE (Long Polling Ativo)</b>\\n• Fila: <b>ONLINE</b>'}; const text=replies[x.command]; return text?[{json:{...x,text}}]:[];"},
-      "id":"command-response","name":"05 Responder comandos mínimos","type":"n8n-nodes-base.code","typeVersion":2,"position":[540,0]
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const x=$input.first()?.json??{}; if(x.route!=='COMMAND') return []; const menu='<b>Diretor Geral 360 — Agência 6895 (VJ-SAO FIDELIS)</b>\\n\\n<b>Comandos do MVP:</b>\\n/start — Apresentação executiva\\n/comandos ou /menu — Esta lista de comandos\\n/status — Saúde dos motores locais\\n/protocolo &lt;n&gt; — Consultar status de documento\\n/pendencias — Dúvidas aguardando resposta\\n\\n<i>Envie seu PDF do POBJ a qualquer momento para análise executiva imediata.</i>'; const replies={'/start':'<b>Diretor 360</b> operacional na agência <b>6895 - VJ-SAO FIDELIS</b>.\\nEnvie /comandos para ver o menu ou envie seu arquivo POBJ a qualquer momento.','/comandos':menu,'/ajuda':menu,'/menu':menu,'/status':'🟢 <b>Saúde Operacional 360 (Núcleo Local):</b>\\n• PostgreSQL: <b>ONLINE (Local Docker)</b>\\n• n8n Core: <b>ONLINE (Local Docker)</b>\\n• Docling TableFormer: <b>ONLINE (CPU Local)</b>\\n• Adaptador Telegram: <b>ONLINE (Long Polling Ativo)</b>\\n• Fila: <b>ONLINE</b>'}; const text=replies[x.command]; return text?[{json:{...x,text}}]:[];"
+      },
+      "id": "command-response",
+      "name": "05 Responder comandos mínimos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        0
+      ]
     },
     {
-      "parameters":{"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; const max=3800; const parts=[]; for(let i=0;i<x.text.length;i+=max) parts.push({json:{...x,text:x.text.slice(i,i+max),part_index:parts.length+1,part_count:Math.ceil(x.text.length/max)}}); return parts;"},
-      "id":"split-delivery","name":"06 Dividir entrega","type":"n8n-nodes-base.code","typeVersion":2,"position":[790,0]
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const x=$input.first()?.json??{}; const max=3800; const parts=[]; for(let i=0;i<x.text.length;i+=max) parts.push({json:{...x,text:x.text.slice(i,i+max),part_index:parts.length+1,part_count:Math.ceil(x.text.length/max)}}); return parts;"
+      },
+      "id": "split-delivery",
+      "name": "06 Dividir entrega",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        790,
+        0
+      ]
     },
     {
-      "parameters":{"operation":"executeQuery","query":"INSERT INTO channel_deliveries (delivery_id, channel, chat_id, part_index, part_count, content, content_hash, status) VALUES (md5($1 || '|' || $2)::uuid, 'TELEGRAM', $3, $2::integer, $4::integer, $5, 'sha256:' || encode(sha256(convert_to($5,'UTF8')),'hex'), 'PENDING') ON CONFLICT (delivery_id) DO UPDATE SET content=EXCLUDED.content RETURNING delivery_id, chat_id, part_index, part_count, content AS text, $6::uuid AS inbound_event_id, $7::uuid AS lease_token;","options":{"queryBatching":"single","queryReplacement":"={{[$json.inbound_event_id,$json.part_index,$json.chat_id,$json.part_count,$json.text,$json.inbound_event_id,$json.lease_token]}}"}},
-      "id":"persist-delivery","name":"07 Persistir entrega idempotente","type":"n8n-nodes-base.postgres","typeVersion":2.6,"position":[1040,0],"credentials":{"postgres":{"id":"3db02591-5cd1-47ef-ac68-3cdb4b213602","name":"Visao 360 App DB"}}},
-    {
-      "parameters":{"method":"POST","url":"http://telegram-poller:8790/send","sendHeaders":true,"headerParameters":{"parameters":[{"name":"X-Director360-Transport","value":"={{$env.BRIDGE_SHARED_SECRET}}"}]},"sendBody":true,"contentType":"json","specifyBody":"json","jsonBody":"={{JSON.stringify({chat_id:$json.chat_id,text:$json.text,parse_mode:'HTML'})}}","options":{"response":{"response":{"neverError":false,"responseFormat":"json"}},"timeout":10000}},
-      "id":"send-delivery","name":"08 Enviar pelo adaptador","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[1290,0]
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO channel_deliveries (delivery_id, channel, chat_id, part_index, part_count, content, content_hash, status) VALUES (md5($1 || '|' || $2)::uuid, 'TELEGRAM', $3, $2::integer, $4::integer, $5, 'sha256:' || encode(sha256(convert_to($5,'UTF8')),'hex'), 'PENDING') ON CONFLICT (delivery_id) DO UPDATE SET content=EXCLUDED.content RETURNING delivery_id, chat_id, part_index, part_count, content AS text, $6::uuid AS inbound_event_id, $7::uuid AS lease_token;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{[$json.inbound_event_id,$json.part_index,$json.chat_id,$json.part_count,$json.text,$json.inbound_event_id,$json.lease_token]}}"
+        }
+      },
+      "id": "persist-delivery",
+      "name": "07 Persistir entrega idempotente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
     },
     {
-      "parameters":{"operation":"executeQuery","query":"WITH delivered AS (UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id) UPDATE channel_inbound_events SET status='COMPLETED', completed_at=now(), lease_token=NULL, lease_expires_at=NULL WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;","options":{"queryBatching":"single","queryReplacement":"={{[$node['07 Persistir entrega idempotente'].json.delivery_id,$node['07 Persistir entrega idempotente'].json.inbound_event_id,$node['07 Persistir entrega idempotente'].json.lease_token]}}"}},
-      "id":"complete","name":"09 Concluir comando","type":"n8n-nodes-base.postgres","typeVersion":2.6,"position":[1540,0],"credentials":{"postgres":{"id":"3db02591-5cd1-47ef-ac68-3cdb4b213602","name":"Visao 360 App DB"}}}
+      "parameters": {
+        "method": "POST",
+        "url": "http://telegram-poller:8790/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Director360-Transport",
+              "value": "={{$env.BRIDGE_SHARED_SECRET}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({chat_id:$json.chat_id,text:$json.text,parse_mode:'HTML'})}}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "send-delivery",
+      "name": "08 Enviar pelo adaptador",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1290,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH delivered AS (UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id) UPDATE channel_inbound_events SET status='COMPLETED', completed_at=now(), lease_token=NULL, lease_expires_at=NULL WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{[$node['07 Persistir entrega idempotente'].json.delivery_id,$node['07 Persistir entrega idempotente'].json.inbound_event_id,$node['07 Persistir entrega idempotente'].json.lease_token]}}"
+        }
+      },
+      "id": "complete",
+      "name": "09 Concluir comando",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1540,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    }
   ],
   "connections": {
-    "01 Disparo webhook imediato": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
-    "01 Disparo direto": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
-    "01 Disparar dispatcher": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
-    "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] },
-    "03 Roteamento determinístico": { "main": [[{ "node": "04 Persistir conversa antes de interpretar", "type": "main", "index": 0 }]] },
-    "04 Persistir conversa antes de interpretar": { "main": [[{ "node": "05 Responder comandos mínimos", "type": "main", "index": 0 }]] },
-    "05 Responder comandos mínimos": { "main": [[{ "node": "06 Dividir entrega", "type": "main", "index": 0 }]] },
-    "06 Dividir entrega": { "main": [[{ "node": "07 Persistir entrega idempotente", "type": "main", "index": 0 }]] },
-    "07 Persistir entrega idempotente": { "main": [[{ "node": "08 Enviar pelo adaptador", "type": "main", "index": 0 }]] },
-    "08 Enviar pelo adaptador": { "main": [[{ "node": "09 Concluir comando", "type": "main", "index": 0 }]] }
+    "01 Disparo webhook imediato": {
+      "main": [
+        [
+          {
+            "node": "02 Claim com lease",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "01 Disparo direto": {
+      "main": [
+        [
+          {
+            "node": "02 Claim com lease",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "01 Disparar dispatcher": {
+      "main": [
+        [
+          {
+            "node": "02 Claim com lease",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Claim com lease": {
+      "main": [
+        [
+          {
+            "node": "03 Roteamento determinístico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "03 Roteamento determinístico": {
+      "main": [
+        [
+          {
+            "node": "04 Persistir conversa antes de interpretar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "04 Persistir conversa antes de interpretar": {
+      "main": [
+        [
+          {
+            "node": "05 Responder comandos mínimos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "05 Responder comandos mínimos": {
+      "main": [
+        [
+          {
+            "node": "06 Dividir entrega",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "06 Dividir entrega": {
+      "main": [
+        [
+          {
+            "node": "07 Persistir entrega idempotente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "07 Persistir entrega idempotente": {
+      "main": [
+        [
+          {
+            "node": "08 Enviar pelo adaptador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "08 Enviar pelo adaptador": {
+      "main": [
+        [
+          {
+            "node": "09 Concluir comando",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "canonical_runtime": "N8N_LOCAL"
+  },
+  "nodeGroups": [],
   "pinData": {},
-  "active": false,
-  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveDataErrorExecution": "all", "saveDataSuccessExecution": "none", "saveManualExecutions": false },
-  "versionId": "d360-wf101-v1",
-  "meta": { "templateCredsSetupCompleted": true, "canonical_runtime": "N8N_LOCAL" },
-  "tags": []
+  "versionId": "031ef8ed-153c-4dbb-9fd8-e0da703fb0b5",
+  "activeVersionId": "031ef8ed-153c-4dbb-9fd8-e0da703fb0b5",
+  "versionCounter": 3,
+  "triggerCount": 2,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-02T10:41:53.932Z",
+      "createdAt": "2026-09-02T10:41:53.932Z",
+      "role": "workflow:owner",
+      "workflowId": "9eb8e86a-84b8-4aa9-97e4-360000000101",
+      "projectId": "gP27pW5SO7o4kDM0",
+      "project": {
+        "updatedAt": "2026-09-02T01:52:04.388Z",
+        "createdAt": "2026-09-01T18:48:45.11Z",
+        "id": "gP27pW5SO7o4kDM0",
+        "name": "rafael pedrosa <fael@live.de>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "97506ed6-4e4a-4dff-b342-ba33c3c6e978"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
 }

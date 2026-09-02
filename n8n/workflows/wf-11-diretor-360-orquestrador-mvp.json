@@ -1,6 +1,11 @@
-{
+﻿{
+  "updatedAt": "2026-09-02T14:32:41.144Z",
+  "createdAt": "2026-09-02T14:32:41.144Z",
   "id": "9eb8e86a-84b8-4aa9-97e4-360000000011",
   "name": "WF-11 — Diretor 360 — Orquestrador Mestre do MVP",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {},
@@ -583,10 +588,40 @@
     "saveManualExecutions": true,
     "saveExecutionProgress": true
   },
-  "active": false,
-  "pinData": {},
+  "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "tags": []
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "ce4974de-759c-4dd1-8f6c-eb749838805c",
+  "activeVersionId": "ce4974de-759c-4dd1-8f6c-eb749838805c",
+  "versionCounter": 1,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-02T14:32:41.144Z",
+      "createdAt": "2026-09-02T14:32:41.144Z",
+      "role": "workflow:owner",
+      "workflowId": "9eb8e86a-84b8-4aa9-97e4-360000000011",
+      "projectId": "gP27pW5SO7o4kDM0",
+      "project": {
+        "updatedAt": "2026-09-02T01:52:04.388Z",
+        "createdAt": "2026-09-01T18:48:45.11Z",
+        "id": "gP27pW5SO7o4kDM0",
+        "name": "rafael pedrosa <fael@live.de>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "97506ed6-4e4a-4dff-b342-ba33c3c6e978"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
 }

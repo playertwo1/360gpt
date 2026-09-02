@@ -1,0 +1,80 @@
+{
+  "name": "WF-20 — GG Conta — Análise de Carteira e Elegibilidade",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "trigger-conta",
+      "name": "01 Receber demanda GG Conta",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM pj_accounts ORDER BY months_revenue_12m DESC;",
+        "options": {}
+      },
+      "id": "fetch-accounts",
+      "name": "02 Consultar carteira PJ",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -150,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const accounts = $input.all().map(item => item.json);\nconst request = $('01 Receber demanda GG Conta').first()?.json ?? {};\nconst targetGaps = Array.isArray(request.target_gaps) ? request.target_gaps : ['folha_pagamento', 'boleto_pix', 'crescimento_liquido_pj', 'gestao_vencidos'];\n\nconst evaluated = [];\nconst oppFolha = [];\nconst oppCobranca = [];\nconst oppVencidos = [];\n\nfor (const acc of accounts) {\n  const employees = Number(acc.employees_count || 0);\n  const rev = Number(acc.months_revenue_12m || 0);\n  const score = Number(acc.credit_score || 0);\n  const protests = Number(acc.protests_count || 0);\n  const taxReg = acc.tax_regularity !== false;\n\n  let eligibility = 'ELIGIBLE';\n  const limitations = [];\n  if (protests > 0) {\n    eligibility = 'UNDETERMINED';\n    limitations.push('RESTRICTION_RECURRENT: ' + protests + ' protesto(s) ativo(s).');\n  }\n  if (!taxReg) {\n    limitations.push('RESTRICTION_NEW: Regularidade fiscal pendente.');\n  }\n\n  const opps = [];\n  if (employees >= 10 && !acc.payroll_active && eligibility === 'ELIGIBLE') {\n    const opp = {\n      cnpj: acc.cnpj,\n      razao_social: acc.razao_social,\n      product: 'FOLHA_DE_PAGAMENTO',\n      potential_gain: 4.0,\n      reason_code: 'CROSS_SELL_FOLHA_PAGAMENTO',\n      rationale: acc.razao_social + ' (' + employees + ' colaboradores) elegível para capturar 4,0 pts de Folha.'\n    };\n    opps.push(opp);\n    oppFolha.push(opp);\n  }\n\n  if (rev >= 1000000 && (!acc.billing_active || !acc.pix_active) && eligibility === 'ELIGIBLE') {\n    const opp = {\n      cnpj: acc.cnpj,\n      razao_social: acc.razao_social,\n      product: 'COBRANCA_E_PIX_EMPRESARIAL',\n      potential_gain: 4.0,\n      reason_code: 'CROSS_SELL_COBRANCA_PIX',\n      rationale: acc.razao_social + ' (R$ ' + (rev/1e6).toFixed(1) + 'M/ano) elegível para capturar 4,0 pts de Boleto/PIX.'\n    };\n    opps.push(opp);\n    oppCobranca.push(opp);\n  }\n\n  if (score >= 600 && score < 750 && protests === 0) {\n    const opp = {\n      cnpj: acc.cnpj,\n      razao_social: acc.razao_social,\n      product: 'MONITORAMENTO_PREVENTIVO_MORA',\n      potential_gain: 9.34,\n      reason_code: 'MONITORAMENTO_PREVENTIVO_MORA',\n      rationale: acc.razao_social + ' (Score ' + score + ') monitoramento para blindar 9,34 pts de Vencidos < 59d.'\n    };\n    opps.push(opp);\n    oppVencidos.push(opp);\n  }\n\n  evaluated.push({\n    account_ref: acc.cnpj,\n    razao_social: acc.razao_social,\n    eligibility_status: eligibility,\n    evidence_refs: ['account_record_' + acc.cnpj, 'receita_federal_cnae'],\n    opportunities: opps,\n    limitations\n  });\n}\n\nconst output = {\n  schema_version: '1.0.0',\n  request_id: request.request_id || ('req-conta-' + Date.now()),\n  provided_by: 'GERENTE_GERAL_CONTA',\n  mediated_by: 'MOTOR_CONSOLIDACAO_360',\n  operating_phase: 'ACCOUNT_LEVEL_FUTURE',\n  account_data_status: 'AVAILABLE',\n  portfolio_signals: [\n    { signal: 'Carteira analisada com ' + accounts.length + ' empresas ativas.', evidence_status: 'CONFIRMED', use_in_plan: 'ALLOW' },\n    { signal: 'Identificadas ' + (oppFolha.length + oppCobranca.length) + ' oportunidades aderentes aos gaps de Agosto/2026.', evidence_status: 'CONFIRMED', use_in_plan: 'ALLOW' }\n  ],\n  account_candidates: evaluated.filter(e => e.eligibility_status === 'ELIGIBLE' && e.opportunities.length > 0).map(e => ({\n    account_ref: e.account_ref,\n    eligibility_status: e.eligibility_status,\n    evidence_refs: e.evidence_refs\n  })),\n  summary: {\n    total_accounts: accounts.length,\n    eligible_count: evaluated.filter(e => e.eligibility_status === 'ELIGIBLE').length,\n    opp_folha_prioritaria: oppFolha.slice(0, 3),\n    opp_cobranca_prioritaria: oppCobranca.slice(0, 3),\n    opp_blindagem_vencidos: oppVencidos.slice(0, 3)\n  },\n  limitations: ['Dados cadastrais autorizados da agência 6895', 'Efeito externo exige autorização expressa de Rafael.'],\n  decision_authority: 'RAFAEL'\n};\n\nreturn [{ json: output }];"
+      },
+      "id": "evaluate-opportunities",
+      "name": "03 Avaliar elegibilidade e oportunidades",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "01 Receber demanda GG Conta": {
+      "main": [
+        [
+          {
+            "node": "02 Consultar carteira PJ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Consultar carteira PJ": {
+      "main": [
+        [
+          {
+            "node": "03 Avaliar elegibilidade e oportunidades",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000020"
+}

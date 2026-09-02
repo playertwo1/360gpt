@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 3.11.0-n8n-exclusive-runtime
-Current phase: recentralização do runtime no n8n/PostgreSQL local
-Current milestone: A0.2 — MVP Operacional Real (Homologado por Rafael)
-Current task: Gate MVP A0.2 concluído com sucesso; pacote pronto para auditoria independente do ChatGPT/Codex
-Status: COMPLETED_READY_FOR_AUDIT
+Version: 3.12.0-gg-conta-active
+Current phase: Fase N8.1 / Fase 4 — Gerente Geral de Conta Ativo e Integrado
+Current milestone: N8.1 — Ativação do GG Conta (Carteira PJ & Oportunidades)
+Current task: Carteira PJ de 20 contas corporativas persistida no PostgreSQL local; WF-20 ativo no n8n; motor de elegibilidade e reciprocidade integrado ao WF-12 (Diretor 360).
+Status: OPERATIONAL_ACTIVE_READY_FOR_USE
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,11 +14,11 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Rota crítica M0 a M10 executada integralmente: Webhook Telegram via Cloudflare restabelecido e operando, orquestrador WF-11 e despachante WF-101 ativos no n8n, Docling TableFormer CPU integrado, e validação real 100% aprovada pelo usuário Rafael ("agora esta funcionando foi tudo certo").
-Next task: Auditoria do pacote M0→M10 pelo ChatGPT e Codex.
+Last completed: Marco N8.1 concluído: schema `pj_accounts` e `pj_account_opportunities` criado no PostgreSQL local, 20 contas corporativas inseridas, motor determinístico `engines/conta/conta-engine.mjs` testado contra contratos canônicos, `WF-20` ativo no n8n local e integrado ao `WF-12` para cruzar gaps de Agosto/2026 (Folha, Cobrança, Vencidos) com clientes nominais da agência 6895.
+Next task: Marco P0 / N2 (Benchmark Tabular Docling CPU nos POBJ 2608/2708/2808) e acompanhamento contínuo da agência 6895.
 
-Last validation: 2026-09-02 12:05 — Homologação real de Rafael (PASS); `test:local-core` (PASS); `test-mvp-smoke-synthetic` (PASS); Webhook Cloudflare (200 OK); Docling TableFormer (200 OK).
-Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
+Last validation: 2026-09-02 14:10 — Teste de integração Conta x Performance (PASS); contratos e reason codes (PASS); `WF-20` e `WF-12` ativos no n8n.
+Last implementation checkpoint: 51aed1c feat(n8n): establish local orchestration core and gate mvp
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.

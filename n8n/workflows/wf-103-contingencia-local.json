@@ -1,0 +1,126 @@
+﻿{
+  "updatedAt": "2026-09-02T10:41:59.887Z",
+  "createdAt": "2026-09-02T10:41:59.887Z",
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000103",
+  "name": "WF-103 — Contingência local (INATIVO ATE CUTOVER)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "01 Capturar erro n8n",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const e=$input.first()?.json??{}; const workflowId=String(e.workflow?.id??'unknown'); const executionId=String(e.execution?.id??'unknown'); const node=String(e.node?.name??'unknown').slice(0,120); const correlation=String(e.execution?.customData?.correlation_id??'00000000-0000-0000-0000-000000000000'); return [{json:{tenant_id:'rafael-360',correlation_id:correlation,actor:'WF-103',actor_role:'SYSTEM',action:'WORKFLOW_ERROR_RECORDED',object_type:'N8N_EXECUTION',object_id:workflowId+':'+executionId,outcome:'FAILED_SANITIZED',release_id:'3.11.0',event_material:[workflowId,executionId,node].join('|')}}];"
+      },
+      "id": "sanitize",
+      "name": "02 Sanitizar sem dados sensíveis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO audit_log (tenant_id, correlation_id, actor, actor_role, action, object_type, object_id, outcome, release_id, event_hash) SELECT $1, $2::uuid, $3, $4, $5, $6, $7, $8, $9, 'sha256:' || encode(sha256(convert_to($10, 'UTF8')), 'hex') WHERE NOT EXISTS (SELECT 1 FROM audit_log WHERE tenant_id=$1 AND action=$5 AND object_id=$7);",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{[$json.tenant_id,$json.correlation_id,$json.actor,$json.actor_role,$json.action,$json.object_type,$json.object_id,$json.outcome,$json.release_id,$json.event_material]}}"
+        }
+      },
+      "id": "audit",
+      "name": "03 Registrar uma única contingência",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        80,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "01 Capturar erro n8n": {
+      "main": [
+        [
+          {
+            "node": "02 Sanitizar sem dados sensíveis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Sanitizar sem dados sensíveis": {
+      "main": [
+        [
+          {
+            "node": "03 Registrar uma única contingência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  },
+  "staticData": null,
+  "meta": {
+    "canonical_runtime": "N8N_LOCAL"
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "b596800b-d9b5-4b07-8314-56f76da59eab",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-02T10:41:59.887Z",
+      "createdAt": "2026-09-02T10:41:59.887Z",
+      "role": "workflow:owner",
+      "workflowId": "9eb8e86a-84b8-4aa9-97e4-360000000103",
+      "projectId": "gP27pW5SO7o4kDM0",
+      "project": {
+        "updatedAt": "2026-09-02T01:52:04.388Z",
+        "createdAt": "2026-09-01T18:48:45.11Z",
+        "id": "gP27pW5SO7o4kDM0",
+        "name": "rafael pedrosa <fael@live.de>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "97506ed6-4e4a-4dff-b342-ba33c3c6e978"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

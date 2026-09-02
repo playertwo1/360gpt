@@ -1,6 +1,11 @@
-{
+﻿{
+  "updatedAt": "2026-09-02T09:55:08.198Z",
+  "createdAt": "2026-09-02T09:27:51.265Z",
   "id": "9eb8e86a-84b8-4aa9-97e4-360000000100",
   "name": "WF-100 — Telegram local intake (INATIVO ATE CUTOVER)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -13,7 +18,10 @@
       "name": "01 Receber update interno",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-620, 0],
+      "position": [
+        -620,
+        0
+      ],
       "webhookId": "d360-telegram-local-intake-v1"
     },
     {
@@ -26,7 +34,10 @@
       "name": "02 Validar e normalizar",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-380, 0]
+      "position": [
+        -380,
+        0
+      ]
     },
     {
       "parameters": {
@@ -41,7 +52,10 @@
       "name": "03 Persistir atomicamente",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [-120, 0],
+      "position": [
+        -120,
+        0
+      ],
       "credentials": {
         "postgres": {
           "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
@@ -59,30 +73,87 @@
       "name": "04 Confirmar persistência",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [140, 0]
+      "position": [
+        140,
+        0
+      ]
     }
   ],
   "connections": {
     "01 Receber update interno": {
-      "main": [[{"node": "02 Validar e normalizar", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "02 Validar e normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "02 Validar e normalizar": {
-      "main": [[{"node": "03 Persistir atomicamente", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "03 Persistir atomicamente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "03 Persistir atomicamente": {
-      "main": [[{"node": "04 Confirmar persistência", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "04 Confirmar persistência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "pinData": {},
-  "active": false,
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Sao_Paulo",
     "saveManualExecutions": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
+  "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "tags": []
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "e0a414ea-2e0e-488a-9127-7a8568019c6f",
+  "activeVersionId": "e0a414ea-2e0e-488a-9127-7a8568019c6f",
+  "versionCounter": 2,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-02T09:27:51.265Z",
+      "createdAt": "2026-09-02T09:27:51.265Z",
+      "role": "workflow:owner",
+      "workflowId": "9eb8e86a-84b8-4aa9-97e4-360000000100",
+      "projectId": "gP27pW5SO7o4kDM0",
+      "project": {
+        "updatedAt": "2026-09-02T01:52:04.388Z",
+        "createdAt": "2026-09-01T18:48:45.11Z",
+        "id": "gP27pW5SO7o4kDM0",
+        "name": "rafael pedrosa <fael@live.de>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "97506ed6-4e4a-4dff-b342-ba33c3c6e978"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
 }

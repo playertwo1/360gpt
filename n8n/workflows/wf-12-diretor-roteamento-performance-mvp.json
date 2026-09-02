@@ -52,6 +52,44 @@
         200,
         80
       ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "9eb8e86a-84b8-4aa9-97e4-360000000020",
+          "mode": "list",
+          "cachedResultName": "WF-20 — GG Conta — Análise de Carteira e Elegibilidade"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "conta-analysis",
+      "name": "04 Acionar GG Conta",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "\nconst perfResult = $('03 Acionar GG Performance').first()?.json ?? {};\nconst contaResult = $input.first()?.json ?? {};\n\nconst summaryConta = contaResult.summary ?? {};\nconst oppFolha = (summaryConta.opp_folha_prioritaria ?? [])[0];\nconst oppCobranca = (summaryConta.opp_cobranca_prioritaria ?? [])[0];\nconst oppVencidos = (summaryConta.opp_blindagem_vencidos ?? [])[0];\n\nlet textToAdd = '\\n\\n🏢 *OPORTUNIDADES DE CARTEIRA PJ (GG Conta):*\\n';\nif (oppFolha) textToAdd += '• *Folha de Pagamento (+4,0 pts):* ' + oppFolha.razao_social + ' (Alvo de cross-sell)\\n';\nif (oppCobranca) textToAdd += '• *Cobrança & PIX (+4,0 pts):* ' + oppCobranca.razao_social + ' (Ativar esteira)\\n';\nif (oppVencidos) textToAdd += '• *Blindagem de Vencidos (9,34 pts):* ' + oppVencidos.razao_social + ' (Monitoramento preventivo)\\n';\n\nlet baseText = String(perfResult.result?.telegram_text || perfResult.telegram_text || '');\nif (baseText) {\n  baseText += textToAdd;\n  if (perfResult.result) perfResult.result.telegram_text = baseText;\n  else perfResult.telegram_text = baseText;\n}\n\nreturn [{\n  json: {\n    ...perfResult,\n    conta_domain: contaResult,\n    consolidated_360: {\n      performance_status: perfResult.result?.status || 'READY',\n      conta_status: contaResult.operating_phase || 'AVAILABLE',\n      target_companies_identified: (summaryConta.opp_folha_prioritaria?.length || 0) + (summaryConta.opp_cobranca_prioritaria?.length || 0),\n      decision_authority: 'RAFAEL'\n    }\n  }\n}];\n"
+      },
+      "id": "integrate-360",
+      "name": "05 Integrar Parecer 360",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        80
+      ]
     }
   ],
   "connections": {
@@ -71,6 +109,28 @@
         [
           {
             "node": "03 Acionar GG Performance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "03 Acionar GG Performance": {
+      "main": [
+        [
+          {
+            "node": "04 Acionar GG Conta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "04 Acionar GG Conta": {
+      "main": [
+        [
+          {
+            "node": "05 Integrar Parecer 360",
             "type": "main",
             "index": 0
           }

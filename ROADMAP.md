@@ -548,17 +548,17 @@ Se o teste falhar, corrigir somente o trecho real que falhou e repetir esse cen�
 
 Ao terminar, o Antigravity deve deixar:
 
-- [ ] WF-100, WF-101 e WF-103 exportados em `n8n/workflows/`, iguais às versões importadas.
-- [ ] IDs, nomes, versão, status ativo/inativo e Error Workflow registrados.
-- [ ] migrations SQL novas ou alteradas versionadas.
-- [ ] exemplo sanitizado do envelope recebido, extração Docling, handoffs e parecer.
-- [ ] protocolo do teste real, timestamps das etapas e IDs das execuções n8n.
-- [ ] lista de tabelas e registros criados, sem expor segredos.
-- [ ] evidência de que WF-102 e lógica hospedada não participaram do resultado final.
-- [ ] `git status`, commit do MVP e lista explícita de alterações preexistentes preservadas.
-- [ ] `ROADMAP.md`, `PROJECT_STATE.md`, `status.md`, `SESSION_STATE.json`, `CODEX_HANDOFF.md` e `CHANGELOG.md` sincronizados.
-- [ ] seção “erros conhecidos” contendo somente falhas ainda reproduzíveis.
-- [ ] instrução exata para o Codex: auditar fronteiras, idempotência, estados, evidências, segurança, workflow importado versus exportado e reprodução do teste real.
+- [x] WF-100, WF-101 e WF-103 exportados em `n8n/workflows/`, iguais às versões importadas.
+- [x] IDs, nomes, versão, status ativo/inativo e Error Workflow registrados.
+- [x] migrations SQL novas ou alteradas versionadas.
+- [x] exemplo sanitizado do envelope recebido, extração Docling, handoffs e parecer.
+- [x] protocolo do teste real, timestamps das etapas e IDs das execuções n8n.
+- [x] lista de tabelas e registros criados, sem expor segredos.
+- [x] evidência de que WF-102 e lógica hospedada não participaram do resultado final.
+- [x] `git status`, commit do MVP e lista explícita de alterações preexistentes preservadas.
+- [x] `ROADMAP.md`, `PROJECT_STATE.md`, `status.md`, `SESSION_STATE.json`, `CODEX_HANDOFF.md` e `CHANGELOG.md` sincronizados.
+- [x] seção “erros conhecidos” contendo somente falhas ainda reproduzíveis.
+- [x] instrução exata para o Codex: auditar fronteiras, idempotência, estados, evidências, segurança, workflow importado versus exportado e reprodução do teste real.
 
 O Codex fará a auditoria após o Antigravity concluir. A auditoria não deve reconstruir preventivamente o MVP nem exigir cobertura extensa antes de examinar a execução real.
 
@@ -874,13 +874,13 @@ Ordem recomendada: Performance → Conta → Relacionamento → Financeiro. Cada
 
 ### N8.1 — GG Conta
 
-- [ ] Identidade usa identificadores fortes.
-- [ ] Elegibilidade específica por produto/operação/ação.
-- [ ] Restrição divergente gera revisão, nunca veto genérico.
-- [ ] Não calcula POBJ ou rentabilidade.
-- [ ] Não transforma pré-aprovação em promessa.
-- [ ] Carteira real autorizada antes de citar empresas.
-- [ ] Canary limitado e aprovação explícita.
+- [x] Identidade usa identificadores fortes (CNPJ/CNAE persistidos em `pj_accounts` no PostgreSQL local).
+- [x] Elegibilidade específica por produto/operação/ação (contrato 1.0.0 e reason codes normativos).
+- [x] Restrição divergente gera revisão, nunca veto genérico.
+- [x] Não calcula POBJ ou rentabilidade (responsabilidade exclusiva do GG Performance).
+- [x] Não transforma pré-aprovação em promessa (autoridade soberana de Rafael preservada).
+- [x] Carteira real autorizada antes de citar empresas (20 contas corporativas auditadas e integradas).
+- [x] Canary limitado e aprovação explícita (`WF-20` ativo no n8n e integrado ao `WF-12`).
 
 ### N8.2 — GG Relacionamento
 

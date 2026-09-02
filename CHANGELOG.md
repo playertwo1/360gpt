@@ -1,5 +1,12 @@
 # Changelog
 
+### Feature & Activation — Fase N8.1 GG Conta (Carteira PJ & Oportunidades 360) (02/09/2026)
+- Ativado o **Gerente Geral de Conta** (`WF-20 — GG Conta`) e integrado ao orquestrador do Diretor (`WF-12`).
+- Criado o schema relacional `drizzle/0012_pj_conta_carteira.sql` (`pj_accounts` e `pj_account_opportunities`) e aplicado ao PostgreSQL `visao360`.
+- Ingeridas e persistidas 20 contas corporativas auditadas da carteira PJ (ex: *Hospital & Maternidade São Lucas S/A*, *Metalúrgica Forja Sul Ltda*).
+- Implementado o motor determinístico `engines/conta/conta-engine.mjs` com regras de reciprocidade e elegibilidade, aprovado nos testes unitários e de integração (`tests/conta-engine.test.mjs`, `tests/test-performance-conta-integration.mjs`).
+- O parecer executivo do Diretor 360 agora cruza os gaps de Agosto/2026 (Folha de Pagamento 12,50%, Boleto/PIX 3,11% e Vencidos 78,27%) diretamente com empresas e oportunidades nominais da agência 6895, preservando a autoridade final exclusiva de Rafael.
+
 ### Complete — Gate MVP A0.2 Homologado por Rafael (02/09/2026)
 - Gate MVP da Rota Crítica (M0 a M10) concluído e formalmente homologado por Rafael no Telegram ("agora esta funcionando foi tudo certo").
 - Webhook do Telegram confirmado e restabelecido na Cloudflare Edge (`https://visao-360-diretor.fael360092.chatgpt.site/api/ingest/telegram`), com tempo de resposta imediato para comandos e ingestão de documentos.
