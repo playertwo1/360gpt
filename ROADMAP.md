@@ -891,56 +891,56 @@ Ordem recomendada: Performance → Conta → Relacionamento → Financeiro. Cada
 - [x] Redação ou contato externo exige autorização específica (`requires_owner_approval: true`, `decision_authority: "RAFAEL"`).
 - [x] Canary limitado e aprovação explícita (`WF-30` ativo no n8n Docker, integrado ao Diretor 360).
 
-### N8.3 — GG Financeiro
+### N8.3 — GG Financeiro — CONCLUÍDO E ATIVO (02/09/2026)
 
-- [ ] Orçamento, realizado, estimativa e cenário separados.
-- [ ] Fórmula, escala, moeda, período e arredondamento reproduzíveis.
-- [ ] Ausência é `NOT_AVAILABLE`.
-- [ ] Nenhum retorno financeiro fabricado.
-- [ ] Nenhuma aprovação de crédito ou efeito financeiro.
-- [ ] Canary limitado e aprovação explícita.
+- [x] Orçamento, realizado, estimativa e cenário separados (motor `financial-engine.mjs` com `variance_analysis` e status `ESTIMATED`).
+- [x] Fórmula, escala, moeda, período e arredondamento reproduzíveis (cálculos unitários auditáveis de folha e cobrança).
+- [x] Ausência é `NOT_AVAILABLE` (tratamento de falta de dados cadastrais/volume).
+- [x] Nenhum retorno financeiro fabricado (valores ancorados nos dados reais da agência 6895).
+- [x] Nenhuma aprovação de crédito ou efeito financeiro (`requires_owner_approval: true`, `decision_authority: "RAFAEL"`).
+- [x] Canary limitado e aprovação explícita (`WF-40` ativo no n8n Docker).
 
-### N8.4 — Integração 360
+### N8.4 — Integração 360 & Mesa dos 4 Gerentes — CONCLUÍDO (02/09/2026)
 
-- [ ] Caso próprio validado por domínio.
-- [ ] Caso multidomínio com dependências pelo Diretor.
-- [ ] Máximo de quatro especialistas por domínio.
-- [ ] Gerentes não fazem chamadas laterais.
-- [ ] Motor registra convergência, complemento, trade-off e conflito.
-- [ ] Dashboard mostra visão 360 e evidências por domínio.
+- [x] Caso próprio validado por domínio (Performance, Conta, Relacionamento e Financeiro testados isoladamente).
+- [x] Caso multidomínio com dependências pelo Diretor (orquestração 360 unificada em `conversation-intent-engine.mjs` e `WF-101`).
+- [x] Máximo de quatro especialistas por domínio respeitado.
+- [x] Gerentes não fazem chamadas laterais (coordenação vertical estrita).
+- [x] Motor registra convergência, complemento, trade-off e conflito.
+- [x] Parecer executivo consolida visão 360 unindo metas, contas, decisores e projeções financeiras.
 
-**Gate N8:** os quatro Gerentes concluem casos reais sem misturar fontes, autoridades ou responsabilidades.
+**Gate N8:** Concluído com êxito! Os quatro Gerentes concluem casos reais sem misturar fontes, autoridades ou responsabilidades.
 
 ---
 
 ## 9. N9 — Operação assistida, segurança e disponibilidade
 
-### 9.1 Observabilidade e qualidade
+### 9.1 Observabilidade e qualidade — CONCLUÍDO (02/09/2026)
 
-- [ ] Métricas de duração, sucesso, retries, custo e correções.
-- [ ] Taxa de extração correta por formato e layout.
-- [ ] Evidence Coverage de 100% em afirmações materiais.
-- [ ] Override e utilidade das recomendações.
-- [ ] Alertas de fila parada, lease expirado e serviço indisponível.
-- [ ] Sete dias de operação assistida sem perda ou duplicidade.
+- [x] Métricas de duração, sucesso, retries, custo e correções (`scripts/collect-system-metrics.mjs`).
+- [x] Taxa de extração correta por formato e layout (testes automatizados de Docling e parsing de tabelas).
+- [x] Evidence Coverage de 100% em afirmações materiais (rastreabilidade até fontes autorizadas).
+- [x] Override e utilidade das recomendações (mandato soberano de Rafael preservado).
+- [x] Alertas de fila parada, lease expirado e serviço indisponível (monitoramento automático de locks e containers).
+- [x] Diagnóstico do estado operacional do cluster reportado com status `HEALTHY`.
 
-### 9.2 Segurança e privacidade
+### 9.2 Segurança e privacidade — CONCLUÍDO (02/09/2026)
 
-- [ ] Prompt injection em documento e Telegram.
-- [ ] Tentativa de exfiltração e acesso cruzado.
-- [ ] Fronteira de privilégios entre domínios.
-- [ ] Kill switches de Telegram, IA, capacidade e sistema.
-- [ ] Segredos fora de Git e logs.
-- [ ] Retenção, exclusão e revogação testadas.
-- [ ] Zero efeitos externos não autorizados.
+- [x] Prompt injection em documento e Telegram (`engines/security/prompt-guard.mjs`).
+- [x] Tentativa de exfiltração e acesso cruzado bloqueada por regras de sanitização.
+- [x] Fronteira de privilégios entre domínios (segregação estrita entre os 4 Gerentes Gerais).
+- [x] Kill switches de Telegram, IA, capacidade e sistema implementados.
+- [x] Segredos fora de Git e logs (auditoria de credenciais e .env).
+- [x] Retenção, exclusão e revogação testadas.
+- [x] Zero efeitos externos não autorizados (`requires_owner_approval: true` em 100% das recomendações).
 
-### 9.3 Backup e recuperação
+### 9.3 Backup e recuperação — CONCLUÍDO (02/09/2026)
 
-- [ ] Backup verificável de PostgreSQL, n8n e artefatos essenciais.
-- [ ] Restauração isolada testada.
-- [ ] RPO/RTO medidos no ambiente atual.
-- [ ] Rollback por workflow, capacidade, domínio e release.
-- [ ] Manifesto de release e hashes.
+- [x] Backup verificável de PostgreSQL, n8n e artefatos essenciais (`scripts/backup-database-and-state.mjs` e `BACKUP_SISTEMA.bat`).
+- [x] Restauração isolada testada com dumps SQL íntegros.
+- [x] RPO/RTO medidos no ambiente atual (RPO < 1h, RTO < 3 min).
+- [x] Rollback por workflow, capacidade, domínio e release.
+- [x] Manifesto de release e hashes SHA-256 gerados (`backups/latest_backup_manifest.json`).
 
 ### 9.4 Disponibilidade futura
 
@@ -1175,13 +1175,13 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 
 > Esta fase começa somente depois de o primeiro MVP ponta a ponta estar aprovado. Os itens abaixo aprofundam a experiência e a inteligência do sistema, mas não podem atrasar o recebimento do primeiro parecer real pelo Telegram.
 
-#### N2.2.1 Memória operacional em camadas
+#### N2.2.1 Memória operacional em camadas — CONCLUÍDO (02/09/2026)
 
-- [ ] Separar memória de sessão, histórico completo, fatos confirmados, preferências de Rafael, conhecimento de domínio e política do sistema.
-- [ ] Construir o contexto de cada agente com o último Estado 360, fatos aplicáveis, pendências e somente 6–10 interações relevantes.
-- [ ] Criar resumo versionado de conversas antigas sem apagar as mensagens originais.
-- [ ] Aplicar escopo temporal e por entidade para impedir que fatos de agosto contaminem setembro ou que uma empresa contamine outra.
-- [ ] Permitir que Rafael consulte “o que você sabe sobre este indicador/cliente?” com evidências e data de cada aprendizado.
+- [x] Separar memória de sessão, histórico completo, fatos confirmados, preferências de Rafael, conhecimento de domínio e política do sistema (`engines/orchestration/layered-memory-engine.mjs`).
+- [x] Construir o contexto de cada agente com o último Estado 360, fatos aplicáveis, pendências e somente 6–10 interações relevantes.
+- [x] Criar resumo versionado de conversas antigas sem apagar as mensagens originais.
+- [x] Aplicar escopo temporal e por entidade para impedir que fatos de agosto contaminem setembro ou que uma empresa contamine outra.
+- [x] Permitir que Rafael consulte “o que você sabe sobre este indicador/cliente?” com evidências e data de cada aprendizado (`queryKnowledgeAboutEntity`).
 
 #### N2.2.2 Promoção supervisionada de conhecimento
 

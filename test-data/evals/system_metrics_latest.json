@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-02T21:09:24.679Z",
+  "status": "HEALTHY",
+  "containers": {
+    "visao-360-postgres-1": "running",
+    "visao-360-n8n-1": "running",
+    "visao-360-document-worker-1": "running",
+    "visao-360-docling-1": "running",
+    "visao-360-telegram-poller-1": "running"
+  },
+  "database": {
+    "active_connections": 1,
+    "waiting_locks": 0,
+    "pj_accounts_count": 20,
+    "pj_contacts_count": 7
+  },
+  "jobs_summary": {},
+  "evidence_coverage": 1,
+  "alerts": []
+}

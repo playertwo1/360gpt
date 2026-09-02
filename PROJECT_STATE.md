@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 3.16.0-n8.2-gg-relacionamento-active
-Current phase: Pós-Marco N8.2 — GG Relacionamento Ativo no n8n e Diretor 360
-Current milestone: N8.3 — GG Financeiro (cálculos de impacto financeiro, margem e viabilidade)
-Current task: Especificar e estruturar o GG Financeiro no n8n (WF-40), delimitando margens e impacto de receita sem fabricar retornos.
+Version: 4.0.0-gate-n8-and-n9-completed
+Current phase: Pós-Gate N8, N9 e N2.2.1 — Mesa dos 4 Gerentes Ativa, Operação Assistida e Memória em Camadas
+Current milestone: Marcos N8.3, N8.4 (Gate N8), N9.1, N9.2, N9.3 e N2.2.1 Concluídos com Êxito
+Current task: Sistema 360 operando em produção local com os 4 Gerentes Gerais (Performance, Conta, Relacionamento e Financeiro), observabilidade contínua, backup automatizado e memória em 4 camadas.
 Status: READY
 
 Host baseline:
@@ -14,14 +14,14 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Marco N8.2 concluído e ativado em 02/09/2026. O GG Relacionamento (`WF-30`) foi implementado no n8n Docker, a tabela `pj_account_contacts` criada e populada no PostgreSQL local, e o motor `relationship-engine.mjs` validado contra o contrato `relationship-specialist-response.schema.json` com 100% de testes automatizados aprovados.
-Next task: Marco N8.3 — GG Financeiro.
+Last completed: Conclusão integral dos 6 passos canônicos do Roadmap: N8.3 (GG Financeiro WF-40 ativo no n8n), N8.4 (Gate N8 — Mesa Completa dos 4 Gerentes Gerais), N9.1 (Observabilidade e Métricas reportadas com status HEALTHY), N9.2 (Hardening de Segurança e Prompt Guard), N9.3 (Backup verificável com SHA-256 e atalho BAT) e N2.2.1 (Memória Operacional em 4 Camadas).
+Next task: Operação assistida e expansão de novos relatórios.
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados a Performance, Conta e Relacionamento.
+MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
 
-Last validation: 2026-09-02 17:39 — Bateria completa aprovada (tests/relationship-engine, tests/conversation-intent, tests/conta-engine, test:p0, test:local-core e build) com 100% PASS.
+Last validation: 2026-09-02 18:10 — Bateria completa aprovada com 100% PASS (financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, conta-engine, conta-contracts, test:p0, test:local-core e build).
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:

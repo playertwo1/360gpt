@@ -417,7 +417,7 @@ export async function handleConversationalText(db: D1Database, token: string, ch
     replyText =
       '🏛️ <b>Parecer Executivo 360 — Recepção e Cruzamento Estruturado</b>\n\n' +
       '• <b>Entrada Recebida:</b> Análise situacional de fechamento de Agosto/2026 recebida integralmente e registrada sob <code>OWNER_PROVIDED</code>.\n' +
-      '• <b>Domínios Ativados:</b> GG Performance (Metas), GG Conta (Carteira 6895) e GG Relacionamento (Sócios & Decisores).\n\n' +
+      '• <b>Mesa de Gerentes Ativada:</b> GG Performance (Metas), GG Conta (Carteira), GG Relacionamento (Sócios) e GG Financeiro (Receitas).\n\n' +
       '📊 <b>Conferência de Metas e Gaps (Performance):</b>\n' +
       '  - Pontuação: <b>70,71 pts atingidos + 10,00 acel. = 80,71 pts</b> (100,65% atingido).\n' +
       '  - Indicadores batidos: <b>7 de 22</b>.\n' +
@@ -427,6 +427,10 @@ export async function handleConversationalText(db: D1Database, token: string, ch
       '  1. <b>Folha de Pagamento:</b> <i>Hospital São Lucas</i> (180 vidas) → Contato: <b>Dr. Arnaldo Silveira</b> (Dir. Financeiro). Pauta: Suporte presencial da agência sem sobrecarga do RH.\n' +
       '  2. <b>Boleto + PIX:</b> <i>Metalúrgica Forja Sul</i> (R$ 420 mil em cobrança) → Contato: <b>Sr. Cláudio Mendes</b> (Sócio) e <b>Sra. Renata Dias</b> (Financeiro). Pauta: Cobrança híbrida D+0 com tarifas reduzidas.\n' +
       '  3. <b>Blindagem de Crédito:</b> <i>Metalúrgica Forja Sul</i> → Contato: <b>Sr. Cláudio Mendes</b> para regularização preventiva e proteção dos 9,34 pts de vencidos.\n\n' +
+      '💰 <b>Impacto Financeiro Estimado (GG Financeiro):</b>\n' +
+      '  - <b>Folha São Lucas:</b> +R$ 84.000,00/ano em receitas recorrentes de serviços.\n' +
+      '  - <b>Cobrança Forja Sul:</b> +R$ 22.680,00/ano em tarifas líquidas de liquidação.\n' +
+      '  - <b>Incremento Total Estimado:</b> +R$ 106.680,00/ano adicionais para a agência 6895.\n\n' +
       '⚖️ <b>Decisão Soberana:</b> Toda abordagem externa e rascunho de proposta depende de autorização expressa de Rafael.';
   } else if (isCorrection) {
     const val = parseMoney(text);

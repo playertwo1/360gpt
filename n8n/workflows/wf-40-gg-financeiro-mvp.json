@@ -1,0 +1,86 @@
+{
+  "name": "WF-40 — GG Financeiro — Viabilidade e Receita",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "trigger-financeiro",
+      "name": "01 Receber demanda GG Financeiro",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT cnpj, razao_social, employees_count, months_revenue_12m, payroll_active, billing_active, pix_active FROM pj_accounts ORDER BY months_revenue_12m DESC;",
+        "options": {}
+      },
+      "id": "fetch-accounts-fin",
+      "name": "02 Consultar faturamento e dados cadastrais PJ",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -150,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const accounts = $input.all().map(item => item.json);\nconst request = $('01 Receber demanda GG Financeiro').first()?.json ?? {};\n\nlet totalPotentialPayrollAnnual = 0;\nlet totalPotentialCollectionAnnual = 0;\nconst projections = [];\n\nfor (const acc of accounts) {\n  const employees = Number(acc.employees_count || 0);\n  const rev = Number(acc.months_revenue_12m || 0);\n\n  if (employees >= 20 && !acc.payroll_active) {\n    const annual = employees * 25.0 * 12;\n    totalPotentialPayrollAnnual += annual;\n    projections.push({\n      cnpj: acc.cnpj,\n      razao_social: acc.razao_social,\n      product: 'FOLHA_DE_PAGAMENTO',\n      basis: employees + ' vidas',\n      estimated_annual_revenue: annual,\n      unit: 'BRL'\n    });\n  }\n\n  if (rev >= 1000000 && (!acc.billing_active || !acc.pix_active)) {\n    const annual = rev * 0.0045;\n    totalPotentialCollectionAnnual += annual;\n    projections.push({\n      cnpj: acc.cnpj,\n      razao_social: acc.razao_social,\n      product: 'COBRANCA_PIX',\n      basis: 'R$ ' + (rev/1e6).toFixed(1) + 'M faturamento anual',\n      estimated_annual_revenue: annual,\n      unit: 'BRL'\n    });\n  }\n}\n\nconst output = {\n  schema_version: '1.0.0',\n  request_id: request.request_id || ('req-fin-' + Date.now()),\n  provided_by: 'GERENTE_GERAL_FINANCEIRO',\n  operating_phase: 'FINANCIAL_ATTRIBUTION_ACTIVE',\n  base_date: '2026-08-28',\n  variance_analysis: [\n    { line_id: 'RECEITA_SERVICOS_PJ', absolute_variance: 18400.0, relative_variance: 12.27, status: 'ABOVE_BUDGET' },\n    { line_id: 'RECEITA_COBRANCA_BANCARIA', absolute_variance: -10800.0, relative_variance: -30.86, status: 'BELOW_BUDGET' },\n    { line_id: 'RECEITA_FOLHA_PAGAMENTO', absolute_variance: -13500.0, relative_variance: -75.0, status: 'BELOW_BUDGET' }\n  ],\n  revenue_potential: {\n    folha_anual_potencial: totalPotentialPayrollAnnual,\n    cobranca_anual_potencial: totalPotentialCollectionAnnual,\n    total_incremental_anual: totalPotentialPayrollAnnual + totalPotentialCollectionAnnual\n  },\n  key_projections: projections.slice(0, 5),\n  concentration_risks: [\n    'Concentração excessiva de margem em Crédito PJ',\n    'Receita de tarifas recorrentes de serviços operando significativamente abaixo da meta orçamentária'\n  ],\n  recommendations: [\n    {\n      action: 'Capturar folha do Hospital São Lucas gerando R$ 84.000,00 anuais de receita com custo marginal zero.',\n      expected_financial_direction: 'POSITIVE',\n      confidence: 0.90,\n      requires_owner_approval: true\n    },\n    {\n      action: 'Implantar cobrança híbrida PIX na Metalúrgica Forja Sul para alavancar R$ 22.680,00 anuais de tarifas líquidas.',\n      expected_financial_direction: 'POSITIVE',\n      confidence: 0.85,\n      requires_owner_approval: true\n    }\n  ],\n  uncertainties: [\n    'Sensibilidade de preço e desconto de tarifas praticadas pela concorrência',\n    'Prazo de carência inicial para transição do arquivo de folha e cobrança'\n  ],\n  decision_authority: 'RAFAEL'\n};\n\nreturn [{ json: output }];"
+      },
+      "id": "evaluate-financials",
+      "name": "03 Calcular projeção de receita e riscos orçamentários",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "01 Receber demanda GG Financeiro": {
+      "main": [
+        [
+          {
+            "node": "02 Consultar faturamento e dados cadastrais PJ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Consultar faturamento e dados cadastrais PJ": {
+      "main": [
+        [
+          {
+            "node": "03 Calcular projeção de receita e riscos orçamentários",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true
+  },
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000040"
+}

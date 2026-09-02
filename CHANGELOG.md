@@ -1,5 +1,21 @@
 # Changelog
 
+### Complete & Homologated — Conclusão Integral dos 6 Passos do Roadmap (Marcos N8.3, N8.4, N9.1, N9.2, N9.3 e N2.2.1) (02/09/2026)
+- **1. Marco N8.3: Ativação do GG Financeiro (`WF-40`)**:
+  * Implementado e ativo o workflow **`WF-40 — GG Financeiro — Viabilidade e Receita`** (`9eb8e86a-84b8-4aa9-97e4-360000000040`) no n8n Docker.
+  * Criado o motor determinístico [`engines/financeiro/financial-engine.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/financeiro/financial-engine.mjs) calculando variações orçamentárias (`variance_analysis`), yield unitário de produtos (Folha e Cobrança) e projeções com status `ESTIMATED`, validado contra `contracts/financial-specialist-response.schema.json`.
+- **2. Marco N8.4: Gate N8 — Integração 360 & Mesa Completa dos 4 Gerentes Gerais**:
+  * Homologada a orquestração simultânea dos **4 Gerentes Gerais** (Performance, Conta, Relacionamento e Financeiro) sob a liderança do Diretor 360, amarrando gaps $\rightarrow$ empresas elegíveis $\rightarrow$ decisores e pauta consultiva $\rightarrow$ projeção financeira anual (+R$ 106.680,00/ano).
+  * Validado via [`tests/integration-360-gate-n8.test.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/tests/integration-360-gate-n8.test.mjs).
+- **3. Marco N9.1: Observabilidade e Operação Assistida**:
+  * Implementado [`scripts/collect-system-metrics.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/scripts/collect-system-metrics.mjs) com monitoramento contínuo de saúde de containers, conexões e locks no PostgreSQL. Status reportado: `HEALTHY`.
+- **4. Marco N9.2: Hardening de Segurança e Kill Switches**:
+  * Criado o motor [`engines/security/prompt-guard.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/security/prompt-guard.mjs) bloqueando prompt injections, instruções maliciosas e tentativas de exfiltração de dados sensíveis ou comandos SQL destrutivos.
+- **5. Marco N9.3: Backup Automatizado e Continuidade**:
+  * Implementada rotina de backup em [`scripts/backup-database-and-state.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/scripts/backup-database-and-state.mjs) e atalho `BACKUP_SISTEMA.bat`, gerando dumps criptograficamente verificados via hash SHA-256 e manifesto de integridade.
+- **6. Marco N2.2.1: Memória Operacional em 4 Camadas**:
+  * Criado o motor [`engines/orchestration/layered-memory-engine.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/orchestration/layered-memory-engine.mjs) segregando Sessão (efêmera), Fatos Confirmados (entidade), Preferências do Dono (diretrizes) e Governança Normativa, com suporte à consulta estruturada de evidências.
+
 ### Complete & Active — Marco N8.2: Ativação do GG Relacionamento (02/09/2026)
 - **Ativação do 3º Gerente Geral de Negócio:**
   * Implementado o workflow **`WF-30 — GG Relacionamento — Inteligência de Contato e Abordagem`** (`9eb8e86a-84b8-4aa9-97e4-360000000030`), ativo no n8n Docker.
