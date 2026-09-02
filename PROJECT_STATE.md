@@ -25,6 +25,7 @@ Blockers:
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - Não republicar o Telegram automático enquanto META, REALIZADO, % ATG, pontos e período não estiverem 100% associados.
 - Verificação final do deploy Sites v42 exige reconectar a conta proprietária `fael@live.de`; a sessão atual retorna `project_not_found` e não lista Sites.
+- Publicação autorizada em 2026-09-01, mas bloqueada: o conector Sites retornou `project_not_found` para `appgprj_6a8cd5d2678c8191b45be663fbb2a6fc` e não listou nenhum site. Login no Firefox não altera a sessão do conector.
 
 Decisions:
 - Docling Serve 1.30.0 em CPU é o único OCR.
@@ -35,12 +36,12 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 22:08
+Last update: 2026-09-01 22:15
 
 Resume instruction:
 1. Continuar `ROADMAP.md` a partir de P0.2/P0.3 e validar o canário assíncrono.
 2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
-3. Não publicar enquanto a conta proprietária do Sites não estiver conectada.
+3. Reconectar/autorizar a conta proprietária `fael@live.de` no conector Sites/Codex; depois publicar exatamente o commit validado.
 4. Após P0, retomar N2 sem alterar o gate objetivo do Docling.
 
 Evidence:
