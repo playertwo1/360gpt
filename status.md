@@ -30,6 +30,8 @@
 
 **Regra canônica obrigatória:** comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas somente podem existir em workflows/subworkflows n8n. Quatro caminhos legados externos estão congelados e serão migrados no Marco A0; enquanto existirem, o runtime completo não pode ser declarado homologado.
 
+**Checkpoint A0.2:** WF-101 (dispatcher), WF-102 (entrega) e WF-103 (contingência) foram criados e importados no n8n local, todos inativos. O claim/lease e o histórico inbound do WF-101 passaram em teste PostgreSQL transacional com rollback.
+
 **Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
 
 **Checkpoint local:** commit `1ba30c0` (`feat: add Docling CPU OCR candidate`).

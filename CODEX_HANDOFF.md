@@ -9,7 +9,7 @@
 
 **Regra canônica obrigatória (v3.11.0):** o n8n é a única autoridade operacional. Comandos, estado conversacional, seleção e chamada de IA, prompts, roteamento de agentes, cálculos, lacunas, perguntas, aprendizado, transições de jobs e decisão de resposta devem existir em workflows/subworkflows n8n. Sites/Telegram transportam e exibem; Docling extrai; PostgreSQL persiste. As quatro exceções listadas em `policies/n8n-canonical-architecture.yaml` estão congeladas e impedem a homologação do Gate A0 até serem removidas ou reduzidas a adaptadores passivos.
 
-**Ponto exato de retomada:** A0.2 — criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência. O Telegram permanece no webhook estável do Sites, confirmado sem erro; WF-97 deve transportar a fila ao Docker. `telegram-poller` fica desligado como contingência.
+**Ponto exato de retomada:** A0.2 — WF-101, WF-102 e WF-103 já foram criados, importados e mantidos inativos. Claim/lease e histórico inbound passaram em transação sintética com rollback. Completar agora o catálogo determinístico no WF-101, persistência outbound no WF-102 e teste integrado sem ativação. O Telegram permanece no webhook estável; `telegram-poller` fica desligado como contingência.
 
 ---
 
