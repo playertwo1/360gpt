@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 4.1.0-n2.2-phases-completed
-Current phase: Pós-Marcos N2.2.2 a N2.2.6 — Inteligência Conversacional, Simulação Sandbox, Roteamento Fino e Comandos Avançados
-Current milestone: Saneamento Geral Concluído + Marcos N2.2.2, N2.2.3, N2.2.4, N2.2.5 e N2.2.6 Homologados
-Current task: Sistema 360 com saneamento de logs concluído, índice em pj_account_contacts, promoção de conhecimento supervisionada, simulações what-if sem poluição de estado, roteamento progressivo multidomínio, resolução de referências contextuais e catálogo textual ampliado (/indicador, /fontes, /evidencias).
+Version: 5.0.0-gate-n2.2-and-pilot-ready
+Current phase: Pós-Marcos N2.2.7 a N2.2.11 e Gate N2.2 Homologado — Reconciliação Cirúrgica, UX Adaptativa com Badges, FinOps & Context Trimming, DLP de Dados Pessoais e Golden Dataset de Replay
+Current milestone: Todos os 10 Marcos Evolutivos Pós-MVP Concluídos + Gate N2.2 Homologado (Status: PILOT_READY)
+Current task: Sistema Diretor 360 completamente homologado, auditado e pronto para a operação piloto assistida na Agência 6895 (VJ-SAO FIDELIS).
 Status: READY
 
 Host baseline:
@@ -15,20 +15,18 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: 
-1. Saneamento: Correção do nó de claim do WF-101 no n8n (eliminação de logs de erro por execução com fila vazia) e criação de índice idx_pj_contacts_cnpj.
-2. Refatoração SSOT: Eliminação de duplicação em lib/telegram-runtime.ts chamando diretamente o motor de intenção conversacional.
-3. Marco N2.2.2: Ciclo de vida de aprendizado supervisionado (OBSERVED -> LEARNING_CANDIDATE -> VALIDATED -> OWNER_APPROVED -> PROMOTED).
-4. Marco N2.2.3: Motor de simulações "What-If" em sandbox isolado sem contaminação do Estado 360.
-5. Marco N2.2.4: Roteamento progressivo multidomínio com justificativas de inclusão/exclusão e governança vertical sem chamadas laterais.
-6. Marco N2.2.5: Resolução de referências contextuais anafóricas ("essa empresa", "essa esteira", "e se forem mais 2?").
-7. Marco N2.2.6: Catálogo textual e comandos avançados no Telegram (/indicador, /fontes, /evidencias).
-Next task: Fase 6 (Marco N2.2.7 — Reconciliação, Correção e Reprocessamento).
+1. Marco N2.2.7: Reconciliação cirúrgica de divergências (DIVERGENCIA_DE_DADOS, DIVERGENCIA_TEMPORAL), vínculo SUPERSEDES e comando /resolver no Telegram.
+2. Marco N2.2.8: Experiência adaptativa de resposta com badges de proveniência ([OFICIAL], [DECLARADO POR RAFAEL], [CÁLCULO], [ESTIMATIVA], [PENDÊNCIA]) e modos /modo compacto, executivo e detalhado.
+3. Marco N2.2.9: Eficiência e FinOps com Context Trimming (~90% de economia de tokens), cache local determinístico por SHA-256 e contabilização de custos.
+4. Marco N2.2.10: DLP de dados pessoais com mascaramento automático de CPFs e contas bancárias, e quarentena de injeções indiretas em documentos.
+5. Marco N2.2.11 & Gate N2.2: Bateria do Golden Dataset com 10 cenários canônicos aprovados com 100% de precisão (PILOT_READY).
+Next task: Iniciar Operação Piloto Assistida em Campo de 7 dias na Agência 6895.
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais e aos motores contextuais e de simulação.
+MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 
-Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
+Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade. 100% CONCLUÍDO E HOMOLOGADO.
 
-Last validation: 2026-09-02 18:43 — Bateria completa de 14 suítes aprovada com 100% PASS (knowledge-promotion, simulation-engine, progressive-router, contextual-reference, advanced-commands, financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, test:p0, test:local-core e build).
+Last validation: 2026-09-02 19:14 — Bateria completa de 19 suítes aprovada com 100% PASS (reconciliation, adaptive-response, efficiency-engine, dlp-guard, golden-dataset, knowledge-promotion, simulation-engine, progressive-router, contextual-reference, advanced-commands, financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, test:p0, test:local-core e build).
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:

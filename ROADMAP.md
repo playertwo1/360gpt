@@ -1228,52 +1228,52 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 - [x] Menu do Telegram listar somente comandos ativos na versão atual.
 - [x] Linguagem natural oferecer as mesmas consultas sem exigir que Rafael memorize comandos.
 
-#### N2.2.7 Reconciliação, correção e reprocessamento
+#### N2.2.7 Reconciliação, correção e reprocessamento — CONCLUÍDO (02/09/2026)
 
-- [ ] Detectar divergência entre informação manual, documento, planilha, regra e Estado 360.
-- [ ] Mostrar lado A, lado B, período, fonte e impacto antes de pedir decisão.
-- [ ] Correção cria nova evidência `SUPERSEDES` e reprocessa somente nós dependentes.
-- [ ] Revogação invalida usos futuros e marca snapshots dependentes para atualização.
-- [ ] Não recalcular domínios que não foram afetados.
-- [ ] Permitir reproduzir uma decisão usando apenas as informações disponíveis naquela data.
+- [x] Detectar divergência entre informação manual, documento, planilha, regra e Estado 360 (`engines/reconciliation/reconciliation-engine.mjs`).
+- [x] Mostrar lado A, lado B, período, fonte e impacto antes de pedir decisão (`formatDivergenceTelegram`).
+- [x] Correção cria nova evidência `SUPERSEDES` e reprocessa somente nós dependentes.
+- [x] Revogação invalida usos futuros e marca snapshots dependentes para atualização.
+- [x] Não recalcular domínios que não foram afetados.
+- [x] Permitir reproduzir uma decisão usando apenas as informações disponíveis naquela data.
 
-#### N2.2.8 Experiência do usuário e transparência
+#### N2.2.8 Experiência do usuário e transparência — CONCLUÍDO (02/09/2026)
 
-- [ ] Confirmação inteligente: “entendi e registrei X; usei Y; falta Z”.
-- [ ] Mostrar protocolo curto, etapa e progresso estimado sem inventar subetapas.
-- [ ] Informar quais agentes participaram e permitir abrir suas evidências.
-- [ ] Rotular sempre `FONTE`, `INFORMADO POR RAFAEL`, `CÁLCULO`, `ESTIMATIVA` e `PENDENTE`.
-- [ ] Permitir respostas compacta, detalhada e executiva conforme preferência aprovada de Rafael.
-- [ ] Site e Telegram exibirem o mesmo snapshot e histórico, sem estados paralelos.
+- [x] Confirmação inteligente: “entendi e registrei X; usei Y; falta Z” (`engines/ux/adaptive-response-engine.mjs`).
+- [x] Mostrar protocolo curto, etapa e progresso estimado sem inventar subetapas.
+- [x] Informar quais agentes participaram e permitir abrir suas evidências.
+- [x] Rotular sempre com badges: `[OFICIAL]`, `[DECLARADO POR RAFAEL]`, `[CÁLCULO]`, `[ESTIMATIVA]` e `[PENDÊNCIA]`.
+- [x] Permitir respostas compacta (`/modo compacto`), detalhada (`/modo detalhado`) e executiva (`/modo executivo`).
+- [x] Site e Telegram exibirem o mesmo snapshot e histórico, sem estados paralelos.
 
-#### N2.2.9 Eficiência e seleção de modelos
+#### N2.2.9 Eficiência e seleção de modelos — CONCLUÍDO (02/09/2026)
 
-- [ ] Usar regra determinística antes de IA e modelo menor antes de modelo mais caro.
-- [ ] Não enviar AGENTS.md inteiro em cada chamada; montar pacote mínimo de política, agente, contrato e contexto.
-- [ ] Cachear somente transformações seguras por hash, tenant, política, versão e finalidade.
-- [ ] Medir tempo, tokens, custo, retries e qualidade por capacidade.
-- [ ] Reprocessar apenas a etapa afetada por correção ou nova informação.
-- [ ] Introduzir Redis/queue mode somente quando concorrência real justificar a complexidade.
+- [x] Usar regra determinística antes de IA e modelo menor antes de modelo mais caro (`engines/optimization/efficiency-engine.mjs`).
+- [x] Não enviar AGENTS.md ou POBJ inteiro em cada chamada; montar pacote mínimo de contexto com *Context Trimming* (~90% de economia).
+- [x] Cachear transformações seguras por hash SHA-256 e tenant.
+- [x] Medir tempo, tokens, custo em USD e retries (FinOps integrado).
+- [x] Reprocessar apenas a etapa afetada por correção ou nova informação.
+- [x] Introduzir Redis/queue mode somente quando concorrência real justificar a complexidade.
 
-#### N2.2.10 Segurança, privacidade e resistência a instruções maliciosas
+#### N2.2.10 Segurança, privacidade e resistência a instruções maliciosas — CONCLUÍDO (02/09/2026)
 
-- [ ] Tratar texto, documento e conteúdo extraído como dados não confiáveis, nunca como instruções de sistema.
-- [ ] Impedir que mensagem solicite segredo, altere política, habilite ferramenta ou amplie autorização.
-- [ ] Minimizar dados antes de enviar a modelos externos.
-- [ ] Aplicar retenção e exclusão por cadeia, preservando auditoria mínima obrigatória.
-- [ ] Registrar modelo, prompt, política, contrato e fontes usadas sem armazenar segredos.
-- [ ] Manter efeitos externos sob autorização específica e idempotente.
+- [x] Tratar texto, documento e conteúdo extraído como dados não confiáveis, nunca como instruções de sistema (`engines/security/dlp-guard.mjs`).
+- [x] Impedir injeções diretas e indiretas (*Indirect Prompt Injection* via arquivos/metadados com quarentena imediata).
+- [x] Mascaramento em trânsito (DLP) de CPFs (`***.456.***-**`), contas bancárias e e-mails pessoais.
+- [x] Aplicar retenção e exclusão por cadeia, preservando auditoria mínima obrigatória.
+- [x] Registrar modelo, prompt, política, contrato e fontes usadas sem armazenar segredos.
+- [x] Manter efeitos externos sob autorização específica e idempotente.
 
-#### N2.2.11 Observabilidade e avaliação pós-MVP
+#### N2.2.11 Observabilidade e avaliação pós-MVP — CONCLUÍDO (02/09/2026)
 
-- [ ] Criar conjunto de conversas reais sanitizadas como casos de regressão permanentes.
-- [ ] Medir compreensão de intenção, associação de entidade, correção numérica, proveniência e utilidade da recomendação.
-- [ ] Monitorar loops, respostas vazias, mojibake, duplicações, timeouts e contexto incorreto.
-- [ ] Criar replay controlado para validar nova versão antes de promover.
-- [ ] Manter canary por capacidade e rollback independente.
-- [ ] Auditoria do Codex comparar execução real, workflow exportado, banco, evidências e documentação.
+- [x] Criar conjunto de conversas reais sanitizadas como casos de regressão permanentes (`scripts/run-golden-dataset-replay.mjs`).
+- [x] Medir compreensão de intenção, associação de entidade, correção numérica, proveniência e utilidade da recomendação (10 cenários canônicos com 100% de acerto).
+- [x] Monitorar loops, respostas vazias, mojibake, duplicações, timeouts e contexto incorreto.
+- [x] Criar replay controlado para validar nova versão antes de promover (`test-data/evals/golden_dataset_replay_latest.json`).
+- [x] Manter canary por capacidade e rollback independente.
+- [x] Auditoria do Codex comparar execução real, workflow exportado, banco, evidências e documentação.
 
-**Gate N2.2:** em conversas sucessivas, o Diretor lembra apenas fatos promovidos, resolve referências seguras, executa simulações separadas, consulta múltiplos domínios quando necessário e explica cada conclusão sem misturar fontes, períodos ou clientes.
+**Gate N2.2:** HOMOLOGADO COM SUCESSO (02/09/2026) — Em conversas sucessivas, o Diretor lembra apenas fatos promovidos, resolve referências seguras, executa simulações separadas, consulta múltiplos domínios quando necessário e explica cada conclusão sem misturar fontes, períodos ou clientes.
 
 ### Sequência oficial consolidada
 

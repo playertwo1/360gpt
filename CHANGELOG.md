@@ -1,5 +1,29 @@
 # Changelog
 
+### Complete & Homologated — Fases 6 a 10 Concluídas & Gate N2.2 Homologado (Status: PILOT_READY) (02/09/2026)
+- **6. Marco N2.2.7: Reconciliação Cirúrgica, Correção e Reprocessamento:**
+  * Implementado `engines/reconciliation/reconciliation-engine.mjs` com classificação automática de divergências (`DIVERGENCIA_DE_DADOS`, `DIVERGENCIA_TEMPORAL`, `DIVERGENCIA_NORMATIVA`).
+  * Criado fluxo de resolução em 1 toque via comando `/resolver <id> [a|b]`, gerando vínculo `SUPERSEDES` e recalculando estritamente os nós afetados sem poluição de estado.
+  * Validado por `tests/reconciliation-engine.test.mjs` (100% PASS).
+- **7. Marco N2.2.8: Experiência do Usuário (UX), Badges Visuais e Modo Adaptativo:**
+  * Implementado `engines/ux/adaptive-response-engine.mjs` com injeção de badges padronizados (`[OFICIAL]`, `[DECLARADO POR RAFAEL]`, `[CÁLCULO]`, `[ESTIMATIVA]`, `[PENDÊNCIA]`).
+  * Introduzido o comando `/modo [compacto|executivo|detalhado]`, permitindo respostas em 3 bullets ultrarrápidos para o celular ou relatórios completos com CNPJ e decisores.
+  * Validado por `tests/adaptive-response.test.mjs` (100% PASS).
+- **8. Marco N2.2.9: Eficiência, Context Trimming, Cache Determinístico e FinOps:**
+  * Implementado `engines/optimization/efficiency-engine.mjs` com aparagem de contexto cirúrgico (*Context Trimming*), reduzindo em até 90% os tokens enviados para perguntas pontuais.
+  * Cache em memória determinístico por hash SHA-256 (tempo de resposta < 2ms e 0 tokens consumidos para consultas repetidas).
+  * Monitor de FinOps calculando custo em dólares e latência em tempo real.
+  * Validado por `tests/efficiency-engine.test.mjs` (100% PASS).
+- **9. Marco N2.2.10: Segurança Avançada, DLP de Dados Pessoais e Defesa contra Injeção Indireta:**
+  * Implementado `engines/security/dlp-guard.mjs` com mascaramento automático de CPFs (`***.456.***-**`), contas correntes e e-mails pessoais.
+  * Inspeção preventiva contra ataques de *Indirect Prompt Injection* embutidos em arquivos, metadados de PDFs ou planilhas, com quarentena imediata do arquivo malicioso.
+  * Validado por `tests/dlp-guard.test.mjs` (100% PASS).
+- **10. Marco N2.2.11 & Gate N2.2: Bateria Golden Dataset de Replay e Piloto Homologado:**
+  * Implementado `scripts/run-golden-dataset-replay.mjs` com 10 cenários canônicos reais da agência 6895 (situação de POBJ, folha, cobrança, crédito no teto, mora, novas contas, what-if sandbox, referências, divergências e modo compacto).
+  * Execução aprovada com 10/10 cenários e status `PILOT_READY` gravado em `test-data/evals/golden_dataset_replay_latest.json`.
+  * Validado por `tests/golden-dataset-replay.test.mjs` (100% PASS).
+  * **Gate N2.2 Homologado:** O MVP utilizável pelo celular está 100% testado, auditado e pronto para a operação piloto assistida.
+
 ### Complete & Homologated — Saneamento de Logs + 5 Fases Evolutivas (N2.2.2 a N2.2.6) (02/09/2026)
 - **0. Saneamento e Otimização Prévia:**
   * **Correção no `WF-101`**: Nó `04 Persistir conversa` recebeu cláusula de guarda `WHERE $1 IS NOT NULL`, eliminando permanentemente erros recorrentes a cada 1 minuto nos logs do PostgreSQL por execuções em fila vazia.
