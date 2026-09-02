@@ -1,0 +1,11 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000102",
+  "name": "WF-102 — Entrega Telegram por adaptador (INATIVO ATE CUTOVER)",
+  "nodes": [
+    {"parameters": {},"id":"trigger","name":"01 Receber envelope de entrega","type":"n8n-nodes-base.executeWorkflowTrigger","typeVersion":1,"position":[-460,0]},
+    {"parameters":{"mode":"runOnceForAllItems","jsCode":"const input = $input.first()?.json ?? {}; const text = String(input.text ?? input.text_content ?? ''); const maxLen = 3800; const parts = []; for (let i=0; i<text.length; i+=maxLen) parts.push({json:{...input,text:text.slice(i,i+maxLen),part_index:parts.length+1,part_total:Math.ceil(text.length/maxLen)}}); return parts.length ? parts : [{json:{...input,text:'',part_index:1,part_total:1}}];"},"id":"split","name":"02 Dividir mensagem com idempotência","type":"n8n-nodes-base.code","typeVersion":2,"position":[-200,0]},
+    {"parameters":{"method":"POST","url":"http://telegram-poller:8790/send","sendHeaders":true,"headerParameters":{"parameters":[{"name":"X-Director360-Transport","value":"={{$env.BRIDGE_SHARED_SECRET}}"}]},"sendBody":true,"contentType":"json","specifyBody":"json","jsonBody":"={{JSON.stringify({chat_id:$json.chat_id,text:$json.text,parse_mode:'HTML'})}}","options":{"response":{"response":{"neverError":true,"responseFormat":"json"}},"timeout":10000},"onError":"continueRegularOutput"},"id":"send","name":"03 Enviar pelo adaptador","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[100,0]}
+  ],
+  "connections":{"01 Receber envelope de entrega":{"main":[[{"node":"02 Dividir mensagem com idempotência","type":"main","index":0}]]},"02 Dividir mensagem com idempotência":{"main":[[{"node":"03 Enviar pelo adaptador","type":"main","index":0}]]}},
+  "pinData":{},"active":false,"settings":{"executionOrder":"v1","timezone":"America/Sao_Paulo","saveDataErrorExecution":"all","saveDataSuccessExecution":"none"},"versionId":"d360-wf102-v1","meta":{"canonical_runtime":"N8N_LOCAL"},"tags":[]
+}

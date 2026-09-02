@@ -272,7 +272,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Migrar `/start`, `/comandos`, `/ajuda`, `/menu`, `/status`, `/progresso`, `/protocolo`, `/pendencias` e `/duvidas` para PostgreSQL/n8n.
 - [ ] Migrar `/excluir`, `/excluirultimo`, `/confirmar` e protocolos curtos com confirmação idempotente.
 - [ ] Registrar conversa inbound/outbound e impedir que mensagem do próprio bot seja processada.
-- [ ] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura e idempotência por parte.
+- [x] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura em partes de 3.800 caracteres e workflow inativo até cutover.
 - [ ] Criar WF-103 de contingência local, com erro sanitizado e sem aviso duplicado.
 - [ ] Remover parser e execução de comandos de `lib/telegram-runtime.ts` após equivalência comprovada no WF-101.
 
