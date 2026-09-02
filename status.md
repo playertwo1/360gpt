@@ -1,45 +1,32 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026, 16:37 (America/Sao_Paulo)
-**Versão Atual da Release:** `v3.14.0-gate-n2-approved`
-**Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
+**Data do status:** 2 de setembro de 2026, 20:40 (America/Sao_Paulo)
+**Versão Atual da Release:** `v5.3.0-gate-a0-and-flywheel-roadmap`
+**Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Marcos N0 a N13 + Marco N2.3)  
 **Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
-**Saúde do Projeto:** 🟢 **GATE MVP CONCLUÍDO | GG CONTA (N8.1) ATIVO | GATE N2 HOMOLOGADO POR RAFAEL**
+**Saúde do Projeto:** 🟢 **PILOTO EM CAMPO ATIVO | GATE A0 CONCLUÍDO | MARCO N2.3 APROVADO**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`); `360.git` preservado como remoto legado.  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 
-> Este arquivo é um relatório humano de status, não uma fila de tarefas. Toda sequência, checklist e próximo passo oficial residem exclusivamente em `ROADMAP.md`.
+> Este arquivo é um relatório humano de status, não uma fila de tarefas. Toda sequência, checklist e próximo passo oficial residem exclusivamente em `ROADMAP.md` e `docs/ONDE_ESTAMOS_E_PROXIMOS_PASSOS.md`.
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Gate N2 (Conferência de campos críticos do Docling TableFormer CPU em POBJ2608.pdf) formalmente homologado por Rafael ("Sim") em 02/09/2026.
-**Marco anterior:** Fase N8.1 (GG Conta — Carteira PJ & Oportunidades 360) ativada com 20 empresas auditadas no PostgreSQL e WF-20 integrado ao WF-12.
-**Relatório da auditoria:** `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md` e `walkthrough.md`  
-**Escopo Ativo:** Telegram → Webhook Cloudflare → Orquestrador WF-11/WF-12 local → Docling TableFormer → GG Performance (WF-13) + GG Conta (WF-20) → Parecer Integrado 360 no Telegram.
-**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11, WF-12, WF-13 e WF-20 ativos no n8n.
-**Próximo passo:** ROADMAP 4.6/N2.1 — cinco casos textuais simples no WF-101; depois E2E WF-11, Gate N7 e somente então N2.2 avançado e GG Relacionamento.
+**Último marco concluído:** Gate A0 (Cutover Canônico e Aposentadoria de Exceções Legadas) homologado em 02/09/2026 com status `CANONICAL_LOCAL_ACTIVE` e `legacyExceptions: 0`.
+**Marco comercial ativo:** Briefing Matinal Proativo (`WF-102`) agendado às 08h30 e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`), testados e entregues com HTTP 200 no Telegram de Rafael.
+**Próximo marco aprovado:** Marco N2.3 (Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente — Fases N2.3.1 a N2.3.5).
+**Próxima tarefa:** Fase N2.3.1 (Camada de Memória Semântica Desacoplada no PostgreSQL `visao360`).
 
-**Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
+**Decisão arquitetural vigente:** O n8n local no Docker é a autoridade operacional exclusiva, operando com 28 workflows ativos. O PostgreSQL local `visao360` é a fonte oficial de dados, carteira e Estado 360. Todos os componentes legados fora do n8n foram aposentados ou reduzidos a transporte puro.
 
-**Regra canônica obrigatória:** comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas somente podem existir em workflows/subworkflows n8n. Quatro caminhos legados externos estão congelados e serão migrados no Marco A0; enquanto existirem, o runtime completo não pode ser declarado homologado.
+**Regra canônica obrigatória:** Comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas existem estritamente em workflows n8n e engines determinísticos. Zero exceções legadas ativas.
 
-**Checkpoint A0.2:** WF-101 (dispatcher), WF-102 (entrega) e WF-103 (contingência) foram criados e importados no n8n local, todos inativos. O claim/lease e o histórico inbound do WF-101 passaram em teste PostgreSQL transacional com rollback.
-
-**Handoff atual:** o Antigravity executará a rota crítica M0→M10 definida no `ROADMAP.md` 4.4. O WF-102 será incorporado ao WF-101, deixando o runtime do MVP limitado a WF-100, WF-101 e WF-103. Após o teste real, o Codex fará somente a auditoria técnica e de aderência.
-
-**Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
-
-**Checkpoint local:** commit `1ba30c0` (`feat: add Docling CPU OCR candidate`).
-**Roadmap canônico:** `ROADMAP.md`; planejamento e checklist foram unificados, e o n8n controla todo o ciclo operacional.
-**Versão hospedada atual:** 41; inclui conhecimento POBJ supervisionado, aba `/knowledge`, migração versionada e comandos seguros de aprovação/revogação.
-**Checkpoint para troca de conta:** `SESSION_STATE.json` e `docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md`; retomar pelo N1 no WF-11.
-
-**Persistência Docker confirmada:** Docker Desktop foi substituído pelo Engine nativo no Ubuntu/WSL2. A distribuição e seus volumes ficam em `G:\Docker\Ubuntu`; `./n8n/workflows` e `./infra/postgres/init` permanecem bind mounts do repositório.
+**Regressão técnica:** 21 suítes de testes automatizados passando com 100% de êxito, `test:local-core` exibindo `CANONICAL_LOCAL_ACTIVE`, `test:p0` com 34/34 verificações e build do Next.js / Edge Worker com 0 erros.
 
 **Baseline do host:** AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2, WSL limitado a 6 GB, Lazydocker 0.25.2 e mais de 451 GB recuperados (G: 763 GB livres; C: 233 GB livres).
 
