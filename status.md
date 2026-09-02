@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026, 12:05 (America/Sao_Paulo)
-**Versão Atual da Release:** `v3.11.0-n8n-exclusive-runtime`
+**Data do status:** 2 de setembro de 2026, 16:32 (America/Sao_Paulo)
+**Versão Atual da Release:** `v3.14.0-gate-n2-approved`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
-**Saúde do Projeto:** 🟢 **GATE MVP CONCLUÍDO E HOMOLOGADO POR RAFAEL (M0 A M10 APROVADOS)**
+**Saúde do Projeto:** 🟢 **GATE MVP CONCLUÍDO | GG CONTA (N8.1) ATIVO | GATE N2 HOMOLOGADO POR RAFAEL**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -17,12 +17,12 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Gate MVP A0.2 (Passos M0 a M10) totalmente concluído e homologado em teste real com Rafael ("agora esta funcionando foi tudo certo").
-**Correção de governança recente:** Webhook Cloudflare oficial restabelecido, polling concorrente desativado e orquestrador n8n WF-11 ativado localmente com Docling TableFormer CPU.
-**Relatório da auditoria:** `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md`  
-**Escopo do MVP:** Telegram → Webhook Cloudflare → Orquestrador WF-11/WF-101 local → Docling TableFormer → GG Performance (WF-13) → Parecer Telegram.
-**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11 e WF-101 ativos no n8n; motor de regras e tabelas estruturadas validadas.
-**Próximo passo:** Pacote de auditoria independente para verificação do ChatGPT e Codex.
+**Último marco concluído:** Gate N2 (Conferência de campos críticos do Docling TableFormer CPU em POBJ2608.pdf) formalmente homologado por Rafael ("Sim") em 02/09/2026.
+**Marco anterior:** Fase N8.1 (GG Conta — Carteira PJ & Oportunidades 360) ativada com 20 empresas auditadas no PostgreSQL e WF-20 integrado ao WF-12.
+**Relatório da auditoria:** `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md` e `walkthrough.md`  
+**Escopo Ativo:** Telegram → Webhook Cloudflare → Orquestrador WF-11/WF-12 local → Docling TableFormer → GG Performance (WF-13) + GG Conta (WF-20) → Parecer Integrado 360 no Telegram.
+**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11, WF-12, WF-13 e WF-20 ativos no n8n.
+**Próximo passo:** Marco N8.2 (GG Relacionamento) ou piloto documental E2E do WF-11.
 
 **Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
 

@@ -1,15 +1,18 @@
 # 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-**Data da Última Atualização:** 02 de setembro de 2026
+**Data da Última Atualização:** 02 de setembro de 2026, 16:32
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
-**Status Atual da Infraestrutura:** LEVE, OTIMIZADA, COM PERSISTÊNCIA 100% PRESERVADA
+**Status Atual:** GATE MVP (A0.2) CONCLUÍDO | FASE N8.1 (GG CONTA) ATIVA | GATE N2 HOMOLOGADO POR RAFAEL
 
-**Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O marco vigente é A0 — recentralização no n8n/PostgreSQL local. Telegram e Sites são somente canais; o WF-11 hospedado é legado de transição. Ler `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md` antes de alterar o runtime.
+**Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O n8n local e o PostgreSQL `visao360` no Docker são o núcleo operacional canônico; Telegram e Sites são somente canais passivos de transporte.
 
-**Regra canônica obrigatória (v3.11.0):** o n8n é a única autoridade operacional. Comandos, estado conversacional, seleção e chamada de IA, prompts, roteamento de agentes, cálculos, lacunas, perguntas, aprendizado, transições de jobs e decisão de resposta devem existir em workflows/subworkflows n8n. Sites/Telegram transportam e exibem; Docling extrai; PostgreSQL persiste. As quatro exceções listadas em `policies/n8n-canonical-architecture.yaml` estão congeladas e impedem a homologação do Gate A0 até serem removidas ou reduzidas a adaptadores passivos.
-
-**Ponto exato de retomada:** O Antigravity executou com sucesso integral a rota crítica A0.2 (M0 a M10). O Gate MVP foi testado, validado e formalmente homologado por Rafael em 02/09/2026 ("agora esta funcionando foi tudo certo"). O pacote completo de evidências está pronto e detalhado em `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md` para auditoria independente do ChatGPT Codex.
+**Ponto exato de retomada:**
+1. **Gate MVP A0.2 (M0 a M10):** Totalmente concluído e homologado por Rafael no Telegram.
+2. **Desengasgo do Canal Telegram:** Resolvido o encerramento da pendência fantasma `telegram-5281600644-498443332` no gateway.
+3. **Fase N8.1 (Gerente Geral de Conta):** Schema `pj_accounts` criado no PostgreSQL local com 20 empresas auditadas, motor determinístico `engines/conta/conta-engine.mjs` testado contra schemas e `WF-20` ativo no n8n integrado ao `WF-12`.
+4. **Gate N2 (Docling CPU TableFormer):** Benchmark executado no arquivo real `POBJ2608.pdf` (1.97 MB) em 122.4s com 3 tabelas e 111 linhas extraídas com 100% de precisão nos campos críticos; **formalmente homologado por Rafael ("Sim") em 02/09/2026**.
+5. **Próximo passo na fila executável:** Iniciar o **Marco N8.2 (GG Relacionamento — Inteligência de Contatos, Objeções e Abordagem PJ)** ou rodar piloto documental E2E do `WF-11`.
 
 ---
 
