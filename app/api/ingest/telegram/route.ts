@@ -137,6 +137,7 @@ export async function POST(request: Request) {
   let storageKey: string | null = null;
   let contentHash: string | null = null;
   let canonicalDocumentId = documentId;
+  let shortProtocol: number | null = null;
   let duplicateByHash = false;
   try {
     if (document) {
@@ -168,9 +169,11 @@ export async function POST(request: Request) {
           .bind(canonicalDocumentId, Date.now(), updateId),
       ]);
     } else {
+      await env.DB.prepare(`INSERT OR IGNORE INTO owner_protocol_counters (owner_id, next_value) VALUES (?, 0)`).bind(ownerId).run();
+      shortProtocol = (await env.DB.prepare(`UPDATE owner_protocol_counters SET next_value = next_value + 1 WHERE owner_id = ? RETURNING next_value`).bind(ownerId).first<{ next_value: number }>())?.next_value ?? null;
       await env.DB.batch([
-        env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?)`)
-          .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, receivedAt),
+        env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, short_protocol, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?, ?)`)
+          .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, shortProtocol, receivedAt),
         env.DB.prepare(`INSERT OR IGNORE INTO agent_runs (id, document_id, agent_role, status, input_summary, available_at) VALUES (?, ?, 'diretor', 'QUEUED', ?, ?)`)
           .bind(runId, documentId, text || document?.file_name || 'Nova entrada', receivedAt),
         env.DB.prepare(`INSERT OR IGNORE INTO audit_log (id, owner_id, actor, action, entity_type, entity_id, details_json, created_at) VALUES (?, ?, ?, 'ingested_and_enqueued', 'document', ?, ?, ?)`)

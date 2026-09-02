@@ -40,7 +40,8 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
   const row = await db.prepare(`SELECT id, command, arguments_json FROM command_confirmations WHERE id = ? AND owner_id = ? AND chat_id = ? AND status = 'PENDING' AND expires_at >= ?`)
     .bind(code.toUpperCase(), ownerId, String(chatId), Date.now()).first<{ id: string; command: string; arguments_json: string }>();
   if (!row) { await sendTelegramText(token, chatId, 'Confirmação inválida ou expirada. Repita o comando original.'); return; }
-  const args = safeJson<string[]>(row.arguments_json, []); const protocol = args[0]; const now = Date.now();
+  const args = safeJson<string[]>(row.arguments_json, []); let protocol = args[0]; const now = Date.now();
+  if (protocol && /^\d+$/.test(protocol)) protocol = (await db.prepare(`SELECT id FROM documents WHERE owner_id = ? AND short_protocol = ?`).bind(ownerId, Number(protocol)).first<{ id: string }>())?.id ?? protocol;
   if (!protocol) { await sendTelegramText(token, chatId, 'Ação sem protocolo válido.'); return; }
   if (row.command === '/reprocessartodos' && protocol === 'todos') {
     await db.batch([
@@ -327,7 +328,7 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const queueSummary = (counts.results ?? []).map((item) => `• ${item.status}: ${item.total}`).join('\n') || 'Fila vazia.';
     let row: DetailedProgressRow | null = null;
     if (protocol) {
-      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE d.id = ? AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, ownerId).first<DetailedProgressRow>();
+      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE (d.id = ? OR CAST(d.short_protocol AS TEXT) = ?) AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, protocol, ownerId).first<DetailedProgressRow>();
     } else {
       row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d JOIN agent_runs ar ON ar.document_id = d.id WHERE d.owner_id = ? ORDER BY CASE WHEN ar.status = 'PROCESSING' THEN 1 WHEN ar.status = 'AWAITING_OWNER_INPUT' THEN 2 WHEN ar.status = 'QUEUED' THEN 3 ELSE 4 END ASC, ar.started_at DESC, d.received_at DESC LIMIT 1`).bind(ownerId).first<DetailedProgressRow>();
     }
