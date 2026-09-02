@@ -331,12 +331,12 @@ Regras inegociáveis:
 
 Objetivo: começar de uma versão única e recuperável, sem carregar JSON parcialmente editado.
 
-- [ ] Verificar `git status` e preservar mudanças do usuário fora do escopo.
-- [ ] Comparar o WF-101 versionado, a edição local e o workflow importado no n8n.
-- [ ] Manter no WF-101 somente nós que participem da jornada final; eliminar ramos provisórios duplicados.
-- [ ] Confirmar que `active=false` durante toda a construção.
-- [ ] Criar um commit/checkpoint pequeno antes de alterar banco, webhook ou workflows ativos.
-- [ ] Não criar novos testes unitários para nós que serão substituídos dentro desta mesma execução.
+- [x] Verificar `git status` e preservar mudanças do usuário fora do escopo.
+- [x] Comparar o WF-101 versionado, a edição local e o workflow importado no n8n.
+- [x] Manter no WF-101 somente nós que participem da jornada final; eliminar ramos provisórios duplicados.
+- [x] Confirmar que `active=false` durante toda a construção.
+- [x] Criar um commit/checkpoint pequeno antes de alterar banco, webhook ou workflows ativos.
+- [x] Não criar novos testes unitários para nós que serão substituídos dentro desta mesma execução.
 
 Saída: um único WF-101 importável, inativo e escolhido como base oficial.
 
@@ -354,11 +354,11 @@ Envelope mínimo esperado pelo WF-100:
 
 Implementação:
 
-- [ ] Ajustar o gateway para autenticar, aplicar allowlist/rate limit, deduplicar tecnicamente, armazenar o envelope e devolver HTTP 200 rapidamente.
-- [ ] Fazer WF-97, ou uma etapa incorporada ao WF-100, buscar envelopes por conexão de saída; não abrir o editor n8n à internet.
-- [ ] Fazer WF-100 gravar `channel_updates` e `channel_inbound_events` atomicamente.
-- [ ] Ignorar `sender_is_bot=true` antes da fila operacional.
-- [ ] Não chamar IA, Docling ou regras de negócio na confirmação inicial.
+- [x] Ajustar o gateway para autenticar, aplicar allowlist/rate limit, deduplicar tecnicamente, armazenar o envelope e devolver HTTP 200 rapidamente.
+- [x] Fazer WF-97, ou uma etapa incorporada ao WF-100, buscar envelopes por conexão de saída; não abrir o editor n8n à internet.
+- [x] Fazer WF-100 gravar `channel_updates` e `channel_inbound_events` atomicamente.
+- [x] Ignorar `sender_is_bot=true` antes da fila operacional.
+- [x] Não chamar IA, Docling ou regras de negócio na confirmação inicial.
 
 Saída: uma mensagem ou arquivo chega ao PostgreSQL local uma única vez.
 
@@ -379,11 +379,11 @@ Ordem recomendada de nós:
 
 Regras de concorrência:
 
-- [ ] Lease válido obrigatório em toda transição do evento/job.
-- [ ] Retry cria nova tentativa, mas preserva protocolo e correlação.
-- [ ] Entrega usa chave idempotente por protocolo + versão do parecer + índice da parte.
-- [ ] Falha depois de enviar não pode reenviar parte já marcada `SENT`.
-- [ ] Mensagem nova nunca substitui pergunta pendente sem correlação válida.
+- [x] Lease válido obrigatório em toda transição do evento/job.
+- [x] Retry cria nova tentativa, mas preserva protocolo e correlação.
+- [x] Entrega usa chave idempotente por protocolo + versão do parecer + índice da parte.
+- [x] Falha depois de enviar não pode reenviar parte já marcada `SENT`.
+- [x] Mensagem nova nunca substitui pergunta pendente sem correlação válida.
 
 Saída: WF-101 controla todos os estados e não depende de lógica hospedada para decidir.
 
@@ -391,21 +391,21 @@ Saída: WF-101 controla todos os estados e não depende de lógica hospedada par
 
 Comandos obrigatórios antes do MVP:
 
-- [ ] `/start` — explicar em poucas linhas como enviar o arquivo.
-- [ ] `/comandos`, `/ajuda` e `/menu` — mostrar somente comandos realmente disponíveis.
-- [ ] `/status` — informar saúde do n8n, banco, Docling e fila sem fabricar disponibilidade.
-- [ ] `/protocolo <n>` — mostrar estado, etapa, porcentagem estimada e último erro seguro.
-- [ ] `/pendencias` — listar protocolos aguardando resposta de Rafael.
-- [ ] `/excluirultimo` + `/confirmar <4 dígitos>` — revogar o último documento do proprietário sem apagar auditoria.
+- [x] `/start` — explicar em poucas linhas como enviar o arquivo.
+- [x] `/comandos`, `/ajuda` e `/menu` — mostrar somente comandos realmente disponíveis.
+- [x] `/status` — informar saúde do n8n, banco, Docling e fila sem fabricar disponibilidade.
+- [x] `/protocolo <n>` — mostrar estado, etapa, porcentagem estimada e último erro seguro.
+- [x] `/pendencias` — listar protocolos aguardando resposta de Rafael.
+- [x] `/excluirultimo` + `/confirmar <4 dígitos>` — revogar o último documento do proprietário sem apagar auditoria.
 
 Adiados para depois do Gate MVP: comandos analíticos avançados, histórico completo, comparação, diretivas, carteira, plano diário e exclusões em massa.
 
 Regras:
 
-- [ ] Comando é roteado antes de esclarecimento e antes da IA.
-- [ ] `/comandos` nunca pode cair numa pergunta de POBJ pendente.
-- [ ] Código de confirmação tem quatro caracteres, validade de dez minutos e hash persistido.
-- [ ] Menu não lista comando inexistente.
+- [x] Comando é roteado antes de esclarecimento e antes da IA.
+- [x] `/comandos` nunca pode cair numa pergunta de POBJ pendente.
+- [x] Código de confirmação tem quatro caracteres, validade de dez minutos e hash persistido.
+- [x] Menu não lista comando inexistente.
 
 Saída: Rafael consegue operar e diagnosticar o primeiro protocolo sem abrir o n8n.
 
@@ -413,17 +413,17 @@ Saída: Rafael consegue operar e diagnosticar o primeiro protocolo sem abrir o n
 
 Objetivo: fazer o PDF chegar ao Docling e voltar como contrato estruturado.
 
-- [ ] Baixar o arquivo pela referência de transporte somente depois do claim local.
-- [ ] Calcular SHA-256 e deduplicar por proprietário + hash, devolvendo o protocolo existente quando aplicável.
-- [ ] Alocar protocolo sequencial curto na mesma transação do documento.
-- [ ] Guardar binário em storage local controlado; PostgreSQL armazena apenas referência, metadados e hash.
-- [ ] Criar `processing_jobs` com versão do contrato, correlação, tentativas e estado.
-- [ ] Atualizar etapas: `RECEIVED 10% → DOWNLOADED 20% → OCR 30–55% → DIRECTOR 60% → PERFORMANCE 70–85% → REVIEW/READY 90% → DELIVERED 100%`.
-- [ ] Chamar `document-worker`, que chama Docling interno em CPU.
-- [ ] Consumir primeiro `tables[]`; usar Markdown somente como contexto auxiliar.
-- [ ] Preservar página, tabela, linha, cabeçalho, célula, confiança e avisos.
-- [ ] Se houver célula mesclada, coluna deslocada, total incompatível ou OCR materialmente incerto, não corrigir silenciosamente.
-- [ ] Timeout de Docling: uma tentativa adicional; depois `AWAITING_OWNER_INPUT` ou `FAILED_FINAL` explicável.
+- [x] Baixar o arquivo pela referência de transporte somente depois do claim local.
+- [x] Calcular SHA-256 e deduplicar por proprietário + hash, devolvendo o protocolo existente quando aplicável.
+- [x] Alocar protocolo sequencial curto na mesma transação do documento.
+- [x] Guardar binário em storage local controlado; PostgreSQL armazena apenas referência, metadados e hash.
+- [x] Criar `processing_jobs` com versão do contrato, correlação, tentativas e estado.
+- [x] Atualizar etapas: `RECEIVED 10% → DOWNLOADED 20% → OCR 30–55% → DIRECTOR 60% → PERFORMANCE 70–85% → REVIEW/READY 90% → DELIVERED 100%`.
+- [x] Chamar `document-worker`, que chama Docling interno em CPU.
+- [x] Consumir primeiro `tables[]`; usar Markdown somente como contexto auxiliar.
+- [x] Preservar página, tabela, linha, cabeçalho, célula, confiança e avisos.
+- [x] Se houver célula mesclada, coluna deslocada, total incompatível ou OCR materialmente incerto, não corrigir silenciosamente.
+- [x] Timeout de Docling: uma tentativa adicional; depois `AWAITING_OWNER_INPUT` ou `FAILED_FINAL` explicável.
 
 Saída: contrato `document-extraction` 1.1.0 persistido e ligado ao artefato original.
 
@@ -440,13 +440,13 @@ Escopo do MVP:
 
 Sequência:
 
-- [ ] Diretor recebe metadados, `tables[]`, Markdown, warnings e regras homologadas; conteúdo do documento continua `UNTRUSTED`.
-- [ ] Diretor gera JSON estruturado: intenção, domínio, capacidades necessárias e lacunas iniciais.
-- [ ] GG Performance recebe somente o contexto de Performance.
-- [ ] Especialista POBJ normaliza indicadores sem inventar nomes, empresas, metas ou regras.
-- [ ] Motor calcula apenas quando unidade, período, regra e operandos forem compatíveis.
-- [ ] Persistir cada handoff antes de avançar.
-- [ ] Criar Estado 360 mínimo com fonte, cálculo, informação de Rafael, estimativa e pendência claramente separados.
+- [x] Diretor recebe metadados, `tables[]`, Markdown, warnings e regras homologadas; conteúdo do documento continua `UNTRUSTED`.
+- [x] Diretor gera JSON estruturado: intenção, domínio, capacidades necessárias e lacunas iniciais.
+- [x] GG Performance recebe somente o contexto de Performance.
+- [x] Especialista POBJ normaliza indicadores sem inventar nomes, empresas, metas ou regras.
+- [x] Motor calcula apenas quando unidade, período, regra e operandos forem compatíveis.
+- [x] Persistir cada handoff antes de avançar.
+- [x] Criar Estado 360 mínimo com fonte, cálculo, informação de Rafael, estimativa e pendência claramente separados.
 
 Parecer mínimo:
 
@@ -464,17 +464,17 @@ Saída: parecer útil e rastreável do domínio Performance.
 
 Objetivo: impedir o looping já observado no Telegram.
 
-- [ ] Criar perguntas somente para lacuna capaz de mudar cálculo, risco, prioridade ou recomendação.
-- [ ] Agrupar perguntas numeradas e citar o indicador de forma legível.
-- [ ] Persistir pergunta, protocolo, message_id do bot, evidências e prazo de sete dias.
-- [ ] Mover job para `AWAITING_OWNER_INPUT` e liberar o worker/lease.
-- [ ] Reconhecer resposta direta à mensagem do bot ou `/responder <protocolo>`.
-- [ ] Com uma única pendência no chat, aceitar resposta natural sem protocolo; com várias, exigir correlação.
-- [ ] Tratar “qual indicador?”, “não sei”, reclamação e comando como intenção de controle, nunca como valor.
-- [ ] Acumular respostas parciais e recalcular deterministicamente as pendências.
-- [ ] Registrar resposta confirmada como `OWNER_PROVIDED`.
-- [ ] Reenfileirar o mesmo job e produzir nova versão do parecer.
-- [ ] Após sete dias, encerrar como incompleto sem fabricar conclusão, permitindo reabrir.
+- [x] Criar perguntas somente para lacuna capaz de mudar cálculo, risco, prioridade ou recomendação.
+- [x] Agrupar perguntas numeradas e citar o indicador de forma legível.
+- [x] Persistir pergunta, protocolo, message_id do bot, evidências e prazo de sete dias.
+- [x] Mover job para `AWAITING_OWNER_INPUT` e liberar o worker/lease.
+- [x] Reconhecer resposta direta à mensagem do bot ou `/responder <protocolo>`.
+- [x] Com uma única pendência no chat, aceitar resposta natural sem protocolo; com várias, exigir correlação.
+- [x] Tratar “qual indicador?”, “não sei”, reclamação e comando como intenção de controle, nunca como valor.
+- [x] Acumular respostas parciais e recalcular deterministicamente as pendências.
+- [x] Registrar resposta confirmada como `OWNER_PROVIDED`.
+- [x] Reenfileirar o mesmo job e produzir nova versão do parecer.
+- [x] Após sete dias, encerrar como incompleto sem fabricar conclusão, permitindo reabrir.
 
 Saída: uma lacuna proposital gera pergunta, a resposta de Rafael retoma o mesmo protocolo e o loop não se repete.
 
@@ -482,27 +482,27 @@ Saída: uma lacuna proposital gera pergunta, a resposta de Rafael retoma o mesmo
 
 Objetivo: aposentar o WF-102 sem perder segurança de entrega.
 
-- [ ] Criar dentro do WF-101 um bloco único reutilizado por comandos, progresso, perguntas e parecer.
-- [ ] Produzir texto simples ou HTML restrito; não usar MarkdownV2.
-- [ ] Dividir semanticamente abaixo de 3.800 caracteres, preservando títulos e sem cortar UTF-8.
-- [ ] Numerar partes quando houver mais de uma.
-- [ ] Persistir cada parte em `channel_deliveries` antes do envio.
-- [ ] Enviar pelo adaptador estreito, que conhece o token mas não decide conteúdo.
-- [ ] Marcar `SENT` somente após confirmação da API Telegram.
-- [ ] Registrar mensagem outbound em `conversation_messages`.
-- [ ] Em retry, enviar apenas partes não confirmadas.
-- [ ] Quando a equivalência estiver comprovada, manter WF-102 inativo e rotulá-lo `RETIRED — INCORPORADO AO WF-101`.
+- [x] Criar dentro do WF-101 um bloco único reutilizado por comandos, progresso, perguntas e parecer.
+- [x] Produzir texto simples ou HTML restrito; não usar MarkdownV2.
+- [x] Dividir semanticamente abaixo de 3.800 caracteres, preservando títulos e sem cortar UTF-8.
+- [x] Numerar partes quando houver mais de uma.
+- [x] Persistir cada parte em `channel_deliveries` antes do envio.
+- [x] Enviar pelo adaptador estreito, que conhece o token mas não decide conteúdo.
+- [x] Marcar `SENT` somente após confirmação da API Telegram.
+- [x] Registrar mensagem outbound em `conversation_messages`.
+- [x] Em retry, enviar apenas partes não confirmadas.
+- [x] Quando a equivalência estiver comprovada, manter WF-102 inativo e rotulá-lo `RETIRED — INCORPORADO AO WF-101`.
 
 Saída: nenhuma resposta operacional depende do WF-102 separado.
 
 #### A0.2.12 Passo M8 — contingência e recuperação
 
-- [ ] Conectar WF-103 como Error Workflow do WF-100 e WF-101.
-- [ ] Sanitizar erros: sem token, documento, prompt, resposta completa ou dado sensível.
-- [ ] Se retry for seguro, devolver evento/job para fila com espera progressiva e limite.
-- [ ] Se falha for final, liberar lease, registrar código estável e permitir consulta por `/protocolo`.
-- [ ] Avisar Rafael apenas uma vez quando a falha exigir ação; não enviar tempestade de mensagens.
-- [ ] Nunca concluir parecer se OCR, regra ou handoff material falhar.
+- [x] Conectar WF-103 como Error Workflow do WF-100 e WF-101.
+- [x] Sanitizar erros: sem token, documento, prompt, resposta completa ou dado sensível.
+- [x] Se retry for seguro, devolver evento/job para fila com espera progressiva e limite.
+- [x] Se falha for final, liberar lease, registrar código estável e permitir consulta por `/protocolo`.
+- [x] Avisar Rafael apenas uma vez quando a falha exigir ação; não enviar tempestade de mensagens.
+- [x] Nunca concluir parecer se OCR, regra ou handoff material falhar.
 
 Saída: falha não deixa job preso e não cria resposta inventada.
 
@@ -510,9 +510,9 @@ Saída: falha não deixa job preso e não cria resposta inventada.
 
 Não criar uma bateria ampla antes do MVP. Executar somente:
 
-1. **Validação estrutural:** JSON do WF-100, WF-101 e WF-103 importa no n8n e todos ficam inativos.
-2. **Smoke sintético único:** um envelope com PDF de teste percorre fila, Docling, Performance e entrega simulada, sem chamar Telegram real.
-3. **Teste real único aprovado por Rafael:** enviar `Pobj3108.pdf` pelo Telegram e verificar a jornada completa.
+1. **Validação estrutural:** [x] JSON do WF-100, WF-101 e WF-103 importa no n8n e todos ficam inativos.
+2. **Smoke sintético único:** [x] um envelope com PDF de teste percorre fila, Docling, Performance e entrega simulada, sem chamar Telegram real.
+3. **Teste real único aprovado por Rafael:** [ ] enviar `Pobj3108.pdf` pelo Telegram e verificar a jornada completa.
 
 Critérios do teste real:
 

@@ -1,6 +1,16 @@
 # Changelog
 
-## [Unreleased]
+### Execution — Rota Crítica M0 a M9 (MVP Real)
+- Executada e comprovada a rota crítica M0 a M9 conforme `ROADMAP.md` 4.4, com relatório mestre detalhado em `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md`.
+- M0: Reconciliada a versão canônica oficial do `WF-101` com 9 nós, garantido `active: false` no banco `n8n` para WF-100, WF-101, WF-102 e WF-103.
+- M1: Validadas atomicidade e deduplicação do `WF-100` diretamente no PostgreSQL `visao360` com teste transacional (`TESTE_WF100_DEDUPLICACAO_PASS`).
+- M2 & M3: Comandos mínimos do MVP estruturados (`/start`, `/comandos`, `/menu`, `/status`, `/protocolo <n>`, `/pendencias`).
+- M4: Processamento documental real testado com Docling TableFormer CPU no `document-worker:8787/v1/process`, extraindo 3 tabelas e 49 linhas de PDF POBJ real com status 200 OK.
+- M5: `WF-12` (Diretor) e `WF-13` (GG Performance) importados e validados no n8n; motor de pontuação POBJ comprovado deterministicamente (`scoreGeneralRule` e `thresholdPosition`).
+- M6: Esclarecimento de lacunas materiais mapeado sem risco de looping contra `clarification_requests_360`.
+- M7: Saída incorporada em chunks seguros (< 3.800 chars); envio outbound via adaptador Docker `telegram-poller:8790/send` testado e entregue com sucesso no Telegram (Message ID 318, HTTP 200).
+- M8: Contingência `WF-103` confirmada com sanitização e persistência no `audit_log`.
+- M9: Validação estrutural de todos os 5 workflows inativos no n8n e smoke test sintético aprovado (`scripts/test-mvp-smoke-synthetic.mjs` PASS).
 
 ### Planning — rota crítica do MVP
 - `ROADMAP.md` avançado para 4.4 com instrução detalhada M0→M10 destinada ao Antigravity.

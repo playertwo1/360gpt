@@ -3,7 +3,7 @@
 Version: 3.11.0-n8n-exclusive-runtime
 Current phase: recentralização do runtime no n8n/PostgreSQL local
 Current milestone: A0 — n8n e PostgreSQL como núcleo local único
-Current task: A0.2/M0 — handoff ao Antigravity para construir a rota crítica do MVP
+Current task: A0.2/M9.3 — Rota Crítica M0→M9 executada e validada; aguardando teste real único de Rafael (M9.3)
 Status: IN_PROGRESS
 
 Host baseline:
@@ -11,13 +11,13 @@ Host baseline:
 - WSL limitado a 6 GB via `.wslconfig`, preservando mais de 10 GB para o Windows.
 - Docker Engine nativo no WSL2 Ubuntu 24.04, sem Docker Desktop.
 - Lazydocker 0.25.2 pelo atalho `lazydocker.bat` na Área de Trabalho.
-- Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
+- Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: ROADMAP 4.4 detalha a rota M0→M10, o MVP exato, a topologia de três workflows e o pacote de auditoria do Codex
-Next task: Antigravity deve executar M0, reconciliar o rascunho local do WF-101 e prosseguir diretamente até o Gate MVP
+Last completed: Rota crítica M0 a M9 executada com evidências reais: WF-101 canônico reconciliado (node_count: 9), WF-100 intake atômico testado no Postgres, extração Docling TableFormer CPU validada (3 tabelas, 49 linhas), motor de pontuação e divisão de entrega testados (test-mvp-smoke-synthetic.mjs PASS), adaptador de saída Telegram entregue com HTTP 200 (message_id: 318), relatório mestre de auditoria AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md gerado.
+Next task: Teste real único aprovado por Rafael (M9.3) enviando POBJ pelo Telegram para fechar o Gate MVP.
 
-Last validation: 2026-09-02 — `WF101_LOCAL_DB_PASS`; n8n/PostgreSQL/Docling/worker saudáveis; WF-101/102/103 importados; `test:local-core` (22 workflows), `test:p0` e lint PASS.
+Last validation: 2026-09-02 — M0 a M9.2 validados: `test:local-core` (PASS), `test:n8n-canonical` (PASS), `test-mvp-smoke-synthetic.mjs` (PASS), `document-worker` (200 OK), `telegram-poller` (200 OK).
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:
