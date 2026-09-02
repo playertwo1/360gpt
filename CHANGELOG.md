@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added — núcleo local n8n/PostgreSQL
+- Registrada a decisão arquitetural ADR-002: Telegram e Sites passam a ser canais; n8n orquestra e PostgreSQL local mantém o estado oficial.
+- Criado esquema PostgreSQL idempotente para updates, fila inbound, documentos, jobs, conversas, esclarecimentos, diretrizes, entregas, confirmações e handoffs.
+- Criado adaptador `telegram-poller` por long polling, sem regra de negócio, sem porta pública e com token isolado dos workflows.
+- Criado e importado o WF-100 de intake local autenticado, deduplicação e persistência atômica.
+- Adicionado `npm run test:local-core` para validar fronteiras, Compose, workflow e esquema.
+
+### Changed — núcleo local n8n/PostgreSQL
+- Telegram local deixa de depender conceitualmente de HTTPS/webhook público; polling permanece desligado até o corte controlado.
+- O WF-11 hospedado foi classificado como legado de transição e não será reativado como controlador canônico.
+- `ROADMAP.md` 4.2 coloca o Marco A0 antes de P0/N2 e detalha migração incremental, shadow, backup e rollback.
+
+### Validation — núcleo local n8n/PostgreSQL
+- Migração aplicada ao banco `visao360`; 11 tabelas essenciais do novo núcleo confirmadas.
+- `telegram-poller` construído e iniciado saudável com `TELEGRAM_POLLING_ENABLED=false`.
+- WF-100 aprovado com entrada sintética e repetição idempotente: uma única persistência; workflow despublicado após o teste.
+- `npm run test:local-core`, `npm run test:p0`, lint e build aprovados após a mudança arquitetural.
+
 ### Changed
 - Validação local do P0 repetida com `npm run test:telegram-hardening`; fila assíncrona e debounce permanecem atrás de flag até canário.
 - Adicionado entrypoint JavaScript `scripts/test-telegram-conversational.mjs` para executar a regressão conversacional existente.

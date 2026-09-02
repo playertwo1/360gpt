@@ -12,7 +12,8 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "test:telegram-hardening": "node scripts/test-telegram-hardening.mjs",
-    "test:p0": "npm run test:telegram-hardening && node scripts/test-telegram-intent-schema.mjs && node scripts/test-telegram-conversational.mjs"
+    "test:p0": "npm run test:telegram-hardening && node scripts/test-telegram-intent-schema.mjs && node scripts/test-telegram-conversational.mjs",
+    "test:local-core": "node scripts/test-local-core-architecture.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

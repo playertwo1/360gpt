@@ -164,10 +164,47 @@ services:
     networks:
       - frontend
 
+  telegram-poller:
+    profiles: ["telegram-local"]
+    build:
+      context: ./services/telegram-poller
+    restart: unless-stopped
+    depends_on:
+      n8n:
+        condition: service_healthy
+    environment:
+      TELEGRAM_POLLING_ENABLED: ${TELEGRAM_POLLING_ENABLED:-false}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ALLOWED_CHAT_IDS: ${TELEGRAM_ALLOWED_CHAT_IDS:-}
+      N8N_TELEGRAM_INGRESS_URL: http://n8n:5678/webhook/director-360/telegram/inbound
+      DIRECTOR360_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET}
+      TELEGRAM_LONG_POLL_SECONDS: 25
+      TELEGRAM_RETRY_SECONDS: 5
+    expose:
+      - "8790"
+    volumes:
+      - telegram_poller_data:/var/lib/director360
+    read_only: true
+    tmpfs:
+      - /tmp:size=16777216,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8790/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - frontend
+
 volumes:
   postgres_data:
   n8n_data:
   docling_models:
+  telegram_poller_data:
 
 networks:
   frontend:

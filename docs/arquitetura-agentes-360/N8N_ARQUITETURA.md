@@ -4,14 +4,17 @@
 
 O n8n é o barramento de eventos e executor de workflows. Ele recebe entradas, cria correlação, chama o Diretor, executa os subworkflows dos domínios, persiste estados, controla retries e responde ao canal. Decisões, fórmulas e regras permanecem em motores e contratos versionados.
 
-## Stack inicial recomendada para casa
+## Stack local canônica
 
-1. `reverse-proxy`: TLS e entrada HTTPS quando algum webhook precisar ser externo.
-2. `n8n-main`: editor, webhooks e orquestração.
-3. `postgres-n8n`: banco interno do n8n.
-4. `postgres-360`: dados de negócio, handoffs, casos e auditoria; pode usar o mesmo servidor PostgreSQL com banco e usuário separados.
-5. `object-storage`: documentos, áudios, imagens e exportações; preferencialmente MinIO ou armazenamento compatível com objetos.
-6. `backup`: cópias programadas dos bancos, volume n8n, objetos e chave de criptografia.
+1. `n8n-main`: editor local, webhooks internos e orquestração.
+2. `postgres-n8n`: banco interno do n8n.
+3. `postgres-360`: fonte oficial de dados de negócio, conversas, handoffs, casos e auditoria; usa o mesmo servidor PostgreSQL com banco e usuário separados.
+4. `docling`: extração documental subordinada, em CPU e sob demanda.
+5. `telegram-poller`: adaptador de transporte por long polling, sem regra de negócio e sem porta pública.
+6. `object-storage`: documentos, áudios, imagens e exportações; pode começar por storage local referenciado e evoluir para MinIO.
+7. `backup`: cópias programadas dos bancos, volume n8n, objetos e chave de criptografia.
+
+O MVP não exige reverse proxy nem HTTPS: o Telegram é consumido por long polling e todos os webhooks do n8n permanecem internos. O editor continua acessível apenas em `127.0.0.1:5678`. A decisão completa está em `ADR-002-N8N-NUCLEO-LOCAL.md`.
 
 Para o volume doméstico inicial, começar sem Redis reduz complexidade. Quando houver concorrência ou processamento pesado, ativar queue mode com Redis e workers. Em queue mode, os workers devem receber as mesmas credenciais e chave de criptografia; task runners acompanham os workers quando usados.
 
@@ -26,8 +29,8 @@ Para o volume doméstico inicial, começar sem Redis reduz complexidade. Quando 
 
 - Definir e guardar fora do repositório uma `N8N_ENCRYPTION_KEY` estável; incluí-la no plano de recuperação.
 - Usar o cofre de credenciais do n8n e arquivos de segredo/secret store do ambiente, nunca valores dentro dos nós.
-- Colocar o editor do n8n somente na rede local ou VPN. Expor apenas webhooks necessários.
-- Usar TLS por reverse proxy, autenticação forte e segredos distintos por webhook.
+- Colocar o editor do n8n somente na rede local ou VPN. Não expor o editor ou webhooks internos à internet.
+- Usar segredo distinto entre adaptadores e n8n. TLS/reverse proxy só será necessário se uma futura entrada pública direta for explicitamente aprovada.
 - Restringir nós perigosos e community nodes; instalar somente após revisão.
 - Minimizar dados antes de chamar IA externa e bloquear logs de prompt, conversa, documento, token e PII.
 - Usar usuários diferentes de banco com permissões mínimas.

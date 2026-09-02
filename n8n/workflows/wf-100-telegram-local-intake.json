@@ -1,0 +1,88 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000100",
+  "name": "WF-100 — Telegram local intake (INATIVO ATE CUTOVER)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "director-360/telegram/inbound",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "telegram-local-webhook",
+      "name": "01 Receber update interno",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-620, 0],
+      "webhookId": "d360-telegram-local-intake-v1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const { createHash } = require('crypto');\nconst request = $input.first().json ?? {};\nconst update = request.body ?? request;\nconst headers = request.headers ?? {};\nconst message = update.message ?? update.edited_message ?? update.callback_query?.message ?? {};\nconst updateId = String(update.update_id ?? '').trim();\nconst chatId = String(message.chat?.id ?? '').trim();\nif (!/^\\d+$/.test(updateId) || !/^-?\\d+$/.test(chatId)) throw new Error('TELEGRAM_ENVELOPE_INVALID');\nconst text = String(update.callback_query?.data ?? message.text ?? message.caption ?? '').trim();\nconst senderIsBot = Boolean((update.callback_query?.from ?? message.from)?.is_bot);\nconst eventKind = update.callback_query ? 'CALLBACK' : message.document ? 'DOCUMENT' : Array.isArray(message.photo) && message.photo.length ? 'IMAGE' : text.startsWith('/') ? 'COMMAND' : text ? 'TEXT' : 'OTHER';\nconst canonical = JSON.stringify(update);\nconst transportSecret = String(headers['x-director360-transport'] ?? headers['X-Director360-Transport'] ?? '');\nreturn [{ json: {\n  channel: 'TELEGRAM', tenant_id: 'rafael-360', owner_id: 'rafael',\n  external_update_id: updateId, chat_id: chatId, message_id: String(message.message_id ?? ''),\n  sender_is_bot: senderIsBot, event_kind: eventKind, text_content: text,\n  payload: update, payload_hash: 'sha256:' + createHash('sha256').update(canonical, 'utf8').digest('hex'),\n  transport_secret_hash: createHash('sha256').update(transportSecret, 'utf8').digest('hex')\n} }];"
+      },
+      "id": "normalize-update",
+      "name": "02 Validar e normalizar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-380, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH authorized AS (\n  SELECT 1 FROM channel_adapters\n  WHERE adapter_id = 'telegram-local-poller'\n    AND channel = 'TELEGRAM'\n    AND status IN ('SHADOW', 'ACTIVE')\n    AND secret_hash = $9\n), attempted_update AS (\n  INSERT INTO channel_updates (channel, external_update_id, tenant_id, owner_id, chat_id, message_id, sender_is_bot, payload, payload_hash, status)\n  SELECT $1, $2, $3, $4, $5, NULLIF($6, ''), $7::boolean, $8::jsonb, $10, CASE WHEN $7::boolean THEN 'IGNORED' ELSE 'QUEUED' END\n  FROM authorized\n  ON CONFLICT (channel, external_update_id) DO NOTHING\n  RETURNING channel, external_update_id\n), inbound AS (\n  INSERT INTO channel_inbound_events (inbound_event_id, channel, external_update_id, tenant_id, owner_id, chat_id, event_kind, text_content)\n  SELECT md5($1 || '|' || $2)::uuid, $1, $2, $3, $4, $5, $11, $12\n  FROM authorized\n  WHERE NOT $7::boolean\n  ON CONFLICT (channel, external_update_id) DO NOTHING\n  RETURNING inbound_event_id\n)\nSELECT\n  EXISTS (SELECT 1 FROM authorized) AS accepted,\n  (EXISTS (SELECT 1 FROM attempted_update) OR EXISTS (SELECT 1 FROM channel_updates WHERE channel = $1 AND external_update_id = $2)) AS persisted,\n  NOT EXISTS (SELECT 1 FROM attempted_update) AS duplicate,\n  EXISTS (SELECT 1 FROM inbound) AS queued,\n  $2 AS update_id;",
+        "options": {
+          "queryBatching": "single",
+          "queryReplacement": "={{ [ $json.channel, $json.external_update_id, $json.tenant_id, $json.owner_id, $json.chat_id, $json.message_id, $json.sender_is_bot, JSON.stringify($json.payload), $json.transport_secret_hash, $json.payload_hash, $json.event_kind, $json.text_content ] }}"
+        }
+      },
+      "id": "persist-update",
+      "name": "03 Persistir atomicamente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-120, 0],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const row = $input.first().json ?? {};\nreturn [{ json: {\n  accepted: Boolean(row.accepted && row.persisted),\n  queued: Boolean(row.queued),\n  duplicate: Boolean(row.accepted && row.duplicate && row.persisted),\n  update_id: String(row.update_id ?? ''),\n  runtime: 'N8N_LOCAL',\n  business_state: 'POSTGRES_VISAO360'\n} }];"
+      },
+      "id": "response",
+      "name": "04 Confirmar persistência",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [140, 0]
+    }
+  ],
+  "connections": {
+    "01 Receber update interno": {
+      "main": [[{"node": "02 Validar e normalizar", "type": "main", "index": 0}]]
+    },
+    "02 Validar e normalizar": {
+      "main": [[{"node": "03 Persistir atomicamente", "type": "main", "index": 0}]]
+    },
+    "03 Persistir atomicamente": {
+      "main": [[{"node": "04 Confirmar persistência", "type": "main", "index": 0}]]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

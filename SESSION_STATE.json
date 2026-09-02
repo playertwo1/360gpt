@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.8.0-roadmap-unificado",
-  "last_updated": "2026-09-01T18:45:00-03:00",
+  "version": "3.10.0-n8n-local-core",
+  "last_updated": "2026-09-02T06:32:00-03:00",
   "last_active_assistant": "ChatGPT Codex",
   "next_recommended_assistant": "ChatGPT Codex or Antigravity",
   "official_repository": "https://github.com/playertwo1/360gpt.git",
@@ -11,10 +11,14 @@
   "site": "https://visao-360-diretor.fael360092.chatgpt.site",
   "deployed_site_version": 41,
   "current_roadmap": "ROADMAP.md",
-  "current_phase": "N2 - Homologação objetiva do leitor documental",
-  "current_task": "Corrigir e validar células materialmente unidas nos PDFs POBJ reais sem inferência silenciosa",
+  "current_phase": "A0 - n8n e PostgreSQL como núcleo local único",
+  "current_task": "Criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência",
   "status": "IN_PROGRESS",
   "last_completed": [
+    "ADR-002 aprovado: Telegram e Sites são canais; n8n/PostgreSQL local são o núcleo",
+    "Esquema local de canais, jobs, conversa, esclarecimentos, diretrizes, entregas e handoffs aplicado",
+    "telegram-poller criado e saudável com polling desligado",
+    "WF-100 importado e aprovado com intake/deduplicação sintéticos, depois despublicado",
     "R1 intake assíncrono publicado",
     "WF-11 Orquestrador Mestre criado, validado e importado no n8n local, ainda inativo",
     "document-worker e Docling CPU criados e validados na rede interna Docker",
@@ -24,22 +28,24 @@
   ],
   "last_validation": {
     "result": "PASS",
-    "commands": ["pwsh -File scripts/test-docling-integration.ps1", "pwsh -File scripts/test-document-worker.ps1", "npm run lint", "npm run build"],
-    "evidence": "Compose, Docling CPU, endpoint multipart, worker, PDF nativo, imagem, XLSX/CSV, lint e build aprovados; gate POBJ ainda pendente"
+    "commands": ["npm run test:local-core", "python -m py_compile services/telegram-poller/app.py", "docker compose config", "teste sintético WF-100"],
+    "evidence": "Primeiro update accepted/queued; repetição duplicate; uma única linha por update; polling e workflow ficaram inativos"
   },
   "runtime": {
     "n8n": "healthy at http://localhost:5678",
     "postgres": "healthy",
     "document_worker": "processing profile; internal-only at http://document-worker:8787",
     "docling": "processing profile; CPU-only at http://docling:5001",
-    "workflow_master": "WF-11 — Diretor 360 — Orquestrador Mestre do MVP",
-    "workflow_id": "9eb8e86a-84b8-4aa9-97e4-360000000011",
-    "workflow_active": false
+    "workflow_master": "WF-100 — Telegram local intake (INATIVO ATE CUTOVER)",
+    "workflow_id": "9eb8e86a-84b8-4aa9-97e4-360000000100",
+    "workflow_active": false,
+    "telegram_poller": "healthy; TELEGRAM_POLLING_ENABLED=false",
+    "canonical_business_database": "PostgreSQL visao360"
   },
   "security": {"external_effects_allowed": false, "document_content_trust": "UNTRUSTED", "secrets_committed": false},
-  "blockers": ["Docling ainda produz células materialmente unidas em tabelas POBJ; WF-11 permanece inativo até o Gate N2"],
+  "blockers": ["Webhook remoto ainda ativo; polling local não pode ser ligado antes do corte", "WF-11 ainda depende do Sites hospedado", "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"],
   "pending_decisions": ["Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"],
-  "next_exact_step": "Mapear células Docling unidas por página/linha/coluna/bbox e repetir o benchmark POBJ2608/2708/2808 sem inventar separações.",
+  "next_exact_step": "Implementar A0.2 no n8n local: claim/lease, roteamento de comandos antes de esclarecimentos, histórico e saída pelo adaptador.",
   "resume_order": ["AGENTS.md", "PROJECT_STATE.md", "ROADMAP.md", "CHANGELOG.md", "SESSION_STATE.json", "CODEX_HANDOFF.md", "git status"],
   "canonical_files": {
     "roadmap": "ROADMAP.md",
@@ -49,7 +55,9 @@
     "handoff": "CODEX_HANDOFF.md",
     "account_switch_handoff": "docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md",
     "agents": "AGENTS.md",
-    "workflow": "n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json",
+    "workflow": "n8n/workflows/wf-100-telegram-local-intake.json",
+    "architecture_decision": "docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md",
+    "telegram_transport": "services/telegram-poller/app.py",
     "worker": "services/document-worker/app/main.py",
     "extraction_contract": "contracts/document-extraction.schema.json"
   },

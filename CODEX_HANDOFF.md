@@ -1,11 +1,13 @@
 # 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-**Data da Última Atualização:** 01 de setembro de 2026
+**Data da Última Atualização:** 02 de setembro de 2026
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
 **Status Atual da Infraestrutura:** LEVE, OTIMIZADA, COM PERSISTÊNCIA 100% PRESERVADA
 
-**Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. Arquivos de planejamento concorrentes foram absorvidos e removidos em 01/09/2026. O marco vigente é N2 — homologação Docling/POBJ.
+**Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O marco vigente é A0 — recentralização no n8n/PostgreSQL local. Telegram e Sites são somente canais; o WF-11 hospedado é legado de transição. Ler `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md` antes de alterar o runtime.
+
+**Ponto exato de retomada:** A0.2 — criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência. O `telegram-poller` está saudável, porém `TELEGRAM_POLLING_ENABLED=false`; o WF-100 foi testado sinteticamente e ficou despublicado. Não ativar polling antes de pausar o webhook remoto.
 
 ---
 

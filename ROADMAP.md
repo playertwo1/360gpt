@@ -1,8 +1,8 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.1
+**Versão do planejamento:** 4.2
 
-**Atualizado em:** 1º de setembro de 2026
+**Atualizado em:** 2 de setembro de 2026
 
 **Autoridade e proprietário:** Rafael
 
@@ -10,11 +10,11 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** MVP mínimo `Telegram → n8n → Docling → Diretor → GG Performance → Estado 360 → Telegram`
+**Fase atual:** recentralização do runtime `Telegram/Sites → n8n local → Docling/agentes → PostgreSQL → Telegram/Sites`
 
-**Marco atual:** `P0 — blindagem conversacional, estabilidade e aprendizado supervisionado`
+**Marco atual:** `A0 — n8n e PostgreSQL como núcleo local único`
 
-**Próxima tarefa:** concluir P0.0–P0.10 antes de retomar a homologação documental N2
+**Próxima tarefa:** A0.2 — criar o dispatcher local de comandos/conversa e retirar a dependência operacional do WF-11 em endpoints hospedados
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -77,7 +77,8 @@ O Diretor 360 é um sistema privado de Rafael para transformar arquivos, mensage
 
 ```text
 Telegram ou site
-  → entrada durável e arquivo original preservado
+  → adaptadores de canal sem regra de negócio
+  → entrada durável e arquivo original preservado no núcleo local
   → n8n controla estado, fila, lease, retries e auditoria
   → leitor local extrai texto, tabelas e evidências
   → Diretor identifica intenção e domínios materiais
@@ -87,6 +88,8 @@ Telegram ou site
   → Rafael revisa, corrige, aprova e decide
   → Dashboard e Telegram apresentam informação verificável
 ```
+
+O PostgreSQL local `visao360` é a fonte oficial de runtime e histórico. O Sites/D1 pode existir somente como caixa postal de transporte para acesso remoto; não pode ser a fonte oficial de comandos, jobs, perguntas, diretrizes, conhecimento ou Estado 360. A decisão está em `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md`.
 
 ### 2.1 Princípio central
 
@@ -126,6 +129,15 @@ Fora do MVP, até o gate N7:
 - aprendizado autônomo sem aprovação;
 - VPS/alta disponibilidade;
 - expansão visual sem relação com o primeiro fluxo útil.
+
+### 2.4 Regra de arquitetura vigente
+
+- Telegram local usa long polling; não exige HTTPS, domínio, túnel ou webhook público.
+- O editor n8n permanece somente em `127.0.0.1:5678`.
+- Sites e Telegram são portas de entrada/saída; regras e estado pertencem ao n8n/PostgreSQL.
+- Docling é um serviço técnico subordinado ao n8n, assim como o adaptador de transporte.
+- O WF-11 que chama `/api/bridge/*` hospedado é legado de transição e não pode ser reativado como controlador canônico.
+- O corte do bot exige pausar o webhook remoto antes de ativar `getUpdates`; os dois modos nunca operam simultaneamente.
 
 ---
 
@@ -229,9 +241,76 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 ---
 
-## 6. Marco prioritário P0 — blindagem do Telegram
+## 5A. Marco prioritário A0 — n8n e PostgreSQL como núcleo local
 
-> Este marco precede temporariamente o N2. Ele consolida três planejamentos aprovados: estabilidade Telegram/n8n/LLM, blindagem de entrada e memória, e aprendizado supervisionado de diretrizes.
+> Este marco corrige a fronteira arquitetural antes de P0 e N2. A decisão foi aprovada por Rafael em 02/09/2026. Nenhuma nova regra de negócio deve ser adicionada ao Sites/D1.
+
+### A0.0 — Decisão e fronteiras
+
+- [x] Registrar ADR-002 com n8n como orquestrador, PostgreSQL local como verdade e canais como transporte.
+- [x] Formalizar Telegram por long polling sem HTTPS e Sites remoto como caixa postal mínima.
+- [x] Proibir exposição pública do editor n8n e operação simultânea de webhook/polling.
+- [x] Identificar WF-11 e `/api/bridge/*` hospedados como caminho legado de transição.
+
+### A0.1 — Fundação local segura
+
+- [x] Criar esquema PostgreSQL canônico para updates, eventos, documentos, jobs, conversas, perguntas, diretrizes, entregas e handoffs.
+- [x] Criar adaptador `telegram-poller` sem regra de negócio, token fora dos workflows e offset avançado somente após persistência.
+- [x] Isolar o serviço na rede Docker, sem porta pública, sob perfil `telegram-local` e com polling desligado por padrão.
+- [x] Criar WF-100 para validar, deduplicar e persistir updates no PostgreSQL local.
+- [x] Executar teste sintético do WF-100: primeira entrada aceita e enfileirada; repetição reconhecida como duplicata; uma única linha persistida.
+- [x] Deixar WF-100 despublicado e `TELEGRAM_POLLING_ENABLED=false` após o teste.
+
+### A0.2 — Dispatcher local de conversa e comandos — MARCO ATUAL
+
+- [ ] Criar WF-101 para claim com lease dos `channel_inbound_events`.
+- [ ] Rotear deterministicamente comandos antes de qualquer esclarecimento ou IA.
+- [ ] Migrar `/start`, `/comandos`, `/ajuda`, `/menu`, `/status`, `/progresso`, `/protocolo`, `/pendencias` e `/duvidas` para PostgreSQL/n8n.
+- [ ] Migrar `/excluir`, `/excluirultimo`, `/confirmar` e protocolos curtos com confirmação idempotente.
+- [ ] Registrar conversa inbound/outbound e impedir que mensagem do próprio bot seja processada.
+- [ ] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura e idempotência por parte.
+- [ ] Criar WF-103 de contingência local, com erro sanitizado e sem aviso duplicado.
+
+### A0.3 — Documento, Docling e orquestração local
+
+- [ ] Substituir claim/download/complete/fail hospedados do WF-11 por tabelas e storage locais.
+- [ ] Criar protocolo curto no PostgreSQL na mesma transação do documento.
+- [ ] Fazer n8n controlar `RECEIVED → QUEUED → OCR → DIRECTOR → MANAGERS → MOTOR → REVIEW/READY → DELIVERED`.
+- [ ] Manter Docling como extrator e consumir `tables[]` antes de Markdown.
+- [ ] Converter Diretor, quatro Gerentes Gerais e especialistas em subworkflows versionados, acionando somente domínios materiais.
+- [ ] Persistir todo handoff e Estado 360 antes da resposta ao canal.
+
+### A0.4 — Conversa, aprendizado e histórico local
+
+- [ ] Migrar esclarecimentos para `clarification_requests_360`/`clarification_answers_360`.
+- [ ] Migrar diretrizes candidatas e aplicações para `learned_directives_360`/`directive_applications_360`.
+- [ ] Garantir que correções de Rafael sejam `OWNER_PROVIDED` e só virem conhecimento reutilizável após aprovação.
+- [ ] Limitar contexto textual, preservando histórico completo e referências no PostgreSQL.
+
+### A0.5 — Sites reduzido a canal
+
+- [ ] Definir envelope mínimo da caixa postal Sites ↔ n8n.
+- [ ] Retirar do runtime hospedado regras, cálculos, slot-filling, comandos, aprendizado e Estado 360 oficial.
+- [ ] Manter no D1/R2 somente transporte temporário necessário ao acesso remoto, com retenção e idempotência.
+- [ ] Fazer o site consultar respostas e snapshots produzidos pelo núcleo local, sem fabricar fallback demo.
+
+### A0.6 — Shadow, backup e corte controlado
+
+- [ ] Comparar caminho hospedado legado × núcleo local em mensagens, comandos, arquivo e esclarecimento sintéticos.
+- [ ] Validar UTF-8, idempotência, debounce, lease, retry, exclusão por cadeia e entrega multipartes.
+- [ ] Criar backup verificável de PostgreSQL, n8n e configuração antes do corte.
+- [ ] Pausar o webhook remoto do Telegram.
+- [ ] Publicar WF-100/WF-101/WF-102 e ativar `TELEGRAM_POLLING_ENABLED=true` em uma única janela controlada.
+- [ ] Executar teste real pelo celular e manter rollback documentado.
+- [ ] Somente depois do gate, revogar a lógica operacional hospedada duplicada.
+
+**Gate A0:** uma mensagem e um arquivo enviados pelo Telegram entram por polling, percorrem o n8n/PostgreSQL e retornam pelo adaptador; comandos não entram em esclarecimento; duplicatas não reprocessam; Sites não governa o estado.
+
+---
+
+## 6. Marco P0 — blindagem do Telegram
+
+> Este marco sucede A0. Ele consolida três planejamentos aprovados: estabilidade Telegram/n8n/LLM, blindagem de entrada e memória, e aprendizado supervisionado de diretrizes. Itens marcados como hospedados precisam ser revalidados ou migrados no núcleo local antes de `DONE` operacional.
 
 ### P0.0 — Checkpoint e baseline
 
@@ -631,18 +710,23 @@ Condições automáticas de pausa:
 
 ## 11. Próximos passos exatos — fila executável
 
-### Agora — N2
+### Agora — A0
 
-1. [ ] Capturar a estrutura bruta das células Docling nos três POBJ sem persistir conteúdo sensível no Git.
-2. [ ] Mapear cada célula unida por página, linha, coluna e `bbox`.
-3. [ ] Implementar reconstrução determinística apenas quando posição e separação forem comprováveis.
-4. [ ] Se a separação não for comprovável, emitir `AWAITING_OWNER_INPUT` com trecho e pergunta objetiva.
-5. [ ] Criar testes de regressão para vazio, merge, cabeçalho repetido, rotação e quebra entre páginas.
-6. [ ] Reprocessar POBJ2608, POBJ2708 e POBJ2808.
-7. [ ] Rafael confere os campos críticos.
-8. [ ] Adicionar mais dois arquivos reais autorizados.
-9. [ ] Registrar benchmark, memória, tempo, precisão e falhas.
-10. [ ] Aprovar ou reprovar formalmente o Gate N2.
+1. [x] Aprovar e documentar a recentralização no n8n/PostgreSQL.
+2. [x] Criar esquema local, adaptador Telegram desativado e WF-100.
+3. [x] Validar intake e deduplicação com payload sintético; deixar polling e WF-100 inativos.
+4. [ ] Criar WF-101 dispatcher de comandos/conversa com claim e lease locais.
+5. [ ] Criar WF-102 de saída Telegram pelo adaptador e WF-103 de contingência.
+6. [ ] Migrar documento, esclarecimentos, diretrizes e Estado 360 do Sites/D1 para o PostgreSQL local.
+7. [ ] Executar shadow completo e backup.
+8. [ ] Realizar corte controlado webhook → polling e teste real pelo celular.
+
+### Depois do Gate A0 — retomar N2
+
+1. [ ] Capturar e mapear as células Docling dos POBJ por página, linha, coluna e `bbox`.
+2. [ ] Implementar reconstrução somente quando comprovável; caso contrário emitir `AWAITING_OWNER_INPUT`.
+3. [ ] Reprocessar POBJ2608/2708/2808 e mais dois arquivos autorizados.
+4. [ ] Rafael confere campos críticos e decide o Gate N2.
 
 ### Depois do Gate N2
 
