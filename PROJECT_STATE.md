@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 3.12.0-gg-conta-active
-Current phase: Fase N8.1 / Fase 4 — Gerente Geral de Conta Ativo e Integrado
-Current milestone: N8.1 — Ativação do GG Conta (Carteira PJ & Oportunidades)
-Current task: Carteira PJ de 20 contas corporativas persistida no PostgreSQL local; WF-20 ativo no n8n; motor de elegibilidade e reciprocidade integrado ao WF-12 (Diretor 360).
-Status: OPERATIONAL_ACTIVE_READY_FOR_USE
+Version: 3.13.0-n2-benchmark-complete
+Current phase: Marco N2 — Benchmark e Calibração Tabular Docling CPU
+Current milestone: Gate N2 — Conferência de Campos Críticos do POBJ
+Current task: Benchmark Docling TableFormer CPU concluído em POBJ2608.pdf com 3 tabelas e 111 linhas extraídas; campos críticos de Crédito, Encanta, Open Finance e Vencidos validados.
+Status: READY_FOR_OWNER_GATE_DECISION
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,11 +14,11 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Marco N8.1 concluído: schema `pj_accounts` e `pj_account_opportunities` criado no PostgreSQL local, 20 contas corporativas inseridas, motor determinístico `engines/conta/conta-engine.mjs` testado contra contratos canônicos, `WF-20` ativo no n8n local e integrado ao `WF-12` para cruzar gaps de Agosto/2026 (Folha, Cobrança, Vencidos) com clientes nominais da agência 6895.
-Next task: Marco P0 / N2 (Benchmark Tabular Docling CPU nos POBJ 2608/2708/2808) e acompanhamento contínuo da agência 6895.
+Last completed: Marco N2.3 executado: benchmark do Docling CPU TableFormer (`document-worker:8787`) no arquivo real `POBJ2608.pdf` (1.97 MB) concluído em 122.4s, gerando `test-data/performance/benchmark_docling_pobj2608.json` com extração de 3 tabelas, 111 linhas e detecção de warnings geométricos (`docling_merged_cells`, `docling_possible_column_shift`).
+Next task: Rafael confere os campos críticos do POBJ e decide o Gate N2.
 
-Last validation: 2026-09-02 14:10 — Teste de integração Conta x Performance (PASS); contratos e reason codes (PASS); `WF-20` e `WF-12` ativos no n8n.
-Last implementation checkpoint: 51aed1c feat(n8n): establish local orchestration core and gate mvp
+Last validation: 2026-09-02 16:28 — Benchmark Docling TableFormer CPU (PASS: 3 tabelas, 111 linhas, campos críticos validados).
+Last implementation checkpoint: b30bebe feat(conta): activate GG Conta WF-20, persist pj_accounts and integrate with WF-12 (N8.1)
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.

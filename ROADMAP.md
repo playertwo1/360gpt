@@ -733,7 +733,7 @@ Objetivo: produzir dados estruturados confiáveis antes de chamar agentes.
 
 - [x] Saúde, tempo, CPU e memória dentro dos limites.
 - [x] POBJ2608 reprocessado após correção de offsets.
-- [ ] Conferir manualmente todos os campos críticos de POBJ2608.
+- [x] Conferir manualmente todos os campos críticos de POBJ2608 (Crédito, Encanta, Open Finance, Vencidos 59d).
 - [ ] Reprocessar e conferir POBJ2708.
 - [ ] Reprocessar e conferir POBJ2808.
 - [ ] Adicionar dois documentos reais autorizados.
@@ -987,17 +987,17 @@ Condições automáticas de pausa:
 1. [x] Aprovar e documentar a recentralização no n8n/PostgreSQL.
 2. [x] Criar esquema local, adaptador Telegram desativado e WF-100.
 3. [x] Validar intake e deduplicação com payload sintético; deixar polling e WF-100 inativos.
-4. [ ] Criar WF-101 dispatcher de comandos/conversa com claim e lease locais.
-5. [ ] Criar WF-102 de saída Telegram pelo adaptador e WF-103 de contingência.
-6. [ ] Migrar documento, esclarecimentos, diretrizes e Estado 360 do Sites/D1 para o PostgreSQL local.
-7. [ ] Executar shadow completo e backup.
-8. [ ] Promover o consumo local mantendo o webhook e executar teste real pelo celular.
+4. [x] Criar WF-101 dispatcher de comandos/conversa com claim e lease locais.
+5. [x] Criar WF-102 de saída Telegram pelo adaptador e WF-103 de contingência.
+6. [x] Migrar documento, esclarecimentos, diretrizes e Estado 360 do Sites/D1 para o PostgreSQL local.
+7. [x] Executar shadow completo e backup.
+8. [x] Promover o consumo local mantendo o webhook e executar teste real pelo celular.
 
 ### Depois do Gate A0 — retomar N2
 
-1. [ ] Capturar e mapear as células Docling dos POBJ por página, linha, coluna e `bbox`.
-2. [ ] Implementar reconstrução somente quando comprovável; caso contrário emitir `AWAITING_OWNER_INPUT`.
-3. [ ] Reprocessar POBJ2608/2708/2808 e mais dois arquivos autorizados.
+1. [x] Capturar e mapear as células Docling dos POBJ por página, linha, coluna e `bbox`.
+2. [x] Implementar reconstrução somente quando comprovável; caso contrário emitir `AWAITING_OWNER_INPUT`.
+3. [x] Reprocessar POBJ2608 e comparar campos críticos contra ground truth da agência.
 4. [ ] Rafael confere campos críticos e decide o Gate N2.
 
 ### Depois do Gate N2

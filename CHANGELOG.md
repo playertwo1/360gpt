@@ -1,5 +1,15 @@
 # Changelog
 
+### Benchmark & Validation — Marco N2 (Docling CPU TableFormer POBJ2608) (02/09/2026)
+- Executado o benchmark do modelo Docling TableFormer CPU (`document-worker:8787` e `docling:5001`) sobre o arquivo oficial `POBJ2608.pdf` (1.97 MB), processado em 122.4s com estabilidade total de memória e CPU.
+- Extraídas com precisão 3 tabelas e 111 linhas estruturadas, comprovando a leitura exata de campos críticos:
+  * Produção de Crédito PJ: Meta R$ 765.726,75 | Realizado R$ 1.384.193,37 | 180,77% atingido | 15,00 pts calculados.
+  * Encanta BRA (NPS): Meta 144,00 | Realizado 150,00 | 104,17% atingido | 15,00 pts calculados.
+  * Open Finance PJ: Meta 4,00 | Realizado 5,00 | 125,00% atingido | 7,00 pts calculados.
+  * Vencidos Até 59 dias: Meta R$ 954.316,47 | Realizado R$ 619.000,71 | 64,86% atingido.
+- Validados os filtros de segurança geométrica (`docling_merged_cells` e `docling_possible_column_shift`), garantindo que o leitor nunca invente valores diante de células mescladas.
+- Resultado persistido em `test-data/performance/benchmark_docling_pobj2608.json` e submetido para conferência e decisão de Rafael no **Gate N2**.
+
 ### Feature & Activation — Fase N8.1 GG Conta (Carteira PJ & Oportunidades 360) (02/09/2026)
 - Ativado o **Gerente Geral de Conta** (`WF-20 — GG Conta`) e integrado ao orquestrador do Diretor (`WF-12`).
 - Criado o schema relacional `drizzle/0012_pj_conta_carteira.sql` (`pj_accounts` e `pj_account_opportunities`) e aplicado ao PostgreSQL `visao360`.
