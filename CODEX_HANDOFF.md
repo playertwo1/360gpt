@@ -7,6 +7,8 @@
 
 **Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O marco vigente é A0 — recentralização no n8n/PostgreSQL local. Telegram e Sites são somente canais; o WF-11 hospedado é legado de transição. Ler `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md` antes de alterar o runtime.
 
+**Regra canônica obrigatória (v3.11.0):** o n8n é a única autoridade operacional. Comandos, estado conversacional, seleção e chamada de IA, prompts, roteamento de agentes, cálculos, lacunas, perguntas, aprendizado, transições de jobs e decisão de resposta devem existir em workflows/subworkflows n8n. Sites/Telegram transportam e exibem; Docling extrai; PostgreSQL persiste. As quatro exceções listadas em `policies/n8n-canonical-architecture.yaml` estão congeladas e impedem a homologação do Gate A0 até serem removidas ou reduzidas a adaptadores passivos.
+
 **Ponto exato de retomada:** A0.2 — criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência. O Telegram permanece no webhook estável do Sites, confirmado sem erro; WF-97 deve transportar a fila ao Docker. `telegram-poller` fica desligado como contingência.
 
 ---

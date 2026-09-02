@@ -1,7 +1,7 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.1
+**Versão:** 2.2
 **Status:** APPROVED_DESIGN — implementação e homologação pendentes
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
@@ -10,9 +10,19 @@
 
 O n8n transporta, agenda, persiste e observa o fluxo. Não cria regras de negócio, não interpreta lacunas como fatos e não substitui os agentes de domínio.
 
+> **Regra canônica de execução n8n:** toda entrada operacional deve chegar a um workflow n8n antes de qualquer comando, decisão, classificação, cálculo, IA, pergunta, aprendizado, mutação de estado ou resposta. Sites, Telegram, adaptadores, scripts, APIs e serviços auxiliares não podem implementar caminhos paralelos. Docling somente extrai; PostgreSQL somente persiste; interfaces somente transportam e exibem. Alterar comportamento significa alterar workflow, contrato, política ou subworkflow versionado e chamado pelo n8n.
+
 ---
 
 ## Changelog
+
+### v2.2 — n8n como autoridade operacional exclusiva
+
+- Tornado o n8n o único controlador canônico de entrada, roteamento, agentes, decisões, perguntas, aprendizagem, estado e saída.
+- Proibidos fluxos paralelos de negócio em Sites, Telegram, scripts, APIs, workers ou serviços auxiliares.
+- Limitados canais a transporte/exibição, Docling a extração e PostgreSQL a persistência/consulta transacional.
+- Instituído inventário versionado de exceções legadas, que ficam congeladas e não podem receber nova funcionalidade.
+- Determinado que código escrito fora do n8n não constitui implementação concluída de uma capacidade operacional.
 
 ### v2.1 — Execução autônoma, estado e histórico
 

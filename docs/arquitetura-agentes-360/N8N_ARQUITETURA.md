@@ -2,7 +2,11 @@
 
 ## Papel do n8n
 
-O n8n é o barramento de eventos e executor de workflows. Ele recebe entradas, cria correlação, chama o Diretor, executa os subworkflows dos domínios, persiste estados, controla retries e responde ao canal. Decisões, fórmulas e regras permanecem em motores e contratos versionados.
+O n8n é a autoridade operacional exclusiva, o barramento de eventos e o executor de workflows. Ele recebe entradas, cria correlação, interpreta comandos, controla o estado conversacional, chama o Diretor, escolhe capacidades/modelos homologados, executa os subworkflows dos domínios, aplica motores e contratos versionados, persiste estados, controla retries e decide a resposta ao canal.
+
+Decisões operacionais, fórmulas, regras, prompts e roteamento permanecem versionados, mas sua execução ocorre obrigatoriamente dentro de workflows ou subworkflows n8n. Nenhum site, script, worker, endpoint ou serviço auxiliar pode manter uma implementação paralela dessas capacidades.
+
+Componentes externos são subordinados e estreitos: Telegram e Sites transportam/exibem; Docling e document-worker extraem sem interpretar o negócio; PostgreSQL persiste sem decidir; scripts apenas instalam, migram, testam, fazem backup e recuperam. A política verificável é `../../policies/n8n-canonical-architecture.yaml`.
 
 ## Stack local canônica
 

@@ -1,7 +1,7 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
 **Data do status:** 2 de setembro de 2026, 06:32 (America/Sao_Paulo)
-**Versão Atual da Release:** `v3.10.0-n8n-local-core`
+**Versão Atual da Release:** `v3.11.0-n8n-exclusive-runtime`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** webhook hospedado estável; núcleo local em `SHADOW`; polling desligado
 **Saúde do Projeto:** 🟡 **RECENTRALIZAÇÃO N8N EM CURSO; INTAKE LOCAL VALIDADO; CUTOVER NÃO EXECUTADO**
@@ -27,6 +27,8 @@
 **Próximo passo exato:** A0.2 — criar WF-101 para comandos/conversa com claim/lease locais e WF-102 para entrega pelo adaptador. Depois migrar o WF-11 para filas e estado PostgreSQL antes de retomar N2.
 
 **Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
+
+**Regra canônica obrigatória:** comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas somente podem existir em workflows/subworkflows n8n. Quatro caminhos legados externos estão congelados e serão migrados no Marco A0; enquanto existirem, o runtime completo não pode ser declarado homologado.
 
 **Regressão técnica:** Compose, integração Docling, smoke do worker, lint e build aprovados. No POBJ2608 real, o parser preservou as 12 posições em 142,6 s e 1,87 GiB, mas células unidas ainda impedem o gate funcional.
 

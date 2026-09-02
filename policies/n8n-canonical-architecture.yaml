@@ -1,0 +1,65 @@
+schema_version: 1.0.0
+policy_id: director360.n8n-exclusive-runtime
+status: ACTIVE
+owner: Rafael
+effective_from: 2026-09-02
+
+canonical_runtime:
+  orchestrator: n8n
+  workflow_directory: n8n/workflows
+  business_state: PostgreSQL/visao360
+  rule: >-
+    Toda entrada passa por n8n antes de comando, decisão, IA, cálculo,
+    pergunta, aprendizado, mudança de estado ou resposta.
+
+allowed_subordinate_components:
+  telegram_and_sites:
+    allowed: [authenticate, authorize_channel, rate_limit, technical_deduplication, enqueue_envelope, display]
+    forbidden: [business_commands, agent_routing, llm_prompting, calculation, clarification_logic, final_opinion]
+  docling_and_document_worker:
+    allowed: [extract_text, extract_tables, extract_layout, return_provenance]
+    forbidden: [interpret_business_rule, repair_ambiguous_cell, recommend, decide]
+  postgres:
+    allowed: [transaction, constraint, persistence, lease, idempotency, query]
+    forbidden: [business_recommendation, model_decision, silent_conflict_resolution]
+  scripts:
+    allowed: [install, start, stop, backup, restore, test, migrate]
+    forbidden: [process_real_case, bypass_workflow, create_parallel_runtime]
+
+mandatory_n8n_ownership:
+  - command_routing
+  - conversation_state
+  - document_journey
+  - director_orchestration
+  - general_manager_orchestration
+  - specialist_orchestration
+  - model_selection
+  - prompt_application
+  - business_calculation
+  - material_gap_detection
+  - owner_clarification
+  - supervised_learning
+  - state_360_publication
+  - final_response_composition
+  - outbound_delivery_decision
+  - error_and_retry_policy
+
+legacy_exceptions_frozen:
+  - path: app/api/ingest/telegram/route.ts
+    violation: commands, clarification and document journey still execute in hosted code
+    migration_target: WF-97/WF-101/WF-102
+  - path: lib/telegram-runtime.ts
+    violation: operational command and clarification behavior outside n8n
+    migration_target: WF-101
+  - path: app/api/bridge
+    violation: hosted job transitions remain authoritative in the legacy path
+    migration_target: WF-11 local plus PostgreSQL visao360
+  - path: core/telegram_bot_worker.py
+    violation: parallel Telegram runtime retained from an earlier architecture
+    migration_target: retire after WF-101/WF-102 gate
+
+exception_rules:
+  new_exceptions_allowed: false
+  legacy_can_receive_features: false
+  allowed_change: security_fix_or_migration_removal_only
+  done_requires_zero_runtime_violations: true

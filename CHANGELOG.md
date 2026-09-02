@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Governance — n8n canônico
+- `AGENTS.md` avançado para v2.2 e n8n definido como autoridade operacional exclusiva do Diretor 360.
+- Criada política `n8n-canonical-architecture.yaml`, proibindo comandos, IA, cálculos, perguntas, aprendizado, transições e parecer final fora dos workflows.
+- Quatro implementações legadas externas foram inventariadas, congeladas e vinculadas aos workflows de migração.
+- Adicionado teste arquitetural que valida a regra canônica, o catálogo de workflows e o bloqueio do gate enquanto houver exceções legadas.
+
+### Validation — n8n canônico
+- `test:local-core` aprovou a arquitetura e os 19 workflows versionados.
+- `test:p0`, lint e build aprovados; o gate de runtime permaneceu deliberadamente bloqueado até a migração das quatro exceções legadas.
+
 ### Changed — webhook Telegram preservado
 - Por decisão de Rafael, o Telegram permanece em webhook; o gateway hospedado será reduzido a fila de transporte e o Docker consumirá os eventos pelo WF-97.
 - Quick Tunnel gratuito foi testado e ficou acessível, mas o Telegram recusou o subdomínio temporário por resolução DNS; o experimento foi interrompido sem deixar o bot indisponível.

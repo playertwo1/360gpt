@@ -1,6 +1,6 @@
 # PROJECT STATE
 
-Version: 3.10.0-n8n-local-core
+Version: 3.11.0-n8n-exclusive-runtime
 Current phase: recentralização do runtime no n8n/PostgreSQL local
 Current milestone: A0 — n8n e PostgreSQL como núcleo local único
 Current task: A0.2 — dispatcher local de comandos/conversa e saída Telegram
@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: webhook Telegram restaurado no gateway estável, esquema PostgreSQL local e intake/deduplicação sintética aprovados
+Last completed: n8n declarado autoridade operacional exclusiva no AGENTS v2.2, ADR, política e teste de arquitetura
 Next task: criar WF-101 com claim/lease, comandos antes de esclarecimentos e histórico local; depois WF-102 de entrega pelo adaptador
 
-Last validation: 2026-09-02 — WF-100 sintético: primeira entrega `accepted=true/queued=true`, repetição `duplicate=true`, 1 update e 1 evento; `test:local-core`, `test:p0`, lint e build PASS; poller saudável e desativado.
+Last validation: 2026-09-02 — `test:local-core`, gate canônico (19 workflows), `test:p0`, lint e build PASS; runtime gate corretamente bloqueado pelas 4 exceções legadas; poller permanece desativado.
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:
@@ -26,8 +26,10 @@ Blockers:
 - WF-11 permanece despublicado e é legado de transição enquanto depender de `/api/bridge/*` hospedado.
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - O Sites ainda contém lógica operacional legada; deve ser reduzido a transporte somente depois do shadow local.
+- Quatro exceções legadas fora do n8n estão inventariadas e congeladas; o Gate A0 exige removê-las ou reduzi-las a transporte puro.
 
 Decisions:
+- Nenhuma capacidade operacional pode ser implementada ou alterada fora do n8n; código externo é apenas adaptador, extrator, persistência, interface ou operação técnica.
 - n8n e PostgreSQL local são o núcleo canônico; Telegram e Sites são somente canais.
 - Telegram permanece em webhook HTTPS no gateway; Docker consome a fila por conexão de saída; editor n8n continua privado.
 - Sites remoto pode manter somente caixa postal temporária, nunca Estado 360 oficial.

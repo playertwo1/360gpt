@@ -1,6 +1,6 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.2
+**Versão do planejamento:** 4.3
 
 **Atualizado em:** 2 de setembro de 2026
 
@@ -132,6 +132,8 @@ Fora do MVP, até o gate N7:
 
 ### 2.4 Regra de arquitetura vigente
 
+- n8n é a autoridade operacional exclusiva: toda entrada passa por workflow antes de comando, IA, cálculo, pergunta, estado ou resposta.
+- Implementação paralela em Sites, Telegram, scripts, APIs ou workers é proibida e não conta como `DONE`.
 - Telegram continua em webhook HTTPS estável no gateway hospedado; WF-97 entrega a fila ao Docker por conexão de saída.
 - O editor n8n permanece somente em `127.0.0.1:5678`.
 - Sites e Telegram são portas de entrada/saída; regras e estado pertencem ao n8n/PostgreSQL.
@@ -248,6 +250,8 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 ### A0.0 — Decisão e fronteiras
 
 - [x] Registrar ADR-002 com n8n como orquestrador, PostgreSQL local como verdade e canais como transporte.
+- [x] Tornar o n8n autoridade operacional exclusiva no `AGENTS.md` v2.2 e na política executável.
+- [x] Inventariar e congelar quatro exceções legadas fora do n8n; nenhuma pode receber nova funcionalidade.
 - [x] Formalizar Telegram por webhook no gateway hospedado e entrega ao Docker pelo WF-97.
 - [x] Proibir exposição pública do editor n8n e do PostgreSQL.
 - [x] Identificar WF-11 e `/api/bridge/*` hospedados como caminho legado de transição.
@@ -270,6 +274,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Registrar conversa inbound/outbound e impedir que mensagem do próprio bot seja processada.
 - [ ] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura e idempotência por parte.
 - [ ] Criar WF-103 de contingência local, com erro sanitizado e sem aviso duplicado.
+- [ ] Remover parser e execução de comandos de `lib/telegram-runtime.ts` após equivalência comprovada no WF-101.
 
 ### A0.3 — Documento, Docling e orquestração local
 
@@ -279,6 +284,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Manter Docling como extrator e consumir `tables[]` antes de Markdown.
 - [ ] Converter Diretor, quatro Gerentes Gerais e especialistas em subworkflows versionados, acionando somente domínios materiais.
 - [ ] Persistir todo handoff e Estado 360 antes da resposta ao canal.
+- [ ] Retirar transições de negócio de `app/api/bridge/*`; endpoints restantes somente transportam envelopes.
 
 ### A0.4 — Conversa, aprendizado e histórico local
 
@@ -305,6 +311,8 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Somente depois do gate, revogar a lógica operacional hospedada duplicada.
 
 **Gate A0:** uma mensagem e um arquivo enviados ao webhook entram na fila de transporte, percorrem o n8n/PostgreSQL no Docker e retornam ao Telegram; comandos não entram em esclarecimento; duplicatas não reprocessam; Sites não governa o estado.
+
+**Gate adicional de canonicidade:** zero capacidade operacional depende de decisão fora de `n8n/workflows`; as exceções em `policies/n8n-canonical-architecture.yaml` devem estar removidas ou reduzidas a transporte puro.
 
 ---
 

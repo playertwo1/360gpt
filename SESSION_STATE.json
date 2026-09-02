@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.10.0-n8n-local-core",
+  "version": "3.11.0-n8n-exclusive-runtime",
   "last_updated": "2026-09-02T06:32:00-03:00",
   "last_active_assistant": "ChatGPT Codex",
   "next_recommended_assistant": "ChatGPT Codex or Antigravity",
@@ -15,6 +15,8 @@
   "current_task": "Criar WF-101 dispatcher local, WF-102 entrega Telegram e WF-103 contingência",
   "status": "IN_PROGRESS",
   "last_completed": [
+    "AGENTS v2.2, ADR-002 e política executável definem o n8n como autoridade operacional exclusiva",
+    "Quatro exceções legadas fora do n8n foram inventariadas e congeladas; nenhuma pode receber funcionalidade nova",
     "ADR-002 aprovado: Telegram e Sites são canais; n8n/PostgreSQL local são o núcleo",
     "Esquema local de canais, jobs, conversa, esclarecimentos, diretrizes, entregas e handoffs aplicado",
     "Webhook Telegram confirmado no gateway estável; Docker consumirá a fila pelo WF-97",
@@ -29,8 +31,8 @@
   ],
   "last_validation": {
     "result": "PASS",
-    "commands": ["npm run test:local-core", "python -m py_compile services/telegram-poller/app.py", "docker compose config", "teste sintético WF-100"],
-    "evidence": "Primeiro update accepted/queued; repetição duplicate; uma única linha por update; polling e workflow ficaram inativos"
+    "commands": ["npm run test:local-core", "npm run test:p0", "npm run lint", "npm run build"],
+    "evidence": "19 workflows JSON válidos; política canônica PASS; gate de runtime corretamente bloqueado até migrar 4 exceções; Telegram conversacional, lint e build PASS"
   },
   "runtime": {
     "n8n": "healthy at http://localhost:5678",
@@ -44,9 +46,9 @@
     "canonical_business_database": "PostgreSQL visao360"
   },
   "security": {"external_effects_allowed": false, "document_content_trust": "UNTRUSTED", "secrets_committed": false},
-  "blockers": ["WF-11 ainda depende da lógica hospedada além do transporte", "WF-101/WF-102 locais ainda precisam assumir comandos e respostas", "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"],
+  "blockers": ["Gate canônico bloqueado enquanto quatro caminhos legados não forem removidos ou reduzidos a transporte puro", "WF-11 ainda depende da lógica hospedada além do transporte", "WF-101/WF-102 locais ainda precisam assumir comandos e respostas", "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"],
   "pending_decisions": ["Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"],
-  "next_exact_step": "Implementar A0.2 no n8n local: claim/lease, roteamento de comandos antes de esclarecimentos, histórico e saída pelo adaptador.",
+  "next_exact_step": "Implementar A0.2 exclusivamente em workflows n8n: WF-101 para claim/lease, comandos antes de esclarecimentos e histórico; WF-102 para entrega por adaptador passivo; WF-103 para contingência.",
   "resume_order": ["AGENTS.md", "PROJECT_STATE.md", "ROADMAP.md", "CHANGELOG.md", "SESSION_STATE.json", "CODEX_HANDOFF.md", "git status"],
   "canonical_files": {
     "roadmap": "ROADMAP.md",
@@ -58,6 +60,7 @@
     "agents": "AGENTS.md",
     "workflow": "n8n/workflows/wf-100-telegram-local-intake.json",
     "architecture_decision": "docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md",
+    "runtime_policy": "policies/n8n-canonical-architecture.yaml",
     "telegram_transport": "services/telegram-poller/app.py",
     "worker": "services/document-worker/app/main.py",
     "extraction_contract": "contracts/document-extraction.schema.json"
