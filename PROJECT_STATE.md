@@ -17,7 +17,7 @@ Host baseline:
 Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99, retenção n8n e remoção de dados demo da interface validados localmente
 Next task: executar WF-97/WF-98 em modo local com payload sintético e confirmar leases/idempotência
 
-Last validation: 2026-09-01 — Docker Compose saudável e endpoint local n8n `/healthz` respondeu HTTP 200; WF-97/WF-98 permanecem inativos; contrato `telegram-intent.schema.json`, validação estrutural de payload IA, regressão conversacional e hardening PASS.
+Last validation: 2026-09-02 — nova observação Shadow 20/20 PASS; consolidado 30 observações/600 casos, 0 erros, 0 divergências, 0 mutações e 0 efeitos externos. Lacuna histórica permanece sinalizada, sem backfill artificial.
 Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:
@@ -37,7 +37,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-02 00:55
+Last update: 2026-09-02 01:10
 
 Resume instruction:
 1. Continuar `ROADMAP.md` a partir de P0.4 e formalizar o contrato de intenção estruturada.
