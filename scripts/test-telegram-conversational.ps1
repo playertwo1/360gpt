@@ -10,6 +10,7 @@ function Assert-True([bool]$condition, [string]$message) {
 }
 
 $runtime = Get-Content (Join-Path $repo 'lib/telegram-runtime.ts') -Raw
+$clarificationAi = Get-Content (Join-Path $repo 'lib/clarification-ai.ts') -Raw
 $messages = Get-Content (Join-Path $repo 'lib/telegram-messages.ts') -Raw
 $complete = Get-Content (Join-Path $repo 'app/api/bridge/complete/route.ts') -Raw
 $request = Get-Content (Join-Path $repo 'app/api/bridge/clarifications/request/route.ts') -Raw
@@ -33,6 +34,9 @@ Assert-True ($claim -match 'OWNER_PROVIDED' -and $wf13 -match 'OWNER_PROVIDED') 
 Assert-True ($claim -match "status = 'FAILED_FINAL'" -and $claim -match "last_error_code = 'BRIDGE_TIMEOUT'") 'Lease final expirado não permanece eternamente em PROCESSING'
 Assert-True ($runtime -match 'attempt_count = 0' -and $reopen -match 'attempt_count = 0' -and $reopen -match "'FAILED_FINAL'") 'Reabertura reinicia orçamento de tentativas e aceita falha final'
 Assert-True ($messages -match 'TELEGRAM_SAFE_LIMIT = 3600' -and $complete -match 'telegram_deliveries') 'Parecer usa partes seguras e idempotentes'
+Assert-True ($runtime -match 'combinedAnswers' -and $runtime -match 'answeredIds') 'Respostas parciais acumulam e removem somente perguntas já atendidas'
+Assert-True ($request -match 'questions_json' -and $clarificationAi -match 'isContextRequest') 'Reclamação ou dúvida de formato não vira valor de indicador'
+Assert-True ($clarificationAi -match 'repairMojibake') 'Texto com mojibake é reparado antes do envio'
 Assert-True ($telegram -notmatch 'Santa Rita|Agro Vale|Supermercado Central|Bebidas Paraíso|TransVale') 'Webhook operacional não contém empresas fictícias'
 Assert-True ($wf13 -notmatch "tenant-demo|cust-demo-001") 'GG Performance publica somente no escopo real do proprietário'
 
