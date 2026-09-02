@@ -1,6 +1,6 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026, 16:32 (America/Sao_Paulo)
+**Data do status:** 2 de setembro de 2026, 16:37 (America/Sao_Paulo)
 **Versão Atual da Release:** `v3.14.0-gate-n2-approved`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
 **Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
@@ -22,7 +22,7 @@
 **Relatório da auditoria:** `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md` e `walkthrough.md`  
 **Escopo Ativo:** Telegram → Webhook Cloudflare → Orquestrador WF-11/WF-12 local → Docling TableFormer → GG Performance (WF-13) + GG Conta (WF-20) → Parecer Integrado 360 no Telegram.
 **Worker e agenda:** `document-worker` e Docling saudáveis; WF-11, WF-12, WF-13 e WF-20 ativos no n8n.
-**Próximo passo:** Marco N8.2 (GG Relacionamento) ou piloto documental E2E do WF-11.
+**Próximo passo:** Marco N2.1 — entrada textual conversacional no WF-101; depois execução E2E do WF-11 e Gate N7. GG Relacionamento permanece posterior ao Gate N7.
 
 **Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
 

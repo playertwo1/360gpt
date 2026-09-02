@@ -1,6 +1,6 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.4 — rota crítica detalhada até o MVP
+**Versão do planejamento:** 4.5 — entrada textual conversacional antes do E2E
 
 **Atualizado em:** 2 de setembro de 2026
 
@@ -14,7 +14,7 @@
 
 **Marco atual:** `A0 — n8n e PostgreSQL como núcleo local único`
 
-**Próxima tarefa:** A0.2/M0 — Antigravity deve reconciliar o rascunho do WF-101, escolher a versão canônica e iniciar a rota crítica M0→M10
+**Próxima tarefa:** N2.1 — implementar entrada textual direta no WF-101, roteada pelo Diretor aos agentes necessários, antes do piloto E2E documental
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -1000,15 +1000,173 @@ Condições automáticas de pausa:
 3. [x] Reprocessar POBJ2608 e comparar campos críticos contra ground truth da agência.
 4. [x] Rafael confere campos críticos e decide o Gate N2 (HOMOLOGADO POR RAFAEL EM 02/09/2026).
 
+### N2.1 — Entrada textual conversacional pelo Telegram — PRIORIDADE ATUAL
+
+Objetivo: permitir que Rafael envie fatos, atualizações, perguntas, correções ou análises extensas diretamente pelo Telegram. Texto não passa por Docling/OCR; entra no mesmo envelope canônico, é persistido como evidência atribuída a Rafael, interpretado pelo Diretor e encaminhado apenas aos Gerentes Gerais e especialistas materiais.
+
+#### Princípio funcional
+
+```text
+Telegram texto
+  → gateway passivo registra envelope e responde HTTP 200
+  → WF-100 deduplica e enfileira
+  → WF-101 normaliza e persiste a mensagem original
+  → classificador estruturado identifica intenção e fatos candidatos
+  → Diretor consulta Estado 360 e escolhe domínios necessários
+  → Gerente(s) e especialista(s) interpretam no próprio escopo
+  → Motor reconcilia texto, fontes existentes e regras homologadas
+  → dúvida ou conflito material pergunta a Rafael
+  → Estado 360 versionado
+  → resposta pelo Telegram
+```
+
+#### Tipos de texto que devem ser reconhecidos
+
+- `QUESTION`: pergunta que consulta o Estado 360, como “Como está meu POBJ?”.
+- `OWNER_FACT`: fato novo informado por Rafael, como “Abri mais duas contas hoje”.
+- `OWNER_CORRECTION`: correção explícita de dado ou entendimento anterior.
+- `QUESTION_AND_FACT`: fato novo acompanhado de pergunta, como “Liberei R$ 30 mil de rotativo; com isso bato a linha?”.
+- `OWNER_ANALYSIS`: texto longo estruturado, parecer ou consolidação produzida/fornecida por Rafael.
+- `COMMAND`: mensagem iniciada por comando conhecido; deve ser tratada antes da IA.
+- `FORMAT_FEEDBACK`: reclamação sobre corte, loop, erro, codificação ou resposta inadequada.
+- `SOCIAL_OR_AMBIGUOUS`: saudação, conversa geral ou texto que não possa ser aplicado com segurança.
+
+#### Envelope canônico unificado
+
+Toda entrada, independentemente da origem, deve chegar ao Diretor no mesmo formato conceitual:
+
+```json
+{
+  "schema_version": "1.0.0",
+  "source": "TELEGRAM",
+  "input_type": "TEXT",
+  "tenant_id": "rafael-360",
+  "owner_id": "rafael",
+  "chat_id": "...",
+  "message_id": "...",
+  "correlation_id": "...",
+  "received_at": "...",
+  "reply_to_message_id": null,
+  "user_message": "texto original integral",
+  "attachment": null,
+  "extracted_content": null,
+  "provenance": {
+    "evidence_type": "OWNER_PROVIDED",
+    "actor": "Rafael",
+    "channel": "TELEGRAM"
+  }
+}
+```
+
+PDF, imagem e planilha usam o mesmo envelope, mudando `input_type`, `attachment` e `extracted_content`. O Diretor não deve precisar conhecer detalhes internos de OCR ou parser.
+
+#### Implementação obrigatória no WF-101
+
+- [ ] No Switch principal, criar ramo `TEXT` antes do ramo documental.
+- [ ] Ignorar mensagens de bot e deduplicar por `update_id`/`message_id` antes de interpretar.
+- [ ] Persistir o texto original integral em `conversation_messages` antes da chamada de IA.
+- [ ] Preservar acentos e UTF-8 sem conversões Latin-1/Windows-1252.
+- [ ] Aplicar debounce de 2,5 segundos somente em textos comuns enviados em sequência; comando, resposta direta e arquivo não aguardam.
+- [ ] Limitar contexto enviado à IA às últimas interações relevantes e referências persistidas; não depender de toda a conversa bruta.
+- [ ] Exigir saída JSON estruturada do classificador, contendo `intent`, `facts[]`, `questions[]`, `corrections[]`, `domains[]`, `material_conflicts[]`, `requires_owner_input` e `safe_response`.
+- [ ] Validar o JSON antes de alterar qualquer estado; JSON inválido preserva a mensagem e gera resposta segura, sem inventar fatos.
+- [ ] Diretor selecionar somente `performance`, `conta`, `financeiro` e/ou `relacionamento` quando o conteúdo realmente exigir.
+- [ ] Para mensagens POBJ, acionar GG Performance; quando houver empresa real identificada por chave forte, permitir complemento do GG Conta.
+- [ ] Registrar handoff, versão de prompt/modelo, evidências usadas e resultado de cada agente.
+
+#### Regras de proveniência e aprendizagem
+
+- [ ] Todo fato digitado por Rafael nasce como `OWNER_PROVIDED`; nunca como conteúdo comprovado no PDF.
+- [ ] Texto longo com aparência de relatório continua sendo informação fornecida por Rafael, ainda que contenha números detalhados e recomendações.
+- [ ] Uma informação de Rafael pode complementar o Estado 360, mas não substitui silenciosamente fonte oficial divergente.
+- [ ] Se o texto conflitar com PDF, planilha, regra homologada ou outro fato confirmado, preservar os dois valores, mostrar as fontes e perguntar qual tratamento aplicar.
+- [ ] Correção explícita cria nova versão ligada por `SUPERSEDES`; o valor anterior permanece auditável.
+- [ ] Preferência, hipótese ou cenário não vira fato reutilizável.
+- [ ] Informação validada por Rafael pode tornar-se conhecimento reutilizável somente após promoção supervisionada; nunca por repetição automática.
+- [ ] Informações aprendidas mantêm escopo: indicador, período, cliente, carteira ou preferência do proprietário.
+
+#### Comportamento esperado para exemplos reais
+
+Mensagem curta:
+
+> Cielo já está subindo e deve bater. Liberei R$ 18 mil de limite rotativo. Tenho R$ 180 mil de captação para entrar.
+
+Resultado interno esperado:
+
+- fatos candidatos separados por indicador;
+- valores, unidade e período marcados como ausentes quando não informados;
+- GG Performance acionado;
+- nenhum cálculo definitivo sem meta/período/regra aplicável;
+- pergunta apenas se a lacuna mudar materialmente a resposta solicitada.
+
+Mensagem mista:
+
+> Liberei R$ 30 mil de rotativo hoje. Com isso consigo bater essa linha?
+
+Resultado esperado:
+
+- registrar R$ 30 mil como fato `OWNER_PROVIDED`;
+- identificar a intenção de calcular impacto;
+- consultar o Estado 360 para meta e realizado correntes;
+- recalcular somente se a regra estiver homologada;
+- responder com resultado, hipótese, evidência e confiança.
+
+Texto longo estruturado como o parecer fornecido por Rafael:
+
+- preservar integralmente o original;
+- extrair seções `SITUAÇÃO`, `PONTUAÇÃO`, `METAS CRÍTICAS`, `CAMINHO RECOMENDADO`, `RISCOS` e `PRÓXIMA AÇÃO`;
+- converter afirmações em fatos, cálculos, estimativas, riscos e recomendações candidatos;
+- comparar os números com o snapshot POBJ vigente;
+- não assumir que “competência encerrada”, “recuperável 0,00” ou qualquer regra textual é oficial sem fonte/regra correspondente;
+- apresentar conflitos materiais a Rafael antes de publicar uma nova versão do Estado 360.
+
+#### Resposta do Diretor
+
+A resposta deve informar, de maneira curta:
+
+1. o que foi entendido;
+2. o que foi registrado como informação de Rafael;
+3. quais agentes foram consultados;
+4. qual análise ou impacto foi produzido;
+5. quais pontos continuam pendentes ou conflitantes;
+6. a próxima ação recomendada.
+
+Quando o texto for apenas uma atualização e não contiver pergunta, o sistema confirma o registro e informa se a atualização mudou alguma projeção relevante. Não precisa fabricar uma análise extensa em toda mensagem.
+
+#### Estados e persistência
+
+- [ ] Mensagem recebida: `RECEIVED → QUEUED → PROCESSING`.
+- [ ] Texto interpretado e suficiente: `READY → DELIVERED`.
+- [ ] Texto com dúvida material: `AWAITING_OWNER_INPUT`.
+- [ ] Falha temporária da IA: `FAILED_RETRYABLE`, mantendo o original.
+- [ ] Falha definitiva: `FAILED_FINAL`, explicável por `/protocolo`.
+- [ ] Salvar mensagem original, interpretação estruturada, fatos aceitos, conflitos, perguntas, respostas, handoffs, snapshot resultante e mensagem enviada.
+
+#### Critérios mínimos de aceite N2.1
+
+- [ ] “Como está meu POBJ?” consulta dados existentes sem passar pelo OCR.
+- [ ] “Abri duas contas hoje” registra informação nova como `OWNER_PROVIDED` e aciona os domínios adequados.
+- [ ] Mensagem com fato + pergunta registra primeiro e responde depois.
+- [ ] Texto longo estruturado é recebido integralmente, sem corte nem mojibake.
+- [ ] Comando `/comandos` continua sendo comando e não vira fato/pergunta de indicador.
+- [ ] “Oi”, “não sei” e “qual indicador?” não alteram valores.
+- [ ] Conflito com documento oficial produz pergunta, não sobrescrita silenciosa.
+- [ ] Retry não duplica mensagem, fato, handoff ou resposta.
+- [ ] Histórico permite ao Diretor usar informação confirmada na interação seguinte.
+- [ ] Toda decisão operacional continua dentro do n8n.
+
+**Gate N2.1:** Rafael envia pelo Telegram (a) uma atualização curta com fato, (b) uma pergunta sobre o impacto e (c) um texto longo estruturado. O sistema registra com proveniência, consulta os agentes necessários, responde corretamente e reutiliza apenas informações confirmadas na mensagem seguinte.
+
 ### Depois do Gate N2
 
-1. [ ] Rebuild e regressão do worker.
-2. [ ] Testes WF-11, WF-12 e WF-13 com contrato 1.1.0.
-3. [ ] Execução manual do WF-11.
-4. [ ] Ativação controlada da agenda.
-5. [ ] Teste de lacuna e conversa supervisionada.
-6. [ ] Piloto com 3–5 documentos.
-7. [ ] Gate N7 no celular.
+1. [ ] Implementar e aprovar o Gate N2.1 de entrada textual.
+2. [ ] Rebuild e regressão mínima do worker.
+3. [ ] Testes WF-11, WF-12 e WF-13 com contrato 1.1.0.
+4. [ ] Execução manual do WF-11.
+5. [ ] Ativação controlada da agenda.
+6. [ ] Teste de lacuna e conversa supervisionada.
+7. [ ] Piloto com 3–5 documentos e textos relacionados.
+8. [ ] Gate N7 no celular.
 
 ### Regra de continuidade
 

@@ -1,10 +1,10 @@
 # PROJECT STATE
 
 Version: 3.14.0-gate-n2-approved
-Current phase: Transição Pós-Gate N2 para N8.2 (GG Relacionamento) e Testes E2E
-Current milestone: Gate N2 — Leitor Docling CPU TableFormer Homologado por Rafael
-Current task: Gate N2 formalmente homologado por Rafael ("Sim"); campos críticos do POBJ validados com precisão de 100%.
-Status: GATE_N2_APPROVED
+Current phase: Pós-Gate N2 — entrada textual conversacional antes do E2E documental
+Current milestone: N2.1 — texto Telegram direto ao Diretor e agentes necessários
+Current task: Implementar ramo TEXT no WF-101 com envelope canônico, proveniência OWNER_PROVIDED, roteamento e memória supervisionada.
+Status: IN_PROGRESS
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -15,7 +15,7 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: Gate N2 homologado formalmente por Rafael em 02/09/2026 após conferência dos campos críticos do POBJ2608 (Crédito PJ 180,77%, Encanta BRA 104,17%, Open Finance 125,00%, Vencidos 64,86%), com extração pelo Docling CPU TableFormer em 122.4s.
-Next task: Avançar para a Fase N8.2 (GG Relacionamento — Inteligência de Contatos, Objeções e Abordagem PJ) e testes ponta a ponta.
+Next task: Executar checklist N2.1 do ROADMAP 4.5; depois retomar o E2E WF-11 e Gate N7, antes de N8.2.
 
 Last validation: 2026-09-02 16:30 — Homologação formal de Rafael no Gate N2 (PASS); benchmark tabular 100% preciso; warnings geométricos emitidos sem alucinação.
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
@@ -41,11 +41,12 @@ Decisions:
 
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
+- Nenhuma decisão pendente para N2.1: Rafael aprovou entrada textual direta com roteamento pelo Diretor.
 
-Last update: 2026-09-02 06:32
+Last update: 2026-09-02 16:37
 
 Resume instruction:
-1. Continuar `ROADMAP.md` 4.4 em A0.2/M0 e executar a rota crítica M0→M10 pelo Antigravity.
+1. Continuar `ROADMAP.md` 4.5 no Marco N2.1 e implementar o ramo TEXT dentro do WF-101.
 2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
 3. Manter polling desligado; avançar WF-97/WF-101/WF-102 sem trocar o webhook.
 4. Após o Gate A0, retomar N2 sem alterar o gate objetivo do Docling.

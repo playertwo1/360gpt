@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.14.0-gate-n2-approved-gg-conta-active",
-  "last_updated": "2026-09-02T16:32:00-03:00",
+  "version": "3.14.0-roadmap-4.5-text-input",
+  "last_updated": "2026-09-02T16:37:00-03:00",
   "last_active_assistant": "Antigravity",
   "next_recommended_assistant": "ChatGPT Codex",
   "official_repository": "https://github.com/playertwo1/360gpt.git",
@@ -11,9 +11,9 @@
   "site": "https://visao-360-diretor.fael360092.chatgpt.site",
   "deployed_site_version": 41,
   "current_roadmap": "ROADMAP.md",
-  "current_phase": "Pós-Gate N2 & Fase N8.1 (GG Conta Ativo)",
-  "current_task": "Gate N2 homologado por Rafael; GG Conta ativo; pronto para auditoria do ChatGPT Codex e avanço para N8.2",
-  "status": "GATE_N2_APPROVED",
+  "current_phase": "Pós-Gate N2 — entrada textual conversacional antes do E2E",
+  "current_task": "Implementar N2.1: texto Telegram direto ao Diretor e aos agentes necessários dentro do WF-101",
+  "status": "IN_PROGRESS",
   "last_completed": [
     "Gate N2 homologado formalmente por Rafael em 02/09/2026 após validação dos campos críticos do POBJ2608",
     "Benchmark Docling CPU TableFormer processado em 122.4s com 3 tabelas e 111 linhas extraídas com 100% de precisão",
@@ -59,7 +59,7 @@
   "pending_decisions": [
     "Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"
   ],
-  "next_exact_step": "Retomar em N8.2 (GG Relacionamento) ou execução E2E do WF-11 com POBJ real",
+  "next_exact_step": "Executar ROADMAP 4.5/N2.1: ramo TEXT no WF-101, envelope canônico, classificação estruturada, OWNER_PROVIDED, roteamento seletivo, persistência e Gate N2.1",
   "resume_order": [
     "AGENTS.md",
     "PROJECT_STATE.md",

@@ -1,5 +1,12 @@
 # Changelog
 
+### Planning — N2.1 entrada textual conversacional (02/09/2026)
+- Entrada de texto pelo Telegram promovida a prioridade anterior ao E2E documental e ao GG Relacionamento.
+- Definido envelope unificado para texto, PDF, imagem e planilha; texto pula Docling e segue diretamente ao Diretor.
+- Formalizadas intenções `QUESTION`, `OWNER_FACT`, `OWNER_CORRECTION`, `QUESTION_AND_FACT`, `OWNER_ANALYSIS`, `COMMAND`, `FORMAT_FEEDBACK` e `SOCIAL_OR_AMBIGUOUS`.
+- Toda informação digitada por Rafael recebe proveniência `OWNER_PROVIDED`; conflitos com fontes oficiais exigem reconciliação, sem sobrescrita silenciosa.
+- Adicionados critérios de aceite para mensagem curta, fato mais pergunta, texto longo estruturado, histórico e roteamento seletivo dos agentes.
+
 ### Complete & Homologated — Gate N2 Homologado por Rafael (02/09/2026)
 - Gate N2 formalmente aprovado e homologado por Rafael ("Sim") após validação da mesa de conferência dos campos críticos do `POBJ2608.pdf`.
 - Extração de 100% de precisão nos indicadores materiais: Crédito PJ (180,77%), Encanta BRA (104,17%), Open Finance PJ (125,00%), Vencidos Até 59 dias (64,86%), Capital de Giro e Desconto.

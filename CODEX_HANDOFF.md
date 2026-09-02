@@ -12,7 +12,7 @@
 2. **Desengasgo do Canal Telegram:** Resolvido o encerramento da pendência fantasma `telegram-5281600644-498443332` no gateway.
 3. **Fase N8.1 (Gerente Geral de Conta):** Schema `pj_accounts` criado no PostgreSQL local com 20 empresas auditadas, motor determinístico `engines/conta/conta-engine.mjs` testado contra schemas e `WF-20` ativo no n8n integrado ao `WF-12`.
 4. **Gate N2 (Docling CPU TableFormer):** Benchmark executado no arquivo real `POBJ2608.pdf` (1.97 MB) em 122.4s com 3 tabelas e 111 linhas extraídas com 100% de precisão nos campos críticos; **formalmente homologado por Rafael ("Sim") em 02/09/2026**.
-5. **Próximo passo na fila executável:** Iniciar o **Marco N8.2 (GG Relacionamento — Inteligência de Contatos, Objeções e Abordagem PJ)** ou rodar piloto documental E2E do `WF-11`.
+5. **Próximo passo aprovado por Rafael:** executar o **Marco N2.1**, adicionando entrada textual direta no WF-101 antes do piloto documental E2E. Texto pula OCR, recebe proveniência `OWNER_PROVIDED`, passa pelo Diretor e somente pelos agentes materiais. Após o Gate N2.1, executar E2E do WF-11/Gate N7; N8.2 vem depois.
 
 ---
 
