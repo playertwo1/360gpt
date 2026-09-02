@@ -22,6 +22,17 @@ for (const workflowFile of workflows) {
   assert.ok(Array.isArray(workflow.nodes), `${workflowFile}: nodes ausentes`);
 }
 
+const wf101 = await readFile(path.join(root, 'n8n/workflows/wf-101-local-dispatcher.json'), 'utf8');
+const wf102 = await readFile(path.join(root, 'n8n/workflows/wf-102-telegram-delivery.json'), 'utf8');
+const wf103 = await readFile(path.join(root, 'n8n/workflows/wf-103-local-error-contingency.json'), 'utf8');
+assert.match(wf101, /FOR UPDATE SKIP LOCKED/);
+assert.match(wf101, /conversation_messages/);
+assert.match(wf101, /Roteamento determinístico/);
+assert.match(wf102, /telegram-poller:8790\/send/);
+assert.match(wf102, /part_index/);
+assert.match(wf103, /audit_log/);
+assert.match(wf103, /NOT EXISTS/);
+
 console.log(JSON.stringify({
   status: 'PASS',
   policy: 'director360.n8n-exclusive-runtime',

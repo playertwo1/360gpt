@@ -13,7 +13,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH candidate AS (SELECT inbound_event_id FROM channel_inbound_events WHERE status = 'QUEUED' AND available_at <= now() ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1) UPDATE channel_inbound_events e SET status = 'PROCESSING', lease_token = gen_random_uuid(), lease_expires_at = now() + interval '2 minutes', attempt_count = attempt_count + 1 FROM candidate c WHERE e.inbound_event_id = c.inbound_event_id RETURNING e.inbound_event_id, e.channel, e.chat_id, e.event_kind, e.text_content, e.lease_token;"
+        "query": "WITH candidate AS (SELECT inbound_event_id FROM channel_inbound_events WHERE status = 'QUEUED' AND available_at <= now() ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1) UPDATE channel_inbound_events e SET status = 'PROCESSING', lease_token = gen_random_uuid(), lease_expires_at = now() + interval '2 minutes', attempt_count = attempt_count + 1 FROM candidate c WHERE e.inbound_event_id = c.inbound_event_id RETURNING e.inbound_event_id, e.external_update_id, e.tenant_id, e.owner_id, e.channel, e.chat_id, e.event_kind, e.text_content, e.lease_token;"
       },
       "id": "claim",
       "name": "02 Claim com lease",
@@ -32,11 +32,25 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH thread AS (INSERT INTO conversation_threads (thread_id, tenant_id, owner_id, channel, chat_id) VALUES (md5($1 || '|' || $2 || '|' || $3 || '|' || $4)::uuid, $1, $2, $3, $4) ON CONFLICT (tenant_id, owner_id, channel, chat_id) DO UPDATE SET updated_at=now() RETURNING thread_id), message AS (INSERT INTO conversation_messages (conversation_message_id, thread_id, direction, actor_role, external_message_id, content, content_hash) SELECT md5($5 || '|INBOUND')::uuid, thread_id, 'INBOUND', 'OWNER', $5, $6, 'sha256:' || encode(sha256(convert_to($6, 'UTF8')), 'hex') FROM thread ON CONFLICT (thread_id, direction, external_message_id) DO NOTHING RETURNING conversation_message_id) SELECT (SELECT thread_id FROM thread) AS thread_id, EXISTS (SELECT 1 FROM message) AS message_created, $7 AS route, $8 AS command, $9::uuid AS inbound_event_id, $10::uuid AS lease_token;",
+        "options": { "queryBatching": "single", "queryReplacement": "={{[$json.tenant_id,$json.owner_id,$json.channel,$json.chat_id,$json.external_update_id,$json.text_content,$json.route,$json.command,$json.inbound_event_id,$json.lease_token]}}" }
+      },
+      "id": "persist-conversation",
+      "name": "04 Persistir conversa antes de interpretar",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [280, 0],
+      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
     }
   ],
   "connections": {
     "01 Disparar dispatcher": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
-    "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] }
+    "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] },
+    "03 Roteamento determinístico": { "main": [[{ "node": "04 Persistir conversa antes de interpretar", "type": "main", "index": 0 }]] }
   },
   "pinData": {},
   "active": false,
