@@ -10,6 +10,7 @@
 
 ### Validation — n8n canônico
 - `test:local-core` aprovou a arquitetura e os 19 workflows versionados.
+- WF-101 foi adicionado como dispatcher local inativo, com claim/lease e roteamento determinístico.
 - `test:p0`, lint e build aprovados; o gate de runtime permaneceu deliberadamente bloqueado até a migração das quatro exceções legadas.
 
 ### Changed — webhook Telegram preservado

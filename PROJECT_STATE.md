@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: n8n declarado autoridade operacional exclusiva no AGENTS v2.2, ADR, política e teste de arquitetura
-Next task: criar WF-101 com claim/lease, comandos antes de esclarecimentos e histórico local; depois WF-102 de entrega pelo adaptador
+Last completed: WF-101 criado e validado em JSON com claim/lease e roteamento determinístico inicial; permanece inativo até cutover
+Next task: completar WF-101 com persistência de conversa/comandos e criar WF-102 de entrega pelo adaptador
 
-Last validation: 2026-09-02 — `test:local-core`, gate canônico (19 workflows), `test:p0`, lint e build PASS; runtime gate corretamente bloqueado pelas 4 exceções legadas; poller permanece desativado.
+Last validation: 2026-09-02 — `test:local-core` (20 workflows), `test:p0`, lint e build PASS; runtime gate corretamente bloqueado pelas 4 exceções legadas; poller permanece desativado.
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:

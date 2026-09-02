@@ -267,7 +267,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 ### A0.2 — Dispatcher local de conversa e comandos — MARCO ATUAL
 
-- [ ] Criar WF-101 para claim com lease dos `channel_inbound_events`.
+- [x] Criar WF-101 para claim com lease dos `channel_inbound_events` e roteamento determinístico inicial (workflow permanece inativo até cutover).
 - [ ] Rotear deterministicamente comandos antes de qualquer esclarecimento ou IA.
 - [ ] Migrar `/start`, `/comandos`, `/ajuda`, `/menu`, `/status`, `/progresso`, `/protocolo`, `/pendencias` e `/duvidas` para PostgreSQL/n8n.
 - [ ] Migrar `/excluir`, `/excluirultimo`, `/confirmar` e protocolos curtos com confirmação idempotente.

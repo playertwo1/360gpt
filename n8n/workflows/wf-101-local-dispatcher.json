@@ -1,0 +1,47 @@
+{
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000101",
+  "name": "WF-101 — Dispatcher local n8n (INATIVO ATE CUTOVER)",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "seconds", "secondsInterval": 10 }] } },
+      "id": "trigger",
+      "name": "01 Disparar dispatcher",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-520, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH candidate AS (SELECT inbound_event_id FROM channel_inbound_events WHERE status = 'QUEUED' AND available_at <= now() ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1) UPDATE channel_inbound_events e SET status = 'PROCESSING', lease_token = gen_random_uuid(), lease_expires_at = now() + interval '2 minutes', attempt_count = attempt_count + 1 FROM candidate c WHERE e.inbound_event_id = c.inbound_event_id RETURNING e.inbound_event_id, e.channel, e.chat_id, e.event_kind, e.text_content, e.lease_token;"
+      },
+      "id": "claim",
+      "name": "02 Claim com lease",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-260, 0],
+      "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const event = $input.first()?.json;\nif (!event) return [];\nconst text = String(event.text_content ?? '').trim();\nconst command = text.toLowerCase().split(/\\s+/)[0] || null;\nconst known = new Set(['/start','/comandos','/ajuda','/menu','/status','/progresso','/protocolo','/pendencias','/duvidas','/excluir','/excluirultimo','/confirmar','/pobj','/metas','/prioridades','/riscos','/cenarios','/indicador','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/explicar','/privacidade','/meusdados']);\nreturn [{json:{...event, route: known.has(command) ? 'COMMAND' : event.event_kind === 'DOCUMENT' || event.event_kind === 'IMAGE' ? 'DOCUMENT' : 'CONVERSATION', command, runtime:'N8N_LOCAL', business_state:'POSTGRES_VISAO360'}}];"
+      },
+      "id": "route",
+      "name": "03 Roteamento determinístico",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 0]
+    }
+  ],
+  "connections": {
+    "01 Disparar dispatcher": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
+    "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": { "executionOrder": "v1", "timezone": "America/Sao_Paulo", "saveDataErrorExecution": "all", "saveDataSuccessExecution": "none", "saveManualExecutions": false },
+  "versionId": "d360-wf101-v1",
+  "meta": { "templateCredsSetupCompleted": true, "canonical_runtime": "N8N_LOCAL" },
+  "tags": []
+}
