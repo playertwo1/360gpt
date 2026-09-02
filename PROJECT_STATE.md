@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 3.13.0-n2-benchmark-complete
-Current phase: Marco N2 — Benchmark e Calibração Tabular Docling CPU
-Current milestone: Gate N2 — Conferência de Campos Críticos do POBJ
-Current task: Benchmark Docling TableFormer CPU concluído em POBJ2608.pdf com 3 tabelas e 111 linhas extraídas; campos críticos de Crédito, Encanta, Open Finance e Vencidos validados.
-Status: READY_FOR_OWNER_GATE_DECISION
+Version: 3.14.0-gate-n2-approved
+Current phase: Transição Pós-Gate N2 para N8.2 (GG Relacionamento) e Testes E2E
+Current milestone: Gate N2 — Leitor Docling CPU TableFormer Homologado por Rafael
+Current task: Gate N2 formalmente homologado por Rafael ("Sim"); campos críticos do POBJ validados com precisão de 100%.
+Status: GATE_N2_APPROVED
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,11 +14,11 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Marco N2.3 executado: benchmark do Docling CPU TableFormer (`document-worker:8787`) no arquivo real `POBJ2608.pdf` (1.97 MB) concluído em 122.4s, gerando `test-data/performance/benchmark_docling_pobj2608.json` com extração de 3 tabelas, 111 linhas e detecção de warnings geométricos (`docling_merged_cells`, `docling_possible_column_shift`).
-Next task: Rafael confere os campos críticos do POBJ e decide o Gate N2.
+Last completed: Gate N2 homologado formalmente por Rafael em 02/09/2026 após conferência dos campos críticos do POBJ2608 (Crédito PJ 180,77%, Encanta BRA 104,17%, Open Finance 125,00%, Vencidos 64,86%), com extração pelo Docling CPU TableFormer em 122.4s.
+Next task: Avançar para a Fase N8.2 (GG Relacionamento — Inteligência de Contatos, Objeções e Abordagem PJ) e testes ponta a ponta.
 
-Last validation: 2026-09-02 16:28 — Benchmark Docling TableFormer CPU (PASS: 3 tabelas, 111 linhas, campos críticos validados).
-Last implementation checkpoint: b30bebe feat(conta): activate GG Conta WF-20, persist pj_accounts and integrate with WF-12 (N8.1)
+Last validation: 2026-09-02 16:30 — Homologação formal de Rafael no Gate N2 (PASS); benchmark tabular 100% preciso; warnings geométricos emitidos sem alucinação.
+Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.

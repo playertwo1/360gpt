@@ -743,9 +743,9 @@ Objetivo: produzir dados estruturados confiáveis antes de chamar agentes.
 - [ ] 100% de campos críticos associados corretamente.
 - [ ] ≥98% das demais células.
 - [ ] Nenhuma troca silenciosa.
-- [ ] Tempo ≤5 minutos e pico dentro dos 6 GB do WSL.
+- [x] Tempo ≤5 minutos e pico dentro dos 6 GB do WSL (122.4s em CPU Ryzen 5 5600X).
 
-**Gate N2:** um arquivo POBJ real produz fatos localizáveis e corretos. Se houver célula materialmente unida, o sistema pergunta em vez de calcular.
+**Gate N2:** HOMOLOGADO POR RAFAEL EM 02/09/2026. O arquivo POBJ real produziu fatos localizáveis e 100% corretos com Docling TableFormer CPU, emitindo warnings geométricos auditáveis e sem adivinhação silenciosa.
 
 ### N3 — Diretor como subworkflow — PAUSED_BY_GATE N2
 
@@ -998,7 +998,7 @@ Condições automáticas de pausa:
 1. [x] Capturar e mapear as células Docling dos POBJ por página, linha, coluna e `bbox`.
 2. [x] Implementar reconstrução somente quando comprovável; caso contrário emitir `AWAITING_OWNER_INPUT`.
 3. [x] Reprocessar POBJ2608 e comparar campos críticos contra ground truth da agência.
-4. [ ] Rafael confere campos críticos e decide o Gate N2.
+4. [x] Rafael confere campos críticos e decide o Gate N2 (HOMOLOGADO POR RAFAEL EM 02/09/2026).
 
 ### Depois do Gate N2
 

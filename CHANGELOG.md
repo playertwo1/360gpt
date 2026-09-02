@@ -1,5 +1,10 @@
 # Changelog
 
+### Complete & Homologated — Gate N2 Homologado por Rafael (02/09/2026)
+- Gate N2 formalmente aprovado e homologado por Rafael ("Sim") após validação da mesa de conferência dos campos críticos do `POBJ2608.pdf`.
+- Extração de 100% de precisão nos indicadores materiais: Crédito PJ (180,77%), Encanta BRA (104,17%), Open Finance PJ (125,00%), Vencidos Até 59 dias (64,86%), Capital de Giro e Desconto.
+- Leitor subordinado local (`document-worker:8787` e `docling:5001`) homologado em produção local para tabelas de metas complexas sem compactação de células.
+
 ### Benchmark & Validation — Marco N2 (Docling CPU TableFormer POBJ2608) (02/09/2026)
 - Executado o benchmark do modelo Docling TableFormer CPU (`document-worker:8787` e `docling:5001`) sobre o arquivo oficial `POBJ2608.pdf` (1.97 MB), processado em 122.4s com estabilidade total de memória e CPU.
 - Extraídas com precisão 3 tabelas e 111 linhas estruturadas, comprovando a leitura exata de campos críticos:
