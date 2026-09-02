@@ -29,7 +29,7 @@ function conciseSection(text: string, heading: string) {
 }
 
 async function createConfirmation(db: D1Database, token: string, chatId: number, ownerId: string, command: string, args: string[]) {
-  const code = crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
+  const code = crypto.randomUUID().replace(/-/g, '').slice(0, 4).toUpperCase();
   const now = Date.now(); const expiresAt = now + 10 * 60 * 1000;
   await db.prepare(`INSERT INTO command_confirmations (id, owner_id, chat_id, command, arguments_json, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, 'PENDING', ?, ?)`)
     .bind(code, ownerId, String(chatId), command, JSON.stringify(args), expiresAt, now).run();
