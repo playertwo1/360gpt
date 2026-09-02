@@ -18,7 +18,7 @@ Last completed: fila, lotes de debounce, endpoints inbound, persistência de dir
 Next task: validar o modo assíncrono no canário sem alterar o caminho síncrono atual
 
 Last validation: 2026-09-01 — npm lint PASS; npm build PASS; teste P0 Telegram hardening PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; interface sem empresas/pontuação demo; filtro is_bot, UTF-8 estrito, filas, debounce e diretrizes validados localmente
-Last commit: ced0aba feat: add telegram hardening and supervised directives
+Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
