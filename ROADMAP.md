@@ -305,7 +305,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 ### P0.10 — Gate de homologação
 
-- [~] Testes estáticos de hardening e lint/build locais aprovados; cenários HTTP de duplicidade, concorrência, falha de IA e pruning aguardam canário. O script conversacional documentado como `.mjs` não existe (há somente a variante `.ps1`).
+- [~] Testes estáticos de hardening e lint/build locais aprovados; o entrypoint `scripts/test-telegram-conversational.mjs` agora executa a suíte PowerShell equivalente. Cenários HTTP de duplicidade, concorrência, falha de IA e pruning aguardam canário.
 - [ ] Testar criação, aprovação, aplicação e revogação de diretriz.
 - [ ] Executar migrations, lint, build e regressões WF-11/WF-13/WF-99.
 - [ ] Publicar canário com a conta proprietária `fael@live.de` e reabrir o protocolo com estado limpo (bloqueado pelo conector Sites sem projeto visível).

@@ -17,7 +17,7 @@ Host baseline:
 Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99, retenção n8n e remoção de dados demo da interface validados localmente
 Next task: validar o modo assíncrono no canário sem alterar o caminho síncrono atual
 
-Last validation: 2026-09-01 — npm test:telegram-hardening PASS; npm lint PASS; npm build PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; interface sem empresas/pontuação demo; fila/debounce/diretrizes validados estaticamente. Teste conversacional `.mjs` solicitado não existe no repositório (há apenas `.ps1`).
+Last validation: 2026-09-01 — npm test:telegram-hardening PASS; `node scripts/test-telegram-conversational.mjs` PASS; npm lint PASS; npm build PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; interface sem empresas/pontuação demo; fila/debounce/diretrizes validados estaticamente.
 Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:

@@ -4,9 +4,10 @@
 
 ### Changed
 - Validação local do P0 repetida com `npm run test:telegram-hardening`; fila assíncrona e debounce permanecem atrás de flag até canário.
+- Adicionado entrypoint JavaScript `scripts/test-telegram-conversational.mjs` para executar a regressão conversacional existente.
 
 ### Known issues
-- O script `scripts/test-telegram-conversational.mjs` referenciado no roadmap não existe; a variante disponível é PowerShell e requer ambiente/serviço ativo.
+- Cenários HTTP de concorrência e retry ainda aguardam canário local/hospedado; a suíte estrutural pode ser executada sem serviços ativos.
 
 ### P0 Telegram hardening
 - Criadas persistência hospedada para feedbacks, candidatas, aplicações e auditoria de erros, endpoints protegidos de `sendChatAction` e workflows n8n WF-98/WF-99.
