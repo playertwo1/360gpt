@@ -1004,6 +1004,20 @@ Condições automáticas de pausa:
 
 Objetivo: permitir que Rafael envie fatos, atualizações, perguntas, correções ou análises extensas diretamente pelo Telegram. Texto não passa por Docling/OCR; entra no mesmo envelope canônico, é persistido como evidência atribuída a Rafael, interpretado pelo Diretor e encaminhado apenas aos Gerentes Gerais e especialistas materiais.
 
+#### Corte de escopo aprovado para o MVP
+
+Implementar primeiro, nesta ordem, somente cinco comportamentos:
+
+1. **Pergunta simples:** “Como está meu POBJ?” consulta o último Estado 360 válido.
+2. **Fato simples:** “Abri duas contas hoje.” registra candidato `OWNER_PROVIDED` e aciona os domínios materiais.
+3. **Fato + pergunta:** “Liberei R$ 30 mil. Com isso bato a meta?” registra o fato e calcula o impacto quando houver regra e base suficientes.
+4. **Correção simples:** “O realizado correto é 51,04.” correlaciona com uma pendência única ou pede o indicador/protocolo quando houver ambiguidade.
+5. **Texto longo estruturado:** recebe integralmente um parecer com seções, separa fatos, cálculos, estimativas, riscos e recomendações, sem promover tudo automaticamente.
+
+Para o MVP, é suficiente responder e persistir corretamente esses cinco casos no GG Performance, com complemento do GG Conta apenas quando houver empresa real identificada. Não implementar antecipadamente memória semântica ampla, aprendizado automático, múltiplos cenários sofisticados, todos os comandos, todos os Gerentes ou otimização de custo/modelos.
+
+**Regra de foco:** qualquer melhoria que não seja necessária para um dos cinco casos entra na lista pós-MVP e não bloqueia o Gate N2.1.
+
 #### Princípio funcional
 
 ```text

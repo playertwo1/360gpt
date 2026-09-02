@@ -6,6 +6,7 @@
 - Formalizadas intenções `QUESTION`, `OWNER_FACT`, `OWNER_CORRECTION`, `QUESTION_AND_FACT`, `OWNER_ANALYSIS`, `COMMAND`, `FORMAT_FEEDBACK` e `SOCIAL_OR_AMBIGUOUS`.
 - Toda informação digitada por Rafael recebe proveniência `OWNER_PROVIDED`; conflitos com fontes oficiais exigem reconciliação, sem sobrescrita silenciosa.
 - Adicionados critérios de aceite para mensagem curta, fato mais pergunta, texto longo estruturado, histórico e roteamento seletivo dos agentes.
+- Rafael aprovou o corte mínimo de cinco casos conversacionais; funcionalidades avançadas foram explicitamente adiadas para depois do Gate MVP.
 
 ### Complete & Homologated — Gate N2 Homologado por Rafael (02/09/2026)
 - Gate N2 formalmente aprovado e homologado por Rafael ("Sim") após validação da mesa de conferência dos campos críticos do `POBJ2608.pdf`.
