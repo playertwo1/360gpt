@@ -1329,27 +1329,20 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 
 ### Sequência oficial consolidada
 
-1. [ ] N2.1: implementar os cinco casos textuais simples.
-2. [ ] Gate N2.1 pelo Telegram.
-3. [ ] E2E documental WF-11 com POBJ real.
-4. [ ] Teste de lacuna, resposta e reprocessamento.
-5. [ ] Piloto combinado com textos e 3–5 documentos.
-6. [ ] Gate N7 — MVP viável pelo celular.
-7. [ ] N2.2: aprofundamento conversacional pós-MVP.
-8. [ ] N8.2: GG Relacionamento, aproveitando a base conversacional homologada.
-9. [ ] N8.3: GG Financeiro.
-10. [ ] N8.4: integração 360 dos quatro domínios.
-
-### Depois do Gate N2
-
-1. [ ] Implementar e aprovar o Gate N2.1 de entrada textual.
-2. [ ] Rebuild e regressão mínima do worker.
-3. [ ] Testes WF-11, WF-12 e WF-13 com contrato 1.1.0.
-4. [ ] Execução manual do WF-11.
-5. [ ] Ativação controlada da agenda.
-6. [ ] Teste de lacuna e conversa supervisionada.
-7. [ ] Piloto com 3–5 documentos e textos relacionados.
-8. [ ] Gate N7 no celular.
+1. [x] N2.1: implementar os cinco casos textuais simples (CONCLUÍDO).
+2. [x] Gate N2.1 pelo Telegram (CONCLUÍDO).
+3. [x] E2E documental com POBJ real (CONCLUÍDO).
+4. [x] N8: Mesa Completa dos 4 Gerentes Gerais (Performance, Conta, Relacionamento, Financeiro) (CONCLUÍDO).
+5. [x] N2.2: Aprofundamento conversacional pós-MVP (Fases 1 a 10 concluídas) (CONCLUÍDO).
+6. [x] Gate N2.2 / PILOT_READY homologado com 10 cenários no Golden Dataset (CONCLUÍDO).
+7. [x] Gate A0: Cutover Canônico e Desativação de Legados (CONCLUÍDO).
+8. [ ] N2.3.1: Camada de Memória Semântica Desacoplada (Prompt-as-Code / Data-as-State no Postgres).
+9. [ ] N2.3.2: Repositório de Exemplares Dourados Dinâmicos (Dynamic Few-Shot Learning).
+10. [ ] N2.3.3: O Triângulo de Feedback e Matriz de Desfecho (Decision Utility Engine).
+11. [ ] N2.3.4: Workflow Semanal de Reflexão e Síntese (WF-104 — Reflexion Engine).
+12. [ ] N2.3.5: Memória de Decisões Negativas e Anti-Padrões (Negative Memory).
+13. [ ] Gate N2.3: Homologação do Flywheel de Aprendizado Contínuo (Decision Utility Rate ≥ 85%).
+14. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular.
 
 ### Regra de continuidade
 

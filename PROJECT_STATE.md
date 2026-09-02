@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 5.2.0-gate-a0-canonical-cutover
-Current phase: Piloto Operacional Ativo + Gate A0 Homologado (Arquitetura Canônica Exclusiva n8n + PostgreSQL local)
-Current milestone: Gate A0 Aprovado (Zero Exceções Legadas, core/telegram_bot_worker.py Aposentado e Rotas Bridge Descontinuadas)
-Current task: Operação diária do piloto de 7 dias com Briefing Matinal Proativo (WF-102) e abordagem executiva via celular.
+Version: 5.3.0-planning-milestone-n2.3-flywheel
+Current phase: Piloto Operacional Ativo + Marco N2.3 Formalizado no Roadmap (Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente)
+Current milestone: Gate A0 Concluído + Marco N2.3 Aprovado por Rafael no Roadmap (Fases N2.3.1 a N2.3.5)
+Current task: Pronto para iniciar a Fase N2.3.1 (Camada de Memória Semântica Desacoplada no PostgreSQL).
 Status: READY
 
 Host baseline:
@@ -15,11 +15,10 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: 
-1. Marco A0 (Cutover Canônico): Aposentadoria de `core/telegram_bot_worker.py` (arquivado em `legacy/core-prototype/`) e descontinuação das rotas de transição `/api/bridge/*`.
-2. Política `policies/n8n-canonical-architecture.yaml`: 4 exceções legadas resolvidas (`legacy_exceptions_count: 0`).
-3. Gate A0 Desbloqueado e Homologado: `runtimeGate: "CANONICAL_LOCAL_ACTIVE"` validado em `test:local-core`.
-4. Ativação do Briefing Matinal Proativo (`WF-102`) e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`), com testes reais entregues com HTTP 200 no Telegram de Rafael.
-Next task: Acompanhamento da operação do piloto de 7 dias e suporte consultivo contínuo na agência.
+1. Marco A0 (Cutover Canônico): Aposentadoria de `core/telegram_bot_worker.py` e descontinuação de `/api/bridge/*`, com 0 exceções legadas e `CANONICAL_LOCAL_ACTIVE` ativo.
+2. Marco N2.3 adicionado e estruturado no `ROADMAP.md` em 5 fases (N2.3.1 a N2.3.5) e Gate N2.3 de homologação do Flywheel de Aprendizado.
+3. Ativação do Briefing Matinal Proativo (`WF-102`) e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`).
+Next task: Implementação da Fase N2.3.1 (Tabela `promoted_knowledge` e injeção dinâmica de contexto).
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 
