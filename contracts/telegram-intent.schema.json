@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diretor360.local/contracts/telegram-intent.schema.json",
+  "title": "Diretor 360 Telegram Intent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "intent", "answers", "context_request", "format_feedback", "unresolved_question_ids", "requires_follow_up", "safe_response"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "intent": { "enum": ["COMMAND", "ANSWER", "QUESTION", "FEEDBACK", "NEW_INPUT", "UNKNOWN"] },
+    "answers": {
+      "type": "array", "maxItems": 30,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["question_id", "indicator", "value", "unit", "confidence"],
+        "properties": {
+          "question_id": { "type": ["string", "null"], "maxLength": 160 },
+          "indicator": { "type": ["string", "null"], "maxLength": 200 },
+          "value": { "type": ["string", "number", "null"], "maxLength": 500 },
+          "unit": { "type": ["string", "null"], "maxLength": 40 },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "context_request": { "type": ["string", "null"], "maxLength": 1000 },
+    "format_feedback": { "type": ["string", "null"], "maxLength": 1000 },
+    "unresolved_question_ids": { "type": "array", "maxItems": 30, "items": { "type": "string", "maxLength": 160 } },
+    "requires_follow_up": { "type": "boolean" },
+    "safe_response": { "type": "string", "minLength": 1, "maxLength": 3600 }
+  }
+}

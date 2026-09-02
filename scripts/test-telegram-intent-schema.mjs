@@ -1,0 +1,10 @@
+import { readFileSync } from 'node:fs';
+const schema = JSON.parse(readFileSync(new URL('../contracts/telegram-intent.schema.json', import.meta.url), 'utf8'));
+const valid = { schema_version: '1.0.0', intent: 'ANSWER', answers: [{ question_id: 'q1', indicator: 'Total de pontos', value: 51.04, unit: 'pontos', confidence: 1 }], context_request: null, format_feedback: null, unresolved_question_ids: [], requires_follow_up: false, safe_response: 'Resposta registrada.' };
+const required = schema.required;
+if (required.some((key) => !(key in valid))) throw new Error('exemplo válido não contém campos obrigatórios');
+if (schema.properties.schema_version.const !== valid.schema_version) throw new Error('versão incompatível');
+if (!Array.isArray(valid.answers) || valid.answers[0].confidence > 1) throw new Error('resposta inválida');
+const invalid = { ...valid, schema_version: '9.0.0' };
+if (invalid.schema_version === schema.properties.schema_version.const) throw new Error('schema aceitou versão inválida');
+console.log('TELEGRAM_INTENT_SCHEMA_PASS');
