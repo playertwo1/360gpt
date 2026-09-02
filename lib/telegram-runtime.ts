@@ -121,7 +121,9 @@ export async function handleClarificationReply(db: D1Database, token: string, ch
   const combinedAnswers = [...answerMap.values()];
   const now = Date.now();
   if (!interpretation.resolved) {
-    const answeredIds = new Set((interpretation.answers ?? []).filter((answer) => Number(answer.confidence) >= 0.8 && answer.value !== null && answer.value !== undefined).map((answer) => answer.question_id));
+    // Pendências são a diferença entre todas as perguntas persistidas e todas
+    // as respostas aceitas acumuladas no protocolo, não apenas a última mensagem.
+    const answeredIds = new Set(combinedAnswers.filter((answer) => Number(answer.confidence) >= 0.8 && answer.value !== null && answer.value !== undefined).map((answer) => answer.question_id));
     const remaining = questions.filter((question) => !answeredIds.has(question.id));
     const followUp = remaining.map((question) => {
       const indicator = repairMojibake(question.indicator ?? '');

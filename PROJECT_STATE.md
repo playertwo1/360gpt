@@ -3,7 +3,7 @@
 Version: 3.9.0-telegram-hardening
 Current phase: MVP Telegram resiliente
 Current milestone: P0 — blindagem conversacional, estabilidade e aprendizado supervisionado
-Current task: P0.4 — integrar o contrato de intenção ao parser e cobrir pendências determinísticas
+Current task: P0.4 — cobrir casos ambíguos e respostas naturais no parser estruturado
 Status: IN_PROGRESS
 
 Host baseline:
@@ -15,9 +15,9 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99, retenção n8n e remoção de dados demo da interface validados localmente
-Next task: validar no runtime que `perguntas persistidas − respostas aceitas = pendências reais`
+Next task: adicionar casos de teste para resposta parcial, reclamação de formato e JSON ambíguo
 
-Last validation: 2026-09-01 — Docker Compose saudável (PostgreSQL, n8n, Docling e document-worker); contrato `telegram-intent.schema.json` e teste local PASS; npm test:telegram-hardening PASS; `node scripts/test-telegram-conversational.mjs` PASS; npm lint PASS; npm build PASS.
+Last validation: 2026-09-01 — Docker Compose saudável; contrato `telegram-intent.schema.json` PASS; correção de pendências acumuladas validada por hardening/conversacional; npm lint PASS.
 Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:
@@ -36,7 +36,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 22:45
+Last update: 2026-09-01 23:00
 
 Resume instruction:
 1. Continuar `ROADMAP.md` a partir de P0.4 e formalizar o contrato de intenção estruturada.
