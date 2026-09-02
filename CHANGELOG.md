@@ -8,6 +8,7 @@
 - Comandos `/diretrizes`, `/aprovardiretriz`, `/rejeitardiretriz` e `/revogardiretriz` exigem confirmação e nunca ativam regras automaticamente.
 - Adicionados fila inbound e lotes de debounce duráveis atrás de flag, endpoints de claim/processamento e WF-97 para canário assíncrono.
 - Claims de feedback receberam lease token para impedir concorrência; migrations 0009/0010 foram geradas e inspecionadas.
+- Interface operacional deixou de exibir empresas e pontuação fictícias; sem carteira ou POBJ real, informa explicitamente a ausência de dados.
 
 ### Documentation
 - Princípio central do `AGENTS.md` ampliado para formalizar aprendizado supervisionado a partir das trocas e correções de Rafael, com preservação do histórico de conversas, decisões e aprendizados.

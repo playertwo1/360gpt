@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99 e retenção n8n implementados e validados localmente
+Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99, retenção n8n e remoção de dados demo da interface validados localmente
 Next task: validar o modo assíncrono no canário sem alterar o caminho síncrono atual
 
-Last validation: 2026-09-01 — npm lint PASS; npm build PASS; teste P0 Telegram hardening PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; filtro is_bot, UTF-8 estrito, filas, debounce e diretrizes validados localmente
+Last validation: 2026-09-01 — npm lint PASS; npm build PASS; teste P0 Telegram hardening PASS; workflows WF-97/WF-98/WF-99 válidos; migrations 0009/0010 geradas; interface sem empresas/pontuação demo; filtro is_bot, UTF-8 estrito, filas, debounce e diretrizes validados localmente
 Last commit: ced0aba feat: add telegram hardening and supervised directives
 
 Blockers:
@@ -35,7 +35,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 21:48
+Last update: 2026-09-01 22:08
 
 Resume instruction:
 1. Continuar `ROADMAP.md` a partir de P0.2/P0.3 e validar o canário assíncrono.

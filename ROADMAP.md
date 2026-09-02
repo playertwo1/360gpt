@@ -310,6 +310,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Executar migrations, lint, build e regressões WF-11/WF-13/WF-99.
 - [ ] Publicar canário com a conta proprietária `fael@live.de` e reabrir o protocolo com estado limpo.
 - [ ] Atualizar controles e criar checkpoint Git final.
+- [x] Remover clientes e pontuações demo da interface operacional; sem carteira conectada o painel informa a limitação.
 
 **Gate P0:** nenhuma mensagem vazia, cortada, duplicada ou em loop; erros possuem contingência; aprendizado exige aprovação explícita.
 
