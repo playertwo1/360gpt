@@ -5,6 +5,7 @@
 ### Changed
 - Validação local do P0 repetida com `npm run test:telegram-hardening`; fila assíncrona e debounce permanecem atrás de flag até canário.
 - Adicionado entrypoint JavaScript `scripts/test-telegram-conversational.mjs` para executar a regressão conversacional existente.
+- Confirmada saúde local dos quatro serviços Docker e build/lint/regressões do P0 sem publicação.
 
 ### Known issues
 - Cenários HTTP de concorrência e retry ainda aguardam canário local/hospedado; a suíte estrutural pode ser executada sem serviços ativos.

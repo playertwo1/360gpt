@@ -263,7 +263,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 
 - [~] Roteamento determinístico já cobre respostas numéricas, perguntas contextuais, reclamações e `não sei`; ampliar testes e contrato.
 - [x] Interpretação Gemini já exige JSON estruturado quando o parser determinístico não resolve.
-- [ ] Formalizar contrato de intenção, respostas, contexto, feedback e confiança.
+- [ ] Formalizar contrato de intenção, respostas, contexto, feedback e confiança; próximo trabalho local elegível.
 - [ ] Calcular pendências somente por diferença determinística.
 - [ ] Reproduzir e eliminar integralmente os loops do protocolo atual.
 
