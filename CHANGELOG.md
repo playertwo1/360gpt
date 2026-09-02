@@ -15,6 +15,7 @@
 - Observações sintéticas A2, A3-gap, A3-plan e WF-13 passaram; Shadow 20/20 passou tecnicamente, mas foi registrado bloqueio por lacuna de medição horária (`HOURLY_MEASUREMENT_GAP`). Nenhuma promoção realizada.
 - Nova observação Shadow e consolidação passaram (30 observações, 600 casos, 0 erros/divergências); lacuna histórica mantida como bloqueio sem preenchimento artificial.
 - Criado comando agregado `npm run test:p0`, executando hardening, contrato de intenção e regressão conversacional em sequência.
+- Bateria P0 e lint executados novamente com Docker saudável; execução ponta a ponta dos workflows permanece aguardando canário controlado para não produzir efeitos externos.
 
 ### Known issues
 - Cenários HTTP de concorrência e retry ainda aguardam canário local/hospedado; a suíte estrutural pode ser executada sem serviços ativos.

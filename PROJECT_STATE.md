@@ -3,7 +3,7 @@
 Version: 3.9.0-telegram-hardening
 Current phase: MVP Telegram resiliente
 Current milestone: P0 — blindagem conversacional, estabilidade e aprendizado supervisionado
-Current task: P0.4 — validar integração do contrato no fluxo n8n local
+Current task: P0.4/P0.10 — preparar execução controlada dos workflows no canário
 Status: IN_PROGRESS
 
 Host baseline:
@@ -15,9 +15,9 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: fila, lotes de debounce, endpoints inbound, persistência de diretrizes, endpoint typing, WF-97/WF-98/WF-99, retenção n8n e remoção de dados demo da interface validados localmente
-Next task: executar WF-97/WF-98 em modo local com payload sintético e confirmar leases/idempotência
+Next task: autorizar e executar uma rodada controlada do WF-97/WF-98 com ponte sintética; manter workflows inativos até essa rodada
 
-Last validation: 2026-09-02 — `npm run test:p0` PASS (hardening, contrato de intenção e regressão conversacional); nova observação Shadow 20/20 PASS; consolidado 30 observações/600 casos sem erros, divergências, mutações ou efeitos externos. Lacuna histórica permanece sinalizada.
+Last validation: 2026-09-02 — `npm run test:p0` PASS; npm lint PASS; Docker Compose saudável (PostgreSQL, n8n, Docling e document-worker); workflows WF-97/98/99 importados e inativos. Execução ponta a ponta ainda não disparada para evitar efeito externo na ponte hospedada.
 Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:
