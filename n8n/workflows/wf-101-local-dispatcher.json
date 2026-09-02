@@ -36,7 +36,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH thread AS (INSERT INTO conversation_threads (thread_id, tenant_id, owner_id, channel, chat_id) VALUES (md5($1 || '|' || $2 || '|' || $3 || '|' || $4)::uuid, $1, $2, $3, $4) ON CONFLICT (tenant_id, owner_id, channel, chat_id) DO UPDATE SET updated_at=now() RETURNING thread_id), message AS (INSERT INTO conversation_messages (conversation_message_id, thread_id, direction, actor_role, external_message_id, content, content_hash) SELECT md5($5 || '|INBOUND')::uuid, thread_id, 'INBOUND', 'OWNER', $5, $6, 'sha256:' || encode(sha256(convert_to($6, 'UTF8')), 'hex') FROM thread ON CONFLICT (thread_id, direction, external_message_id) DO NOTHING RETURNING conversation_message_id) SELECT (SELECT thread_id FROM thread) AS thread_id, EXISTS (SELECT 1 FROM message) AS message_created, $7 AS route, $8 AS command, $9::uuid AS inbound_event_id, $10::uuid AS lease_token;",
+        "query": "WITH thread AS (INSERT INTO conversation_threads (thread_id, tenant_id, owner_id, channel, chat_id) VALUES (md5($1 || '|' || $2 || '|' || $3 || '|' || $4)::uuid, $1, $2, $3, $4) ON CONFLICT (tenant_id, owner_id, channel, chat_id) DO UPDATE SET updated_at=now() RETURNING thread_id), message AS (INSERT INTO conversation_messages (conversation_message_id, thread_id, direction, actor_role, external_message_id, content, content_hash) SELECT md5($5 || '|INBOUND')::uuid, thread_id, 'INBOUND', 'OWNER', $5, $6, 'sha256:' || encode(sha256(convert_to($6, 'UTF8')), 'hex') FROM thread ON CONFLICT (thread_id, direction, external_message_id) DO NOTHING RETURNING conversation_message_id) SELECT (SELECT thread_id FROM thread) AS thread_id, EXISTS (SELECT 1 FROM message) AS message_created, $7 AS route, $8 AS command, $9::uuid AS inbound_event_id, $10::uuid AS lease_token, $4 AS chat_id;",
         "options": { "queryBatching": "single", "queryReplacement": "={{[$json.tenant_id,$json.owner_id,$json.channel,$json.chat_id,$json.external_update_id,$json.text_content,$json.route,$json.command,$json.inbound_event_id,$json.lease_token]}}" }
       },
       "id": "persist-conversation",
@@ -45,12 +45,35 @@
       "typeVersion": 2.6,
       "position": [280, 0],
       "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
-    }
+    },
+    {
+      "parameters": {"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; if(x.route!=='COMMAND') return []; const menu='Comandos do MVP:\n/start - apresentação\n/comandos, /ajuda ou /menu - esta lista\n/status - saúde do núcleo local\n\nOutros comandos serão liberados progressivamente no WF-101.'; const replies={'/start':'Diretor 360 conectado ao núcleo n8n local. Envie /comandos para ver o MVP.','/comandos':menu,'/ajuda':menu,'/menu':menu,'/status':'Núcleo n8n local disponível. O runtime real permanece inativo até o gate de cutover.'}; const text=replies[x.command]; return text?[{json:{...x,text}}]:[];"},
+      "id":"command-response","name":"05 Responder comandos mínimos","type":"n8n-nodes-base.code","typeVersion":2,"position":[540,0]
+    },
+    {
+      "parameters":{"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; const max=3800; const parts=[]; for(let i=0;i<x.text.length;i+=max) parts.push({json:{...x,text:x.text.slice(i,i+max),part_index:parts.length+1,part_count:Math.ceil(x.text.length/max)}}); return parts;"},
+      "id":"split-delivery","name":"06 Dividir entrega","type":"n8n-nodes-base.code","typeVersion":2,"position":[790,0]
+    },
+    {
+      "parameters":{"operation":"executeQuery","query":"INSERT INTO channel_deliveries (delivery_id, channel, chat_id, part_index, part_count, content, content_hash, status) VALUES (md5($1 || '|' || $2)::uuid, 'TELEGRAM', $3, $2::integer, $4::integer, $5, 'sha256:' || encode(sha256(convert_to($5,'UTF8')),'hex'), 'PENDING') ON CONFLICT (delivery_id) DO UPDATE SET content=EXCLUDED.content RETURNING delivery_id, chat_id, part_index, part_count, content AS text, $6::uuid AS inbound_event_id, $7::uuid AS lease_token;","options":{"queryBatching":"single","queryReplacement":"={{[$json.inbound_event_id,$json.part_index,$json.chat_id,$json.part_count,$json.text,$json.inbound_event_id,$json.lease_token]}}"}},
+      "id":"persist-delivery","name":"07 Persistir entrega idempotente","type":"n8n-nodes-base.postgres","typeVersion":2.6,"position":[1040,0],"credentials":{"postgres":{"id":"3db02591-5cd1-47ef-ac68-3cdb4b213602","name":"Visao 360 App DB"}}},
+    {
+      "parameters":{"method":"POST","url":"http://telegram-poller:8790/send","sendHeaders":true,"headerParameters":{"parameters":[{"name":"X-Director360-Transport","value":"={{$env.BRIDGE_SHARED_SECRET}}"}]},"sendBody":true,"contentType":"json","specifyBody":"json","jsonBody":"={{JSON.stringify({chat_id:$json.chat_id,text:$json.text,parse_mode:'HTML'})}}","options":{"response":{"response":{"neverError":false,"responseFormat":"json"}},"timeout":10000}},
+      "id":"send-delivery","name":"08 Enviar pelo adaptador","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[1290,0]
+    },
+    {
+      "parameters":{"operation":"executeQuery","query":"WITH delivered AS (UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id) UPDATE channel_inbound_events SET status='COMPLETED', completed_at=now(), lease_token=NULL, lease_expires_at=NULL WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;","options":{"queryBatching":"single","queryReplacement":"={{[$node['07 Persistir entrega idempotente'].json.delivery_id,$node['07 Persistir entrega idempotente'].json.inbound_event_id,$node['07 Persistir entrega idempotente'].json.lease_token]}}"}},
+      "id":"complete","name":"09 Concluir comando","type":"n8n-nodes-base.postgres","typeVersion":2.6,"position":[1540,0],"credentials":{"postgres":{"id":"3db02591-5cd1-47ef-ac68-3cdb4b213602","name":"Visao 360 App DB"}}}
   ],
   "connections": {
     "01 Disparar dispatcher": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
     "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] },
-    "03 Roteamento determinístico": { "main": [[{ "node": "04 Persistir conversa antes de interpretar", "type": "main", "index": 0 }]] }
+    "03 Roteamento determinístico": { "main": [[{ "node": "04 Persistir conversa antes de interpretar", "type": "main", "index": 0 }]] },
+    "04 Persistir conversa antes de interpretar": { "main": [[{ "node": "05 Responder comandos mínimos", "type": "main", "index": 0 }]] },
+    "05 Responder comandos mínimos": { "main": [[{ "node": "06 Dividir entrega", "type": "main", "index": 0 }]] },
+    "06 Dividir entrega": { "main": [[{ "node": "07 Persistir entrega idempotente", "type": "main", "index": 0 }]] },
+    "07 Persistir entrega idempotente": { "main": [[{ "node": "08 Enviar pelo adaptador", "type": "main", "index": 0 }]] },
+    "08 Enviar pelo adaptador": { "main": [[{ "node": "09 Concluir comando", "type": "main", "index": 0 }]] }
   },
   "pinData": {},
   "active": false,
