@@ -15,6 +15,7 @@
 - WF-103 foi adicionado como contingência local inativa, sanitizando falhas e registrando uma única evidência append-only por execução.
 - WF-101 passou a registrar thread e mensagem inbound no PostgreSQL antes de qualquer interpretação, preservando idempotência por update.
 - O gate canônico agora verifica requisitos estruturais de WF-101, WF-102 e WF-103, além da validade do JSON.
+- WF-101, WF-102 e WF-103 foram importados no n8n local e confirmados pelo CLI, permanecendo inativos até o cutover autorizado.
 - `test:p0`, lint e build aprovados; o gate de runtime permaneceu deliberadamente bloqueado até a migração das quatro exceções legadas.
 
 ### Changed — webhook Telegram preservado

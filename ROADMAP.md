@@ -274,6 +274,7 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [ ] Registrar conversa inbound/outbound e impedir que mensagem do próprio bot seja processada.
 - [x] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura em partes de 3.800 caracteres e workflow inativo até cutover.
 - [x] Criar WF-103 de contingência local, com erro sanitizado, auditoria append-only e deduplicação por execução; permanece inativo até cutover.
+- [x] Importar WF-101, WF-102 e WF-103 no n8n local e confirmar presença pelo CLI, mantendo-os inativos.
 - [ ] Remover parser e execução de comandos de `lib/telegram-runtime.ts` após equivalência comprovada no WF-101.
 
 ### A0.3 — Documento, Docling e orquestração local

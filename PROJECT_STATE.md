@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: WF-101 agora persiste a mensagem inbound e a thread oficial antes de interpretar, com deduplicação por mensagem
+Last completed: WF-101/WF-102/WF-103 importados com sucesso no n8n local e confirmados pelo CLI, todos ainda inativos
 Next task: implementar respostas determinísticas do catálogo de comandos no WF-101 e persistir outbound via WF-102
 
-Last validation: 2026-09-02 — `test:local-core` (22 workflows), `test:p0`, lint e build PASS; runtime gate corretamente bloqueado pelas 4 exceções legadas; poller permanece desativado.
+Last validation: 2026-09-02 — n8n/PostgreSQL/Docling/worker saudáveis; WF-101/102/103 importados e listados; `test:local-core` (22 workflows), `test:p0` e lint PASS; runtime gate bloqueado pelas 4 exceções legadas.
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:
