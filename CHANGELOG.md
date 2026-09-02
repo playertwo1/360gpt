@@ -9,6 +9,7 @@
 - Adicionado contrato Draft 2020-12 `telegram-intent.schema.json` e teste de compatibilidade local.
 - Corrigido cálculo de pendências para acumular respostas válidas entre mensagens e evitar repetição/loop de perguntas já respondidas.
 - Ampliada regressão conversacional com casos de resposta parcial, reclamação de formato e reparo de mojibake.
+- Fortalecida validação do JSON retornado pela IA: somente respostas únicas, vinculadas a perguntas existentes e com confiança entre 0 e 1 são aceitas.
 
 ### Known issues
 - Cenários HTTP de concorrência e retry ainda aguardam canário local/hospedado; a suíte estrutural pode ser executada sem serviços ativos.

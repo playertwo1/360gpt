@@ -44,12 +44,31 @@ export async function interpretClarification(questions: ClarificationQuestion[],
     const payload = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
     const raw = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? '').join('') ?? '';
     try {
-      const parsed = JSON.parse(raw) as { resolved: boolean; answers: ClarificationAnswer[]; follow_up: string[] };
-      const complete = parsed.resolved && parsed.answers.length >= questions.length && parsed.answers.every((answer) => answer.confidence >= 0.8);
-      return { ...parsed, resolved: complete, model };
+      const parsed = JSON.parse(raw) as unknown;
+      if (!isSafeClarificationPayload(parsed, questions)) continue;
+      const typed = parsed as { resolved: boolean; answers: ClarificationAnswer[]; follow_up: string[] };
+      const complete = typed.resolved && typed.answers.length >= questions.length && typed.answers.every((answer) => answer.confidence >= 0.8);
+      return { ...typed, resolved: complete, model };
     } catch { continue; }
   }
   return { resolved: false, answers: [] as ClarificationAnswer[], follow_up: ['Não consegui interpretar com segurança. Responda novamente, numerando cada resposta.'], model: 'unavailable' };
+}
+
+function isSafeClarificationPayload(value: unknown, questions: ClarificationQuestion[]): value is { resolved: boolean; answers: ClarificationAnswer[]; follow_up: string[] } {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  if (typeof candidate.resolved !== 'boolean' || !Array.isArray(candidate.answers) || !Array.isArray(candidate.follow_up)) return false;
+  const ids = new Set(questions.map((question) => question.id));
+  const seen = new Set<string>();
+  return candidate.answers.every((answer) => {
+    if (!answer || typeof answer !== 'object') return false;
+    const item = answer as Record<string, unknown>;
+    const id = typeof item.question_id === 'string' ? item.question_id : '';
+    const confidence = item.confidence;
+    if (!id || !ids.has(id) || seen.has(id) || typeof confidence !== 'number' || confidence < 0 || confidence > 1) return false;
+    if (typeof item.field !== 'string' || typeof item.answer !== 'string') return false;
+    seen.add(id); return true;
+  }) && candidate.follow_up.every((item) => typeof item === 'string' && item.length <= 1000);
 }
 
 function parseOwnerAnswerLocally(questions: ClarificationQuestion[], text: string) {
