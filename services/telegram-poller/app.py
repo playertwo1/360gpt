@@ -102,6 +102,16 @@ def deliver_to_n8n(update: dict[str, Any]) -> None:
     )
     if not result.get("accepted"):
         raise RuntimeError("n8n não confirmou persistência do update")
+    dispatcher_url = INGRESS_URL.replace("/telegram/inbound", "/dispatcher/trigger")
+    try:
+        json_request(
+            dispatcher_url,
+            {"trigger": "inbound_received", "update_id": update.get("update_id")},
+            timeout=5,
+            headers={"X-Director360-Transport": TRANSPORT_SECRET},
+        )
+    except Exception as exc:
+        LOG.warning("falha ao despertar dispatcher imediato: %s", exc)
 
 
 def polling_loop() -> None:

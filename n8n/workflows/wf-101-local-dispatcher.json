@@ -3,12 +3,36 @@
   "name": "WF-101 — Dispatcher local n8n (INATIVO ATE CUTOVER)",
   "nodes": [
     {
-      "parameters": { "rule": { "interval": [{ "field": "seconds", "secondsInterval": 10 }] } },
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "director-360/dispatcher/trigger",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "trigger-webhook",
+      "name": "01 Disparo webhook imediato",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-520, 0],
+      "webhookId": "d360-dispatcher-trigger-v1"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "trigger-direct",
+      "name": "01 Disparo direto",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [-520, 80]
+    },
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 1 }] } },
       "id": "trigger",
       "name": "01 Disparar dispatcher",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-520, 0]
+      "position": [-520, -80]
     },
     {
       "parameters": {
@@ -47,7 +71,7 @@
       "credentials": { "postgres": { "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602", "name": "Visao 360 App DB" } }
     },
     {
-      "parameters": {"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; if(x.route!=='COMMAND') return []; const menu='Comandos do MVP:\n/start - apresentação\n/comandos, /ajuda ou /menu - esta lista\n/status - saúde do núcleo local\n\nOutros comandos serão liberados progressivamente no WF-101.'; const replies={'/start':'Diretor 360 conectado ao núcleo n8n local. Envie /comandos para ver o MVP.','/comandos':menu,'/ajuda':menu,'/menu':menu,'/status':'Núcleo n8n local disponível. O runtime real permanece inativo até o gate de cutover.'}; const text=replies[x.command]; return text?[{json:{...x,text}}]:[];"},
+      "parameters": {"mode":"runOnceForAllItems","jsCode":"const x=$input.first()?.json??{}; if(x.route!=='COMMAND') return []; const menu='<b>Diretor Geral 360 — Agência 6895 (VJ-SAO FIDELIS)</b>\\n\\n<b>Comandos do MVP:</b>\\n/start — Apresentação executiva\\n/comandos ou /menu — Esta lista de comandos\\n/status — Saúde dos motores locais\\n/protocolo &lt;n&gt; — Consultar status de documento\\n/pendencias — Dúvidas aguardando resposta\\n\\n<i>Envie seu PDF do POBJ a qualquer momento para análise executiva imediata.</i>'; const replies={'/start':'<b>Diretor 360</b> operacional na agência <b>6895 - VJ-SAO FIDELIS</b>.\\nEnvie /comandos para ver o menu ou envie seu arquivo POBJ a qualquer momento.','/comandos':menu,'/ajuda':menu,'/menu':menu,'/status':'🟢 <b>Saúde Operacional 360 (Núcleo Local):</b>\\n• PostgreSQL: <b>ONLINE (Local Docker)</b>\\n• n8n Core: <b>ONLINE (Local Docker)</b>\\n• Docling TableFormer: <b>ONLINE (CPU Local)</b>\\n• Adaptador Telegram: <b>ONLINE (Long Polling Ativo)</b>\\n• Fila: <b>ONLINE</b>'}; const text=replies[x.command]; return text?[{json:{...x,text}}]:[];"},
       "id":"command-response","name":"05 Responder comandos mínimos","type":"n8n-nodes-base.code","typeVersion":2,"position":[540,0]
     },
     {
@@ -66,6 +90,8 @@
       "id":"complete","name":"09 Concluir comando","type":"n8n-nodes-base.postgres","typeVersion":2.6,"position":[1540,0],"credentials":{"postgres":{"id":"3db02591-5cd1-47ef-ac68-3cdb4b213602","name":"Visao 360 App DB"}}}
   ],
   "connections": {
+    "01 Disparo webhook imediato": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
+    "01 Disparo direto": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
     "01 Disparar dispatcher": { "main": [[{ "node": "02 Claim com lease", "type": "main", "index": 0 }]] },
     "02 Claim com lease": { "main": [[{ "node": "03 Roteamento determinístico", "type": "main", "index": 0 }]] },
     "03 Roteamento determinístico": { "main": [[{ "node": "04 Persistir conversa antes de interpretar", "type": "main", "index": 0 }]] },
