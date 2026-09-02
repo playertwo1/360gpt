@@ -28,4 +28,7 @@ assert.equal(workflow98.active, false);
 assert.equal(workflow99.active, false);
 assert.equal(workflow97.active, false);
 assert.equal(workflow99.nodes.some((node) => node.type === 'n8n-nodes-base.errorTrigger'), true);
+assert.equal(workflow97.nodes.some((node) => /reservar|claim/i.test(node.name)) && workflow97.nodes.some((node) => /process/i.test(node.name)), true);
+assert.equal(workflow97.nodes.some((node) => /schedule|interval|cron/i.test(`${node.type} ${node.name}`)), true);
+assert.equal(workflow98.nodes.some((node) => /reservar|claim/i.test(node.name)) && workflow98.nodes.some((node) => /extrair|gravar|complete/i.test(node.name)), true);
 console.log('P0 Telegram hardening: PASS');
