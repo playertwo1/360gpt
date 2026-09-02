@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- Validação local do P0 repetida com `npm run test:telegram-hardening`; fila assíncrona e debounce permanecem atrás de flag até canário.
+
+### Known issues
+- O script `scripts/test-telegram-conversational.mjs` referenciado no roadmap não existe; a variante disponível é PowerShell e requer ambiente/serviço ativo.
+
 ### P0 Telegram hardening
 - Criadas persistência hospedada para feedbacks, candidatas, aplicações e auditoria de erros, endpoints protegidos de `sendChatAction` e workflows n8n WF-98/WF-99.
 - Telegram passou a usar texto simples; retenção de execuções n8n foi ajustada para 24 horas, com progresso intermediário desativado.
