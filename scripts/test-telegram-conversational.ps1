@@ -21,7 +21,7 @@ $wf11 = Get-Content (Join-Path $repo 'n8n/workflows/wf-11-diretor-360-orquestrad
 $wf13 = Get-Content (Join-Path $repo 'n8n/workflows/wf-13-gg-performance-mvp.json') -Raw
 
 Write-Host '=== TELEGRAM CONVERSACIONAL SUPERVISIONADO ==='
-foreach ($command in @('/comandos','/status','/progresso','/andamento','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/destravar','/reprocessartodos','/explicar','/privacidade','/meusdados','/excluir')) {
+foreach ($command in @('/comandos','/status','/progresso','/andamento','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/destravar','/reprocessartodos','/explicar','/privacidade','/meusdados','/excluir','/excluirultimo')) {
   Assert-True ($messages.Contains($command) -or $runtime.Contains($command)) "Comando documentado: $command"
 }
 Assert-True ($runtime -match 'toLowerCase\(\)' -and $runtime -match 'replace\(/\\s\+\/g') 'Comandos toleram caixa e espaços extras'

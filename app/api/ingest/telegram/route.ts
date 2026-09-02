@@ -147,10 +147,14 @@ export async function POST(request: Request) {
       const file = await downloadTelegramFile(document);
       validateFileContent(file.bytes, document.mime_type?.toLowerCase() ?? '');
       contentHash = `sha256:${await sha256Hex(file.bytes)}`;
-      const existing = await env.DB.prepare(`SELECT id FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile', 'telegram') AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`)
-        .bind(ownerId, contentHash).first<{ id: string }>();
+      const existing = await env.DB.prepare(`SELECT id, short_protocol FROM documents WHERE owner_id = ? AND content_hash = ? AND source IN ('pobj_mobile', 'telegram') AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`)
+        .bind(ownerId, contentHash).first<{ id: string; short_protocol: number | null }>();
       if (existing) {
         canonicalDocumentId = existing.id;
+        shortProtocol = existing.short_protocol ?? await allocateShortProtocol(ownerId);
+        if (existing.short_protocol == null) {
+          await env.DB.prepare(`UPDATE documents SET short_protocol = ? WHERE id = ? AND owner_id = ? AND short_protocol IS NULL`).bind(shortProtocol, existing.id, ownerId).run();
+        }
         duplicateByHash = true;
       } else {
         storageKey = `telegram/${chatId}/${updateId}/${safeFileName(document.file_name ?? 'documento')}`;
@@ -171,8 +175,7 @@ export async function POST(request: Request) {
           .bind(canonicalDocumentId, Date.now(), updateId),
       ]);
     } else {
-      await env.DB.prepare(`INSERT OR IGNORE INTO owner_protocol_counters (owner_id, next_value) VALUES (?, 0)`).bind(ownerId).run();
-      shortProtocol = (await env.DB.prepare(`UPDATE owner_protocol_counters SET next_value = next_value + 1 WHERE owner_id = ? RETURNING next_value`).bind(ownerId).first<{ next_value: number }>())?.next_value ?? null;
+      shortProtocol = await allocateShortProtocol(ownerId);
       await env.DB.batch([
         env.DB.prepare(`INSERT OR IGNORE INTO documents (id, owner_id, source, source_message_id, original_name, mime_type, storage_key, content_hash, raw_text, status, short_protocol, received_at) VALUES (?, ?, 'telegram', ?, ?, ?, ?, ?, ?, 'received', ?, ?)`)
           .bind(documentId, ownerId, updateId, document?.file_name ?? null, document?.mime_type ?? null, storageKey, contentHash, text || null, shortProtocol, receivedAt),
@@ -193,7 +196,7 @@ export async function POST(request: Request) {
 ` +
           `Arquivo: ${document.file_name ?? 'documento'}
 ` +
-          `Protocolo: ${canonicalDocumentId}
+          `Protocolo: ${shortProtocol ?? canonicalDocumentId}
 ` +
           `Status: RECEBIDO
 ` +
@@ -204,7 +207,7 @@ export async function POST(request: Request) {
           `Linhagem: registrada no Evidence Graph.
 
 ` +
-          `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Progresso: 10% (recebido). Consulte /protocolo ${canonicalDocumentId} para acompanhar. Não reenvie o arquivo.`;
+          `${duplicateByHash ? '♻️ Este arquivo já havia sido recebido; mantivemos o protocolo original.' : '⚙️ O processamento continuará em segundo plano.'} Progresso: 10% (recebido). Consulte /protocolo ${shortProtocol ?? canonicalDocumentId} para acompanhar. Não reenvie o arquivo.`;
         await sendTelegramMessage(message.chat.id, docConfirm);
         ackSent = true;
       }
@@ -217,6 +220,11 @@ export async function POST(request: Request) {
       .bind(retryable ? 'FAILED_RETRYABLE' : 'FAILED_FINAL', errorCode, retryable ? null : Date.now(), updateId).run();
     return NextResponse.json({ ok: false, error: errorCode, retryable }, { status: errorCode === 'bot_not_configured' ? 503 : retryable ? 502 : 422 });
   }
+}
+
+async function allocateShortProtocol(ownerId: string) {
+  await env.DB.prepare(`INSERT OR IGNORE INTO owner_protocol_counters (owner_id, next_value) VALUES (?, 0)`).bind(ownerId).run();
+  return (await env.DB.prepare(`UPDATE owner_protocol_counters SET next_value = next_value + 1 WHERE owner_id = ? RETURNING next_value`).bind(ownerId).first<{ next_value: number }>())?.next_value ?? null;
 }
 
 async function reserveTextBatch(ownerId: string, chatId: string, text: string, firstAt: number, dueAt: number) {

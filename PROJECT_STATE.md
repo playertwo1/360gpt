@@ -14,11 +14,11 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: blindagem de comandos Telegram, protocolo curto sequencial, sincronização GitHub/Sites e publicação da versão 46
+Last completed: correção da exclusão por cadeia de hash, protocolo curto operacional e migrações Drizzle oficiais
 Next task: reprocessar POBJ2608/2708/2808 e validar META, REALIZADO, % ATG, pontos e período antes do Gate N2
 
-Last validation: 2026-09-02 — `npm run lint` PASS; `npm run build` PASS; Docker n8n saudável; versão Sites 46 publicada; comandos Telegram roteados antes de esclarecimentos.
-Last commit: 7bcb79f fix(telegram): show delete commands in menu
+Last validation: 2026-09-02 — `npm run test:p0` PASS; `npm run lint` PASS; `npm run build` PASS; migrações 0011–0013 geradas pelo Drizzle.
+Last commit: pendente — correção de exclusão por hash e protocolo curto
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
@@ -37,7 +37,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-02 01:10
+Last update: 2026-09-02 01:18
 
 Resume instruction:
 1. Continuar `ROADMAP.md` na fila executável de N2: validar extração Docling e campos críticos.

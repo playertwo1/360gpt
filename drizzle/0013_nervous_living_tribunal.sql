@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `uq_documents_owner_short_protocol` ON `documents` (`owner_id`,`short_protocol`);

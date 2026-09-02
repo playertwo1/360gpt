@@ -1,0 +1,1 @@
+ALTER TABLE `documents` ADD `short_protocol` integer;

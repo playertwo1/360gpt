@@ -12,7 +12,12 @@ export const documents = sqliteTable('documents', {
   source: text('source').notNull(), sourceMessageId: text('source_message_id'), originalName: text('original_name'),
   mimeType: text('mime_type'), storageKey: text('storage_key'), contentHash: text('content_hash'), rawText: text('raw_text'),
   status: text('status').notNull().default('received'), shortProtocol: integer('short_protocol'), receivedAt: integer('received_at', { mode: 'timestamp_ms' }).notNull(),
-}, (table) => [index('idx_documents_owner_status').on(table.ownerId, table.status), index('idx_documents_company').on(table.companyId), uniqueIndex('uq_documents_source_message').on(table.source, table.sourceMessageId)]);
+}, (table) => [index('idx_documents_owner_status').on(table.ownerId, table.status), index('idx_documents_company').on(table.companyId), uniqueIndex('uq_documents_source_message').on(table.source, table.sourceMessageId), uniqueIndex('uq_documents_owner_short_protocol').on(table.ownerId, table.shortProtocol)]);
+
+export const ownerProtocolCounters = sqliteTable('owner_protocol_counters', {
+  ownerId: text('owner_id').primaryKey(),
+  nextValue: integer('next_value').notNull().default(0),
+});
 
 export const telegramUpdates = sqliteTable('telegram_updates', {
   updateId: text('update_id').primaryKey(),

@@ -1093,6 +1093,11 @@
 - Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
 ## [3.9.0] - 2026-09-02
 
+### Fixed
+- Exclusão Telegram agora revoga toda a cadeia de registros do mesmo arquivo pelo hash, permitindo reenvio limpo.
+- Protocolo curto sequencial passou a ser exibido e aceito nas consultas e ações operacionais.
+- Migrações do contador e do protocolo curto foram registradas oficialmente no histórico Drizzle.
+
 ### Changed
 - Sincronizado `PROJECT_STATE.md` com o estado real do Git, Docker e Sites.
 - Próxima tarefa ajustada para a homologação documental N2.

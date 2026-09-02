@@ -96,9 +96,14 @@ async function executeConfirmation(db: D1Database, token: string, chatId: number
       db.prepare(`UPDATE documents SET status = 'ready_for_processing' WHERE id = ? AND owner_id = ?`).bind(protocol, ownerId),
     ]);
   } else if (row.command === '/excluir') {
+    const target = await db.prepare(`SELECT content_hash FROM documents WHERE id = ? AND owner_id = ?`).bind(protocol, ownerId).first<{ content_hash: string | null }>();
+    if (!target) { await sendTelegramText(token, chatId, 'Documento não encontrado ou já removido.'); return; }
+    const sameArtifact = target.content_hash
+      ? `SELECT id FROM documents WHERE owner_id = ? AND content_hash = ?`
+      : `SELECT id FROM documents WHERE owner_id = ? AND id = ?`;
     await db.batch([
-      db.prepare(`UPDATE agent_runs SET status = 'REVOKED', completed_at = ?, lease_token = NULL, lease_expires_at = NULL WHERE document_id = ?`).bind(now, protocol),
-      db.prepare(`UPDATE documents SET status = 'revoked', raw_text = NULL, storage_key = NULL WHERE id = ? AND owner_id = ?`).bind(protocol, ownerId),
+      db.prepare(`UPDATE agent_runs SET status = 'REVOKED', completed_at = ?, lease_token = NULL, lease_expires_at = NULL WHERE document_id IN (${sameArtifact})`).bind(now, ownerId, target.content_hash ?? protocol),
+      db.prepare(`UPDATE documents SET status = 'revoked', raw_text = NULL, storage_key = NULL WHERE id IN (${sameArtifact})`).bind(ownerId, target.content_hash ?? protocol),
     ]);
   } else if (row.command === '/corrigir') {
     await sendTelegramText(token, chatId, `Correção autorizada para ${protocol}. Envie /responder ${protocol} seguido da informação correta.`);
@@ -193,6 +198,7 @@ function formatDuration(ms: number): string {
 
 type DetailedProgressRow = {
   id: string;
+  short_protocol: number | null;
   original_name: string | null;
   document_status: string;
   job_id: string | null;
@@ -250,14 +256,14 @@ function formatProgressReport(row: DetailedProgressRow | null, queueSummary?: st
   } else if (status.startsWith('FAILED') || status === 'CANCELLED') {
     progress = 0;
     stage = `❌ Interrompido — Erro: ${row.last_error_code || 'Falha na execução'}`;
-    health = `🔴 Falha registrada (use /tentar novamente ${row.id})`;
+    health = `🔴 Falha registrada (use /tentar novamente ${row.short_protocol ?? row.id})`;
   }
 
   const lines = [
     '📊 ANDAMENTO DO PROCESSAMENTO',
     '',
     `📄 Arquivo: ${row.original_name ?? 'mensagem de texto / documento'}`,
-    `🔢 Protocolo: ${row.id}`,
+    `🔢 Protocolo: ${row.short_protocol ?? row.id}`,
     `⏳ Status: ${status} (Tentativa ${attempt}/3)`,
     `📈 Progresso por etapa (estimado): ${renderProgressBar(progress)}`,
     '',
@@ -299,9 +305,9 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     return { handled: true, kind: 'critical' };
   }
   if (command === '/excluirultimo') {
-    const latest = await db.prepare(`SELECT id FROM documents WHERE owner_id = ? AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`).bind(ownerId).first<{ id: string }>();
+    const latest = await db.prepare(`SELECT id, short_protocol FROM documents WHERE owner_id = ? AND status NOT IN ('revoked','cancelled') ORDER BY received_at DESC LIMIT 1`).bind(ownerId).first<{ id: string; short_protocol: number | null }>();
     if (!latest) await sendTelegramText(token, chatId, 'Nenhum documento encontrado para excluir.');
-    else await createConfirmation(db, token, chatId, ownerId, '/excluir', [latest.id]);
+    else await createConfirmation(db, token, chatId, ownerId, '/excluir', [String(latest.short_protocol ?? latest.id)]);
     return { handled: true, kind: 'critical' };
   }
   if (['/cancelar','/reabrir','/excluir','/corrigir','/aprovar','/revogarregra','/aprovardiretriz','/rejeitardiretriz','/revogardiretriz'].includes(command) || (command === '/tentar' && args[0]?.toLowerCase() === 'novamente')) {
@@ -328,9 +334,9 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const queueSummary = (counts.results ?? []).map((item) => `• ${item.status}: ${item.total}`).join('\n') || 'Fila vazia.';
     let row: DetailedProgressRow | null = null;
     if (protocol) {
-      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE (d.id = ? OR CAST(d.short_protocol AS TEXT) = ?) AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, protocol, ownerId).first<DetailedProgressRow>();
+      row = await db.prepare(`SELECT d.id, d.short_protocol, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d LEFT JOIN agent_runs ar ON ar.document_id = d.id WHERE (d.id = ? OR CAST(d.short_protocol AS TEXT) = ?) AND d.owner_id = ? ORDER BY ar.started_at DESC LIMIT 1`).bind(protocol, protocol, ownerId).first<DetailedProgressRow>();
     } else {
-      row = await db.prepare(`SELECT d.id, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d JOIN agent_runs ar ON ar.document_id = d.id WHERE d.owner_id = ? ORDER BY CASE WHEN ar.status = 'PROCESSING' THEN 1 WHEN ar.status = 'AWAITING_OWNER_INPUT' THEN 2 WHEN ar.status = 'QUEUED' THEN 3 ELSE 4 END ASC, ar.started_at DESC, d.received_at DESC LIMIT 1`).bind(ownerId).first<DetailedProgressRow>();
+      row = await db.prepare(`SELECT d.id, d.short_protocol, d.original_name, d.status AS document_status, d.received_at, ar.id AS job_id, ar.status AS job_status, ar.attempt_count, ar.started_at, ar.available_at, ar.lease_expires_at, ar.last_error_code, ar.completed_at FROM documents d JOIN agent_runs ar ON ar.document_id = d.id WHERE d.owner_id = ? ORDER BY CASE WHEN ar.status = 'PROCESSING' THEN 1 WHEN ar.status = 'AWAITING_OWNER_INPUT' THEN 2 WHEN ar.status = 'QUEUED' THEN 3 ELSE 4 END ASC, ar.started_at DESC, d.received_at DESC LIMIT 1`).bind(ownerId).first<DetailedProgressRow>();
     }
     await sendTelegramText(token, chatId, formatProgressReport(row, queueSummary));
     return { handled: true, kind: 'progress' };
@@ -344,8 +350,8 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     return { handled: true, kind: 'pending' };
   }
   if (command === '/meusdados') {
-    const rows = await db.prepare(`SELECT id, original_name, status, received_at FROM documents WHERE owner_id = ? ORDER BY received_at DESC LIMIT 20`).bind(ownerId).all<Record<string, unknown>>();
-    const lines = (rows.results ?? []).map((row) => `• ${row.id} — ${row.original_name ?? 'texto'} — ${row.status}`);
+    const rows = await db.prepare(`SELECT id, short_protocol, original_name, status, received_at FROM documents WHERE owner_id = ? ORDER BY received_at DESC LIMIT 20`).bind(ownerId).all<Record<string, unknown>>();
+    const lines = (rows.results ?? []).map((row) => `• ${row.short_protocol ?? row.id} — ${row.original_name ?? 'texto'} — ${row.status}`);
     await sendTelegramText(token, chatId, lines.length ? `SEUS DOCUMENTOS\n\n${lines.join('\n')}` : 'Nenhum documento encontrado.'); return { handled: true, kind: 'data' };
   }
   if (command === '/privacidade') { await sendTelegramText(token, chatId, 'PRIVACIDADE\n\nFinalidade: análise pessoal de Performance/POBJ.\nRetenção detalhada: até 24 meses.\nBackups: até 90 dias.\nAgregados não identificáveis: prazo indeterminado.\nRafael decide quais fontes e campos podem ser utilizados.\nUse /meusdados para consultar e /excluir <protocolo> para solicitar revogação.'); return { handled: true, kind: 'privacy' }; }
