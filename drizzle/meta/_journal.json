@@ -83,21 +83,7 @@
       "idx": 11,
       "version": "6",
       "when": 1788322567785,
-      "tag": "0011_yielding_rhino",
-      "breakpoints": true
-    },
-    {
-      "idx": 12,
-      "version": "6",
-      "when": 1788322583653,
-      "tag": "0012_whole_punisher",
-      "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "6",
-      "when": 1788322599972,
-      "tag": "0013_nervous_living_tribunal",
+      "tag": "0011_short_protocol",
       "breakpoints": true
     }
   ]

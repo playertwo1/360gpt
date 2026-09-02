@@ -17,8 +17,8 @@ Host baseline:
 Last completed: correção da exclusão por cadeia de hash, protocolo curto operacional e migrações Drizzle oficiais
 Next task: reprocessar POBJ2608/2708/2808 e validar META, REALIZADO, % ATG, pontos e período antes do Gate N2
 
-Last validation: 2026-09-02 — `npm run test:p0` PASS; `npm run lint` PASS; `npm run build` PASS; migrações 0011–0013 geradas pelo Drizzle.
-Last commit: 167147b fix(telegram): revoke duplicate chains and activate short protocols
+Last validation: 2026-09-02 — `npm run test:p0` PASS; `npm run lint` PASS; `npm run build` PASS; migração 0011 reconciliada com o banco hospedado já atualizado.
+Last commit: 310ae05 docs: record telegram deletion fix
 
 Blockers:
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.

@@ -1096,7 +1096,7 @@
 ### Fixed
 - Exclusão Telegram agora revoga toda a cadeia de registros do mesmo arquivo pelo hash, permitindo reenvio limpo.
 - Protocolo curto sequencial passou a ser exibido e aceito nas consultas e ações operacionais.
-- Migrações do contador e do protocolo curto foram registradas oficialmente no histórico Drizzle.
+- Migração já aplicada do contador/protocolo curto foi reconciliada no histórico Drizzle sem repetir alterações no banco.
 
 ### Changed
 - Sincronizado `PROJECT_STATE.md` com o estado real do Git, Docker e Sites.

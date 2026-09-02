@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d543b127-9655-4fa6-bef0-dd7c0f8da611",
-  "prevId": "9758d4ea-9c7b-4042-9696-1287ee0a065a",
+  "id": "bd8df258-6874-42e1-a90d-5d07be87a285",
+  "prevId": "10108b29-0098-4a82-9e07-351b48e9bae2",
   "tables": {
     "agent_runs": {
       "name": "agent_runs",
@@ -1343,6 +1343,14 @@
             "source_message_id"
           ],
           "isUnique": true
+        },
+        "uq_documents_owner_short_protocol": {
+          "name": "uq_documents_owner_short_protocol",
+          "columns": [
+            "owner_id",
+            "short_protocol"
+          ],
+          "isUnique": true
         }
       },
       "foreignKeys": {
@@ -2239,6 +2247,31 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "owner_protocol_counters": {
+      "name": "owner_protocol_counters",
+      "columns": {
+        "owner_id": {
+          "name": "owner_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "next_value": {
+          "name": "next_value",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
