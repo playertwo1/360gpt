@@ -15,9 +15,11 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: Gate N2 homologado formalmente por Rafael em 02/09/2026 após conferência dos campos críticos do POBJ2608 (Crédito PJ 180,77%, Encanta BRA 104,17%, Open Finance 125,00%, Vencidos 64,86%), com extração pelo Docling CPU TableFormer em 122.4s.
-Next task: Executar checklist N2.1 do ROADMAP 4.5; depois retomar o E2E WF-11 e Gate N7, antes de N8.2.
+Next task: Executar checklist N2.1 do ROADMAP 4.6; depois E2E WF-11, Gate N7 e aprofundamento N2.2.
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Melhorias avançadas ficam pós-MVP.
+
+Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
 
 Last validation: 2026-09-02 16:30 — Homologação formal de Rafael no Gate N2 (PASS); benchmark tabular 100% preciso; warnings geométricos emitidos sem alucinação.
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
@@ -48,7 +50,7 @@ Pending decisions:
 Last update: 2026-09-02 16:37
 
 Resume instruction:
-1. Continuar `ROADMAP.md` 4.5 no Marco N2.1 e implementar o ramo TEXT dentro do WF-101.
+1. Continuar `ROADMAP.md` 4.6 no Marco N2.1 e implementar os cinco casos simples dentro do WF-101.
 2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
 3. Manter polling desligado; avançar WF-97/WF-101/WF-102 sem trocar o webhook.
 4. Após o Gate A0, retomar N2 sem alterar o gate objetivo do Docling.

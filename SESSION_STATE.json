@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.14.0-roadmap-4.5-text-input",
+  "version": "3.14.0-roadmap-4.6-text-mvp-and-post-mvp",
   "last_updated": "2026-09-02T16:37:00-03:00",
   "last_active_assistant": "Antigravity",
   "next_recommended_assistant": "ChatGPT Codex",
@@ -59,7 +59,7 @@
   "pending_decisions": [
     "Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"
   ],
-  "next_exact_step": "Executar ROADMAP 4.5/N2.1: ramo TEXT no WF-101, envelope canônico, classificação estruturada, OWNER_PROVIDED, roteamento seletivo, persistência e Gate N2.1",
+  "next_exact_step": "Executar ROADMAP 4.6/N2.1: implementar no WF-101 os cinco casos textuais simples; não iniciar N2.2 antes do Gate N7",
   "resume_order": [
     "AGENTS.md",
     "PROJECT_STATE.md",

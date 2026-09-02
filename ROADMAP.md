@@ -1,6 +1,6 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.5 — entrada textual conversacional antes do E2E
+**Versão do planejamento:** 4.6 — MVP textual simples e evolução conversacional pós-MVP
 
 **Atualizado em:** 2 de setembro de 2026
 
@@ -1170,6 +1170,123 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 - [ ] Toda decisão operacional continua dentro do n8n.
 
 **Gate N2.1:** Rafael envia pelo Telegram (a) uma atualização curta com fato, (b) uma pergunta sobre o impacto e (c) um texto longo estruturado. O sistema registra com proveniência, consulta os agentes necessários, responde corretamente e reutiliza apenas informações confirmadas na mensagem seguinte.
+
+### N2.2 — Evolução conversacional após o MVP — NÃO BLOQUEIA O GATE N7
+
+> Esta fase começa somente depois de o primeiro MVP ponta a ponta estar aprovado. Os itens abaixo aprofundam a experiência e a inteligência do sistema, mas não podem atrasar o recebimento do primeiro parecer real pelo Telegram.
+
+#### N2.2.1 Memória operacional em camadas
+
+- [ ] Separar memória de sessão, histórico completo, fatos confirmados, preferências de Rafael, conhecimento de domínio e política do sistema.
+- [ ] Construir o contexto de cada agente com o último Estado 360, fatos aplicáveis, pendências e somente 6–10 interações relevantes.
+- [ ] Criar resumo versionado de conversas antigas sem apagar as mensagens originais.
+- [ ] Aplicar escopo temporal e por entidade para impedir que fatos de agosto contaminem setembro ou que uma empresa contamine outra.
+- [ ] Permitir que Rafael consulte “o que você sabe sobre este indicador/cliente?” com evidências e data de cada aprendizado.
+
+#### N2.2.2 Promoção supervisionada de conhecimento
+
+- [ ] Implementar ciclo `OBSERVED → LEARNING_CANDIDATE → VALIDATED → OWNER_APPROVED → PROMOTED`.
+- [ ] Exibir ao Rafael exatamente o que será aprendido, por qual motivo, em qual escopo e até quando valerá.
+- [ ] Permitir aprovar, rejeitar, corrigir, substituir ou revogar conhecimento pelo Telegram e pelo site.
+- [ ] Reutilizar nos próximos arquivos somente conhecimento promovido e compatível com layout, período, indicador e finalidade.
+- [ ] Registrar aplicações da regra aprendida e permitir explicar “por que você entendeu dessa forma?”.
+- [ ] Nunca permitir que reclamação, repetição ou preferência momentânea altere automaticamente prompt, política ou regra de negócio.
+
+#### N2.2.3 Simulações e cenários sem contaminar o estado
+
+- [ ] Reconhecer linguagem condicional: “se entrar”, “caso eu faça”, “supondo”, “quanto ficaria”.
+- [ ] Criar workspace temporário de simulação separado do Estado 360 oficial.
+- [ ] Mostrar cenário-base, hipótese adicionada, resultado simulado, diferença e confiança.
+- [ ] Não promover uma hipótese como fato sem confirmação explícita de Rafael.
+- [ ] Permitir converter cenário em fato somente após a ação ocorrer e Rafael confirmar.
+- [ ] Comparar dois ou mais cenários por pontos, esforço, prazo, risco e executabilidade.
+
+#### N2.2.4 Roteamento multidomínio progressivo
+
+- [ ] Acionar Performance para metas, pontos, gaps e projeções.
+- [ ] Acionar Conta para empresa, carteira, elegibilidade e oportunidade identificada por chave forte.
+- [ ] Acionar Relacionamento para conversa, objeção, compromisso, abordagem e follow-up.
+- [ ] Acionar Financeiro para orçamento, realizado, retorno e impacto monetário.
+- [ ] Permitir mais de um domínio somente quando o complemento puder mudar materialmente a conclusão.
+- [ ] Registrar por que cada domínio foi incluído ou excluído.
+- [ ] Motor 360 reconciliar resultados; agentes não fazem chamadas laterais entre si.
+
+#### N2.2.5 Conversas naturais mais ricas
+
+- [ ] Suportar referência contextual: “e se forem mais duas?”, “compare com ontem”, “essa linha”, “a empresa anterior”.
+- [ ] Resolver referência apenas quando houver antecedente inequívoco; caso contrário perguntar.
+- [ ] Aceitar mensagens consecutivas agregadas por debounce sem misturar protocolos.
+- [ ] Permitir continuar uma análise dias depois usando protocolo ou assunto identificado.
+- [ ] Diferenciar atualização, pergunta, ordem, hipótese, correção, reclamação, autorização e revogação.
+- [ ] Gerar respostas curtas por padrão e oferecer aprofundamento por comando/pergunta.
+
+#### N2.2.6 Catálogo textual e operacional ampliado
+
+- [ ] Liberar `/ultimo`, `/duvidas`, `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios` e `/indicador <nome>`.
+- [ ] Liberar `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario` somente com fontes suficientes.
+- [ ] Liberar `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir` com confirmação segura quando aplicável.
+- [ ] Menu do Telegram listar somente comandos ativos na versão atual.
+- [ ] Linguagem natural oferecer as mesmas consultas sem exigir que Rafael memorize comandos.
+
+#### N2.2.7 Reconciliação, correção e reprocessamento
+
+- [ ] Detectar divergência entre informação manual, documento, planilha, regra e Estado 360.
+- [ ] Mostrar lado A, lado B, período, fonte e impacto antes de pedir decisão.
+- [ ] Correção cria nova evidência `SUPERSEDES` e reprocessa somente nós dependentes.
+- [ ] Revogação invalida usos futuros e marca snapshots dependentes para atualização.
+- [ ] Não recalcular domínios que não foram afetados.
+- [ ] Permitir reproduzir uma decisão usando apenas as informações disponíveis naquela data.
+
+#### N2.2.8 Experiência do usuário e transparência
+
+- [ ] Confirmação inteligente: “entendi e registrei X; usei Y; falta Z”.
+- [ ] Mostrar protocolo curto, etapa e progresso estimado sem inventar subetapas.
+- [ ] Informar quais agentes participaram e permitir abrir suas evidências.
+- [ ] Rotular sempre `FONTE`, `INFORMADO POR RAFAEL`, `CÁLCULO`, `ESTIMATIVA` e `PENDENTE`.
+- [ ] Permitir respostas compacta, detalhada e executiva conforme preferência aprovada de Rafael.
+- [ ] Site e Telegram exibirem o mesmo snapshot e histórico, sem estados paralelos.
+
+#### N2.2.9 Eficiência e seleção de modelos
+
+- [ ] Usar regra determinística antes de IA e modelo menor antes de modelo mais caro.
+- [ ] Não enviar AGENTS.md inteiro em cada chamada; montar pacote mínimo de política, agente, contrato e contexto.
+- [ ] Cachear somente transformações seguras por hash, tenant, política, versão e finalidade.
+- [ ] Medir tempo, tokens, custo, retries e qualidade por capacidade.
+- [ ] Reprocessar apenas a etapa afetada por correção ou nova informação.
+- [ ] Introduzir Redis/queue mode somente quando concorrência real justificar a complexidade.
+
+#### N2.2.10 Segurança, privacidade e resistência a instruções maliciosas
+
+- [ ] Tratar texto, documento e conteúdo extraído como dados não confiáveis, nunca como instruções de sistema.
+- [ ] Impedir que mensagem solicite segredo, altere política, habilite ferramenta ou amplie autorização.
+- [ ] Minimizar dados antes de enviar a modelos externos.
+- [ ] Aplicar retenção e exclusão por cadeia, preservando auditoria mínima obrigatória.
+- [ ] Registrar modelo, prompt, política, contrato e fontes usadas sem armazenar segredos.
+- [ ] Manter efeitos externos sob autorização específica e idempotente.
+
+#### N2.2.11 Observabilidade e avaliação pós-MVP
+
+- [ ] Criar conjunto de conversas reais sanitizadas como casos de regressão permanentes.
+- [ ] Medir compreensão de intenção, associação de entidade, correção numérica, proveniência e utilidade da recomendação.
+- [ ] Monitorar loops, respostas vazias, mojibake, duplicações, timeouts e contexto incorreto.
+- [ ] Criar replay controlado para validar nova versão antes de promover.
+- [ ] Manter canary por capacidade e rollback independente.
+- [ ] Auditoria do Codex comparar execução real, workflow exportado, banco, evidências e documentação.
+
+**Gate N2.2:** em conversas sucessivas, o Diretor lembra apenas fatos promovidos, resolve referências seguras, executa simulações separadas, consulta múltiplos domínios quando necessário e explica cada conclusão sem misturar fontes, períodos ou clientes.
+
+### Sequência oficial consolidada
+
+1. [ ] N2.1: implementar os cinco casos textuais simples.
+2. [ ] Gate N2.1 pelo Telegram.
+3. [ ] E2E documental WF-11 com POBJ real.
+4. [ ] Teste de lacuna, resposta e reprocessamento.
+5. [ ] Piloto combinado com textos e 3–5 documentos.
+6. [ ] Gate N7 — MVP viável pelo celular.
+7. [ ] N2.2: aprofundamento conversacional pós-MVP.
+8. [ ] N8.2: GG Relacionamento, aproveitando a base conversacional homologada.
+9. [ ] N8.3: GG Financeiro.
+10. [ ] N8.4: integração 360 dos quatro domínios.
 
 ### Depois do Gate N2
 
