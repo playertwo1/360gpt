@@ -1283,6 +1283,50 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 
 **Gate N2.2:** HOMOLOGADO COM SUCESSO (02/09/2026) — Em conversas sucessivas, o Diretor lembra apenas fatos promovidos, resolve referências seguras, executa simulações separadas, consulta múltiplos domínios quando necessário e explica cada conclusão sem misturar fontes, períodos ou clientes.
 
+---
+
+### 11.1 Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente (Marco N2.3)
+
+Este marco implementa a evolução contínua da rede de agentes e subagentes no n8n **sem retreinar pesos do modelo (fine-tuning)** e **sem permitir que os agentes alterem seus próprios System Prompts**. A inteligência é refinada externamente através de uma camada de memória semântica estruturada no PostgreSQL, repositório de exemplares dourados (*Dynamic Few-Shot*), matriz de desfecho com medição de utilidade e workflow de reflexão semanal.
+
+#### N2.3.1 Camada de Memória Semântica Desacoplada (Data-as-State, Prompt-as-Code)
+
+- [ ] Prompts de sistema (System Prompts) de Diretor, Gerentes Gerais e subagentes são 100% fixos, imutáveis durante a execução e versionados no Git.
+- [ ] O aprendizado não edita código nem altera prompts; persiste exclusivamente como dados estruturados na tabela `promoted_knowledge` do PostgreSQL `visao360`.
+- [ ] Injeção dinâmica de diretrizes no pacote de contexto (*Context Packet*) via consulta SQL indexada por escopo (`GLOBAL`, `CLIENTE:<CNPJ>`, `INDICADOR:<NOME>`).
+- [ ] Guardrails de vigência (`valid_to`), autoridade de origem (`source_event`), escopo fechado e descarte automático de regras obsoletas (*Memory Decay / TTL*).
+
+#### N2.3.2 Repositório de Exemplares Dourados Dinâmicos (Dynamic Few-Shot Learning)
+
+- [ ] Criar a tabela `golden_exemplars` no PostgreSQL para armazenar abordagens, relatórios e análises aprovadas com nota máxima por Rafael.
+- [ ] Mecanismo de busca por similaridade de perfil (hospitalar, metalmecânica, serviços, agro) e objetivo (folha, cobrança, crédito, recuperação de mora).
+- [ ] Subagentes recebem de 1 a 2 exemplares reais de Rafael no contexto da chamada, aprendendo por mimetismo de alto nível sem retreino de pesos.
+- [ ] Garantir que tom de voz, vocabulário bancário e saudações reflitam com exatidão o estilo gerencial de Rafael.
+
+#### N2.3.3 O Triângulo de Feedback e Matriz de Desfecho (Decision Utility Engine)
+
+- [ ] Rastrear o desfecho de cada recomendação ou texto gerado: `ACEITO_INTEGRAL`, `EDITADO_POR_RAFAEL`, `RECUSADO_COM_MOTIVO`.
+- [ ] Analisador de Delta (*Diff Engine*): quando Rafael edita uma mensagem gerada pelo bot, o sistema compara a proposta da IA com a versão final enviada e extrai a heurística que motivou o ajuste.
+- [ ] Calibração dinâmica do `confidence_score`: recomendações frequentemente aceitas ganham mais autonomia; recomendações frequentemente recusadas passam a exigir `REVIEW_REQUIRED` preventivo.
+- [ ] Exibir e auditar a métrica de `Decision Utility Rate` em tempo real (meta de projeto: $\ge 85\%$).
+
+#### N2.3.4 Workflow Semanal de Reflexão e Síntese (WF-104 — Reflexion Engine)
+
+- [ ] Workflow n8n assíncrono agendado para sextas-feiras às 18h00 (ou fechamento de expediente).
+- [ ] Varredura das conversas, deltas, edições e recusas da semana no PostgreSQL.
+- [ ] Síntese de lições emergentes e eliminação de ruídos (regras sem recorrência comprovada são descartadas).
+- [ ] Emissão de Card Executivo compacto no Telegram com as 2–3 lições candidatas da semana para aprovação soberana em 1 clique (`/aprovar_todas` ou `/rejeitar`).
+
+#### N2.3.5 Memória de Decisões Negativas e Anti-Padrões (Negative Memory)
+
+- [ ] Registro das abordagens, argumentos e produtos explicitamente vetados por Rafael ou rejeitados pelos clientes da carteira.
+- [ ] Criação de nós `CONTRADICTS` e `SUPERSEDES` no Evidence Graph.
+- [ ] Filtro preventivo obrigatório: antes de qualquer Gerente Geral formular uma sugestão, cruza o payload com a memória negativa para impedir gafes comerciais ou ofertas de produtos já recusados.
+
+**Gate N2.3 (Flywheel Homologado):** Em 3 ciclos consecutivos de conversa em campo, a rede absorve uma correção de Rafael, reflete no banco sem alterar arquivos de código, recupera o exemplar dourado correspondente e gera a próxima abordagem com 100% de aderência ao padrão ensinado, mantendo `Decision Utility Rate ≥ 85%`.
+
+---
+
 ### Sequência oficial consolidada
 
 1. [ ] N2.1: implementar os cinco casos textuais simples.
