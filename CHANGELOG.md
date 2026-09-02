@@ -12,6 +12,7 @@
 - `test:local-core` aprovou a arquitetura e os 19 workflows versionados.
 - WF-101 foi adicionado como dispatcher local inativo, com claim/lease e roteamento determinístico.
 - WF-102 foi adicionado como entrega local inativa, com divisão segura multipartes e adaptador Telegram sem lógica de negócio.
+- WF-103 foi adicionado como contingência local inativa, sanitizando falhas e registrando uma única evidência append-only por execução.
 - `test:p0`, lint e build aprovados; o gate de runtime permaneceu deliberadamente bloqueado até a migração das quatro exceções legadas.
 
 ### Changed — webhook Telegram preservado
