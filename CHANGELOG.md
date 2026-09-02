@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Planning — rota crítica do MVP
+- `ROADMAP.md` avançado para 4.4 com instrução detalhada M0→M10 destinada ao Antigravity.
+- Fixada a topologia mínima de três workflows: WF-100 entrada, WF-101 jornada completa e WF-103 contingência.
+- Definidos MVP exato, estados, comandos mínimos, pipeline Docling, Diretor/GG Performance, esclarecimento, entrega, cutover, rollback e pacote posterior de auditoria do Codex.
+- Reduzidos os testes pré-MVP a validação estrutural, um smoke sintético e um teste real ponta a ponta.
+
 ### Governance — n8n canônico
 - `AGENTS.md` avançado para v2.2 e n8n definido como autoridade operacional exclusiva do Diretor 360.
 - Criada política `n8n-canonical-architecture.yaml`, proibindo comandos, IA, cálculos, perguntas, aprendizado, transições e parecer final fora dos workflows.

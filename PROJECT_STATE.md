@@ -3,7 +3,7 @@
 Version: 3.11.0-n8n-exclusive-runtime
 Current phase: recentralização do runtime no n8n/PostgreSQL local
 Current milestone: A0 — n8n e PostgreSQL como núcleo local único
-Current task: A0.2 — dispatcher local de comandos/conversa e saída Telegram
+Current task: A0.2/M0 — handoff ao Antigravity para construir a rota crítica do MVP
 Status: IN_PROGRESS
 
 Host baseline:
@@ -14,8 +14,8 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1` e `visao-360-n8n-1`; Docling/worker são serviços de processamento sob demanda.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: claim/lease e persistência inbound do WF-101 aprovados no PostgreSQL em transação sintética integralmente revertida
-Next task: implementar respostas determinísticas do catálogo de comandos no WF-101 e persistir outbound via WF-102
+Last completed: ROADMAP 4.4 detalha a rota M0→M10, o MVP exato, a topologia de três workflows e o pacote de auditoria do Codex
+Next task: Antigravity deve executar M0, reconciliar o rascunho local do WF-101 e prosseguir diretamente até o Gate MVP
 
 Last validation: 2026-09-02 — `WF101_LOCAL_DB_PASS`; n8n/PostgreSQL/Docling/worker saudáveis; WF-101/102/103 importados; `test:local-core` (22 workflows), `test:p0` e lint PASS.
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
@@ -27,6 +27,7 @@ Blockers:
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - O Sites ainda contém lógica operacional legada; deve ser reduzido a transporte somente depois do shadow local.
 - Quatro exceções legadas fora do n8n estão inventariadas e congeladas; o Gate A0 exige removê-las ou reduzi-las a transporte puro.
+- O WF-101 possui edição local ainda não homologada para incorporar comandos e entrega; deve ser reconciliada no M0 antes de importação.
 
 Decisions:
 - Nenhuma capacidade operacional pode ser implementada ou alterada fora do n8n; código externo é apenas adaptador, extrator, persistência, interface ou operação técnica.
@@ -44,7 +45,7 @@ Pending decisions:
 Last update: 2026-09-02 06:32
 
 Resume instruction:
-1. Continuar `ROADMAP.md` em A0.2: WF-101 dispatcher local, WF-102 entrega e WF-103 contingência.
+1. Continuar `ROADMAP.md` 4.4 em A0.2/M0 e executar a rota crítica M0→M10 pelo Antigravity.
 2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
 3. Manter polling desligado; avançar WF-97/WF-101/WF-102 sem trocar o webhook.
 4. Após o Gate A0, retomar N2 sem alterar o gate objetivo do Docling.

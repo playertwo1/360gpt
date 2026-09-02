@@ -9,7 +9,7 @@
 
 **Regra canônica obrigatória (v3.11.0):** o n8n é a única autoridade operacional. Comandos, estado conversacional, seleção e chamada de IA, prompts, roteamento de agentes, cálculos, lacunas, perguntas, aprendizado, transições de jobs e decisão de resposta devem existir em workflows/subworkflows n8n. Sites/Telegram transportam e exibem; Docling extrai; PostgreSQL persiste. As quatro exceções listadas em `policies/n8n-canonical-architecture.yaml` estão congeladas e impedem a homologação do Gate A0 até serem removidas ou reduzidas a adaptadores passivos.
 
-**Ponto exato de retomada:** A0.2 — WF-101, WF-102 e WF-103 já foram criados, importados e mantidos inativos. Claim/lease e histórico inbound passaram em transação sintética com rollback. Completar agora o catálogo determinístico no WF-101, persistência outbound no WF-102 e teste integrado sem ativação. O Telegram permanece no webhook estável; `telegram-poller` fica desligado como contingência.
+**Ponto exato de retomada:** o Antigravity executará `ROADMAP.md` 4.4, A0.2/M0→M10. Deve reconciliar primeiro o rascunho local do WF-101. A topologia final tem WF-100, WF-101 e WF-103; WF-102 será incorporado. O Codex deve atuar depois como auditor do MVP real e do pacote de evidências, sem reconstruir preventivamente a solução.
 
 ---
 

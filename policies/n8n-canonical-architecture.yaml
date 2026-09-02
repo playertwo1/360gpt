@@ -63,3 +63,8 @@ exception_rules:
   legacy_can_receive_features: false
   allowed_change: security_fix_or_migration_removal_only
   done_requires_zero_runtime_violations: true
+
+mvp_runtime_workflows:
+  canonical: [WF-100, WF-101, WF-103]
+  incorporated: [WF-102]
+  rule: WF-102 deve ser absorvido pelo WF-101 antes do cutover.

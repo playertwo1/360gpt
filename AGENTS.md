@@ -10,6 +10,10 @@
 
 O n8n transporta, agenda, persiste e observa o fluxo. Não cria regras de negócio, não interpreta lacunas como fatos e não substitui os agentes de domínio.
 
+### Topologia mínima canônica do MVP
+
+O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada rápida, deduplicação e fila; `WF-101` para todo o processamento principal e entrega; e `WF-103` para contingência global. A função do `WF-102` é incorporada ao `WF-101`; os demais workflows são históricos, avaliações ou módulos ainda não promovidos.
+
 > **Regra canônica de execução n8n:** toda entrada operacional deve chegar a um workflow n8n antes de qualquer comando, decisão, classificação, cálculo, IA, pergunta, aprendizado, mutação de estado ou resposta. Sites, Telegram, adaptadores, scripts, APIs e serviços auxiliares não podem implementar caminhos paralelos. Docling somente extrai; PostgreSQL somente persiste; interfaces somente transportam e exibem. Alterar comportamento significa alterar workflow, contrato, política ou subworkflow versionado e chamado pelo n8n.
 
 ---

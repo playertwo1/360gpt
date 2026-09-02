@@ -1,6 +1,6 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.3
+**Versão do planejamento:** 4.4 — rota crítica detalhada até o MVP
 
 **Atualizado em:** 2 de setembro de 2026
 
@@ -14,7 +14,7 @@
 
 **Marco atual:** `A0 — n8n e PostgreSQL como núcleo local único`
 
-**Próxima tarefa:** A0.2 — criar o dispatcher local de comandos/conversa e retirar a dependência operacional do WF-11 em endpoints hospedados
+**Próxima tarefa:** A0.2/M0 — Antigravity deve reconciliar o rascunho do WF-101, escolher a versão canônica e iniciar a rota crítica M0→M10
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -265,56 +265,318 @@ Regra: WF-12/WF-13 não serão descritos como MVP ativo enquanto o controlador W
 - [x] Executar teste sintético do WF-100: primeira entrada aceita e enfileirada; repetição reconhecida como duplicata; uma única linha persistida.
 - [x] Deixar WF-100 despublicado e `TELEGRAM_POLLING_ENABLED=false` após o teste.
 
-### A0.2 — Dispatcher local de conversa e comandos — MARCO ATUAL
+### A0.2 — Rota crítica detalhada até o MVP real — MARCO ATUAL
 
-- [x] Criar WF-101 para claim com lease dos `channel_inbound_events` e roteamento determinístico inicial (workflow permanece inativo até cutover).
-- [ ] Rotear deterministicamente comandos antes de qualquer esclarecimento ou IA.
-- [ ] Migrar `/start`, `/comandos`, `/ajuda`, `/menu`, `/status`, `/progresso`, `/protocolo`, `/pendencias` e `/duvidas` para PostgreSQL/n8n.
-- [ ] Migrar `/excluir`, `/excluirultimo`, `/confirmar` e protocolos curtos com confirmação idempotente.
-- [ ] Registrar conversa inbound/outbound e impedir que mensagem do próprio bot seja processada.
-- [x] Criar WF-102 de entrega via `telegram-poller:/send`, com divisão segura em partes de 3.800 caracteres e workflow inativo até cutover.
-- [x] Criar WF-103 de contingência local, com erro sanitizado, auditoria append-only e deduplicação por execução; permanece inativo até cutover.
-- [x] Importar WF-101, WF-102 e WF-103 no n8n local e confirmar presença pelo CLI, mantendo-os inativos.
-- [x] Validar claim/lease e histórico inbound do WF-101 em transação sintética com rollback (`WF101_LOCAL_DB_PASS`).
-- [ ] Remover parser e execução de comandos de `lib/telegram-runtime.ts` após equivalência comprovada no WF-101.
+> Esta seção é a instrução principal para o Antigravity. Ela substitui, para o primeiro MVP, planos anteriores que separavam excessivamente dispatcher, entrega, shadow, blindagens e recursos avançados. O objetivo é colocar um único arquivo real de Rafael no Telegram e obter um parecer útil do GG Performance, persistido e rastreável. Recursos que não participem diretamente dessa jornada ficam para depois do Gate MVP.
 
-### A0.3 — Documento, Docling e orquestração local
+#### A0.2.1 Estado real de partida
 
-- [ ] Substituir claim/download/complete/fail hospedados do WF-11 por tabelas e storage locais.
-- [ ] Criar protocolo curto no PostgreSQL na mesma transação do documento.
-- [ ] Fazer n8n controlar `RECEIVED → QUEUED → OCR → DIRECTOR → MANAGERS → MOTOR → REVIEW/READY → DELIVERED`.
-- [ ] Manter Docling como extrator e consumir `tables[]` antes de Markdown.
-- [ ] Converter Diretor, quatro Gerentes Gerais e especialistas em subworkflows versionados, acionando somente domínios materiais.
-- [ ] Persistir todo handoff e Estado 360 antes da resposta ao canal.
-- [ ] Retirar transições de negócio de `app/api/bridge/*`; endpoints restantes somente transportam envelopes.
+- [x] PostgreSQL, n8n, Docling e document-worker estão saudáveis no Docker Engine do WSL2.
+- [x] O webhook HTTPS atual do Telegram aponta para o gateway hospedado e está operacional.
+- [x] A entrada durável, tabelas de canais, documentos, jobs, conversas, esclarecimentos, diretrizes, entregas e handoffs existem no PostgreSQL local.
+- [x] WF-100 existe para validar, deduplicar e enfileirar entrada; permanece inativo até o corte.
+- [x] WF-101 existe e foi importado com claim/lease, roteamento inicial e persistência inbound.
+- [x] WF-103 existe e foi importado como contingência global, permanecendo inativo.
+- [~] Existe uma edição local ainda não homologada do WF-101 tentando incorporar comandos e entrega. O Antigravity deve abrir o JSON e o workflow importado, escolher uma única versão, corrigir a estrutura e reimportar. Não assumir que esse rascunho funciona.
+- [~] WF-102 existe, mas deixou de ser canônico. Aproveitar somente os nós úteis de divisão e envio; depois mantê-lo inativo e marcar como incorporado/aposentado.
+- [ ] A lógica hospedada antiga ainda executa comandos, esclarecimentos e partes da jornada documental. Ela só pode ser removida depois que o caminho local produzir uma resposta real.
 
-### A0.4 — Conversa, aprendizado e histórico local
+#### A0.2.2 Definição exata do MVP viável
 
-- [ ] Migrar esclarecimentos para `clarification_requests_360`/`clarification_answers_360`.
-- [ ] Migrar diretrizes candidatas e aplicações para `learned_directives_360`/`directive_applications_360`.
-- [ ] Garantir que correções de Rafael sejam `OWNER_PROVIDED` e só virem conhecimento reutilizável após aprovação.
-- [ ] Limitar contexto textual, preservando histórico completo e referências no PostgreSQL.
+O MVP estará pronto quando Rafael conseguir, pelo celular:
 
-### A0.5 — Sites reduzido a canal
+1. enviar um PDF POBJ pelo Telegram;
+2. receber confirmação imediata com protocolo curto;
+3. consultar o andamento com `/protocolo <número>`;
+4. ter o arquivo baixado e processado localmente pelo n8n;
+5. ter o Docling extraindo texto, tabelas, páginas e proveniência;
+6. ter o Diretor classificando o documento como Performance/POBJ;
+7. ter o GG Performance e o especialista POBJ produzindo uma análise baseada somente no documento e nas regras homologadas;
+8. receber uma pergunta objetiva se existir lacuna material;
+9. responder naturalmente e continuar no mesmo protocolo;
+10. receber o parecer final no Telegram, em partes legíveis;
+11. encontrar documento, extração, perguntas, resposta de Rafael, análise e parecer registrados no PostgreSQL.
 
-- [ ] Definir envelope mínimo da caixa postal Sites ↔ n8n.
-- [ ] Retirar do runtime hospedado regras, cálculos, slot-filling, comandos, aprendizado e Estado 360 oficial.
-- [ ] Manter no D1/R2 somente transporte temporário necessário ao acesso remoto, com retenção e idempotência.
-- [ ] Fazer o site consultar respostas e snapshots produzidos pelo núcleo local, sem fabricar fallback demo.
+O MVP não precisa, antes desse gate, de todos os comandos históricos, quatro Gerentes ativos, site completo, aprendizado automático, comparação de carteiras, Redis, VPS, alta disponibilidade ou bateria extensa de testes.
 
-### A0.6 — Shadow, backup e corte controlado
+#### A0.2.3 Topologia canônica mínima
 
-- [ ] Comparar caminho hospedado legado × núcleo local em mensagens, comandos, arquivo e esclarecimento sintéticos.
-- [ ] Validar UTF-8, idempotência, debounce, lease, retry, exclusão por cadeia e entrega multipartes.
-- [ ] Criar backup verificável de PostgreSQL, n8n e configuração antes do corte.
-- [ ] Ativar o modo assíncrono de transporte no gateway hospedado após validar WF-97/WF-101/WF-102.
-- [ ] Promover o consumo local sem trocar a URL do webhook.
-- [ ] Executar teste real pelo celular e manter rollback documentado.
-- [ ] Somente depois do gate, revogar a lógica operacional hospedada duplicada.
+Somente três workflows poderão participar do runtime do MVP:
 
-**Gate A0:** uma mensagem e um arquivo enviados ao webhook entram na fila de transporte, percorrem o n8n/PostgreSQL no Docker e retornam ao Telegram; comandos não entram em esclarecimento; duplicatas não reprocessam; Sites não governa o estado.
+```text
+Telegram/Sites
+    ↓
+WF-100 — entrada rápida
+    valida canal → ignora bot → deduplica update → preserva envelope → enfileira → confirma recebimento
+    ↓
+WF-101 — jornada principal completa
+    claim/lease → classifica intenção → comando | resposta | documento
+       documento → baixa → registra hash/protocolo → Docling → Diretor → GG Performance/POBJ
+       dúvida material → pergunta Rafael → pausa → recebe resposta → reprocessa
+       pronto → Estado 360 mínimo → parecer → persiste entrega → Telegram
 
-**Gate adicional de canonicidade:** zero capacidade operacional depende de decisão fora de `n8n/workflows`; as exceções em `policies/n8n-canonical-architecture.yaml` devem estar removidas ou reduzidas a transporte puro.
+WF-103 — contingência independente
+    captura erro definitivo → sanitiza → registra → libera lease/retry → avisa uma única vez quando necessário
+```
+
+Regras inegociáveis:
+
+- Telegram e Sites apenas transportam e exibem.
+- Docling apenas extrai; não interpreta indicador nem corrige célula ambígua.
+- PostgreSQL persiste, aplica constraints, idempotência e leases; não escreve parecer.
+- Toda decisão, comando, IA, prompt, cálculo, pergunta, estado e resposta ocorre no WF-101 ou em nós/subworkflows chamados por ele.
+- Para o MVP, subworkflows de agentes podem continuar existindo, mas devem ser chamados pelo WF-101; não são novos runtimes independentes.
+
+#### A0.2.4 Passo M0 — reconciliar o rascunho e congelar a base
+
+Objetivo: começar de uma versão única e recuperável, sem carregar JSON parcialmente editado.
+
+- [ ] Verificar `git status` e preservar mudanças do usuário fora do escopo.
+- [ ] Comparar o WF-101 versionado, a edição local e o workflow importado no n8n.
+- [ ] Manter no WF-101 somente nós que participem da jornada final; eliminar ramos provisórios duplicados.
+- [ ] Confirmar que `active=false` durante toda a construção.
+- [ ] Criar um commit/checkpoint pequeno antes de alterar banco, webhook ou workflows ativos.
+- [ ] Não criar novos testes unitários para nós que serão substituídos dentro desta mesma execução.
+
+Saída: um único WF-101 importável, inativo e escolhido como base oficial.
+
+#### A0.2.5 Passo M1 — fechar a entrada do Telegram no WF-100
+
+Objetivo: transformar o gateway hospedado numa caixa postal, sem regra de negócio.
+
+Envelope mínimo esperado pelo WF-100:
+
+- `channel`, `update_id`, `chat_id`, `message_id` e `sender_id`;
+- tipo `COMMAND | TEXT | DOCUMENT | IMAGE | CALLBACK`;
+- texto/caption, metadados do arquivo e referência temporária para download;
+- hash do envelope, timestamp e resposta à mensagem anterior quando existir;
+- nenhuma decisão de comando, indicador, lacuna ou protocolo feita pelo Sites.
+
+Implementação:
+
+- [ ] Ajustar o gateway para autenticar, aplicar allowlist/rate limit, deduplicar tecnicamente, armazenar o envelope e devolver HTTP 200 rapidamente.
+- [ ] Fazer WF-97, ou uma etapa incorporada ao WF-100, buscar envelopes por conexão de saída; não abrir o editor n8n à internet.
+- [ ] Fazer WF-100 gravar `channel_updates` e `channel_inbound_events` atomicamente.
+- [ ] Ignorar `sender_is_bot=true` antes da fila operacional.
+- [ ] Não chamar IA, Docling ou regras de negócio na confirmação inicial.
+
+Saída: uma mensagem ou arquivo chega ao PostgreSQL local uma única vez.
+
+#### A0.2.6 Passo M2 — transformar WF-101 no controlador completo
+
+Objetivo: concentrar toda a jornada em um único workflow legível.
+
+Ordem recomendada de nós:
+
+1. Schedule Trigger de 5–10 segundos.
+2. PostgreSQL Claim com `FOR UPDATE SKIP LOCKED` e lease de dois minutos.
+3. IF “há evento?”; se não houver, encerrar sem erro.
+4. Code “Normalizar UTF-8 e intenção básica”.
+5. PostgreSQL “Persistir inbound e thread”.
+6. Switch principal: `COMMAND`, `OWNER_REPLY`, `DOCUMENT`, `TEXT` ou `UNSUPPORTED`.
+7. Cada ramo deve terminar em `COMPLETED`, `AWAITING_OWNER_INPUT`, `FAILED_RETRYABLE` ou `FAILED_FINAL`; nunca deixar `PROCESSING` órfão.
+8. Um único bloco comum de saída: montar texto → dividir → persistir partes → enviar → confirmar entrega.
+
+Regras de concorrência:
+
+- [ ] Lease válido obrigatório em toda transição do evento/job.
+- [ ] Retry cria nova tentativa, mas preserva protocolo e correlação.
+- [ ] Entrega usa chave idempotente por protocolo + versão do parecer + índice da parte.
+- [ ] Falha depois de enviar não pode reenviar parte já marcada `SENT`.
+- [ ] Mensagem nova nunca substitui pergunta pendente sem correlação válida.
+
+Saída: WF-101 controla todos os estados e não depende de lógica hospedada para decidir.
+
+#### A0.2.7 Passo M3 — comandos mínimos, sem reconstruir o catálogo inteiro
+
+Comandos obrigatórios antes do MVP:
+
+- [ ] `/start` — explicar em poucas linhas como enviar o arquivo.
+- [ ] `/comandos`, `/ajuda` e `/menu` — mostrar somente comandos realmente disponíveis.
+- [ ] `/status` — informar saúde do n8n, banco, Docling e fila sem fabricar disponibilidade.
+- [ ] `/protocolo <n>` — mostrar estado, etapa, porcentagem estimada e último erro seguro.
+- [ ] `/pendencias` — listar protocolos aguardando resposta de Rafael.
+- [ ] `/excluirultimo` + `/confirmar <4 dígitos>` — revogar o último documento do proprietário sem apagar auditoria.
+
+Adiados para depois do Gate MVP: comandos analíticos avançados, histórico completo, comparação, diretivas, carteira, plano diário e exclusões em massa.
+
+Regras:
+
+- [ ] Comando é roteado antes de esclarecimento e antes da IA.
+- [ ] `/comandos` nunca pode cair numa pergunta de POBJ pendente.
+- [ ] Código de confirmação tem quatro caracteres, validade de dez minutos e hash persistido.
+- [ ] Menu não lista comando inexistente.
+
+Saída: Rafael consegue operar e diagnosticar o primeiro protocolo sem abrir o n8n.
+
+#### A0.2.8 Passo M4 — jornada documental local
+
+Objetivo: fazer o PDF chegar ao Docling e voltar como contrato estruturado.
+
+- [ ] Baixar o arquivo pela referência de transporte somente depois do claim local.
+- [ ] Calcular SHA-256 e deduplicar por proprietário + hash, devolvendo o protocolo existente quando aplicável.
+- [ ] Alocar protocolo sequencial curto na mesma transação do documento.
+- [ ] Guardar binário em storage local controlado; PostgreSQL armazena apenas referência, metadados e hash.
+- [ ] Criar `processing_jobs` com versão do contrato, correlação, tentativas e estado.
+- [ ] Atualizar etapas: `RECEIVED 10% → DOWNLOADED 20% → OCR 30–55% → DIRECTOR 60% → PERFORMANCE 70–85% → REVIEW/READY 90% → DELIVERED 100%`.
+- [ ] Chamar `document-worker`, que chama Docling interno em CPU.
+- [ ] Consumir primeiro `tables[]`; usar Markdown somente como contexto auxiliar.
+- [ ] Preservar página, tabela, linha, cabeçalho, célula, confiança e avisos.
+- [ ] Se houver célula mesclada, coluna deslocada, total incompatível ou OCR materialmente incerto, não corrigir silenciosamente.
+- [ ] Timeout de Docling: uma tentativa adicional; depois `AWAITING_OWNER_INPUT` ou `FAILED_FINAL` explicável.
+
+Saída: contrato `document-extraction` 1.1.0 persistido e ligado ao artefato original.
+
+#### A0.2.9 Passo M5 — Diretor, GG Performance e especialista POBJ
+
+Objetivo: produzir o primeiro valor real do sistema sem tentar ativar os quatro domínios.
+
+Escopo do MVP:
+
+- Diretor identifica que o documento é POBJ/Performance e cria o pacote de contexto.
+- GG Performance coordena somente as capacidades necessárias.
+- Especialista POBJ associa indicadores, meta, realizado, percentual, pontos, período e evidência.
+- Motor determinístico aplica apenas regras homologadas; informação sem regra permanece como reportada ou pendente.
+
+Sequência:
+
+- [ ] Diretor recebe metadados, `tables[]`, Markdown, warnings e regras homologadas; conteúdo do documento continua `UNTRUSTED`.
+- [ ] Diretor gera JSON estruturado: intenção, domínio, capacidades necessárias e lacunas iniciais.
+- [ ] GG Performance recebe somente o contexto de Performance.
+- [ ] Especialista POBJ normaliza indicadores sem inventar nomes, empresas, metas ou regras.
+- [ ] Motor calcula apenas quando unidade, período, regra e operandos forem compatíveis.
+- [ ] Persistir cada handoff antes de avançar.
+- [ ] Criar Estado 360 mínimo com fonte, cálculo, informação de Rafael, estimativa e pendência claramente separados.
+
+Parecer mínimo:
+
+- situação geral e data-base;
+- total/meta/resultado que foram realmente encontrados;
+- pontos fortes;
+- riscos e gaps;
+- cenários conferíveis, quando existirem regras suficientes;
+- próxima ação, motivo, ganho possível, risco de não agir e confiança;
+- referências de evidência por indicador material.
+
+Saída: parecer útil e rastreável do domínio Performance.
+
+#### A0.2.10 Passo M6 — esclarecimento supervisionado
+
+Objetivo: impedir o looping já observado no Telegram.
+
+- [ ] Criar perguntas somente para lacuna capaz de mudar cálculo, risco, prioridade ou recomendação.
+- [ ] Agrupar perguntas numeradas e citar o indicador de forma legível.
+- [ ] Persistir pergunta, protocolo, message_id do bot, evidências e prazo de sete dias.
+- [ ] Mover job para `AWAITING_OWNER_INPUT` e liberar o worker/lease.
+- [ ] Reconhecer resposta direta à mensagem do bot ou `/responder <protocolo>`.
+- [ ] Com uma única pendência no chat, aceitar resposta natural sem protocolo; com várias, exigir correlação.
+- [ ] Tratar “qual indicador?”, “não sei”, reclamação e comando como intenção de controle, nunca como valor.
+- [ ] Acumular respostas parciais e recalcular deterministicamente as pendências.
+- [ ] Registrar resposta confirmada como `OWNER_PROVIDED`.
+- [ ] Reenfileirar o mesmo job e produzir nova versão do parecer.
+- [ ] Após sete dias, encerrar como incompleto sem fabricar conclusão, permitindo reabrir.
+
+Saída: uma lacuna proposital gera pergunta, a resposta de Rafael retoma o mesmo protocolo e o loop não se repete.
+
+#### A0.2.11 Passo M7 — saída incorporada ao WF-101
+
+Objetivo: aposentar o WF-102 sem perder segurança de entrega.
+
+- [ ] Criar dentro do WF-101 um bloco único reutilizado por comandos, progresso, perguntas e parecer.
+- [ ] Produzir texto simples ou HTML restrito; não usar MarkdownV2.
+- [ ] Dividir semanticamente abaixo de 3.800 caracteres, preservando títulos e sem cortar UTF-8.
+- [ ] Numerar partes quando houver mais de uma.
+- [ ] Persistir cada parte em `channel_deliveries` antes do envio.
+- [ ] Enviar pelo adaptador estreito, que conhece o token mas não decide conteúdo.
+- [ ] Marcar `SENT` somente após confirmação da API Telegram.
+- [ ] Registrar mensagem outbound em `conversation_messages`.
+- [ ] Em retry, enviar apenas partes não confirmadas.
+- [ ] Quando a equivalência estiver comprovada, manter WF-102 inativo e rotulá-lo `RETIRED — INCORPORADO AO WF-101`.
+
+Saída: nenhuma resposta operacional depende do WF-102 separado.
+
+#### A0.2.12 Passo M8 — contingência e recuperação
+
+- [ ] Conectar WF-103 como Error Workflow do WF-100 e WF-101.
+- [ ] Sanitizar erros: sem token, documento, prompt, resposta completa ou dado sensível.
+- [ ] Se retry for seguro, devolver evento/job para fila com espera progressiva e limite.
+- [ ] Se falha for final, liberar lease, registrar código estável e permitir consulta por `/protocolo`.
+- [ ] Avisar Rafael apenas uma vez quando a falha exigir ação; não enviar tempestade de mensagens.
+- [ ] Nunca concluir parecer se OCR, regra ou handoff material falhar.
+
+Saída: falha não deixa job preso e não cria resposta inventada.
+
+#### A0.2.13 Passo M9 — validação mínima, única e útil
+
+Não criar uma bateria ampla antes do MVP. Executar somente:
+
+1. **Validação estrutural:** JSON do WF-100, WF-101 e WF-103 importa no n8n e todos ficam inativos.
+2. **Smoke sintético único:** um envelope com PDF de teste percorre fila, Docling, Performance e entrega simulada, sem chamar Telegram real.
+3. **Teste real único aprovado por Rafael:** enviar `Pobj3108.pdf` pelo Telegram e verificar a jornada completa.
+
+Critérios do teste real:
+
+- [ ] uma única confirmação de recebimento;
+- [ ] protocolo curto e estável;
+- [ ] `/protocolo` mostra avanço coerente;
+- [ ] nenhum timeout silencioso;
+- [ ] nenhuma mensagem cortada ou com `├®`;
+- [ ] nenhuma empresa ou conta fictícia;
+- [ ] números do parecer possuem evidência no PDF ou rótulo de cálculo/estimativa;
+- [ ] dúvida material pergunta uma vez e aceita resposta sem looping;
+- [ ] parecer final chega completo em até três partes;
+- [ ] retry não duplica arquivo, pergunta ou parecer;
+- [ ] PostgreSQL contém a trilha completa;
+- [ ] Sites não tomou decisão de negócio.
+
+Se o teste falhar, corrigir somente o trecho real que falhou e repetir esse cenário. Não voltar a criar dezenas de testes de peças provisórias.
+
+#### A0.2.14 Passo M10 — cutover e rollback
+
+- [ ] Criar backup do PostgreSQL, volume n8n, configuração e workflows exportados imediatamente antes do corte.
+- [ ] Guardar hash, timestamp e instrução de restauração.
+- [ ] Ativar WF-100, WF-101 e WF-103; nenhum outro workflow operacional deve concorrer pela mesma entrada.
+- [ ] Manter a URL atual do webhook enquanto o gateway for caixa postal.
+- [ ] Desativar processamento operacional legado hospedado após o primeiro sucesso local comprovado.
+- [ ] Remover parser de comandos e slot-filling de `lib/telegram-runtime.ts` somente após o cutover.
+- [ ] Reduzir `/api/bridge/*` a transporte ou aposentar endpoints substituídos.
+- [ ] Se houver loop, duplicidade, perda de arquivo ou falha de persistência, pausar WF-101 e restaurar o caminho anterior pelo rollback documentado.
+
+**Gate MVP:** Rafael envia um PDF POBJ real pelo Telegram, acompanha o protocolo, responde eventual dúvida e recebe um parecer útil do GG Performance. Toda decisão operacional ocorreu no n8n; Docling apenas extraiu; PostgreSQL preservou a verdade; Telegram/Sites apenas transportaram e exibiram.
+
+#### A0.2.15 Pacote obrigatório para auditoria posterior do Codex
+
+Ao terminar, o Antigravity deve deixar:
+
+- [ ] WF-100, WF-101 e WF-103 exportados em `n8n/workflows/`, iguais às versões importadas.
+- [ ] IDs, nomes, versão, status ativo/inativo e Error Workflow registrados.
+- [ ] migrations SQL novas ou alteradas versionadas.
+- [ ] exemplo sanitizado do envelope recebido, extração Docling, handoffs e parecer.
+- [ ] protocolo do teste real, timestamps das etapas e IDs das execuções n8n.
+- [ ] lista de tabelas e registros criados, sem expor segredos.
+- [ ] evidência de que WF-102 e lógica hospedada não participaram do resultado final.
+- [ ] `git status`, commit do MVP e lista explícita de alterações preexistentes preservadas.
+- [ ] `ROADMAP.md`, `PROJECT_STATE.md`, `status.md`, `SESSION_STATE.json`, `CODEX_HANDOFF.md` e `CHANGELOG.md` sincronizados.
+- [ ] seção “erros conhecidos” contendo somente falhas ainda reproduzíveis.
+- [ ] instrução exata para o Codex: auditar fronteiras, idempotência, estados, evidências, segurança, workflow importado versus exportado e reprodução do teste real.
+
+O Codex fará a auditoria após o Antigravity concluir. A auditoria não deve reconstruir preventivamente o MVP nem exigir cobertura extensa antes de examinar a execução real.
+
+#### A0.2.16 Depois do MVP — fora da rota crítica
+
+Somente após o Gate MVP:
+
+- completar catálogo de comandos;
+- ativar Conta, Financeiro e Relacionamento;
+- construir visão multidomínio e dashboard completo;
+- ativar aprendizado supervisionado de diretrizes;
+- comparar múltiplos relatórios e períodos;
+- homologar regras adicionais de Seguros e Cartões;
+- melhorar acurácia Docling com corpus real;
+- ampliar testes de regressão, segurança, carga e recuperação;
+- avaliar Redis/queue mode, acesso remoto alternativo, VPS ou alta disponibilidade.
+
+Esses itens não podem atrasar o primeiro PDF chegando a um parecer real.
 
 ---
 

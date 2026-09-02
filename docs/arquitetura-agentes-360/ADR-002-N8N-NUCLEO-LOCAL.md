@@ -10,6 +10,8 @@
 
 O n8n é a autoridade operacional exclusiva do projeto. Não existe segundo orquestrador, atalho de produção ou lógica equivalente mantida em outro componente.
 
+No MVP, essa autoridade usa a topologia mínima `WF-100 → WF-101`, com `WF-103` independente para contingência. A entrega antes desenhada como WF-102 passa a ser etapa interna do WF-101, reduzindo a superfície operacional sem misturar a confirmação imediata nem o tratador global de falhas.
+
 O Diretor 360 terá um único núcleo operacional local:
 
 ```text
