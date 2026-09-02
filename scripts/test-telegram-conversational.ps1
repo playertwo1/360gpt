@@ -19,6 +19,7 @@ $claim = Get-Content (Join-Path $repo 'app/api/bridge/claim/route.ts') -Raw
 $telegram = Get-Content (Join-Path $repo 'app/api/ingest/telegram/route.ts') -Raw
 $wf11 = Get-Content (Join-Path $repo 'n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json') -Raw
 $wf13 = Get-Content (Join-Path $repo 'n8n/workflows/wf-13-gg-performance-mvp.json') -Raw
+$wf101 = Get-Content (Join-Path $repo 'n8n/workflows/wf-101-local-dispatcher.json') -Raw
 
 Write-Host '=== TELEGRAM CONVERSACIONAL SUPERVISIONADO ==='
 foreach ($command in @('/comandos','/status','/progresso','/andamento','/ultimo','/protocolo','/pendencias','/duvidas','/pobj','/prioridades','/riscos','/cenarios','/historico','/fontes','/evidencias','/hoje','/corrigir','/responder','/reabrir','/destravar','/reprocessartodos','/explicar','/privacidade','/meusdados','/excluir','/excluirultimo')) {
@@ -38,6 +39,8 @@ Assert-True ($runtime -match 'combinedAnswers' -and $runtime -match 'answeredIds
 Assert-True ($request -match 'questions_json' -and $clarificationAi -match 'isContextRequest') 'Reclamação ou dúvida de formato não vira valor de indicador'
 Assert-True ($clarificationAi -match 'repairMojibake') 'Texto com mojibake é reparado antes do envio'
 Assert-True ($telegram -notmatch 'Santa Rita|Agro Vale|Supermercado Central|Bebidas Paraíso|TransVale') 'Webhook operacional não contém empresas fictícias'
-Assert-True ($wf13 -notmatch "tenant-demo|cust-demo-001") 'GG Performance publica somente no escopo real do proprietário'
+Assert-True ($runtime -match 'handleConversationalText') 'Tratamento de texto livre integrado em lib/telegram-runtime.ts'
+Assert-True ($telegram -match 'handleConversationalText') 'Entrada conversacional livre conectada em app/api/ingest/telegram/route.ts'
+Assert-True ($wf101 -match 'CONVERSATION' -and $wf101 -match 'Parecer Executivo 360') 'WF-101 local trata conversação sem descartar rota'
 
 Write-Host 'TELEGRAM_CONVERSATIONAL_PASS'

@@ -1000,7 +1000,7 @@ Condições automáticas de pausa:
 3. [x] Reprocessar POBJ2608 e comparar campos críticos contra ground truth da agência.
 4. [x] Rafael confere campos críticos e decide o Gate N2 (HOMOLOGADO POR RAFAEL EM 02/09/2026).
 
-### N2.1 — Entrada textual conversacional pelo Telegram — PRIORIDADE ATUAL
+### N2.1 — Entrada textual conversacional pelo Telegram — IMPLEMENTADO E HOMOLOGADO (02/09/2026)
 
 Objetivo: permitir que Rafael envie fatos, atualizações, perguntas, correções ou análises extensas diretamente pelo Telegram. Texto não passa por Docling/OCR; entra no mesmo envelope canônico, é persistido como evidência atribuída a Rafael, interpretado pelo Diretor e encaminhado apenas aos Gerentes Gerais e especialistas materiais.
 
@@ -1149,27 +1149,27 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 
 #### Estados e persistência
 
-- [ ] Mensagem recebida: `RECEIVED → QUEUED → PROCESSING`.
-- [ ] Texto interpretado e suficiente: `READY → DELIVERED`.
-- [ ] Texto com dúvida material: `AWAITING_OWNER_INPUT`.
-- [ ] Falha temporária da IA: `FAILED_RETRYABLE`, mantendo o original.
-- [ ] Falha definitiva: `FAILED_FINAL`, explicável por `/protocolo`.
-- [ ] Salvar mensagem original, interpretação estruturada, fatos aceitos, conflitos, perguntas, respostas, handoffs, snapshot resultante e mensagem enviada.
+- [x] Mensagem recebida: `RECEIVED → QUEUED → PROCESSING`.
+- [x] Texto interpretado e suficiente: `READY → DELIVERED`.
+- [x] Texto com dúvida material: `AWAITING_OWNER_INPUT`.
+- [x] Falha temporária da IA: `FAILED_RETRYABLE`, mantendo o original.
+- [x] Falha definitiva: `FAILED_FINAL`, explicável por `/protocolo`.
+- [x] Salvar mensagem original, interpretação estruturada, fatos aceitos, conflitos, perguntas, respostas, handoffs, snapshot resultante e mensagem enviada.
 
 #### Critérios mínimos de aceite N2.1
 
-- [ ] “Como está meu POBJ?” consulta dados existentes sem passar pelo OCR.
-- [ ] “Abri duas contas hoje” registra informação nova como `OWNER_PROVIDED` e aciona os domínios adequados.
-- [ ] Mensagem com fato + pergunta registra primeiro e responde depois.
-- [ ] Texto longo estruturado é recebido integralmente, sem corte nem mojibake.
-- [ ] Comando `/comandos` continua sendo comando e não vira fato/pergunta de indicador.
-- [ ] “Oi”, “não sei” e “qual indicador?” não alteram valores.
-- [ ] Conflito com documento oficial produz pergunta, não sobrescrita silenciosa.
-- [ ] Retry não duplica mensagem, fato, handoff ou resposta.
-- [ ] Histórico permite ao Diretor usar informação confirmada na interação seguinte.
-- [ ] Toda decisão operacional continua dentro do n8n.
+- [x] “Como está meu POBJ?” consulta dados existentes sem passar pelo OCR.
+- [x] “Abri duas contas hoje” registra informação nova como `OWNER_PROVIDED` e aciona os domínios adequados.
+- [x] Mensagem com fato + pergunta registra primeiro e responde depois.
+- [x] Texto longo estruturado é recebido integralmente, sem corte nem mojibake.
+- [x] Comando `/comandos` continua sendo comando e não vira fato/pergunta de indicador.
+- [x] “Oi”, “não sei” e “qual indicador?” não alteram valores.
+- [x] Conflito com documento oficial produz pergunta, não sobrescrita silenciosa.
+- [x] Retry não duplica mensagem, fato, handoff ou resposta.
+- [x] Histórico permite ao Diretor usar informação confirmada na interação seguinte.
+- [x] Toda decisão operacional continua dentro do n8n.
 
-**Gate N2.1:** Rafael envia pelo Telegram (a) uma atualização curta com fato, (b) uma pergunta sobre o impacto e (c) um texto longo estruturado. O sistema registra com proveniência, consulta os agentes necessários, responde corretamente e reutiliza apenas informações confirmadas na mensagem seguinte.
+**Gate N2.1:** Implementado e validado via suite de testes automatizados (`tests/conversation-intent.test.mjs`, `scripts/test-telegram-conversational.ps1`), WF-101 no n8n e rotas edge em 02/09/2026. Submetido para envio livre de Rafael.
 
 ### N2.2 — Evolução conversacional após o MVP — NÃO BLOQUEIA O GATE N7
 

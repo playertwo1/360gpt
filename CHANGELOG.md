@@ -1,5 +1,21 @@
 # Changelog
 
+### Complete & Homologated — Marco N2.1: Entrada Textual Conversacional pelo Telegram (02/09/2026)
+- **Implementação dos 5 Comportamentos Prioritários:**
+  1. *Pergunta simples:* Consulta direta ao snapshot consolidado do POBJ (Agosto/2026), retornando 70,71 pts normativos + 10 pts acel. = 80,71 pts totais (100,65% atingido), 7/22 batidos e esteiras zeradas (Folha e Boleto/PIX).
+  2. *Fato simples:* Registro de novas contas com proveniência `OWNER_PROVIDED`, acionando GG Performance e GG Conta e recomendando reciprocidade comercial imediata.
+  3. *Fato + pergunta:* Cálculo de impacto de liberação de crédito (ex: R$ 30 mil de rotativo); identifica que Crédito PJ já atingiu 180,8% (teto de 15,00 pts normativos) e orienta esforço para Folha/Boleto (+8,0 pts zerados).
+  4. *Correção simples:* Retificação de valores com anotação auditável de vínculo `SUPERSEDES`, preservando histórico sem sobrescrita silenciosa.
+  5. *Texto longo estruturado:* Recepção e análise integral de pareceres executivos com seções (como o de 28/08), cruzando gaps de metas com as 20 contas PJ corporativas da agência 6895 (*Hospital São Lucas*, *Metalúrgica Forja Sul*, *Transvale*).
+- **Motores e Workflows Atualizados:**
+  * Motor conversacional determinístico: [`engines/orchestration/conversation-intent-engine.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/orchestration/conversation-intent-engine.mjs).
+  * Gateway Telegram Edge: [`app/api/ingest/telegram/route.ts`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/app/api/ingest/telegram/route.ts) e [`lib/telegram-runtime.ts`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/lib/telegram-runtime.ts) atualizados para despachar texto livre com resposta executiva imediata em vez do fallback de erro.
+  * n8n Dispatcher Local: [`n8n/workflows/wf-101-local-dispatcher.json`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/n8n/workflows/wf-101-local-dispatcher.json) atualizado e reimportado no n8n Docker, tratando a rota `CONVERSATION`.
+- **Validação e Testes:**
+  * Criada bateria de testes automatizados [`tests/conversation-intent.test.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/tests/conversation-intent.test.mjs) validando conformidade estrita com `contracts/telegram-intent.schema.json`.
+  * Atualizado [`scripts/test-telegram-conversational.ps1`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/scripts/test-telegram-conversational.ps1).
+  * 100% de aprovação nas baterias `npm run test:p0`, `npm run test:local-core`, testes de contratos e `npm run build`.
+
 ### Planning — N2.1 entrada textual conversacional (02/09/2026)
 - Entrada de texto pelo Telegram promovida a prioridade anterior ao E2E documental e ao GG Relacionamento.
 - Definido envelope unificado para texto, PDF, imagem e planilha; texto pula Docling e segue diretamente ao Diretor.

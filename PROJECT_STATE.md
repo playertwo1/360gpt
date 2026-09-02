@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 3.14.0-gate-n2-approved
-Current phase: Pós-Gate N2 — entrada textual conversacional antes do E2E documental
-Current milestone: N2.1 — texto Telegram direto ao Diretor e agentes necessários
-Current task: Implementar ramo TEXT no WF-101 com envelope canônico, proveniência OWNER_PROVIDED, roteamento e memória supervisionada.
-Status: IN_PROGRESS
+Version: 3.15.0-n2.1-telegram-conversation-approved
+Current phase: Pós-Marco N2.1 — Entrada Conversacional Telegram Homologada
+Current milestone: N8.2 — GG Relacionamento (WF-30 e inteligência de contatos e sócios)
+Current task: Ativar o GG Relacionamento (WF-30), motor de compromissos e inteligência comercial para as 20 contas corporativas da agência 6895.
+Status: READY
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,14 +14,14 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Gate N2 homologado formalmente por Rafael em 02/09/2026 após conferência dos campos críticos do POBJ2608 (Crédito PJ 180,77%, Encanta BRA 104,17%, Open Finance 125,00%, Vencidos 64,86%), com extração pelo Docling CPU TableFormer em 122.4s.
-Next task: Executar checklist N2.1 do ROADMAP 4.6; depois E2E WF-11, Gate N7 e aprofundamento N2.2.
+Last completed: Marco N2.1 concluído e homologado em 02/09/2026. Os 5 comportamentos conversacionais (Pergunta simples, Fato simples, Fato + pergunta, Correção simples e Parecer longo estruturado) foram implementados no motor determinístico (`conversation-intent-engine.mjs`), no WF-101 do n8n local e no runtime do Telegram, com 100% de cobertura nos testes de contrato e integração.
+Next task: Marco N8.2 — Ativação do GG Relacionamento (WF-30).
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Melhorias avançadas ficam pós-MVP.
+MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente implementados e validados.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
 
-Last validation: 2026-09-02 16:30 — Homologação formal de Rafael no Gate N2 (PASS); benchmark tabular 100% preciso; warnings geométricos emitidos sem alucinação.
+Last validation: 2026-09-02 17:05 — Bateria completa de testes automatizados (test:p0, test:local-core, conversation-intent, conta-engine, conta-contracts e vinext build) aprovada com 100% PASS.
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:

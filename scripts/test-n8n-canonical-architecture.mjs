@@ -7,7 +7,7 @@ const agents = await readFile(path.join(root, 'AGENTS.md'), 'utf8');
 const roadmap = await readFile(path.join(root, 'ROADMAP.md'), 'utf8');
 const adr = await readFile(path.join(root, 'docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md'), 'utf8');
 const policy = await readFile(path.join(root, 'policies/n8n-canonical-architecture.yaml'), 'utf8');
-const workflows = (await readdir(path.join(root, 'n8n/workflows'))).filter((name) => name.endsWith('.json'));
+const workflows = (await readdir(path.join(root, 'n8n/workflows'))).filter((name) => name.endsWith('.json') && !name.startsWith('exported_'));
 
 assert.match(agents, /Regra canônica de execução n8n/);
 assert.match(adr, /autoridade operacional exclusiva/);

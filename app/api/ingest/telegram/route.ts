@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
-import { handleClarificationReply, handleTelegramCommand } from '../../../../lib/telegram-runtime';
+import { handleClarificationReply, handleTelegramCommand, handleConversationalText } from '../../../../lib/telegram-runtime';
 import { sendTelegramText } from '../../../../lib/telegram-messages';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
@@ -124,12 +124,10 @@ export async function POST(request: Request) {
       // Comandos operacionais nunca devem ser consumidos como respostas de
       // esclarecimento, mesmo quando existe uma pendência ativa.
       const clarificationHandled = text.startsWith('/') ? false : await handleClarificationReply(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, message.message_id, text, message.reply_to_message?.message_id);
-      const interaction = clarificationHandled ? { handled: true, kind: 'clarification' } : await handleTelegramCommand(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
-      if (!interaction.handled && env.TELEGRAM_BOT_TOKEN) {
-        await sendTelegramMessage(message.chat.id, 'Envie um PDF, imagem ou planilha para análise, ou use /comandos. Se estiver respondendo uma dúvida, use o botão Responder na mensagem do bot.');
-      }
+      const commandHandled = clarificationHandled ? { handled: true, kind: 'clarification' } : await handleTelegramCommand(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
+      const interaction = commandHandled.handled ? commandHandled : await handleConversationalText(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
       await env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`).bind(Date.now(), updateId).run();
-      return NextResponse.json({ ok: true, interaction: interaction.kind ?? 'guidance', updateId, status: 'SUCCEEDED' });
+      return NextResponse.json({ ok: true, interaction: interaction.kind ?? 'conversation', updateId, status: 'SUCCEEDED' });
     } catch {
       await env.DB.prepare(`UPDATE telegram_updates SET status = 'FAILED_RETRYABLE', error_code = 'interaction_failed' WHERE update_id = ?`).bind(updateId).run();
       return NextResponse.json({ ok: false, error: 'interaction_failed', retryable: true }, { status: 502 });
