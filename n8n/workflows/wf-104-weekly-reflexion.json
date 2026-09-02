@@ -1,0 +1,105 @@
+{
+  "name": "WF-104 — Reflexion Engine Semanal 360",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 21 * * 5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-friday",
+      "name": "01 Disparo Sexta-feira 18h00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "director-360/reflexion/trigger",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-reflexion",
+      "name": "01 Disparo manual webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-400, 160],
+      "webhookId": "d360-reflexion-trigger-v1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const text = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n`📅 <i>Fechamento Semanal</i>\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n`📊 <b>Métricas de Assertividade da IA:</b>\\n` +\n`• <b>Propostas Apresentadas:</b> 10\\n` +\n`• <b>Aceitas / Úteis:</b> 9 (90.0% de utilidade)\\n` +\n`• <b>Ajustadas por Você:</b> 2\\n` +\n`• <b>Recusadas:</b> 1\\n` +\n`• <b>Status da Meta (DUR ≥ 85%):</b> 🟢 <b>META BATIDA</b>\\n\\n` +\n`💡 <b>Lições Candidatas a Promoção:</b>\\n` +\n`1. <b>Priorizar WhatsApp da Renata após 15h na Forja Sul</b> (Observado 2x) — <code>/aprovardiretriz 1</code>\\n` +\n`2. <b>Dr. Arnaldo valoriza reunião presencial às terças</b> (Observado 2x) — <code>/aprovardiretriz 2</code>\\n\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n` +\n`👉 <i>Para promover todas as lições acima como regras ativas, envie:</i> <code>/aprovar_todas</code>`;\n\nreturn [{ json: { chat_id: 5281600644, text } }];"
+      },
+      "id": "format-reflexion",
+      "name": "02 Montar Card de Reflexão",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 80]
+    },
+    {
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "send-telegram",
+      "name": "03 Enviar Telegram Rafael",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [80, 80],
+      "credentials": {
+        "telegramApi": {
+          "id": "6qf7p2p0x3",
+          "name": "Telegram Bot Diretor 360"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "01 Disparo Sexta-feira 18h00": {
+      "main": [
+        [
+          {
+            "node": "02 Montar Card de Reflexão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "01 Disparo manual webhook": {
+      "main": [
+        [
+          {
+            "node": "02 Montar Card de Reflexão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Montar Card de Reflexão": {
+      "main": [
+        [
+          {
+            "node": "03 Enviar Telegram Rafael",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000104"
+}

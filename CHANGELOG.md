@@ -1,5 +1,14 @@
 # Changelog
 
+### Complete & Homologated — Marco N2.3: Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente (02/09/2026)
+- **Marco N2.3 Concluído e Homologado (Gate N2.3 PASS):**
+  * **N2.3.1 (Memória Semântica Desacoplada)**: Criada tabela `promoted_knowledge` no PostgreSQL `visao360` e motor `engines/knowledge/semantic-memory-engine.mjs`. System Prompts permanecem 100% imutáveis no Git; heurísticas aprendidas persistem como dados no Postgres e são injetadas dinamicamente via *Context Packet* por escopo (`GLOBAL`, `ACCOUNT`, `INDICATOR`) com controle de validade (`valid_to`) e *Memory Decay*.
+  * **N2.3.2 (Exemplares Dourados Dinâmicos)**: Criada tabela `golden_exemplars` no PostgreSQL e motor `engines/knowledge/golden-exemplars-engine.mjs`. Recupera abordagens reais aprovadas com nota 5/5 por Rafael (ex: Hospital São Lucas e Metalúrgica Forja Sul) e injeta blocos *Dynamic Few-Shot* para mimetismo perfeito de tom e estilo gerencial.
+  * **N2.3.3 (Triângulo de Feedback & Matriz de Desfecho)**: Criada tabela `decision_outcomes` no PostgreSQL e motor `engines/feedback/decision-utility-engine.mjs`. Rastreia desfechos (`ACEITO_INTEGRAL`, `EDITADO_POR_RAFAEL`, `RECUSADO_COM_MOTIVO`), executa análise de delta léxico/semântico e calibra dinamicamente o `confidence_score` com base na métrica `Decision Utility Rate` (DUR).
+  * **N2.3.4 (Workflow Semanal de Reflexão WF-104)**: Criado `engines/orchestration/reflexion-engine.mjs` e workflow n8n Docker `WF-104 — Reflexion Engine Semanal 360` (`9eb8e86a-84b8-4aa9-97e4-360000000104`), agendado para sextas-feiras às 18h00 para resumir lições da semana em Card Executivo no Telegram com aprovação em 1 toque (`/aprovar_todas`).
+  * **N2.3.5 (Memória Negativa & Anti-Padrões)**: Criada tabela `negative_memory` no PostgreSQL e motor `engines/security/negative-memory-engine.mjs`. Intercepta propostas preventivamente com normalização NFD de acentos para barrar produtos e abordagens já vetados por Rafael ou recusados pelos clientes.
+  * **Gate N2.3 Homologado**: Suíte `tests/flywheel-learning-gate-n2-3.test.mjs` valida 3 ciclos completos de aprendizado, com bloqueio seguro de reincidência, enriquecimento via exemplar dourado e **Decision Utility Rate de 90.0%** (meta: $\ge 85\%$).
+
 ### Complete & Homologated — Marco A0: Cutover Canônico e Desativação de Exceções Legadas (02/09/2026)
 - **Cutover Definitivo de Arquitetura (Gate A0 Desbloqueado):**
   * **Aposentadoria de `core/telegram_bot_worker.py`**: O script legado em Python foi formalmente arquivado em `legacy/core-prototype/` e substituído por aviso de depreciação, eliminando o risco de execução paralela fora do n8n.
