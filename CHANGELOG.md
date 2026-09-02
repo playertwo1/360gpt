@@ -12,6 +12,7 @@
 - Fortalecida validação do JSON retornado pela IA: somente respostas únicas, vinculadas a perguntas existentes e com confiança entre 0 e 1 são aceitas.
 - A suíte de hardening passou a verificar a cadeia agendada de claim/process do WF-97 e claim/extract/gravar candidata do WF-98.
 - Confirmada saúde do n8n local via `/healthz` (HTTP 200), mantendo WF-97/WF-98 inativos conforme o gate.
+- Observações sintéticas A2, A3-gap, A3-plan e WF-13 passaram; Shadow 20/20 passou tecnicamente, mas foi registrado bloqueio por lacuna de medição horária (`HOURLY_MEASUREMENT_GAP`). Nenhuma promoção realizada.
 
 ### Known issues
 - Cenários HTTP de concorrência e retry ainda aguardam canário local/hospedado; a suíte estrutural pode ser executada sem serviços ativos.

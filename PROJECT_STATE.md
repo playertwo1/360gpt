@@ -21,6 +21,7 @@ Last validation: 2026-09-01 — Docker Compose saudável e endpoint local n8n `/
 Last commit: 83a266c feat: prepare local p0 canary and remove demo data
 
 Blockers:
+- Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
 - WF-11 permanece despublicado preventivamente até o gate funcional Docling.
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas.
 - Não republicar o Telegram automático enquanto META, REALIZADO, % ATG, pontos e período não estiverem 100% associados.
@@ -36,7 +37,7 @@ Decisions:
 Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 
-Last update: 2026-09-01 23:50
+Last update: 2026-09-02 00:55
 
 Resume instruction:
 1. Continuar `ROADMAP.md` a partir de P0.4 e formalizar o contrato de intenção estruturada.

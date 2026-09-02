@@ -16,6 +16,8 @@
 
 **Próxima tarefa:** concluir P0.0–P0.10 antes de retomar a homologação documental N2
 
+**Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
+
 > Este é o único arquivo de planejamento e checklist do projeto. Em caso de divergência com documentação histórica, prevalecem, nesta ordem: estado real do código e dos serviços, `AGENTS.md`, `PROJECT_STATE.md` e este `ROADMAP.md`.
 
 ---
