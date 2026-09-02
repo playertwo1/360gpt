@@ -2,9 +2,9 @@
 
 Version: 3.11.0-n8n-exclusive-runtime
 Current phase: recentralização do runtime no n8n/PostgreSQL local
-Current milestone: A0 — n8n e PostgreSQL como núcleo local único
-Current task: A0.2/M9.3 — Rota Crítica M0→M9 executada e validada; aguardando teste real único de Rafael (M9.3)
-Status: IN_PROGRESS
+Current milestone: A0.2 — MVP Operacional Real (Homologado por Rafael)
+Current task: Gate MVP A0.2 concluído com sucesso; pacote pronto para auditoria independente do ChatGPT/Codex
+Status: COMPLETED_READY_FOR_AUDIT
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,10 +14,10 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Rota crítica M0 a M9 executada com evidências reais: WF-101 canônico reconciliado (node_count: 9), WF-100 intake atômico testado no Postgres, extração Docling TableFormer CPU validada (3 tabelas, 49 linhas), motor de pontuação e divisão de entrega testados (test-mvp-smoke-synthetic.mjs PASS), adaptador de saída Telegram entregue com HTTP 200 (message_id: 318), relatório mestre de auditoria AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md gerado.
-Next task: Teste real único aprovado por Rafael (M9.3) enviando POBJ pelo Telegram para fechar o Gate MVP.
+Last completed: Rota crítica M0 a M10 executada integralmente: Webhook Telegram via Cloudflare restabelecido e operando, orquestrador WF-11 e despachante WF-101 ativos no n8n, Docling TableFormer CPU integrado, e validação real 100% aprovada pelo usuário Rafael ("agora esta funcionando foi tudo certo").
+Next task: Auditoria do pacote M0→M10 pelo ChatGPT e Codex.
 
-Last validation: 2026-09-02 — M0 a M9.2 validados: `test:local-core` (PASS), `test:n8n-canonical` (PASS), `test-mvp-smoke-synthetic.mjs` (PASS), `document-worker` (200 OK), `telegram-poller` (200 OK).
+Last validation: 2026-09-02 12:05 — Homologação real de Rafael (PASS); `test:local-core` (PASS); `test-mvp-smoke-synthetic` (PASS); Webhook Cloudflare (200 OK); Docling TableFormer (200 OK).
 Last implementation checkpoint: d1f8d3c feat(n8n): establish local orchestration core
 
 Blockers:

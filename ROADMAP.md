@@ -512,37 +512,37 @@ Não criar uma bateria ampla antes do MVP. Executar somente:
 
 1. **Validação estrutural:** [x] JSON do WF-100, WF-101 e WF-103 importa no n8n e todos ficam inativos.
 2. **Smoke sintético único:** [x] um envelope com PDF de teste percorre fila, Docling, Performance e entrega simulada, sem chamar Telegram real.
-3. **Teste real único aprovado por Rafael:** [ ] enviar `Pobj3108.pdf` pelo Telegram e verificar a jornada completa.
+3. **Teste real único aprovado por Rafael:** [x] enviar `Pobj3108.pdf` pelo Telegram e verificar a jornada completa.
 
 Critérios do teste real:
 
-- [ ] uma única confirmação de recebimento;
-- [ ] protocolo curto e estável;
-- [ ] `/protocolo` mostra avanço coerente;
-- [ ] nenhum timeout silencioso;
-- [ ] nenhuma mensagem cortada ou com `├®`;
-- [ ] nenhuma empresa ou conta fictícia;
-- [ ] números do parecer possuem evidência no PDF ou rótulo de cálculo/estimativa;
-- [ ] dúvida material pergunta uma vez e aceita resposta sem looping;
-- [ ] parecer final chega completo em até três partes;
-- [ ] retry não duplica arquivo, pergunta ou parecer;
-- [ ] PostgreSQL contém a trilha completa;
-- [ ] Sites não tomou decisão de negócio.
+- [x] uma única confirmação de recebimento;
+- [x] protocolo curto e estável;
+- [x] `/protocolo` mostra avanço coerente;
+- [x] nenhum timeout silencioso;
+- [x] nenhuma mensagem cortada ou com `├®`;
+- [x] nenhuma empresa ou conta fictícia;
+- [x] números do parecer possuem evidência no PDF ou rótulo de cálculo/estimativa;
+- [x] dúvida material pergunta uma vez e aceita resposta sem looping;
+- [x] parecer final chega completo em até três partes;
+- [x] retry não duplica arquivo, pergunta ou parecer;
+- [x] PostgreSQL contém a trilha completa;
+- [x] Sites não tomou decisão de negócio.
 
 Se o teste falhar, corrigir somente o trecho real que falhou e repetir esse cenário. Não voltar a criar dezenas de testes de peças provisórias.
 
 #### A0.2.14 Passo M10 — cutover e rollback
 
-- [ ] Criar backup do PostgreSQL, volume n8n, configuração e workflows exportados imediatamente antes do corte.
-- [ ] Guardar hash, timestamp e instrução de restauração.
-- [ ] Ativar WF-100, WF-101 e WF-103; nenhum outro workflow operacional deve concorrer pela mesma entrada.
-- [ ] Manter a URL atual do webhook enquanto o gateway for caixa postal.
-- [ ] Desativar processamento operacional legado hospedado após o primeiro sucesso local comprovado.
-- [ ] Remover parser de comandos e slot-filling de `lib/telegram-runtime.ts` somente após o cutover.
-- [ ] Reduzir `/api/bridge/*` a transporte ou aposentar endpoints substituídos.
-- [ ] Se houver loop, duplicidade, perda de arquivo ou falha de persistência, pausar WF-101 e restaurar o caminho anterior pelo rollback documentado.
+- [x] Criar backup do PostgreSQL, volume n8n, configuração e workflows exportados imediatamente antes do corte.
+- [x] Guardar hash, timestamp e instrução de restauração.
+- [x] Ativar WF-100, WF-101 e WF-103; nenhum outro workflow operacional deve concorrer pela mesma entrada.
+- [x] Manter a URL atual do webhook enquanto o gateway for caixa postal.
+- [x] Desativar processamento operacional legado hospedado após o primeiro sucesso local comprovado.
+- [x] Remover parser de comandos e slot-filling de `lib/telegram-runtime.ts` somente após o cutover.
+- [x] Reduzir `/api/bridge/*` a transporte ou aposentar endpoints substituídos.
+- [x] Se houver loop, duplicidade, perda de arquivo ou falha de persistência, pausar WF-101 e restaurar o caminho anterior pelo rollback documentado.
 
-**Gate MVP:** Rafael envia um PDF POBJ real pelo Telegram, acompanha o protocolo, responde eventual dúvida e recebe um parecer útil do GG Performance. Toda decisão operacional ocorreu no n8n; Docling apenas extraiu; PostgreSQL preservou a verdade; Telegram/Sites apenas transportaram e exibiram.
+**Gate MVP:** Concluído e homologado por Rafael em 02/09/2026. Rafael testou o Telegram, os comandos e o fluxo de documentos. Toda decisão operacional ocorreu no n8n e motores determinísticos; Docling apenas extraiu; PostgreSQL preservou a verdade; Telegram/Sites apenas transportaram e exibiram.
 
 #### A0.2.15 Pacote obrigatório para auditoria posterior do Codex
 

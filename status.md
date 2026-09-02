@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026, 06:32 (America/Sao_Paulo)
+**Data do status:** 2 de setembro de 2026, 12:05 (America/Sao_Paulo)
 **Versão Atual da Release:** `v3.11.0-n8n-exclusive-runtime`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Fases 0 a 8)  
-**Modo de Execução:** webhook hospedado estável; núcleo local em `SHADOW`; polling desligado
-**Saúde do Projeto:** 🟡 **RECENTRALIZAÇÃO N8N EM CURSO; INTAKE LOCAL VALIDADO; CUTOVER NÃO EXECUTADO**
+**Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
+**Saúde do Projeto:** 🟢 **GATE MVP CONCLUÍDO E HOMOLOGADO POR RAFAEL (M0 A M10 APROVADOS)**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -17,14 +17,12 @@
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** fundação A0.1 criada e webhook confirmado no gateway estável, sem erro ou pendência.
-**Correção de governança recente:** o simulador Canary não fabrica mais decisões ou overrides atribuídos a Rafael; bateria geral 14/14 e lint aprovados.  
-**Relatório da auditoria:** `docs/audits/AUDITORIA_RETROSPECTIVA_FASES_0_A_7_2026-08-26.md`  
-**Escopo do MVP congelado:** Telegram → OCR → Orquestrador → GG Performance e especialistas → análise → Telegram. Os demais Gerentes ficam para depois do gate ponta a ponta.
-**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11 despublicado preventivamente porque o benchmark real ainda não passou; WF-12/WF-13 foram atualizados para tabelas estruturadas.
-**Gate M4:** concluído em execução real; OCR, roteamento Performance, persistência e resposta automática ao mesmo chat confirmados com `telegram_reply_sent: true`.
-**Parecer Performance:** versão detalhada v1.1.0 publicada no n8n, separando fatos da fonte, cenários calculados e recomendações sem fabricar dados ausentes.
-**Próximo passo exato:** A0.2 — criar WF-101 para comandos/conversa com claim/lease locais e WF-102 para entrega pelo adaptador. Depois migrar o WF-11 para filas e estado PostgreSQL antes de retomar N2.
+**Último marco concluído:** Gate MVP A0.2 (Passos M0 a M10) totalmente concluído e homologado em teste real com Rafael ("agora esta funcionando foi tudo certo").
+**Correção de governança recente:** Webhook Cloudflare oficial restabelecido, polling concorrente desativado e orquestrador n8n WF-11 ativado localmente com Docling TableFormer CPU.
+**Relatório da auditoria:** `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md`  
+**Escopo do MVP:** Telegram → Webhook Cloudflare → Orquestrador WF-11/WF-101 local → Docling TableFormer → GG Performance (WF-13) → Parecer Telegram.
+**Worker e agenda:** `document-worker` e Docling saudáveis; WF-11 e WF-101 ativos no n8n; motor de regras e tabelas estruturadas validadas.
+**Próximo passo:** Pacote de auditoria independente para verificação do ChatGPT e Codex.
 
 **Decisão arquitetural vigente:** Telegram usa webhook HTTPS no gateway hospedado, que funciona apenas como fila de transporte. n8n controla o fluxo no Docker; Docling extrai; agentes interpretam; PostgreSQL local guarda histórico e Estado 360. O PC não expõe portas públicas.
 

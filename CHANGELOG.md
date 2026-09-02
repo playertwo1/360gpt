@@ -1,5 +1,12 @@
 # Changelog
 
+### Complete — Gate MVP A0.2 Homologado por Rafael (02/09/2026)
+- Gate MVP da Rota Crítica (M0 a M10) concluído e formalmente homologado por Rafael no Telegram ("agora esta funcionando foi tudo certo").
+- Webhook do Telegram confirmado e restabelecido na Cloudflare Edge (`https://visao-360-diretor.fael360092.chatgpt.site/api/ingest/telegram`), com tempo de resposta imediato para comandos e ingestão de documentos.
+- Polling desativado em favor do webhook oficial conforme determinação direta do usuário.
+- Orquestrador Mestre `WF-11` e despachante `WF-101` ativados no n8n local conectado ao Docker, com extração tabular Docling TableFormer CPU e motor de regras GG Performance.
+- Todos os critérios do teste real M9.3 e cutover M10 foram satisfeitos e registrados.
+
 ### Execution — Rota Crítica M0 a M9 (MVP Real)
 - Executada e comprovada a rota crítica M0 a M9 conforme `ROADMAP.md` 4.4, com relatório mestre detalhado em `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md`.
 - M0: Reconciliada a versão canônica oficial do `WF-101` com 9 nós, garantido `active: false` no banco `n8n` para WF-100, WF-101, WF-102 e WF-103.

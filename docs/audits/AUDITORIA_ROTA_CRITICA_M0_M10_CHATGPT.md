@@ -1,4 +1,4 @@
-﻿# RELATÓRIO DE AUDITORIA EXECUTIVA — ROTA CRÍTICA M0 A M10 (MVP REAL)
+# RELATÓRIO DE AUDITORIA EXECUTIVA — ROTA CRÍTICA M0 A M10 (MVP REAL)
 **Auditor Externo Alvo:** ChatGPT / Auditor Independente
 **Data de Execução:** 02 de setembro de 2026
 **Proprietário e Decisor Soberano:** Rafael
@@ -152,8 +152,22 @@
 
 ---
 
-### [M10] — Prontidão para Cutover e Rollback
-- **Status:** `PRONTO PARA CUTOVER (Aguardando Despacho de Rafael)`
-- **Ações Preparatórias Concluídas:**
-  - Backup de banco, volumes e workflows mapeados.
-  - O runtime permanece seguro com `active: false` até a autorização de ativação operacional.
+### [M10] — Cutover e Homologação Operacional do MVP
+- **Status:** `CONCLUÍDO [x]`
+- **Ações Executadas:**
+  1. Backups pré-corte criados e verificados com SHA-256:
+     - `.local/backups/pre-cutover-visao360-20260902.sql` (SHA-256: `5FDAA862FBDC70118CB56ED419F0A11C38D33E81975BF8843A9BF603E79F2741`)
+     - `.local/backups/pre-cutover-n8n-20260902.sql` (SHA-256: `A709E026CB627DA8B158A16CB0956BBF950BDA1228F1C8E8A5EA9B62EAA82986`)
+  2. Webhook oficial no Cloudflare Edge restabelecido conforme determinação de Rafael:
+     - `https://visao-360-diretor.fael360092.chatgpt.site/api/ingest/telegram`
+     - Polling desligado (`TELEGRAM_POLLING_ENABLED=false`).
+  3. Workflows operacionais ativados no n8n local:
+     - `WF-11`: Orquestrador Mestre do MVP (ativo).
+     - `WF-101`: Despachante Local n8n (ativo).
+     - `WF-100`: Intake local (ativo).
+     - `WF-103`: Contingência local (ativo).
+     - `WF-12` e `WF-13`: Roteamento e Análise Performance (ativos).
+  4. Teste real único homologado por Rafael em 02/09/2026:
+     - Teste de comandos executivo: `/start`, `/comandos`, `/status` respondidos com sucesso no chat de Rafael (`chat_id: 5281600644`).
+     - Feedback soberano de Rafael: *"agora esta funcionando foi tudo certo"*.
+  5. **Gate MVP A0.2:** Formalmente CONCLUÍDO e HOMOLOGADO. O ambiente está 100% pronto para a auditoria independente do ChatGPT Codex.

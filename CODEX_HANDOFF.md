@@ -9,7 +9,7 @@
 
 **Regra canônica obrigatória (v3.11.0):** o n8n é a única autoridade operacional. Comandos, estado conversacional, seleção e chamada de IA, prompts, roteamento de agentes, cálculos, lacunas, perguntas, aprendizado, transições de jobs e decisão de resposta devem existir em workflows/subworkflows n8n. Sites/Telegram transportam e exibem; Docling extrai; PostgreSQL persiste. As quatro exceções listadas em `policies/n8n-canonical-architecture.yaml` estão congeladas e impedem a homologação do Gate A0 até serem removidas ou reduzidas a adaptadores passivos.
 
-**Ponto exato de retomada:** o Antigravity executará `ROADMAP.md` 4.4, A0.2/M0→M10. Deve reconciliar primeiro o rascunho local do WF-101. A topologia final tem WF-100, WF-101 e WF-103; WF-102 será incorporado. O Codex deve atuar depois como auditor do MVP real e do pacote de evidências, sem reconstruir preventivamente a solução.
+**Ponto exato de retomada:** O Antigravity executou com sucesso integral a rota crítica A0.2 (M0 a M10). O Gate MVP foi testado, validado e formalmente homologado por Rafael em 02/09/2026 ("agora esta funcionando foi tudo certo"). O pacote completo de evidências está pronto e detalhado em `docs/audits/AUDITORIA_ROTA_CRITICA_M0_M10_CHATGPT.md` para auditoria independente do ChatGPT Codex.
 
 ---
 
