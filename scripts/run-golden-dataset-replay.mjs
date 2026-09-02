@@ -89,7 +89,7 @@ export async function runGoldenDatasetReplay() {
       outputText = res.safe_response || "";
     } else if (sc.id === "SCENARIO-02" || sc.id === "SCENARIO-03" || sc.id === "SCENARIO-05") {
       const parts = sc.input.split(" ");
-      outputText = executeAdvancedCommand({ command: parts[0], args: [parts[1]] }) || "";
+      outputText = (await executeAdvancedCommand({ command: parts[0], args: [parts[1]] })) || "";
     } else if (sc.id === "SCENARIO-07") {
       const sim = simulateScenario({
         baseSnapshot: { current_points: 70.71, accelerator_points: 10.0, total_points: 80.71, attainment_pct: 100.65, max_operational_points: 78.0 },

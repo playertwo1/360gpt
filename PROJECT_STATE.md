@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 5.0.0-gate-n2.2-and-pilot-ready
-Current phase: Pós-Marcos N2.2.7 a N2.2.11 e Gate N2.2 Homologado — Reconciliação Cirúrgica, UX Adaptativa com Badges, FinOps & Context Trimming, DLP de Dados Pessoais e Golden Dataset de Replay
-Current milestone: Todos os 10 Marcos Evolutivos Pós-MVP Concluídos + Gate N2.2 Homologado (Status: PILOT_READY)
-Current task: Sistema Diretor 360 completamente homologado, auditado e pronto para a operação piloto assistida na Agência 6895 (VJ-SAO FIDELIS).
+Version: 5.1.0-pilot-active-with-briefing-and-outreach
+Current phase: Piloto Operacional Ativo no Celular (Agência 6895) — Briefing Matinal Proativo (08h30) e Motor de Abordagem Comercial (/abordar)
+Current milestone: Piloto Assistido Iniciado em Campo + WF-102 Ativo no n8n + Disparos Reais no Telegram Entregues com Sucesso (200 OK)
+Current task: Operação diária assistida com recebimento matinal automático e geração de propostas executivas personalizadas para os decisores da carteira.
 Status: READY
 
 Host baseline:
@@ -15,12 +15,11 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed: 
-1. Marco N2.2.7: Reconciliação cirúrgica de divergências (DIVERGENCIA_DE_DADOS, DIVERGENCIA_TEMPORAL), vínculo SUPERSEDES e comando /resolver no Telegram.
-2. Marco N2.2.8: Experiência adaptativa de resposta com badges de proveniência ([OFICIAL], [DECLARADO POR RAFAEL], [CÁLCULO], [ESTIMATIVA], [PENDÊNCIA]) e modos /modo compacto, executivo e detalhado.
-3. Marco N2.2.9: Eficiência e FinOps com Context Trimming (~90% de economia de tokens), cache local determinístico por SHA-256 e contabilização de custos.
-4. Marco N2.2.10: DLP de dados pessoais com mascaramento automático de CPFs e contas bancárias, e quarentena de injeções indiretas em documentos.
-5. Marco N2.2.11 & Gate N2.2: Bateria do Golden Dataset com 10 cenários canônicos aprovados com 100% de precisão (PILOT_READY).
-Next task: Iniciar Operação Piloto Assistida em Campo de 7 dias na Agência 6895.
+1. Implementado o motor de abordagem comercial (`engines/relationship/outreach-draft-engine.mjs`) gerando rascunhos para WhatsApp e E-mail com autoridade soberana de Rafael (`requires_owner_approval: true`).
+2. Implementado o motor do Briefing Matinal Proativo (`engines/orchestration/morning-briefing-engine.mjs`) e o workflow n8n `WF-102 — Briefing Matinal Proativo 360` (`9eb8e86a-84b8-4aa9-97e4-360000000102`) agendado para as 08h30 nos dias úteis.
+3. Conectados os comandos `/briefing` e `/abordar` no Telegram runtime e validados com testes automatizados.
+4. Realizado disparo real de teste no Telegram de Rafael (`chat_id: 5281600644`) com entrega confirmada (HTTP 200).
+Next task: Acompanhamento da operação do piloto de 7 dias e suporte consultivo contínuo na agência.
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 

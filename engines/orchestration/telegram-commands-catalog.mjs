@@ -3,7 +3,7 @@
  * Marco N2.2.6 — Catálogo Textual e Comandos Avançados no Telegram
  */
 
-export function executeAdvancedCommand({
+export async function executeAdvancedCommand({
   command,
   args = [],
   rawArgs = "",
@@ -92,6 +92,22 @@ export function executeAdvancedCommand({
         `• <b>Proposição:</b> Recomendações de abordagem vinculadas aos CNPJs 01.234.567/0001-89 e 12.345.678/0001-90\n` +
         `• <b>Autoridade Soberana:</b> RAFAEL`
       );
+    }
+
+    case "/briefing": {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const { generateMorningBriefing } = await import("./morning-briefing-engine.mjs");
+      return generateMorningBriefing({});
+    }
+
+    case "/abordar": {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const { generateOutreachDraft, formatOutreachTelegram } = await import("../relationship/outreach-draft-engine.mjs");
+      const targetKey = arg || "hospital-sao-lucas";
+      const draft = generateOutreachDraft({ accountKey: targetKey });
+      return formatOutreachTelegram(draft);
     }
 
     default:

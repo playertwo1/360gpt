@@ -1,5 +1,12 @@
 # Changelog
 
+### Complete & Active — Início do Piloto em Campo: Briefing Matinal Proativo & Motor de Abordagem Comercial (02/09/2026)
+- **Ativação da Dupla Comercial de Alto Impacto:**
+  * **Workflow `WF-102 — Briefing Matinal Proativo 360`** (`9eb8e86a-84b8-4aa9-97e4-360000000102`): Agendado no n8n Docker para disparo automático às 08h30 de segunda a sexta-feira, enviando no Telegram de Rafael (`chat_id: 5281600644`) a situação consolidada do POBJ e as 2 principais ações prioritárias do dia.
+  * **Motor de Abordagem Comercial (`outreach-draft-engine.mjs`)**: Gera mensagens consultivas personalizadas prontas para copiar e colar no WhatsApp ou E-mail para os decisores da carteira (Dr. Arnaldo no Hospital São Lucas para folha de 280 vidas e Sr. Cláudio na Forja Sul para cobrança de R$ 420 mil e blindagem de vencidos).
+  * **Governança Preservada**: Toda abordagem gerada impõe `requires_owner_approval: true` e `decision_authority: "RAFAEL"`, garantindo que nenhuma mensagem seja enviada diretamente a clientes sem autorização explícita.
+  * **Disparo Real de Teste**: Entregues com sucesso (HTTP 200) no Telegram de Rafael a demonstração do Briefing Matinal e o rascunho de WhatsApp para o Dr. Arnaldo Silveira.
+
 ### Complete & Homologated — Fases 6 a 10 Concluídas & Gate N2.2 Homologado (Status: PILOT_READY) (02/09/2026)
 - **6. Marco N2.2.7: Reconciliação Cirúrgica, Correção e Reprocessamento:**
   * Implementado `engines/reconciliation/reconciliation-engine.mjs` com classificação automática de divergências (`DIVERGENCIA_DE_DADOS`, `DIVERGENCIA_TEMPORAL`, `DIVERGENCIA_NORMATIVA`).

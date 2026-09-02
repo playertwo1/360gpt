@@ -381,11 +381,11 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const lines = (rows.results ?? []).map((row) => `• v${row.state_version} — ${new Date(Number(row.generated_at)).toLocaleDateString('pt-BR')} — ${row.overall_status}`);
     await sendTelegramText(token, chatId, lines.length ? `HISTÓRICO POBJ\n\n${lines.join('\n')}` : 'Ainda não há histórico real.'); return { handled: true, kind: 'history' };
   }
-  if (['/fontes','/evidencias','/indicador'].includes(command)) {
+  if (['/fontes','/evidencias','/indicador','/abordar','/briefing'].includes(command)) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const { executeAdvancedCommand } = await import('../engines/orchestration/telegram-commands-catalog.mjs');
-    const advancedText = executeAdvancedCommand({ command, args, rawArgs });
+    const advancedText = await executeAdvancedCommand({ command, args, rawArgs });
     if (advancedText) {
       await sendTelegramText(token, chatId, advancedText);
       return { handled: true, kind: 'advanced-catalog' };

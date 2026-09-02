@@ -1,0 +1,105 @@
+{
+  "name": "WF-102 — Briefing Matinal Proativo 360",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 11 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-morning",
+      "name": "01 Disparo diário às 08h30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "director-360/briefing/trigger",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "01 Disparo manual webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-400, 160],
+      "webhookId": "d360-briefing-trigger-v1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const dateStr = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });\nconst formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);\n\nconst text = `☀️ <b>Bom dia, Rafael! Briefing Matinal 360</b>\\n` +\n`🏛️ <b>Agência 6895 - VJ-SAO FIDELIS</b> | <i>${formattedDate}</i>\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n`📊 <b>Posição Consolidada do POBJ:</b>\\n` +\n`• <b>Pontuação Atual:</b> <b>80,71 pts</b> (100,65% atingido)\\n` +\n`• <b>Indicadores Batidos:</b> 7 de 22\\n` +\n`• <b>Meta Global:</b> Batida com aceleradores. Foco agora é maximizar esteiras zeradas e blindar risco de inadimplência.\\n\\n` +\n`🎯 <b>2 Ações Prioritárias para Hoje:</b>\\n\\n` +\n`1. <b>Hospital & Maternidade São Lucas S/A</b>\\n` +\n`   • <b>Oportunidade:</b> Portabilidade de Folha de Pagamento (280 vidas)\\n` +\n`   • <b>Retorno:</b> <b>+4,00 pts no POBJ | +R$ 84.000,00/ano em receita</b>\\n` +\n`   • <b>Contato:</b> Dr. Arnaldo Silveira (Dir. Financeiro)\\n` +\n`   👉 <i>Para ver a mensagem pronta de WhatsApp, envie:</i> <code>/abordar saolucas</code>\\n\\n` +\n`2. <b>Metalúrgica Forja Sul Ltda</b>\\n` +\n`   • <b>Oportunidade:</b> Cobrança Híbrida Boleto+PIX & Blindagem de Vencidos\\n` +\n`   • <b>Retorno:</b> <b>+4,00 pts de Cobrança e proteção de 9,34 pts de mora</b>\\n` +\n`   • <b>Contato:</b> Sr. Cláudio Mendes (Sócio-Administrador)\\n` +\n`   👉 <i>Para ver a mensagem pronta de WhatsApp, envie:</i> <code>/abordar forjasul</code>\\n\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n` +\n`💡 <i>Tenha um excelente e produtivo dia de negócios!</i>`;\n\nreturn [{ json: { chat_id: 5281600644, text } }];"
+      },
+      "id": "format-briefing",
+      "name": "02 Montar Briefing Executivo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 80]
+    },
+    {
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "send-telegram",
+      "name": "03 Enviar Telegram Rafael",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [80, 80],
+      "credentials": {
+        "telegramApi": {
+          "id": "6qf7p2p0x3",
+          "name": "Telegram Bot Diretor 360"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "01 Disparo diário às 08h30": {
+      "main": [
+        [
+          {
+            "node": "02 Montar Briefing Executivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "01 Disparo manual webhook": {
+      "main": [
+        [
+          {
+            "node": "02 Montar Briefing Executivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "02 Montar Briefing Executivo": {
+      "main": [
+        [
+          {
+            "node": "03 Enviar Telegram Rafael",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000102"
+}
