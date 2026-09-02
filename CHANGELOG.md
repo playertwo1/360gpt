@@ -1091,3 +1091,8 @@
 
 ### Security
 - Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
+## [3.9.0] - 2026-09-02
+
+### Changed
+- Sincronizado `PROJECT_STATE.md` com o estado real do Git, Docker e Sites.
+- Próxima tarefa ajustada para a homologação documental N2.
