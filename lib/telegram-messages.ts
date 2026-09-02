@@ -94,6 +94,8 @@ export function telegramCommandMenu() {
     '/pendencias — processamentos e revisões',
     '/duvidas — perguntas aguardando sua resposta',
     '/cancelar <protocolo> — solicitar cancelamento',
+    '/excluir <protocolo> — solicitar exclusão/revogação',
+    '/excluirultimo — solicitar exclusão do último documento',
     '/tentar novamente <protocolo> — repetir falha recuperável',
     '/destravar ou /reprocessartodos — reabrir todos os jobs travados',
     '',
