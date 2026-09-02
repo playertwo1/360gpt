@@ -381,7 +381,17 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
     const lines = (rows.results ?? []).map((row) => `• v${row.state_version} — ${new Date(Number(row.generated_at)).toLocaleDateString('pt-BR')} — ${row.overall_status}`);
     await sendTelegramText(token, chatId, lines.length ? `HISTÓRICO POBJ\n\n${lines.join('\n')}` : 'Ainda não há histórico real.'); return { handled: true, kind: 'history' };
   }
-  if (['/fontes','/evidencias','/explicar','/indicador','/comparar'].includes(command)) {
+  if (['/fontes','/evidencias','/indicador'].includes(command)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { executeAdvancedCommand } = await import('../engines/orchestration/telegram-commands-catalog.mjs');
+    const advancedText = executeAdvancedCommand({ command, args, rawArgs });
+    if (advancedText) {
+      await sendTelegramText(token, chatId, advancedText);
+      return { handled: true, kind: 'advanced-catalog' };
+    }
+  }
+  if (['/explicar','/comparar'].includes(command)) {
     await sendTelegramText(token, chatId, state ? `Consulta recebida: ${command} ${rawArgs}\n\nOs detalhes disponíveis estão vinculados ao Estado ${state.state_id} v${state.state_version}. Campos ausentes serão perguntados; nenhuma informação será inventada.` : 'Ainda não existe Estado real para essa consulta.');
     return { handled: true, kind: 'explain' };
   }
@@ -390,97 +400,11 @@ export async function handleTelegramCommand(db: D1Database, token: string, chatI
 }
 
 export async function handleConversationalText(db: D1Database, token: string, chatId: number, ownerId: string, text: string): Promise<InteractionResult> {
-  const normalized = text.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-
-  function fmt(n: number, decimals = 2) {
-    return Number(n).toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  }
-
-  function parseMoney(raw: string) {
-    let s = String(raw).trim().replace(/r\$\s*/i, '');
-    const mMil = s.match(/([\d.,]+)\s*(?:mil|k)\b/i);
-    if (mMil) return parseFloat(mMil[1].replace(/\./g, '').replace(',', '.')) * 1000;
-    if (s.includes(',') && s.includes('.')) s = s.replace(/\./g, '').replace(',', '.');
-    else if (s.includes(',')) s = s.replace(',', '.');
-    const val = parseFloat(s.replace(/[^\d.-]/g, ''));
-    return Number.isFinite(val) ? val : 0;
-  }
-
-  const isAnalysis = normalized.includes('situacao') && (normalized.includes('pontuacao') || normalized.includes('pontos'));
-  const isCorrection = normalized.includes('correto e') || normalized.includes('corrigir para');
-  const isQuestion = normalized.includes('?') || normalized.includes('bato') || normalized.includes('consigo') || normalized.includes('como esta');
-  const hasFactVal = /\b\d+[\d.,]*\b/.test(normalized) || normalized.includes('mil') || normalized.includes('contas');
-
-  let replyText = '';
-
-  if (isAnalysis) {
-    replyText =
-      '🏛️ <b>Parecer Executivo 360 — Recepção e Cruzamento Estruturado</b>\n\n' +
-      '• <b>Entrada Recebida:</b> Análise situacional de fechamento de Agosto/2026 recebida integralmente e registrada sob <code>OWNER_PROVIDED</code>.\n' +
-      '• <b>Mesa de Gerentes Ativada:</b> GG Performance (Metas), GG Conta (Carteira), GG Relacionamento (Sócios) e GG Financeiro (Receitas).\n\n' +
-      '📊 <b>Conferência de Metas e Gaps (Performance):</b>\n' +
-      '  - Pontuação: <b>70,71 pts atingidos + 10,00 acel. = 80,71 pts</b> (100,65% atingido).\n' +
-      '  - Indicadores batidos: <b>7 de 22</b>.\n' +
-      '  - Gaps críticos confirmados: Conquista Folha (0/4 pts) e Boleto/PIX (0/4 pts).\n' +
-      '  - Blindagem necessária: Vencidos Até 59d (78,3% atingido, 9,34 pts em risco de mora).\n\n' +
-      '🏢 <b>Encaminhamento Prático na Carteira PJ (Conta & Relacionamento):</b>\n' +
-      '  1. <b>Folha de Pagamento:</b> <i>Hospital São Lucas</i> (180 vidas) → Contato: <b>Dr. Arnaldo Silveira</b> (Dir. Financeiro). Pauta: Suporte presencial da agência sem sobrecarga do RH.\n' +
-      '  2. <b>Boleto + PIX:</b> <i>Metalúrgica Forja Sul</i> (R$ 420 mil em cobrança) → Contato: <b>Sr. Cláudio Mendes</b> (Sócio) e <b>Sra. Renata Dias</b> (Financeiro). Pauta: Cobrança híbrida D+0 com tarifas reduzidas.\n' +
-      '  3. <b>Blindagem de Crédito:</b> <i>Metalúrgica Forja Sul</i> → Contato: <b>Sr. Cláudio Mendes</b> para regularização preventiva e proteção dos 9,34 pts de vencidos.\n\n' +
-      '💰 <b>Impacto Financeiro Estimado (GG Financeiro):</b>\n' +
-      '  - <b>Folha São Lucas:</b> +R$ 84.000,00/ano em receitas recorrentes de serviços.\n' +
-      '  - <b>Cobrança Forja Sul:</b> +R$ 22.680,00/ano em tarifas líquidas de liquidação.\n' +
-      '  - <b>Incremento Total Estimado:</b> +R$ 106.680,00/ano adicionais para a agência 6895.\n\n' +
-      '⚖️ <b>Decisão Soberana:</b> Toda abordagem externa e rascunho de proposta depende de autorização expressa de Rafael.';
-  } else if (isCorrection) {
-    const val = parseMoney(text);
-    replyText =
-      '✏️ <b>Correção Registrada com Sucesso</b>\n\n' +
-      `• <b>Dado Corrigido:</b> Valor R$ ${fmt(val)} registrado com vínculo <code>SUPERSEDES</code>.\n` +
-      '• <b>Auditoria:</b> O valor anterior permanece no histórico para rastreabilidade; os recálculos subsequentes utilizarão esta versão corrigida.\n\n' +
-      'Estado 360 atualizado conforme autorização soberana de Rafael.';
-  } else if (isQuestion && hasFactVal) {
-    const val = parseMoney(text);
-    replyText =
-      '📋 <b>Análise de Impacto — Liberação de Crédito</b>\n\n' +
-      `• <b>Fato Registrado:</b> Liberação de R$ ${fmt(val)} informada por Rafael.\n` +
-      '• <b>Diagnóstico GG Performance:</b>\n' +
-      '  - A linha de <b>Produção de Crédito PJ</b> já está em <b>180,8% de atingimento</b> (teto máximo normativo é 150%).\n' +
-      '  - Os <b>15,00 pontos máximos</b> já foram integralmente conquistados.\n' +
-      `  - Adicionar +R$ ${fmt(val)} eleva o volume para R$ ${fmt(1384193.37 + val)}, porém <b>não adiciona novos pontos</b> na esteira de Crédito.\n\n` +
-      '💡 <b>Recomendação do Diretor:</b>\n' +
-      'Direcione o esforço para <b>Folha de Pagamento</b> (+4,0 pts) ou <b>Boleto/PIX</b> (+4,0 pts), onde a agência ainda possui 8,0 pontos zerados na mesa.';
-  } else if (normalized.includes('como esta') || normalized.includes('pobj') || isQuestion) {
-    replyText =
-      '📊 <b>Posição Consolidada POBJ — 6895 - VJ-SAO FIDELIS</b>\n' +
-      '<i>Competência: Agosto/2026 (Base: 28/08/2026)</i>\n\n' +
-      '• <b>Pontuação Atual:</b> 70,71 pts normativos + 10,00 acel. = <b>80,71 pts totais</b> (100,65% atingido)\n' +
-      '• <b>Indicadores Batidos:</b> 7 de 22 indicadores\n\n' +
-      '⚠️ <b>Esteiras Críticas com Pontos Zerados:</b>\n' +
-      '1. <b>Conquista Folha PJ:</b> 12,5% atingido (0,0 de 4,0 pts)\n' +
-      '2. <b>Faturamento Boleto + PIX:</b> 3,1% atingido (0,0 de 4,0 pts)\n' +
-      '3. <b>Vencidos Até 59 dias:</b> 78,3% atingido (9,34 pts em risco de mora)\n\n' +
-      '💡 <i>Sugestão: Use a carteira PJ para direcionar Folha e Cobrança nas contas elegíveis.</i>';
-  } else if (hasFactVal || normalized.includes('abri')) {
-    const m = text.match(/(\d+)\s*contas?/i);
-    const qtd = m ? m[1] : '2';
-    replyText =
-      '✅ <b>Informação Registrada (Fonte: Rafael)</b>\n\n' +
-      `• <b>Fato Informado:</b> Abertura de +${qtd} conta(s) PJ registrada com proveniência <code>OWNER_PROVIDED</code>.\n` +
-      '• <b>Domínios Consultados:</b> Performance e Conta.\n' +
-      '• <b>Impacto na Linha:</b> Crescimento Líquido PJ reforçado na competência.\n\n' +
-      '🎯 <b>Próxima Ação:</b> Vincular reciprocidade imediata (Folha de Pagamento ou Cobrança PIX) às novas contas para oxigenar os gaps zerados.';
-  } else {
-    replyText =
-      '👋 Olá, Rafael! Recebi sua mensagem.\n\n' +
-      'Você pode me enviar a qualquer momento:\n' +
-      '• <b>Perguntas:</b> "Como está meu POBJ?"\n' +
-      '• <b>Fatos da agência:</b> "Abri 2 contas hoje" ou "Liberei R$ 50 mil de giro"\n' +
-      '• <b>Relatórios textuais:</b> Copiar e colar a situação da carteira PJ\n' +
-      '• <b>Documentos:</b> Enviar PDF do POBJ para leitura automática.\n\n' +
-      'Ou use /comandos para acessar o menu operacional.';
-  }
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { processConversationInput } = await import('../engines/orchestration/conversation-intent-engine.mjs');
+  const result = processConversationInput({ text });
+  const replyText = result?.safe_response || 'Mensagem recebida e registrada sob OWNER_PROVIDED.';
   await sendTelegramText(token, chatId, replyText);
   return { handled: true, kind: 'conversation' };
 }

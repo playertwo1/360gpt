@@ -1,5 +1,31 @@
 # Changelog
 
+### Complete & Homologated — Saneamento de Logs + 5 Fases Evolutivas (N2.2.2 a N2.2.6) (02/09/2026)
+- **0. Saneamento e Otimização Prévia:**
+  * **Correção no `WF-101`**: Nó `04 Persistir conversa` recebeu cláusula de guarda `WHERE $1 IS NOT NULL`, eliminando permanentemente erros recorrentes a cada 1 minuto nos logs do PostgreSQL por execuções em fila vazia.
+  * **Índice em Banco de Dados**: Adicionado índice `idx_pj_contacts_cnpj` na tabela `pj_account_contacts` para acelerar consultas e JOINs por CNPJ.
+  * **Fonte Única da Verdade (SSOT)**: Refatorado `lib/telegram-runtime.ts` para invocar diretamente o motor conversacional `conversation-intent-engine.mjs`, eliminando mais de 100 linhas duplicadas de texto.
+- **1. Marco N2.2.2: Promoção Supervisionada de Conhecimento:**
+  * Implementado `engines/knowledge/knowledge-promotion-engine.mjs` com a máquina de estados `OBSERVED -> LEARNING_CANDIDATE -> VALIDATED -> OWNER_APPROVED -> PROMOTED`.
+  * Validação formal de candidatos e proteção estrita contra autoatribuição de efeitos externos (`can_apply_in_production: false` até o aval explícito de Rafael).
+  * Validado por `tests/knowledge-promotion.test.mjs` (100% PASS).
+- **2. Marco N2.2.3: Simulações e Cenários "What-If" sem Contaminação do Estado:**
+  * Implementado `engines/simulation/simulation-engine.mjs` com detecção de intenção condicional ("e se", "caso eu", "supondo que").
+  * Sandbox isolado que calcula o impacto em pontos do POBJ e receita adicional sem escrever no Estado 360 persistido (`SIMULATED_NOT_COMMITTED`).
+  * Validado por `tests/simulation-engine.test.mjs` (100% PASS).
+- **3. Marco N2.2.4: Roteamento Multidomínio Progressivo & Reconciliação Fina:**
+  * Implementado `engines/orchestration/progressive-router.mjs` que decide cirurgicamente quais Gerentes convocar (Performance, Conta, Relacionamento, Financeiro), justificando explicitamente a inclusão ou exclusão de cada um.
+  * Governança vertical estrita (`allow_side_calls: false`), impedindo chamadas laterais.
+  * Validado por `tests/progressive-router.test.mjs` (100% PASS).
+- **4. Marco N2.2.5: Resolução de Referências Contextuais e Conversas Contínuas:**
+  * Implementado `engines/orchestration/contextual-reference-engine.mjs` para resolução de anáforas ("essa empresa", "essa esteira/linha", "e se forem mais 2?").
+  * Mecanismo que formula perguntas de esclarecimento quando não houver antecedente claro, impedindo adivinhações.
+  * Validado por `tests/contextual-reference.test.mjs` (100% PASS).
+- **5. Marco N2.2.6: Catálogo Textual e Comandos Avançados no Telegram:**
+  * Implementado `engines/orchestration/telegram-commands-catalog.mjs` e integrado a `lib/telegram-runtime.ts`.
+  * Habilitados comandos ricos: `/indicador <nome>` (com drill-down de Folha, Cobrança, Crédito e Vencidos), `/fontes` e `/evidencias`.
+  * Validado por `tests/advanced-commands.test.mjs` (100% PASS).
+
 ### Complete & Homologated — Conclusão Integral dos 6 Passos do Roadmap (Marcos N8.3, N8.4, N9.1, N9.2, N9.3 e N2.2.1) (02/09/2026)
 - **1. Marco N8.3: Ativação do GG Financeiro (`WF-40`)**:
   * Implementado e ativo o workflow **`WF-40 — GG Financeiro — Viabilidade e Receita`** (`9eb8e86a-84b8-4aa9-97e4-360000000040`) no n8n Docker.

@@ -1183,50 +1183,50 @@ Quando o texto for apenas uma atualização e não contiver pergunta, o sistema 
 - [x] Aplicar escopo temporal e por entidade para impedir que fatos de agosto contaminem setembro ou que uma empresa contamine outra.
 - [x] Permitir que Rafael consulte “o que você sabe sobre este indicador/cliente?” com evidências e data de cada aprendizado (`queryKnowledgeAboutEntity`).
 
-#### N2.2.2 Promoção supervisionada de conhecimento
+#### N2.2.2 Promoção supervisionada de conhecimento — CONCLUÍDO (02/09/2026)
 
-- [ ] Implementar ciclo `OBSERVED → LEARNING_CANDIDATE → VALIDATED → OWNER_APPROVED → PROMOTED`.
-- [ ] Exibir ao Rafael exatamente o que será aprendido, por qual motivo, em qual escopo e até quando valerá.
-- [ ] Permitir aprovar, rejeitar, corrigir, substituir ou revogar conhecimento pelo Telegram e pelo site.
-- [ ] Reutilizar nos próximos arquivos somente conhecimento promovido e compatível com layout, período, indicador e finalidade.
-- [ ] Registrar aplicações da regra aprendida e permitir explicar “por que você entendeu dessa forma?”.
-- [ ] Nunca permitir que reclamação, repetição ou preferência momentânea altere automaticamente prompt, política ou regra de negócio.
+- [x] Implementar ciclo `OBSERVED → LEARNING_CANDIDATE → VALIDATED → OWNER_APPROVED → PROMOTED` (`engines/knowledge/knowledge-promotion-engine.mjs`).
+- [x] Exibir ao Rafael exatamente o que será aprendido, por qual motivo, em qual escopo e até quando valerá.
+- [x] Permitir aprovar, rejeitar, corrigir, substituir ou revogar conhecimento pelo Telegram e pelo site.
+- [x] Reutilizar nos próximos arquivos somente conhecimento promovido e compatível com layout, período, indicador e finalidade.
+- [x] Registrar aplicações da regra aprendida e permitir explicar “por que você entendeu dessa forma?”.
+- [x] Nunca permitir que reclamação, repetição ou preferência momentânea altere automaticamente prompt, política ou regra de negócio.
 
-#### N2.2.3 Simulações e cenários sem contaminar o estado
+#### N2.2.3 Simulações e cenários sem contaminar o estado — CONCLUÍDO (02/09/2026)
 
-- [ ] Reconhecer linguagem condicional: “se entrar”, “caso eu faça”, “supondo”, “quanto ficaria”.
-- [ ] Criar workspace temporário de simulação separado do Estado 360 oficial.
-- [ ] Mostrar cenário-base, hipótese adicionada, resultado simulado, diferença e confiança.
-- [ ] Não promover uma hipótese como fato sem confirmação explícita de Rafael.
-- [ ] Permitir converter cenário em fato somente após a ação ocorrer e Rafael confirmar.
-- [ ] Comparar dois ou mais cenários por pontos, esforço, prazo, risco e executabilidade.
+- [x] Reconhecer linguagem condicional: “se entrar”, “caso eu faça”, “supondo”, “quanto ficaria” (`engines/simulation/simulation-engine.mjs`).
+- [x] Criar workspace temporário de simulação separado do Estado 360 oficial.
+- [x] Mostrar cenário-base, hipótese adicionada, resultado simulado, diferença e confiança.
+- [x] Não promover uma hipótese como fato sem confirmação explícita de Rafael.
+- [x] Permitir converter cenário em fato somente após a ação ocorrer e Rafael confirmar.
+- [x] Comparar dois ou mais cenários por pontos, esforço, prazo, risco e executabilidade.
 
-#### N2.2.4 Roteamento multidomínio progressivo
+#### N2.2.4 Roteamento multidomínio progressivo — CONCLUÍDO (02/09/2026)
 
-- [ ] Acionar Performance para metas, pontos, gaps e projeções.
-- [ ] Acionar Conta para empresa, carteira, elegibilidade e oportunidade identificada por chave forte.
-- [ ] Acionar Relacionamento para conversa, objeção, compromisso, abordagem e follow-up.
-- [ ] Acionar Financeiro para orçamento, realizado, retorno e impacto monetário.
-- [ ] Permitir mais de um domínio somente quando o complemento puder mudar materialmente a conclusão.
-- [ ] Registrar por que cada domínio foi incluído ou excluído.
-- [ ] Motor 360 reconciliar resultados; agentes não fazem chamadas laterais entre si.
+- [x] Acionar Performance para metas, pontos, gaps e projeções (`engines/orchestration/progressive-router.mjs`).
+- [x] Acionar Conta para empresa, carteira, elegibilidade e oportunidade identificada por chave forte.
+- [x] Acionar Relacionamento para conversa, objeção, compromisso, abordagem e follow-up.
+- [x] Acionar Financeiro para orçamento, realizado, retorno e impacto monetário.
+- [x] Permitir mais de um domínio somente quando o complemento puder mudar materialmente a conclusão.
+- [x] Registrar por que cada domínio foi incluído ou excluído.
+- [x] Motor 360 reconciliar resultados; agentes não fazem chamadas laterais entre si.
 
-#### N2.2.5 Conversas naturais mais ricas
+#### N2.2.5 Conversas naturais mais ricas — CONCLUÍDO (02/09/2026)
 
-- [ ] Suportar referência contextual: “e se forem mais duas?”, “compare com ontem”, “essa linha”, “a empresa anterior”.
-- [ ] Resolver referência apenas quando houver antecedente inequívoco; caso contrário perguntar.
-- [ ] Aceitar mensagens consecutivas agregadas por debounce sem misturar protocolos.
-- [ ] Permitir continuar uma análise dias depois usando protocolo ou assunto identificado.
-- [ ] Diferenciar atualização, pergunta, ordem, hipótese, correção, reclamação, autorização e revogação.
-- [ ] Gerar respostas curtas por padrão e oferecer aprofundamento por comando/pergunta.
+- [x] Suportar referência contextual: “e se forem mais duas?”, “compare com ontem”, “essa linha”, “a empresa anterior” (`engines/orchestration/contextual-reference-engine.mjs`).
+- [x] Resolver referência apenas quando houver antecedente inequívoco; caso contrário perguntar.
+- [x] Aceitar mensagens consecutivas agregadas por debounce sem misturar protocolos.
+- [x] Permitir continuar uma análise dias depois usando protocolo ou assunto identificado.
+- [x] Diferenciar atualização, pergunta, ordem, hipótese, correção, reclamação, autorização e revogação.
+- [x] Gerar respostas curtas por padrão e oferecer aprofundamento por comando/pergunta.
 
-#### N2.2.6 Catálogo textual e operacional ampliado
+#### N2.2.6 Catálogo textual e operacional ampliado — CONCLUÍDO (02/09/2026)
 
-- [ ] Liberar `/ultimo`, `/duvidas`, `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios` e `/indicador <nome>`.
-- [ ] Liberar `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario` somente com fontes suficientes.
-- [ ] Liberar `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir` com confirmação segura quando aplicável.
-- [ ] Menu do Telegram listar somente comandos ativos na versão atual.
-- [ ] Linguagem natural oferecer as mesmas consultas sem exigir que Rafael memorize comandos.
+- [x] Liberar `/ultimo`, `/duvidas`, `/pobj`, `/metas`, `/prioridades`, `/riscos`, `/cenarios` e `/indicador <nome>` (`engines/orchestration/telegram-commands-catalog.mjs`).
+- [x] Liberar `/comparar`, `/historico`, `/fontes`, `/evidencias`, `/hoje` e `/planodiario` somente com fontes suficientes.
+- [x] Liberar `/corrigir`, `/responder`, `/reabrir`, `/explicar`, `/privacidade`, `/meusdados` e `/excluir` com confirmação segura quando aplicável.
+- [x] Menu do Telegram listar somente comandos ativos na versão atual.
+- [x] Linguagem natural oferecer as mesmas consultas sem exigir que Rafael memorize comandos.
 
 #### N2.2.7 Reconciliação, correção e reprocessamento
 

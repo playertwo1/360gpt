@@ -1,9 +1,9 @@
 # PROJECT STATE
 
-Version: 4.0.0-gate-n8-and-n9-completed
-Current phase: Pós-Gate N8, N9 e N2.2.1 — Mesa dos 4 Gerentes Ativa, Operação Assistida e Memória em Camadas
-Current milestone: Marcos N8.3, N8.4 (Gate N8), N9.1, N9.2, N9.3 e N2.2.1 Concluídos com Êxito
-Current task: Sistema 360 operando em produção local com os 4 Gerentes Gerais (Performance, Conta, Relacionamento e Financeiro), observabilidade contínua, backup automatizado e memória em 4 camadas.
+Version: 4.1.0-n2.2-phases-completed
+Current phase: Pós-Marcos N2.2.2 a N2.2.6 — Inteligência Conversacional, Simulação Sandbox, Roteamento Fino e Comandos Avançados
+Current milestone: Saneamento Geral Concluído + Marcos N2.2.2, N2.2.3, N2.2.4, N2.2.5 e N2.2.6 Homologados
+Current task: Sistema 360 com saneamento de logs concluído, índice em pj_account_contacts, promoção de conhecimento supervisionada, simulações what-if sem poluição de estado, roteamento progressivo multidomínio, resolução de referências contextuais e catálogo textual ampliado (/indicador, /fontes, /evidencias).
 Status: READY
 
 Host baseline:
@@ -14,14 +14,21 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: Conclusão integral dos 6 passos canônicos do Roadmap: N8.3 (GG Financeiro WF-40 ativo no n8n), N8.4 (Gate N8 — Mesa Completa dos 4 Gerentes Gerais), N9.1 (Observabilidade e Métricas reportadas com status HEALTHY), N9.2 (Hardening de Segurança e Prompt Guard), N9.3 (Backup verificável com SHA-256 e atalho BAT) e N2.2.1 (Memória Operacional em 4 Camadas).
-Next task: Operação assistida e expansão de novos relatórios.
+Last completed: 
+1. Saneamento: Correção do nó de claim do WF-101 no n8n (eliminação de logs de erro por execução com fila vazia) e criação de índice idx_pj_contacts_cnpj.
+2. Refatoração SSOT: Eliminação de duplicação em lib/telegram-runtime.ts chamando diretamente o motor de intenção conversacional.
+3. Marco N2.2.2: Ciclo de vida de aprendizado supervisionado (OBSERVED -> LEARNING_CANDIDATE -> VALIDATED -> OWNER_APPROVED -> PROMOTED).
+4. Marco N2.2.3: Motor de simulações "What-If" em sandbox isolado sem contaminação do Estado 360.
+5. Marco N2.2.4: Roteamento progressivo multidomínio com justificativas de inclusão/exclusão e governança vertical sem chamadas laterais.
+6. Marco N2.2.5: Resolução de referências contextuais anafóricas ("essa empresa", "essa esteira", "e se forem mais 2?").
+7. Marco N2.2.6: Catálogo textual e comandos avançados no Telegram (/indicador, /fontes, /evidencias).
+Next task: Fase 6 (Marco N2.2.7 — Reconciliação, Correção e Reprocessamento).
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais.
+MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais e aos motores contextuais e de simulação.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade.
 
-Last validation: 2026-09-02 18:10 — Bateria completa aprovada com 100% PASS (financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, conta-engine, conta-contracts, test:p0, test:local-core e build).
+Last validation: 2026-09-02 18:43 — Bateria completa de 14 suítes aprovada com 100% PASS (knowledge-promotion, simulation-engine, progressive-router, contextual-reference, advanced-commands, financial-engine, integration-360-gate-n8, relationship-engine, conversation-intent, security-killswitches, layered-memory, test:p0, test:local-core e build).
 Last implementation checkpoint: 6ac408f test(n2): benchmark Docling CPU TableFormer on real POBJ2608.pdf with 3 tables and 111 rows
 
 Blockers:
