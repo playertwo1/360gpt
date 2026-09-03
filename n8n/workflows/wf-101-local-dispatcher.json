@@ -209,7 +209,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "WITH delivered AS (UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id) UPDATE channel_inbound_events SET status='COMPLETED', completed_at=now(), lease_token=NULL, lease_expires_at=NULL WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;",
+        "query": "WITH delivered AS (UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id) UPDATE channel_inbound_events SET status = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN 'PROCESSING' ELSE 'COMPLETED' END, completed_at = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN NULL ELSE now() END, lease_token = NULL, lease_expires_at = NULL WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;",
         "options": {
           "queryBatching": "single",
           "queryReplacement": "={{[$node['07 Persistir entrega idempotente'].json.delivery_id,$node['07 Persistir entrega idempotente'].json.inbound_event_id,$node['07 Persistir entrega idempotente'].json.lease_token]}}"

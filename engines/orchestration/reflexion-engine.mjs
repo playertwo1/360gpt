@@ -250,3 +250,23 @@ function formatInsufficientSampleTelegramCard(count, min, week) {
     `• Continue operando normalmente pelo Telegram para acumular evidências de campo.`
   );
 }
+
+/**
+ * Consulta a tabela real de eventos soberanos (telegram_events).
+ * NUNCA fabrica ou presume aprovação a partir de anotação de feedback.
+ */
+export async function findRealRafaelApprovalEvent(db, { ownerId = 'rafael', tenantId = 'default' } = {}) {
+  if (!db) return null;
+  try {
+    const res = await db.query(
+      `SELECT id, payload_hash, command FROM public.telegram_events
+       WHERE owner_id = $1 AND tenant_id = $2 AND command ~* '^/aprovardiretriz' AND used_at IS NULL
+       ORDER BY received_at DESC LIMIT 1`,
+      [ownerId, tenantId]
+    );
+    if (!res.rows || res.rows.length === 0) return null;
+    return res.rows[0];
+  } catch (err) {
+    return null;
+  }
+}

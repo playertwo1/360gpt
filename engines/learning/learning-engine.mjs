@@ -94,3 +94,20 @@ export function determineRiskLevel(rule){
 }
 
 export function sha256Hex(data){return createHash('sha256').update(typeof data==='string'?data:JSON.stringify(data),'utf8').digest('hex');}
+
+/**
+ * Validação delegada ao PostgreSQL (validate_rafael_approval_event).
+ * O JS nunca decide sozinho o que é autenticado.
+ */
+export async function isAuthenticatedRafaelApproval(db, { eventId, ownerId = 'rafael', tenantId, rawPayload = null }) {
+  if (!db || !eventId) return false;
+  try {
+    const result = await db.query(
+      `SELECT validate_rafael_approval_event($1::text, $2::text, $3::text, '/aprovardiretriz', $4::text) AS ok`,
+      [String(eventId), String(ownerId), String(tenantId), rawPayload ? String(rawPayload) : null]
+    );
+    return result.rows?.[0]?.ok === true;
+  } catch (err) {
+    return false;
+  }
+}
