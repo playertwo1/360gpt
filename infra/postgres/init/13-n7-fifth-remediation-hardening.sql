@@ -109,11 +109,11 @@ CREATE OR REPLACE FUNCTION public.audit_event_hash(
 ) RETURNS VARCHAR(64)
 LANGUAGE sql IMMUTABLE SET search_path = pg_catalog
 AS $$
-  SELECT encode(digest(convert_to(
+  SELECT encode(sha256(convert_to(
     coalesce(p_tenant_id,'') || '|' || coalesce(p_event_type,'') || '|' ||
     coalesce(p_entity_type,'') || '|' || coalesce(p_entity_id::text,'') || '|' ||
     coalesce(p_actor,'') || '|' || coalesce(p_payload::text,'{}') || '|' ||
-    coalesce(p_created_at::text,''), 'UTF8'), 'sha256'),'hex');
+    coalesce(p_created_at::text,''), 'UTF8')), 'hex');
 $$;
 REVOKE ALL ON FUNCTION public.audit_event_hash(TEXT,TEXT,TEXT,UUID,TEXT,JSONB,TIMESTAMPTZ) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.audit_event_hash(TEXT,TEXT,TEXT,UUID,TEXT,JSONB,TIMESTAMPTZ) TO visao360_app;

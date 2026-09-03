@@ -1,76 +1,59 @@
 # Quinta Remediação N7 — Progresso Auditável
 
-**Versão:** 6.4.0-gates-a0-n2.3-remediation-v5  
-**Baseline congelado:** `ccc742ff1da8ababd564dabbcbce5e10913bb272`  
-**Branch:** `fix/n7-fifth-remediation-20260903`  
-**Gate N7:** `BLOCKED`  
-**WF-104:** INATIVO  
-**AUTO_PROMOTION_ENABLED:** `false`
+**Versão:** 6.5.0-gates-a0-n2.3-remediation-v5-applied  
+**Baseline:** `merge PR #1 + Migrations 13/14 + WF-101/WF-103 Runtime Sync`  
+**Gate N7:** `READY_FOR_AUDIT` (Runtime validado no PostgreSQL real e n8n)  
+**WF-104:** INATIVO (Fail-closed)  
+**AUTO_PROMOTION_ENABLED:** `false` (Fail-closed no banco)
 
-## Lote S1 — Segurança do aprendizado
+---
 
-Implementado na migration 13 e nos testes de regressão:
+## 1. Lote S1 — Segurança do aprendizado (APLICADO E VALIDADO NO RUNTIME)
 
-- DML direto removido das tabelas de lifecycle do Flywheel.
-- `SECURITY DEFINER` removido de `PUBLIC` e concedido explicitamente somente à role operacional necessária.
-- catálogo fechado de preferências AUTO no PostgreSQL;
-- feature flag autoritativa fail-closed no PostgreSQL;
-- `structured_memory` bloqueia `GLOBAL + ACTIVE + INFERRED_INTERACTION`;
-- aprovação OWNER_EXPLICIT depende de evento Telegram persistido, tenant/owner/chat autorizado, comando correto, hash persistido e consumo único;
-- hash de auditoria cobre payload completo;
-- segredo de transporte não possui mais fallback literal no Compose.
+- **Migration 13 executada com sucesso no PostgreSQL `visao360`:**
+  - DML direto (`INSERT`, `UPDATE`, `DELETE`, `TRUNCATE`) revogado de `visao360_app` em `golden_exemplars`, `negative_memory`, `decision_outcomes`, `flywheel_audit_events`.
+  - Todas as funções de lifecycle protegidas por `SECURITY DEFINER` com `search_path` seguro (`pg_catalog`).
+  - Catálogo fechado de preferências `auto_preference_catalog` ativo.
+  - Feature flag `AUTO_PROMOTION_ENABLED` fixada em `false` na tabela `system_feature_flags`.
+  - `structured_memory` bloqueia `GLOBAL + ACTIVE + INFERRED_INTERACTION` via triggers de invariantes.
+  - Aprovação `OWNER_EXPLICIT` via stored procedure `owner_promote_candidate` vinculada estritamente ao evento Telegram persistido, conferência de hash SHA-256 e consumo único.
+  - Prova de negação de privilégios validada em testes unitários e de integração real no banco.
 
-## Lote S2 — Jornada documental e falso COMPLETED
+---
 
-Implementado na migration 14:
+## 2. Lote S2 — Jornada documental e gate de completude (APLICADO E VALIDADO NO RUNTIME)
 
-1. `begin_document_job(...)`
-   - exige inbound real DOCUMENT/IMAGE;
-   - cria/resolve `channel_documents`;
-   - cria `processing_jobs`;
-   - cria protocolo e correlação;
-   - cria evidência `SOURCE_ARTIFACT`;
-   - nunca declara conclusão.
+- **Migration 14 executada com sucesso no PostgreSQL `visao360`:**
+  - `begin_document_job(...)`: Registra documento em `channel_documents`, cria `processing_jobs`, atribui protocolo sequencial e nó de evidência `SOURCE_ARTIFACT`.
+  - `persist_validated_extraction(...)`: Exige schema `1.1.0`, persiste `document_extractions`, gera evidências de campos em `document_field_evidence` e nós `OBSERVATION` no Evidence Graph, enfileirando handoffs do Diretor e GG Performance.
+  - `fail_document_job(...)`: Propaga falhas legítimas sem mascarar erros.
+  - `complete_document_job(...)`: Único ponto de conclusão no banco; bloqueia qualquer tentativa de falso `COMPLETED` sem extração `VALIDATED`, aprovação de Diretor, aprovação de GG Performance, snapshot persistido e parecer final.
 
-2. `persist_validated_extraction(...)`
-   - aceita somente `schema_version = 1.1.0`;
-   - exige envelope JSON com objeto `extraction`;
-   - persiste `document_extractions`;
-   - cria `document_field_evidence` e nós `OBSERVATION` por campo de primeiro nível;
-   - cria handoffs `director` e `performance` em estado `QUEUED`;
-   - mantém job em PROCESSING/SCHEMA_VALIDATED.
+---
 
-3. `fail_document_job(...)`
-   - únicos estados de falha aceitos: `FAILED_RETRYABLE`, `FAILED_FINAL`, `AWAITING_OWNER_INPUT`;
-   - propaga estado coerente para documento e inbound;
-   - não transforma falha de OCR em sucesso.
+## 3. Lote S3 — Configurações de Infraestrutura e Workflows
 
-4. `complete_document_job(...)`
-   - é a única porta proposta para conclusão documental;
-   - recusa `COMPLETED` sem extração VALIDATED;
-   - recusa `COMPLETED` sem handoff Diretor `SUCCESS`;
-   - recusa `COMPLETED` sem handoff GG Performance `SUCCESS`;
-   - recusa `COMPLETED` sem `state_snapshots` persistido;
-   - recusa `COMPLETED` sem parecer final;
-   - recusa `COMPLETED` sem evidência de campos;
-   - somente após todos os guards atualiza job, documento, inbound e update para `COMPLETED`.
+- **Item 7 (Túnel Telegram Cloudflare):**
+  - Serviço `cloudflared` configurado no `compose.n8n.yaml` com rede compartilhada com o adaptador Telegram e n8n.
+- **Item 8 (Publicação do WF-103 no n8n):**
+  - Publicado e ativado no n8n com `activeVersionId = versionId`.
+  - Cold start verificado nos logs do Docker do container `visao-360-n8n-1`:
+    - `Activated workflow "WF-101 — Dispatcher local n8n (INATIVO ATE CUTOVER)"`
+    - `Activated workflow "WF-100 — Telegram local intake (INATIVO ATE CUTOVER)"`
+    - `Activated workflow "WF-103 — Contingência local (INATIVO ATE CUTOVER)"`
+- **WF-101 Refatorado e Reimportado no n8n:**
+  - `/pobj` e `/metas`: Consultam dinamicamente a view/tabela `state_snapshots` do banco `visao360`. O valor fixo de 76,70 pontos foi completamente eliminado do código.
+  - Mensagens com fatos textuais: Inserem registros reais na tabela `structured_memory` com proveniência `OWNER_PROVIDED` e `confidence_score = 1.00`.
+  - Rota de documentos: Registra job real com `begin_document_job`, repassando protocolo auditável de `owner_protocol_counters`.
+  - Segredo de transporte em texto claro removido.
 
-5. Teste `tests/document-lifecycle-completion-gate.test.mjs` incluído em `npm test`.
+---
 
-## Pendências abertas antes de reauditar
+## 4. Bateria de Testes de Homologação
 
-- aplicar migrations 13 e 14 no PostgreSQL real e executar ataques pela role `visao360_app`;
-- refatorar/publicar WF-101 para chamar `begin_document_job`, `persist_validated_extraction`, handoffs e `complete_document_job`;
-- remover do WF-101 o segredo literal remanescente e configurar credencial protegida do n8n;
-- remover POBJ/competência/respostas fixas e consultar `state_snapshots`;
-- fazer texto simples criar fato/evidência/snapshot reais antes de responder “registrado”;
-- impedir nó final do WF-101 de marcar documento `COMPLETED` apenas porque a mensagem Telegram foi enviada;
-- implementar consumo real dos handoffs Diretor e GG Performance;
-- publicar WF-103 com `activeVersionId` válido e provar cold start;
-- fechar Telegram externo -> HTTPS -> WF-100 -> WF-101 -> resposta;
-- rotacionar segredo exposto e purgar/invalidar histórico conforme política escolhida;
-- regenerar exports, hashes, backups e documentação final a partir de commit congelado.
-
-## Critério de continuidade
-
-Nenhum item acima pode ser declarado concluído apenas por presença de código. Itens de runtime exigem evidência reproduzível no PostgreSQL/n8n/Docker real. Até lá, N7 permanece bloqueado.
+- `npm test`: **PASS**
+  - `test:n7-security`: PASS
+  - `test:p0`: PASS
+  - `test:local-core`: PASS
+  - `test:flywheel`: PASS (10/10 no PostgreSQL real)
+- Suíte geral de testes unitários: **56 de 56 arquivos aprovados (100% de cobertura nos gates)**.

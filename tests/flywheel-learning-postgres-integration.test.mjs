@@ -132,11 +132,25 @@ try {
   }
   assert.ok(promoCheckPassed, "Constraint chk_promoted_knowledge_promotion_base validada!");
 
+  // 2.2.1 Role visao360_app não possui permissão de INSERT direto em flywheel_audit_events
+  let appAuditInsertDenied = false;
+  try {
+    executePg(
+      `INSERT INTO flywheel_audit_events (tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');`,
+      "visao360_app"
+    );
+  } catch (err) {
+    appAuditInsertDenied = true;
+    assert.match(String(err), /permission denied for table flywheel_audit_events/i);
+  }
+  assert.ok(appAuditInsertDenied, "DML direto de INSERT em flywheel_audit_events bloqueado para visao360_app!");
+
   // 2.3 Rejeição de hash inválido em auditoria
   let auditHashPassed = false;
   try {
     executePg(
-      `INSERT INTO flywheel_audit_events (tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'not-a-sha256');`
+      `INSERT INTO flywheel_audit_events (tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'not-a-sha256');`,
+      "postgres"
     );
   } catch (err) {
     auditHashPassed = true;
@@ -147,7 +161,8 @@ try {
   // 2.4 Trigger Append-Only impede UPDATE na auditoria
   const auditId = randomUUID();
   executePg(
-    `INSERT INTO flywheel_audit_events (id, tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${auditId}', '${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');`
+    `INSERT INTO flywheel_audit_events (id, tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${auditId}', '${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');`,
+    "postgres"
   );
   // 2.4.1 Role visao360_app não possui permissão de UPDATE na auditoria
   let appUpdateDenied = false;
@@ -179,10 +194,24 @@ try {
   }
   assert.ok(auditTruncatePassed, "Bloqueio anti-TRUNCATE em flywheel_audit_events validado com sucesso!");
 
-  // 2.6 Permissão de inserção de status CANDIDATE em golden_exemplars sem aprovação
+  // 2.5.1 Role visao360_app não possui permissão de INSERT direto em golden_exemplars
+  let appExemplarInsertDenied = false;
+  try {
+    executePg(
+      `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, status) VALUES (gen_random_uuid(), '${TEST_TENANT}', 'HOSPITALAR', 'FOLHA_PAGAMENTO', 'Hospital Bypass', 'WHATSAPP', 'Texto bypass', 'CANDIDATE');`,
+      "visao360_app"
+    );
+  } catch (err) {
+    appExemplarInsertDenied = true;
+    assert.match(String(err), /permission denied for table golden_exemplars/i);
+  }
+  assert.ok(appExemplarInsertDenied, "DML direto de INSERT em golden_exemplars bloqueado para visao360_app!");
+
+  // 2.6 Permissão de inserção de status CANDIDATE em golden_exemplars sem aprovação (seed administrativo)
   const exemplarCandId = randomUUID();
   executePg(
-    `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, status) VALUES ('${exemplarCandId}', '${TEST_TENANT}', 'HOSPITALAR', 'FOLHA_PAGAMENTO', 'Hospital Teste Candidato', 'WHATSAPP', 'Texto pendente de aprovação', 'CANDIDATE');`
+    `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, status) VALUES ('${exemplarCandId}', '${TEST_TENANT}', 'HOSPITALAR', 'FOLHA_PAGAMENTO', 'Hospital Teste Candidato', 'WHATSAPP', 'Texto pendente de aprovação', 'CANDIDATE');`,
+    "postgres"
   );
   const candCheck = queryPg(`SELECT id, status, approved_by FROM golden_exemplars WHERE id = '${exemplarCandId}'`);
   assert.equal(candCheck.length, 1);
@@ -222,7 +251,8 @@ try {
     });
 
     executePg(
-      `INSERT INTO decision_outcomes (id, tenant_id, recommendation_id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, idempotency_key) VALUES ('${outcomeRecord.id}', '${outcomeRecord.tenant_id}', '${outcomeRecord.recommendation_id}', '${outcomeRecord.domain}', '${JSON.stringify(outcomeRecord.proposed_payload)}'::jsonb, '${outcomeRecord.outcome_type}', '${JSON.stringify(outcomeRecord.final_payload)}'::jsonb, '${outcomeRecord.feedback_note}', '${JSON.stringify(outcomeRecord.delta_analysis)}'::jsonb, '${outcomeRecord.idempotency_key}');`
+      `INSERT INTO decision_outcomes (id, tenant_id, recommendation_id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, idempotency_key) VALUES ('${outcomeRecord.id}', '${outcomeRecord.tenant_id}', '${outcomeRecord.recommendation_id}', '${outcomeRecord.domain}', '${JSON.stringify(outcomeRecord.proposed_payload)}'::jsonb, '${outcomeRecord.outcome_type}', '${JSON.stringify(outcomeRecord.final_payload)}'::jsonb, '${outcomeRecord.feedback_note}', '${JSON.stringify(outcomeRecord.delta_analysis)}'::jsonb, '${outcomeRecord.idempotency_key}');`,
+      "postgres"
     );
   }
 
@@ -379,7 +409,8 @@ try {
   });
 
   executePg(
-    `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, author, rating, status, promotion_mode, promotion_score, idempotency_key, approved_by, approved_at) VALUES ('${promotedExemplar.id}', '${promotedExemplar.tenant_id}', '${promotedExemplar.sector}', '${promotedExemplar.objective}', '${promotedExemplar.client_name}', '${promotedExemplar.channel}', '${promotedExemplar.approved_text}', '${promotedExemplar.author}', ${promotedExemplar.rating}, '${promotedExemplar.status}', '${promotedExemplar.promotion_mode}', ${promotedExemplar.promotion_score}, '${promotedExemplar.idempotency_key}', '${promotedExemplar.approved_by}', NOW());`
+    `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, author, rating, status, promotion_mode, promotion_score, idempotency_key, approved_by, approved_at) VALUES ('${promotedExemplar.id}', '${promotedExemplar.tenant_id}', '${promotedExemplar.sector}', '${promotedExemplar.objective}', '${promotedExemplar.client_name}', '${promotedExemplar.channel}', '${promotedExemplar.approved_text}', '${promotedExemplar.author}', ${promotedExemplar.rating}, '${promotedExemplar.status}', '${promotedExemplar.promotion_mode}', ${promotedExemplar.promotion_score}, '${promotedExemplar.idempotency_key}', '${promotedExemplar.approved_by}', NOW());`,
+    "postgres"
   );
 
   const dbExemplars = queryPg(`SELECT * FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}'`);
@@ -425,7 +456,8 @@ try {
   });
 
   executePg(
-    `INSERT INTO negative_memory (id, tenant_id, target_entity, vetoed_topic, forbidden_action, reason, status, promotion_mode, promotion_score, idempotency_key, approved_by, approved_at) VALUES ('${promotedVeto.id}', '${promotedVeto.tenant_id}', '${promotedVeto.target_entity}', '${promotedVeto.vetoed_topic}', '${promotedVeto.forbidden_action}', '${promotedVeto.reason}', '${promotedVeto.status}', '${promotedVeto.promotion_mode}', ${promotedVeto.promotion_score}, '${promotedVeto.idempotency_key}', '${promotedVeto.approved_by}', NOW());`
+    `INSERT INTO negative_memory (id, tenant_id, target_entity, vetoed_topic, forbidden_action, reason, status, promotion_mode, promotion_score, idempotency_key, approved_by, approved_at) VALUES ('${promotedVeto.id}', '${promotedVeto.tenant_id}', '${promotedVeto.target_entity}', '${promotedVeto.vetoed_topic}', '${promotedVeto.forbidden_action}', '${promotedVeto.reason}', '${promotedVeto.status}', '${promotedVeto.promotion_mode}', ${promotedVeto.promotion_score}, '${promotedVeto.idempotency_key}', '${promotedVeto.approved_by}', NOW());`,
+    "postgres"
   );
 
   const dbVetoes = queryPg(`SELECT * FROM negative_memory WHERE tenant_id = '${TEST_TENANT}'`);

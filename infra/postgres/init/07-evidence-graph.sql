@@ -1,3 +1,5 @@
+\connect visao360;
+
 CREATE TABLE IF NOT EXISTS evidence_nodes (
   node_id UUID PRIMARY KEY,
   tenant_id TEXT NOT NULL,

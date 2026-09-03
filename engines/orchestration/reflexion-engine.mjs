@@ -116,13 +116,8 @@ export function runWeeklyReflexion({
         valid_days: 90
       });
 
-      // 2. Avalia com Learning Engine determinístico
+      // 2. Avalia com Learning Engine determinístico (nunca fabrica evento soberano de Rafael em memória)
       const hasExplicit = pattern.feedbackNotes.length > 0;
-      const ownerEvent = hasExplicit ? {
-        owner_id: 'rafael',
-        source_event_id: `outcome-${pattern.outcomes[0]?.id || 'seed'}`,
-        event_hash: createHash('sha256').update(pattern.feedbackNotes.join('|')).digest('hex')
-      } : null;
 
       const evalResult = evaluateCandidateRule({
         rule: candidate,
@@ -131,7 +126,7 @@ export function runWeeklyReflexion({
         observedOutcome: 0.85,
         explicitFeedback: hasExplicit ? 1.8 : 1.0,
         sampleSize: tenantOutcomes.length,
-        ownerEvent
+        ownerEvent: null
       });
 
       candidate.promotion_score = evalResult.score;

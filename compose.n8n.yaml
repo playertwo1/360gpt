@@ -189,6 +189,15 @@ services:
       start_period: 10s
     networks: [frontend]
 
+  cloudflared:
+    profiles: ["tunnel"]
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run --token ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    environment:
+      CLOUDFLARE_TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    networks: [frontend]
+
 volumes:
   postgres_data:
   n8n_data:
