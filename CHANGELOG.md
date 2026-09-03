@@ -1,5 +1,32 @@
 # Changelog
 
+### Remediation & Verification — Gates A0 e N2.3 Remediados para Reauditoria Codex (02/09/2026)
+
+- Executados integralmente os Blocos 0 a 7 especificados em `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md`:
+  * **Bloco 0 (Contenção)**: Backups verificáveis de `n8n` e `visao360`; WF-104 desativado no banco n8n.
+  * **Bloco 1 (Reabertura Formal)**: Gates A0 e N2.3 marcados como `REOPENED` nos documentos mestres.
+  * **Bloco 2 (Cutover A0 Real)**:
+    - Endpoint `app/api/ingest/telegram/route.ts` purgado de lógica de negócio (`handleClarificationReply`, `handleTelegramCommand`, `handleConversationalText`) e transformado em gateway estrito de transporte técnico, enfileirando em `telegram_inbound_events`.
+    - As 16 rotas de ponte em `app/api/bridge/*` arquivadas em `legacy/bridge/` e excluídas do build (`npm run build` compila com 0 rotas bridge).
+    - `scripts/test-n8n-canonical-architecture.mjs` reescrito com análise estrutural real do código de entrada e ausência física das rotas de ponte.
+  * **Bloco 3 (Persistência Versionada N2.3)**:
+    - Criada a migration `infra/postgres/init/09-flywheel-learning.sql` e aplicada no PostgreSQL `visao360`, criando `promoted_knowledge`, `golden_exemplars`, `decision_outcomes`, `negative_memory` e `flywheel_audit_events` com constraints estritas de integridade.
+  * **Bloco 4 (Refatoração dos Cinco Motores)**:
+    - `semantic-memory-engine.mjs`: Padrão obrigatório `CANDIDATE`; proibida auto-promoção; promoção exige autorização soberana de Rafael (`promoteSemanticRule`).
+    - `golden-exemplars-engine.mjs`: PII e dados de clientes reais removidos do código JS; fallback genérico cego eliminado (busca sem match retorna `null`).
+    - `decision-utility-engine.mjs`: DUR desvinculado de `model_confidence`; tratamento de conjunto vazio/amostra insuficiente (< 5) retornando `NOT_ENOUGH_DATA`.
+    - `reflexion-engine.mjs`: Ciclo semanal sintetiza estritamente `CANDIDATE` com base em recorrência $\ge 2$ ou correções expressas de Rafael.
+    - `negative-memory-engine.mjs`: Ciclo de vida completo (`CANDIDATE`, `ACTIVE`, `SUPERSEDED`, `REVOKED`, `EXPIRED`), normalização e integração com Evidence Graph.
+  * **Bloco 5 (Reimplementação do WF-104)**:
+    - Reescrito com nó PostgreSQL real consultando `decision_outcomes`, cálculo determinístico de DUR, tratamento de amostra insuficiente e formatação de card com IDs reais para `/aprovardiretriz <id>`. Workflow reimportado no n8n Docker.
+  * **Bloco 6 (Bateria E2E Real contra PostgreSQL)**:
+    - Criado `tests/flywheel-learning-postgres-integration.test.mjs` testando 10 cenários de ponta a ponta contra o banco real no Docker, com zero mocks em memória (10/10 PASS).
+  * **Bloco 7 (Documentação e Threat Model)**:
+    - Criado `security/THREAT_MODEL.md` cobrindo injeção de contexto por memória, poluição de base de feedback e impersonação de autorização soberana.
+    - Criado `docs/audits/RESPOSTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` com respostas completas às 20 perguntas obrigatórias e aos 27 achados da auditoria.
+    - Suíte `npm test` (`test:p0`, `test:local-core`, `test:flywheel`) passando com 100% de sucesso.
+
+
 ### Complete & Homologated — Marco N2.3: Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente (02/09/2026)
 - **Marco N2.3 Concluído e Homologado (Gate N2.3 PASS):**
   * **N2.3.1 (Memória Semântica Desacoplada)**: Criada tabela `promoted_knowledge` no PostgreSQL `visao360` e motor `engines/knowledge/semantic-memory-engine.mjs`. System Prompts permanecem 100% imutáveis no Git; heurísticas aprendidas persistem como dados no Postgres e são injetadas dinamicamente via *Context Packet* por escopo (`GLOBAL`, `ACCOUNT`, `INDICATOR`) com controle de validade (`valid_to`) e *Memory Decay*.

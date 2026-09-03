@@ -66,3 +66,19 @@ export function canonicalize(value: unknown): unknown {
     .sort(([left], [right]) => left.localeCompare(right)).map(([key, entry]) => [key, canonicalize(entry)]));
   return value;
 }
+
+export class RequestError extends Error {
+  constructor(public readonly code: string, public readonly status: number) { super(code); }
+}
+
+export async function readBoundedJson(request: Request, limit = 2 * 1024 * 1024) {
+  const contentType = request.headers.get('content-type')?.toLowerCase() ?? '';
+  const declaredLength = Number(request.headers.get('content-length') ?? 0);
+  if (!contentType.includes('application/json')) throw new RequestError('invalid_content_type', 415);
+  if (Number.isFinite(declaredLength) && declaredLength > limit) throw new RequestError('request_too_large', 413);
+  const bytes = await request.arrayBuffer();
+  if (!bytes.byteLength || bytes.byteLength > limit) throw new RequestError('invalid_request_size', bytes.byteLength > limit ? 413 : 400);
+  try { return JSON.parse(new TextDecoder().decode(bytes)) as unknown; }
+  catch { throw new RequestError('invalid_json', 400); }
+}
+

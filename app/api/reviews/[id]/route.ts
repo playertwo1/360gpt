@@ -1,7 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
-import { bounded, isDenied, OPEN_REVIEW_STATUSES, requireReviewer, type ReviewRequestRow } from '../shared';
-import { readBoundedJson } from '../../bridge/shared';
+import { bounded, isDenied, OPEN_REVIEW_STATUSES, readBoundedJson, requireReviewer, type ReviewRequestRow } from '../shared';
 
 export const runtime = 'edge';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

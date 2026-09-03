@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026, 20:40 (America/Sao_Paulo)
+**Data do status:** 2 de setembro de 2026 — atualizado após auditoria independente do commit `940c38b`
 **Versão Atual da Release:** `v5.3.0-gate-a0-and-flywheel-roadmap`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Marcos N0 a N13 + Marco N2.3)  
 **Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
-**Saúde do Projeto:** 🟢 **PILOTO EM CAMPO ATIVO | GATE A0 CONCLUÍDO | MARCO N2.3 APROVADO**
+**Saúde do Projeto:** 🔴 **REMEDIAÇÃO NECESSÁRIA | GATES A0 E N2.3 REABERTOS PARA CORREÇÃO E REAUDITORIA**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -13,14 +13,16 @@
 
 > Este arquivo é um relatório humano de status, não uma fila de tarefas. Toda sequência, checklist e próximo passo oficial residem exclusivamente em `ROADMAP.md` e `docs/ONDE_ESTAMOS_E_PROXIMOS_PASSOS.md`.
 
+> **AVISO DE AUDITORIA VIGENTE:** a auditoria independente `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md` encontrou 27 divergências entre documentação, código, testes, PostgreSQL e runtime n8n. Até a remediação e nova auditoria, as expressões “Gate A0 concluído”, “zero violações” e “Gate N2.3 homologado” abaixo devem ser lidas apenas como reivindicações históricas, não como estado operacional validado.
+
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** Gate A0 (Cutover Canônico e Aposentadoria de Exceções Legadas) homologado em 02/09/2026 com status `CANONICAL_LOCAL_ACTIVE` e `legacyExceptions: 0`.
+**Último marco concluído:** auditoria independente dos Gates A0 e N2.3 no commit `940c38b`; resultado `REPROVADO PARA HOMOLOGAÇÃO`.
 **Marco comercial ativo:** Briefing Matinal Proativo (`WF-102`) agendado às 08h30 e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`), testados e entregues com HTTP 200 no Telegram de Rafael.
-**Próximo marco aprovado:** Marco N2.3 (Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente — Fases N2.3.1 a N2.3.5).
-**Próxima tarefa:** Fase N2.3.1 (Camada de Memória Semântica Desacoplada no PostgreSQL `visao360`).
+**Próximo marco:** remediação auditável dos Gates A0 e N2.3.
+**Próxima tarefa:** executar o Bloco 0 do dossiê de auditoria, preservando backup e impedindo o uso operacional do WF-104 hard-coded.
 
 **Decisão arquitetural vigente:** O n8n local no Docker é a autoridade operacional exclusiva, operando com 28 workflows ativos. O PostgreSQL local `visao360` é a fonte oficial de dados, carteira e Estado 360. Todos os componentes legados fora do n8n foram aposentados ou reduzidos a transporte puro.
 

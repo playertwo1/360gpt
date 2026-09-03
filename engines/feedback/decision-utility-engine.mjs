@@ -1,8 +1,15 @@
 /**
  * engines/feedback/decision-utility-engine.mjs
  * Marco N2.3.3 — O Triângulo de Feedback e Matriz de Desfecho (Decision Utility Engine)
- * Rastreia a taxa de aceitação real das propostas da IA e calibra a confiança.
+ * Rastreia a taxa de aceitação e utilidade das propostas da IA para o usuário.
+ * 
+ * Governança N23-10 / N23-11:
+ * - O DUR (Decision Utility Rate) é uma métrica de experiência e preferência do usuário (UX/Relevância).
+ * - DUR NUNCA altera a confiança factual de cálculos ou autorizações regulatórias (model_confidence).
+ * - Conjuntos vazios ou inferiores à amostra mínima retornam NOT_ENOUGH_DATA e taxa null.
  */
+
+import { randomUUID } from "node:crypto";
 
 export const OUTCOME_TYPES = {
   ACEITO_INTEGRAL: "ACEITO_INTEGRAL",
@@ -10,36 +17,52 @@ export const OUTCOME_TYPES = {
   RECUSADO_COM_MOTIVO: "RECUSADO_COM_MOTIVO"
 };
 
+export const MIN_OUTCOME_SAMPLE_SIZE = 5;
+
 /**
  * Registra o desfecho de uma proposta e calcula o delta se houver edição.
  */
 export function recordDecisionOutcome({
+  tenant_id = "default",
   recommendation_id,
   domain = "RELACIONAMENTO",
-  proposed_text,
+  proposed_payload,
   outcome_type = OUTCOME_TYPES.ACEITO_INTEGRAL,
-  final_text = null,
-  feedback_note = ""
+  final_payload = null,
+  feedback_note = "",
+  evidence_node_id = null
 }) {
-  const delta = computeTextDelta(proposed_text, final_text, outcome_type);
+  if (!recommendation_id) {
+    throw new Error("recommendation_id obrigatório");
+  }
+
+  const propText = typeof proposed_payload === "string" ? proposed_payload : JSON.stringify(proposed_payload);
+  const finText = final_payload ? (typeof final_payload === "string" ? final_payload : JSON.stringify(final_payload)) : propText;
+
+  const delta = computeLexicalDelta(propText, finText, outcome_type);
+  const id = randomUUID();
+  const idempotency_key = `do:${tenant_id}:${recommendation_id}:${outcome_type}:${hashString(propText)}`;
 
   return {
-    id: `outcome-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    id,
+    tenant_id,
     recommendation_id,
     domain,
-    proposed_text,
+    proposed_payload: typeof proposed_payload === "object" ? proposed_payload : { text: propText },
     outcome_type,
-    final_text: final_text || proposed_text,
-    feedback_note,
+    final_payload: typeof final_payload === "object" ? final_payload : { text: finText },
+    feedback_note: String(feedback_note || "").trim(),
     delta_analysis: delta,
+    evidence_node_id,
+    idempotency_key,
     created_at: new Date().toISOString()
   };
 }
 
 /**
- * Calcula a diferença (Delta) entre o que a IA propôs e o que Rafael enviou.
+ * Calcula a diferença léxica (Delta) entre o que a IA propôs e o que Rafael enviou (N23-11).
  */
-export function computeTextDelta(proposed, final, outcomeType) {
+export function computeLexicalDelta(proposed, final, outcomeType) {
   if (outcomeType === OUTCOME_TYPES.RECUSADO_COM_MOTIVO) {
     return {
       has_changes: true,
@@ -56,8 +79,8 @@ export function computeTextDelta(proposed, final, outcomeType) {
     };
   }
 
-  const pWords = proposed.split(/\s+/);
-  const fWords = final.split(/\s+/);
+  const pWords = String(proposed).split(/\s+/).filter(Boolean);
+  const fWords = String(final).split(/\s+/).filter(Boolean);
   const lengthDiff = fWords.length - pWords.length;
 
   let edit_type = "MINOR_TWEAK";
@@ -80,18 +103,47 @@ export function computeTextDelta(proposed, final, outcomeType) {
 
 /**
  * Calcula a métrica Decision Utility Rate (DUR).
- * Meta do Roadmap: >= 85%.
+ * Governança N23-11:
+ * - Se outcomes estiver vazio ou for menor que a amostra mínima, retorna status 'NOT_ENOUGH_DATA'.
+ * - Meta do Roadmap: >= 85%.
  */
-export function calculateDecisionUtilityRate(outcomes = []) {
-  if (outcomes.length === 0) {
+export function calculateDecisionUtilityRate(outcomes = [], minSample = MIN_OUTCOME_SAMPLE_SIZE) {
+  if (!Array.isArray(outcomes) || outcomes.length === 0) {
     return {
+      status: "NOT_ENOUGH_DATA",
       total: 0,
-      utility_rate_pct: 100.0,
-      meets_target: true,
+      utility_rate_pct: null,
+      meets_target: false,
+      reason: "Nenhum desfecho registrado",
       breakdown: { accepted: 0, edited: 0, rejected: 0 }
     };
   }
 
+  if (outcomes.length < minSample) {
+    return {
+      status: "NOT_ENOUGH_DATA",
+      total: outcomes.length,
+      utility_rate_pct: null,
+      meets_target: false,
+      reason: `Amostra insuficiente (${outcomes.length}/${minSample} mínimo)`,
+      breakdown: countOutcomes(outcomes)
+    };
+  }
+
+  const breakdown = countOutcomes(outcomes);
+  const usefulCount = breakdown.accepted + breakdown.edited;
+  const rate = (usefulCount / outcomes.length) * 100;
+
+  return {
+    status: "SUFFICIENT_SAMPLE",
+    total: outcomes.length,
+    utility_rate_pct: Number(rate.toFixed(2)),
+    meets_target: rate >= 85.0,
+    breakdown
+  };
+}
+
+function countOutcomes(outcomes) {
   let accepted = 0;
   let edited = 0;
   let rejected = 0;
@@ -102,35 +154,14 @@ export function calculateDecisionUtilityRate(outcomes = []) {
     else if (o.outcome_type === OUTCOME_TYPES.RECUSADO_COM_MOTIVO) rejected++;
   }
 
-  const usefulCount = accepted + edited;
-  const rate = (usefulCount / outcomes.length) * 100;
-
-  return {
-    total: outcomes.length,
-    utility_rate_pct: Number(rate.toFixed(2)),
-    meets_target: rate >= 85.0,
-    breakdown: { accepted, edited, rejected }
-  };
+  return { accepted, edited, rejected };
 }
 
-/**
- * Calibra a confiança (confidence_score) com base no histórico de aceitação.
- */
-export function calibrateConfidenceScore({
-  baseConfidence = 0.80,
-  historicalOutcomes = []
-}) {
-  if (historicalOutcomes.length === 0) return baseConfidence;
-
-  const { utility_rate_pct, total } = calculateDecisionUtilityRate(historicalOutcomes);
-
-  if (total < 3) return baseConfidence;
-
-  if (utility_rate_pct >= 90.0) {
-    return Math.min(1.0, Number((baseConfidence + 0.15).toFixed(2)));
-  } else if (utility_rate_pct < 70.0) {
-    return Math.max(0.40, Number((baseConfidence - 0.25).toFixed(2)));
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
   }
-
-  return baseConfidence;
+  return Math.abs(hash).toString(16);
 }

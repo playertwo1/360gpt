@@ -1,7 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
-import { readBoundedJson } from '../../../bridge/shared';
-import { bounded, hashCanonical, isDenied, NEXT_ACTIONS, parseJsonArray, parseJsonObject, requireReviewer, REVIEW_DECISIONS, type ReviewRequestRow } from '../../shared';
+import { bounded, hashCanonical, isDenied, NEXT_ACTIONS, parseJsonArray, parseJsonObject, readBoundedJson, requireReviewer, REVIEW_DECISIONS, type ReviewRequestRow } from '../../shared';
 import { createEvidenceEdge, createEvidenceNode, prepareEvidenceEdgeInsert, prepareEvidenceNodeInsert } from '../../../evidence/shared';
 
 export const runtime = 'edge';

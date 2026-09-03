@@ -1,4 +1,5 @@
 {
+  "id": "9eb8e86a-84b8-4aa9-97e4-360000000104",
   "name": "WF-104 — Reflexion Engine Semanal 360",
   "nodes": [
     {
@@ -7,7 +8,7 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "0 21 * * 5"
+              "expression": "0 18 * * 5"
             }
           ]
         }
@@ -16,7 +17,7 @@
       "name": "01 Disparo Sexta-feira 18h00",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-400, 0]
+      "position": [-460, -40]
     },
     {
       "parameters": {
@@ -29,19 +30,36 @@
       "name": "01 Disparo manual webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-400, 160],
+      "position": [-460, 140],
       "webhookId": "d360-reflexion-trigger-v1"
     },
     {
       "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, created_at FROM decision_outcomes WHERE created_at >= NOW() - INTERVAL '7 days' ORDER BY created_at ASC;"
+      },
+      "id": "fetch-outcomes",
+      "name": "02 Consultar Desfechos da Semana",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-220, 40],
+      "credentials": {
+        "postgres": {
+          "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
+          "name": "Visao 360 App DB"
+        }
+      }
+    },
+    {
+      "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const text = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n`📅 <i>Fechamento Semanal</i>\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n`📊 <b>Métricas de Assertividade da IA:</b>\\n` +\n`• <b>Propostas Apresentadas:</b> 10\\n` +\n`• <b>Aceitas / Úteis:</b> 9 (90.0% de utilidade)\\n` +\n`• <b>Ajustadas por Você:</b> 2\\n` +\n`• <b>Recusadas:</b> 1\\n` +\n`• <b>Status da Meta (DUR ≥ 85%):</b> 🟢 <b>META BATIDA</b>\\n\\n` +\n`💡 <b>Lições Candidatas a Promoção:</b>\\n` +\n`1. <b>Priorizar WhatsApp da Renata após 15h na Forja Sul</b> (Observado 2x) — <code>/aprovardiretriz 1</code>\\n` +\n`2. <b>Dr. Arnaldo valoriza reunião presencial às terças</b> (Observado 2x) — <code>/aprovardiretriz 2</code>\\n\\n` +\n`━━━━━━━━━━━━━━━━━━━━━━━━━━\\n` +\n`👉 <i>Para promover todas as lições acima como regras ativas, envie:</i> <code>/aprovar_todas</code>`;\n\nreturn [{ json: { chat_id: 5281600644, text } }];"
+        "jsCode": "const items = $input.all();\nconst outcomes = items.map(i => i.json).filter(j => j && j.id);\nconst total = outcomes.length;\nconst minSample = 5;\nconst nowIso = new Date().toISOString().slice(0, 10);\n\nif (total < minSample) {\n  const card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n    `📅 <i>Semana: ${nowIso}</i>\\n\\n` +\n    `• <b>Amostra insuficiente na semana:</b> ${total} registros observados (Mínimo: ${minSample}).\\n` +\n    `• Nenhuma diretriz foi inferida automaticamente para preservar a integridade das decisões.\\n` +\n    `• O motor continuará acumulando desfechos para o próximo ciclo.`;\n  return [{ json: { chat_id: 5281600644, text: card, insufficient: true, total } }];\n}\n\nlet accepted = 0;\nlet edited = 0;\nlet rejected = 0;\nconst patterns = {};\n\nfor (const o of outcomes) {\n  if (o.outcome_type === 'ACEITO_INTEGRAL') accepted++;\n  else if (o.outcome_type === 'EDITADO_POR_RAFAEL') {\n    edited++;\n    const key = `${o.domain || 'GERAL'}:${o.delta_analysis?.edit_type || 'MODIFICADO'}`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n  else if (o.outcome_type === 'RECUSADO_COM_MOTIVO') {\n    rejected++;\n    const key = `${o.domain || 'GERAL'}:REJEITADO`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n}\n\nconst useful = accepted + edited;\nconst durPct = ((useful / total) * 100).toFixed(1);\nconst targetMet = durPct >= 85.0;\nconst statusIcon = targetMet ? '🟢 <b>META BATIDA</b>' : '🟡 <b>ABAIXO DA META</b>';\n\nconst candidates = [];\nfor (const [key, count] of Object.entries(patterns)) {\n  if (count >= 2) {\n    const [dom, type] = key.split(':');\n    const candidateId = Math.random().toString(36).substring(2, 10);\n    let rule = `Ajustar propostas em ${dom} conforme preferências de Rafael.`;\n    if (type === 'MADE_MORE_CONCISE') rule = `Em ${dom}, gerar propostas mais concisas e objetivas.`;\n    else if (type === 'EXPANDED_DETAILS') rule = `Em ${dom}, detalhar os impactos operacionais antes do envio.`;\n    else if (type === 'REJEITADO') rule = `Em ${dom}, reavaliar ofertas e argumentos previamente recusados.`;\n    candidates.push({ id: candidateId, rule, count, domain: dom });\n  }\n}\n\nlet card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n  `📅 <i>Semana: ${nowIso}</i>\\n` +\n  `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n  `📊 <b>Métricas de Assertividade da IA:</b>\\n` +\n  `• <b>Total de Propostas:</b> ${total}\\n` +\n  `• <b>Aceitas / Úteis:</b> ${useful} (${durPct}% de utilidade)\\n` +\n  `• <b>Ajustadas por Você:</b> ${edited}\\n` +\n  `• <b>Recusadas:</b> ${rejected}\\n` +\n  `• <b>Status da Meta (DUR ≥ 85%):</b> ${statusIcon}\\n\\n`;\n\nif (candidates.length === 0) {\n  card += `💡 <b>Lições Candidatas:</b> Nenhuma divergência recorrente detectada nesta semana.\\n`;\n} else {\n  card += `💡 <b>Lições Candidatas a Promoção:</b>\\n`;\n  for (let i = 0; i < candidates.length; i++) {\n    const c = candidates[i];\n    card += `${i + 1}. <b>${c.rule}</b> (Detectado ${c.count}x) — <code>/aprovardiretriz ${c.id}</code>\\n`;\n  }\n  card += `\\n👉 <i>Para aprovar todas as diretrizes acima:</i> <code>/aprovar_todas</code>\\n`;\n}\n\ncard += `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n_Nenhuma diretriz opera sem sua aprovação explícita (Governança N2.3)._`;\nreturn [{ json: { chat_id: 5281600644, text: card, insufficient: false, durPct, total, candidates } }];"
       },
       "id": "format-reflexion",
-      "name": "02 Montar Card de Reflexão",
+      "name": "03 Calcular DUR e Montar Card",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-160, 80]
+      "position": [20, 40]
     },
     {
       "parameters": {
@@ -53,14 +71,14 @@
         }
       },
       "id": "send-telegram",
-      "name": "03 Enviar Telegram Rafael",
+      "name": "04 Enviar Telegram Rafael",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [80, 80],
+      "position": [260, 40],
       "credentials": {
         "telegramApi": {
-          "id": "6qf7p2p0x3",
-          "name": "Telegram Bot Diretor 360"
+          "id": "060d46ba-7a46-4cb4-8a47-c0e86b0266fe",
+          "name": "Telegram Rafael Bot"
         }
       }
     }
@@ -70,7 +88,7 @@
       "main": [
         [
           {
-            "node": "02 Montar Card de Reflexão",
+            "node": "02 Consultar Desfechos da Semana",
             "type": "main",
             "index": 0
           }
@@ -81,18 +99,29 @@
       "main": [
         [
           {
-            "node": "02 Montar Card de Reflexão",
+            "node": "02 Consultar Desfechos da Semana",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "02 Montar Card de Reflexão": {
+    "02 Consultar Desfechos da Semana": {
       "main": [
         [
           {
-            "node": "03 Enviar Telegram Rafael",
+            "node": "03 Calcular DUR e Montar Card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "03 Calcular DUR e Montar Card": {
+      "main": [
+        [
+          {
+            "node": "04 Enviar Telegram Rafael",
             "type": "main",
             "index": 0
           }
@@ -100,6 +129,18 @@
       ]
     }
   },
-  "active": true,
-  "id": "9eb8e86a-84b8-4aa9-97e4-360000000104"
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  },
+  "versionId": "d360-wf104-v2",
+  "meta": {
+    "canonical_runtime": "N8N_LOCAL",
+    "governance": "N2.3"
+  },
+  "tags": []
 }

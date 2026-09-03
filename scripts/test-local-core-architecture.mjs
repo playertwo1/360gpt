@@ -29,6 +29,13 @@ for (const table of [
   assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}`));
 }
 
+const flywheelMigration = await readFile(path.join(root, 'infra/postgres/init/09-flywheel-learning.sql'), 'utf8');
+for (const table of [
+  'promoted_knowledge', 'golden_exemplars', 'decision_outcomes', 'negative_memory', 'flywheel_audit_events'
+]) {
+  assert.match(flywheelMigration, new RegExp(`CREATE TABLE ${table}`));
+}
+
 const workflowFiles = (await readdir(path.join(root, 'n8n/workflows'))).filter((name) => name.endsWith('.json'));
 for (const file of workflowFiles) {
   JSON.parse(await readFile(path.join(root, 'n8n/workflows', file), 'utf8'));

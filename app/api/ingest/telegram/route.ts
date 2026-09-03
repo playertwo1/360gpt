@@ -1,6 +1,5 @@
 import { env } from 'cloudflare:workers';
 import { NextResponse } from 'next/server';
-import { handleClarificationReply, handleTelegramCommand, handleConversationalText } from '../../../../lib/telegram-runtime';
 import { sendTelegramText } from '../../../../lib/telegram-messages';
 
 type TelegramDocument = { file_id: string; file_unique_id: string; file_name?: string; mime_type?: string; file_size?: number };
@@ -103,9 +102,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, duplicate: true, protocol: documentId, documentId, updateId, status: reservation.status });
   }
 
-  // Modo assíncrono opcional: persiste texto antes de qualquer LLM e deixa o n8n
-  // consumir a fila. O padrão permanece desligado até o canário ser publicado.
-  if (!document && text && env.TELEGRAM_ASYNC_INTERACTIONS_ENABLED === 'true') {
+  // Modo Canônico Exclusivo (Marco A0): O endpoint atua estritamente como transporte técnico.
+  // Todo texto/comando/resposta é enfileirado para consumo e orquestração exclusiva do n8n.
+  if (!document && text) {
     const bypassDebounce = text.startsWith('/') || Boolean(message.reply_to_message?.message_id);
     const availableAt = bypassDebounce ? receivedAt : receivedAt + 2500;
     const eventId = `telegram-event-${updateId}`;
@@ -117,21 +116,6 @@ export async function POST(request: Request) {
         bypassDebounce ? (text.startsWith('/') ? 'COMMAND' : 'CLARIFICATION_REPLY') : 'TEXT_BATCH', text, JSON.stringify({ update_id: update.update_id, message_id: message.message_id }), batchId, availableAt, receivedAt).run();
     await env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`).bind(Date.now(), updateId).run();
     return NextResponse.json({ ok: true, queued: true, updateId, status: 'QUEUED', availableAt }, { status: 202 });
-  }
-
-  if (!document && text) {
-    try {
-      // Comandos operacionais nunca devem ser consumidos como respostas de
-      // esclarecimento, mesmo quando existe uma pendência ativa.
-      const clarificationHandled = text.startsWith('/') ? false : await handleClarificationReply(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, message.message_id, text, message.reply_to_message?.message_id);
-      const commandHandled = clarificationHandled ? { handled: true, kind: 'clarification' } : await handleTelegramCommand(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
-      const interaction = commandHandled.handled ? commandHandled : await handleConversationalText(env.DB, env.TELEGRAM_BOT_TOKEN ?? '', message.chat.id, ownerId, text);
-      await env.DB.prepare(`UPDATE telegram_updates SET status = 'SUCCEEDED', completed_at = ?, error_code = NULL WHERE update_id = ?`).bind(Date.now(), updateId).run();
-      return NextResponse.json({ ok: true, interaction: interaction.kind ?? 'conversation', updateId, status: 'SUCCEEDED' });
-    } catch {
-      await env.DB.prepare(`UPDATE telegram_updates SET status = 'FAILED_RETRYABLE', error_code = 'interaction_failed' WHERE update_id = ?`).bind(updateId).run();
-      return NextResponse.json({ ok: false, error: 'interaction_failed', retryable: true }, { status: 502 });
-    }
   }
 
   let storageKey: string | null = null;

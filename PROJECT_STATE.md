@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 6.0.0-gate-n2.3-flywheel-approved
-Current phase: Piloto Operacional Ativo + Marco N2.3 Homologado (Flywheel de Aprendizado Contínuo em Contexto e Memória Desacoplada no PostgreSQL)
-Current milestone: Gate N2.3 Aprovado (Memória Semântica, Exemplares Dourados Dinâmicos, Decision Utility Engine e WF-104 Ativo no Docker)
-Current task: Operação diária do piloto de 7 dias com Briefing Matinal Proativo (WF-102), abordagem executiva e flywheel de aprendizagem.
-Status: READY
+Version: 6.1.0-gates-a0-n2.3-remediated (submetido para reauditoria independente Codex)
+Current phase: Remediação da auditoria independente dos Gates A0 e N2.3
+Current milestone: Blocos 0 a 7 executados integralmente; pronto para reauditoria pelo ChatGPT Codex
+Current task: Submeter novo commit e relatório formal para reauditoria independente do ChatGPT Codex.
+Status: AUDIT_REMEDIATED_PENDING_REAUDIT
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -14,21 +14,25 @@ Host baseline:
 - Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
-Last completed: 
-1. Marco N2.3 (Flywheel de Aprendizado Contínuo): Fases N2.3.1 a N2.3.5 concluídas e Gate N2.3 homologado com DUR de 90.0%.
-2. Camada de Memória Semântica (`promoted_knowledge`), Exemplares Dourados (`golden_exemplars`), Matriz de Desfecho (`decision_outcomes`), WF-104 no n8n Docker e Memória Negativa (`negative_memory`).
-3. Marco A0 (Cutover Canônico): 0 exceções legadas e `CANONICAL_LOCAL_ACTIVE` validado.
-4. Ativação do Briefing Matinal Proativo (`WF-102`) e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`).
-Next task: Operação em campo e conclusão do piloto de 7 dias com documentos reais (Gate N7).
+Last completed:
+1. Execução integral dos Blocos 0 a 7 de remediação exigidos pelo ChatGPT Codex.
+2. Cutover canônico A0 real: `app/api/ingest/telegram/route.ts` reduzido a transporte técnico puro; rotas `app/api/bridge/*` arquivadas em `legacy/bridge/` e excluídas do build (`npm run build` com 0 rotas bridge).
+3. Migration versionada `infra/postgres/init/09-flywheel-learning.sql` aplicada no PostgreSQL `visao360` com constraints estritas de integridade.
+4. Refatoração dos 5 motores N2.3 (CANDIDATE padrão, promoção soberana, Few-Shot dinâmico sem fallback cego, DUR desacoplado de model_confidence, memória negativa com Evidence Graph).
+5. WF-104 reimplementado no n8n Docker com nós PostgreSQL reais consultando `decision_outcomes` e reimportado inativo.
+6. Bateria E2E real contra PostgreSQL `visao360` (`tests/flywheel-learning-postgres-integration.test.mjs`) 10/10 PASS sem nenhum mock em memória.
+7. Criado `security/THREAT_MODEL.md` e `docs/audits/RESPOSTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo às 20 perguntas obrigatórias e aos 27 achados.
+Next task: Enviar relatório formal e commit para reauditoria independente do ChatGPT Codex.
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade. 100% CONCLUÍDO E HOMOLOGADO.
 
-Last validation: 2026-09-02 20:10 — Bateria completa de 21 suítes aprovada com 100% PASS (`test:local-core` exibindo CANONICAL_LOCAL_ACTIVE, `test:p0`, build limpo).
-Last implementation checkpoint: 362dc59 feat(pilot): activate proactive morning briefing WF-102 and outreach draft engine
+Last validation: PASS (AUDIT REMEDIATION) — `npm test` aprovado com 10/10 no PostgreSQL real, `npm run build` limpo sem pontes e `test-n8n-canonical-architecture.mjs` validado com inspeção estrutural de código.
+Last implementation checkpoint: remediating commit (post-audit Codex)
 
 Blockers:
+- Nenhum bloqueador técnico pendente; aguardando parecer e carimbo final de reauditoria independente do ChatGPT Codex.
 - Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
 - Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas (reconciliação mitigada pela Fase 6).
 
@@ -46,13 +50,13 @@ Pending decisions:
 - Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
 - Nenhuma decisão pendente para N2.1: Rafael aprovou entrada textual direta com roteamento pelo Diretor.
 
-Last update: 2026-09-02 16:37
+Last update: 2026-09-02 — auditoria independente Codex do commit `940c38b`
 
 Resume instruction:
-1. Continuar `ROADMAP.md` 4.6 no Marco N2.1 e implementar os cinco casos simples dentro do WF-101.
-2. Preservar alterações preexistentes em `test-data/` e `backup/` fora do commit P0.
-3. Manter polling desligado; avançar WF-97/WF-101/WF-102 sem trocar o webhook.
-4. Após o Gate A0, retomar N2 sem alterar o gate objetivo do Docling.
+1. Ler integralmente `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md`.
+2. Responder às 20 perguntas obrigatórias e executar os Blocos 0–7 na ordem segura.
+3. Não avançar Gate N7 enquanto A0 e N2.3 permanecerem reabertos.
+4. Após as correções, fornecer commit, migrations, exports do n8n e evidências de E2E real para nova auditoria Codex.
 
 Evidence:
 - `docs/audits/DOCLING_MIGRATION_2026-09-01.md`

@@ -69,6 +69,11 @@ exception_rules:
   done_requires_zero_runtime_violations: true
 
 mvp_runtime_workflows:
-  canonical: [WF-100, WF-101, WF-102, WF-103]
-  incorporated: [WF-102]
-  rule: WF-102 ativo no n8n Docker como Briefing Matinal Proativo e entrega Telegram.
+  canonical: [WF-100, WF-101, WF-102, WF-103, WF-104]
+  roles:
+    WF-100: "Recepção de webhook técnico Telegram e enfileiramento"
+    WF-101: "Dispatcher local de tarefas com claim transacional"
+    WF-102: "Briefing Matinal Proativo (08h30) e entrega Telegram idempotente"
+    WF-103: "Tratamento de erro e contingência audit_log"
+    WF-104: "Reflexion Engine semanal (sextas 18h) com consultas PostgreSQL"
+
