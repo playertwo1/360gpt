@@ -1,7 +1,7 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.3
+**Versão:** 2.4
 **Status:** APPROVED_DESIGN — implementação e homologação pendentes
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
@@ -19,6 +19,18 @@ O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada 
 ---
 
 ## Changelog
+
+### v2.5 — Quinta Remediação: Gates N7/N7A — Lockdown Transacional e Validação Soberana
+
+- Migrations 13–16 aplicadas ao PostgreSQL (Gates N7 e N7A).
+- Migration 15 implementa funções transacionais seguras (`insert_structured_memory`, `activate_structured_memory`, `insert_flywheel_audit_event`, `insert_golden_exemplar`) com bloqueio de memória global inferida via `SECURITY DEFINER`.
+- Migration 16 implementa `validate_rafael_approval_event` (evento real do Telegram, hash recomputado, uso único), `approve_promotion_by_rafael` e tabela `system_flags` com semântica fail-closed.
+- `learning-engine.mjs` exporta `isAuthenticatedRafaelApproval` delegando validação ao PostgreSQL.
+- `reflexion-engine.mjs` exporta `findRealRafaelApprovalEvent` consultando tabela real de eventos.
+- WF-101 nó 09 corrigido para não marcar DOCUMENT/IMAGE como `COMPLETED` prematuramente.
+- `update-wf-101.mjs` corrigido: dados POBJ dinâmicos via `state_snapshots`, fatos confirmados via `inserted_fact_id`, secret por variável de ambiente.
+- `state_snapshots` substituiu definitivamente `daily_snapshots` em todo o sistema.
+- Suíte de testes expandida para 56/56 suítes (`npm test: PASS, exit 0`).
 
 ### v2.4 — Quarta Remediação: AUTO Restrito a Preferências Estruturadas e Menor Privilégio
 

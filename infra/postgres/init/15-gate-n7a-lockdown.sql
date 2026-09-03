@@ -186,8 +186,8 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.insert_structured_memory(text,text,text,text,text,jsonb,text,numeric,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.insert_structured_memory(text,text,text,text,text,jsonb,text,numeric,text) TO visao360_app;
+REVOKE ALL ON FUNCTION public.insert_structured_memory(text,text,text,text,text,jsonb,text,numeric) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.insert_structured_memory(text,text,text,text,text,jsonb,text,numeric) TO visao360_app;
 
 CREATE OR REPLACE FUNCTION public.activate_structured_memory(
   p_id               uuid,
@@ -222,8 +222,8 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.activate_structured_memory(uuid,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.activate_structured_memory(uuid,text) TO visao360_app;
+REVOKE ALL ON FUNCTION public.activate_structured_memory(uuid,uuid,text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.activate_structured_memory(uuid,uuid,text) TO visao360_app;
 
 -- ----------------------------------------------------------------------------
 -- ITEM 4 — Funções transacionais para flywheel_audit_events e golden_exemplars
@@ -270,8 +270,8 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.insert_flywheel_audit_event(text,text,text,uuid,text,jsonb,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.insert_flywheel_audit_event(text,text,text,uuid,text,jsonb,text) TO visao360_app;
+REVOKE ALL ON FUNCTION public.insert_flywheel_audit_event(text,jsonb,text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.insert_flywheel_audit_event(text,jsonb,text) TO visao360_app;
 
 CREATE OR REPLACE FUNCTION public.insert_golden_exemplar(
   p_tenant_id    text,
@@ -310,7 +310,7 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.insert_golden_exemplar(text,text,text,text,text,text,text,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.insert_golden_exemplar(text,text,text,text,text,text,text,text) TO visao360_app;
+REVOKE ALL ON FUNCTION public.insert_golden_exemplar(uuid,text,text,jsonb) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.insert_golden_exemplar(uuid,text,text,jsonb) TO visao360_app;
 
 COMMIT;

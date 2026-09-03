@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const wfPath = 'n8n/workflows/wf-101-local-dispatcher.json';
 const wf = JSON.parse(fs.readFileSync(wfPath, 'utf8'));
 
-const TRANSPORT_SECRET = '4075337d793cdb7fdf51fd3383918e232de65f81822ef8c74530e6b58c862cd8';
+const TRANSPORT_SECRET = process.env.INTERNAL_TRANSPORT_SECRET || '';
 
 // 1. Atualizar nó 04: Persistir conversa antes de interpretar
 const node04 = wf.nodes.find(n => n.name === '04 Persistir conversa antes de interpretar');
@@ -173,7 +173,7 @@ if (x.route === 'DOCUMENT') {
       \`• <b>Blocos de Texto:</b> <code>\${textCount}</code>\\n\` +
       \`• <b>Qualidade OCR:</b> <code>\${ocrScore.toFixed(1)}%</code>\\n\` +
       '• <b>Motor:</b> Docling TableFormer CPU + RapidOCR\\n\\n' +
-      '✅ <i>Os indicadores oficiais da agência 6895 foram consolidados e persistidos na base visao360.</i>';
+      '✅ <i>Extração concluída e enviada ao pipeline de validação. A consolidação definitiva ocorre após validação de integridade.</i>';
 
     return [{ json: { ...x, text: replyText, document_processed: true } }];
   } catch (err) {
@@ -181,7 +181,7 @@ if (x.route === 'DOCUMENT') {
       \`• <b>Protocolo:</b> <code>\${docId}</code>\\n\` +
       \`• <b>Arquivo:</b> <code>\${fileName}</code>\\n\` +
       '• <b>Status:</b> <code>RECEBIDO_FILA_LOCAL</code>\\n' +
-      '• <b>Nota:</b> Enfileirado para extração assíncrona pelo Docling.\\n\\n' +
+      '• <b>Nota:</b> Houve um erro ao processar — nenhum dado foi consolidado. Vou precisar da sua confirmação para prosseguir.\\n\\n' +
       '<i>Os dados serão confrontados deterministicamente com as metas oficiais.</i>';
     return [{ json: { ...x, text: replyText } }];
   }
@@ -334,18 +334,38 @@ if (isCorrection) {
     '• <b>Auditoria:</b> O valor anterior permanece no histórico para rastreabilidade; os recálculos subsequentes utilizarão esta versão corrigida.\\n\\n' +
     'Estado 360 atualizado conforme autorização soberana de Rafael.';
 } else if (normalized.includes('como esta') || normalized.includes('pobj')) {
-  replyText =
-    '📊 <b>Posição Consolidada POBJ — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
-    '• <b>Pontuação Atual:</b> <code>76,70 pontos</code>\\n' +
-    '• <b>Status:</b> CONSOLIDADO (Competência Agosto/2026)\\n\\n' +
-    'Envie /pobj para ver o detalhamento ou envie novo PDF a qualquer momento.';
+  const snap = x.latest_snapshot;
+  if (snap && snap.pobj_score !== null && snap.pobj_score !== undefined) {
+    const scoreStr = Number(snap.pobj_score).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const competence = snap.competence || snap.competencia || 'Competência Atual';
+    replyText =
+      `📊 <b>Posição Consolidada POBJ — Agência 6895 (VJ-São Fidélis)</b>\\n\\n` +
+      `• <b>Pontuação Atual:</b> <code>${scoreStr} pontos</code>\\n` +
+      `• <b>Competência:</b> ${competence}\\n` +
+      '• <b>Status:</b> CONSOLIDADO no Estado 360\\n\\n' +
+      'Envie /pobj para ver o detalhamento ou envie novo PDF a qualquer momento.';
+  } else {
+    replyText =
+      '📊 <b>Posição Consolidada POBJ</b>\\n\\n' +
+      '⚠️ <i>Ainda não há dados consolidados para a sua agência na competência atual.</i>\\n\\n' +
+      'Envie o PDF do seu relatório oficial POBJ para consolidação automática.';
+  }
 } else if (hasFactVal || normalized.includes('abri') || normalized.includes('liberei')) {
-  replyText =
-    '✅ <b>Informação Registrada (Fonte: Rafael)</b>\\n\\n' +
-    \`• <b>Fato Informado:</b> \"\${textContent}\" registrado com proveniência <code>OWNER_PROVIDED</code>.\\n\` +
-    '• <b>Domínios Consultados:</b> Performance e Conta.\\n' +
-    '• <b>Rastreabilidade:</b> O fato foi registrado e será integrado ao próximo ciclo de consolidação.\\n\\n' +
-    '💡 <i>Envie o PDF do POBJ para confrontar este fato com as metas oficiais da agência.</i>';
+  if (x.inserted_fact_id) {
+    replyText =
+      '✅ <b>Informação Registrada (Fonte: Rafael)</b>\\n\\n' +
+      `• <b>Fato Informado:</b> "${textContent}"\\n` +
+      `• <b>ID do Registro:</b> <code>${x.inserted_fact_id}</code>\\n` +
+      '• <b>Proveniência:</b> <code>OWNER_PROVIDED</code> (Memória Estruturada)\\n' +
+      '• <b>Persistência:</b> Confirmada no PostgreSQL visao360.\\n\\n' +
+      '💡 <i>Envie o PDF do POBJ para confrontar este fato com as metas oficiais da agência.</i>';
+  } else {
+    replyText =
+      '⚠️ <b>Fato Recebido</b>\\n\\n' +
+      `• <b>Mensagem:</b> "${textContent}"\\n` +
+      '• <b>Status:</b> Não foi possível confirmar a persistência neste momento.\\n\\n' +
+      'Por favor, tente novamente ou envie o PDF do POBJ oficial.';
+  }
 } else {
   replyText =
     '👋 Olá, Rafael! Recebi sua mensagem.\\n\\n' +

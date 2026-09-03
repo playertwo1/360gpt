@@ -1,12 +1,12 @@
 # PROJECT STATE
 
-> ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7 BLOCKED aguardando parecer final do auditor independente ChatGPT Codex.
+> ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7A BLOCKED aguardando parecer final da reauditoria independente.
 
-Version: 6.3.0-gates-a0-n2.3-quarta-remediacao
-Current phase: Quarta remediação concluída — submetida para reauditoria independente
-Current milestone: Q8 — sincronização de governança, dossiê formal e reauditoria Codex
+Version: 7.0.0-gate-n7a-quinta-remediacao
+Current phase: Quinta remediação — Gate N7/N7A — remediação concluída, aguardando reauditoria
+Current milestone: Q9 — Gate N7A lockdown e reauditoria
 Current task: Submeter dossiê `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` para apreciação do auditor independente ChatGPT Codex
-Status: REMEDIATION_COMPLETED_PENDING_AUDIT
+Status: QUINTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
 
 ## Host baseline
 
@@ -26,12 +26,13 @@ Status: REMEDIATION_COMPLETED_PENDING_AUDIT
 7. **Bloco Q6 (AUTO Seguro e Preferências Estruturadas):** `learning-engine.mjs` restringe modo `AUTO` a preferências estruturadas enumeradas em catálogo fechado (`RESPONSE_LENGTH`, `TABLE_PREFERENCE`, `TONE`, `SECTION_ORDER`). Templates versionados aplicados. Texto livre no modo `AUTO` 100% erradicado. Avaliação de risco fail-closed (`HIGH`) contra evasões semânticas e exigência de evento soberano autenticado de Rafael para `OWNER_EXPLICIT`.
 8. **Bloco Q7 (Bateria E2E Proporcional):** Suíte adversarial com os 5 bypasses específicos do Codex 100% aprovada (`adversarial-corpus-quarta-remediacao.test.mjs`). 10/10 etapas de integração no PostgreSQL real aprovadas (`flywheel-learning-postgres-integration.test.mjs`). Teste de cold start com reinicialização do container `visao-360-n8n-1` ativando automaticamente WF-100 e WF-101 com `activeVersionId` intacto.
 9. **Bloco Q8 (Dossiê Formal de Resposta e Sincronização):** Elaborado `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e às 30 perguntas obrigatórias do Codex. Sincronizados `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md`.
+10. **Quinta Remediação (Gate N7/N7A):** Migrations 13-16 aplicadas. Migration 15 implementa funções transacionais seguras (`insert_structured_memory`, `activate_structured_memory`, `insert_flywheel_audit_event`, `insert_golden_exemplar`) com bloqueio de memória global inferida. Migration 16 implementa `validate_rafael_approval_event` (evento real do Telegram, hash recomputado, uso único), `approve_promotion_by_rafael` e `system_flags` com fail-closed. `learning-engine.mjs` exporta `isAuthenticatedRafaelApproval` delegando ao PostgreSQL. `reflexion-engine.mjs` exporta `findRealRafaelApprovalEvent` consultando tabela real. WF-101 nó 09 corrigido para não marcar DOCUMENT/IMAGE como COMPLETED prematuramente. `update-wf-101.mjs` corrigido: dados POBJ dinâmicos via `state_snapshots`, fatos confirmados via `inserted_fact_id`, secret por env var.
 
 ## Last validation
 
 Result: PASS
 
-- `npm test`: PASS, exit 0 (35/35 suítes).
+- `npm test`: PASS, exit 0 (56/56 suítes).
 - `node tests/adversarial-corpus-quarta-remediacao.test.mjs`: PASS, exit 0 (100% bloqueio adversarial).
 - `node tests/flywheel-learning-postgres-integration.test.mjs`: PASS, exit 0 (10/10 etapas no banco real).
 - `npm run lint`: PASS, exit 0, 23 warnings, zero errors.
@@ -40,7 +41,7 @@ Result: PASS
 - Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
 Last commit: `HEAD` (a registrar pós-commit)
-Last implementation checkpoint: Quarta Remediação dos Gates A0 e N2.3 concluída e validada no runtime real.
+Last implementation checkpoint: Quinta Remediação dos Gates N7/N7A concluída e validada no runtime real.
 
 ## Runtime observed
 
@@ -49,9 +50,9 @@ Last implementation checkpoint: Quarta Remediação dos Gates A0 e N2.3 concluí
 - `visao-360-document-worker-1`: healthy; FastAPI respondendo em 1.7ms.
 - `visao-360-docling-1`: healthy; Docling TableFormer CPU respondendo em 1.9ms.
 - `visao-360-telegram-poller-1`: healthy; endpoint `/health/system` ativo com latências dinâmicas.
-- WF-100: publicado e ativo (`activeVersionId = f7a6a439-50fa-40f4-bda8-54b9cf6d226a`).
-- WF-101: publicado e ativo (`activeVersionId = d3725cb0-ccbd-4171-aa3b-fd4bfb07353f`).
-- WF-103: importado como contingência de erro.
+- WF-100: publicado e ativo (`activeVersionId = 3c45ff0d-1aaf-4d65-90f0-d599b0845608`).
+- WF-101: publicado e ativo (`activeVersionId = 8dd6c06a-9002-4480-8946-0a277becd741`).
+- WF-103: importado como contingência de erro (`activeVersionId = 16321c53-5eaa-4924-98e2-6aea447667e9`).
 - WF-104: inativo (`active = false`, `activeVersionId = null`).
 
 ## Blockers

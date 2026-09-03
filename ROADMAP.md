@@ -2,7 +2,7 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 4.7 — Quarta remediação dos Gates A0 e N2.3
+**Versão do planejamento:** 5.0 — Quinta remediação dos Gates N7/N7A
 
 **Atualizado em:** 3 de setembro de 2026
 
@@ -12,9 +12,9 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** quarta remediação obrigatória após reauditoria independente do commit `d437a0c3`
+**Fase atual:** Quinta remediação (Gate N7/N7A) — remediação concluída, aguardando reauditoria
 
-**Marco atual:** `Q0 — contenção do Flywheel e checkpoint antes das correções A0/N2.3`
+**Marco atual:** `Q8+ — Q0–Q8 concluídos; quinta remediação Gate N7/N7A aplicada`
 
 **Próxima tarefa:** executar Q0 de `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`: manter WF-104 e AUTO inativos, criar backup e registrar baseline
 
