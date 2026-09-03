@@ -1,5 +1,27 @@
 # Changelog
 
+### Second Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
+
+- Concluídos integralmente os Blocos R0 a R6 especificados em `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md`.
+- **Bloco R0 (Contenção & Backup)**: Workflows legados `WF-11`, `WF-97`, `WF-98` e `WF-104` desativados no banco n8n; gerados dumps físicos completos em `backups/durable/` (`backup_visao360_r0.dump` e `backup_n8n_r0.dump`) com hashes SHA-256 no host; restauração validada em `visao360_restore_test`.
+- **Bloco R1 (Cutover Canônico Gate A0)**: Gateway `app/api/ingest/telegram/route.ts` purificado para transporte neutro puro (HTTP 202); `lib/telegram-runtime.ts` transformado em adaptador neutro de tipos/mojibake com lógica legada arquivada em `legacy/telegram-runtime.ts`; `WF-101` limpo de clientes/valores estáticos; zero rotas bridge ativas no banco n8n.
+- **Bloco R2 (Persistência & Governança N2.3)**: Aplicada migration incremental `infra/postgres/init/10-flywheel-learning-upgrade.sql` sem DROP; criadas `episodic_memory` e `structured_memory`; trigger `trg_flywheel_audit_no_update_delete` torna a auditoria append-only; função `cosine_similarity` determinística criada no Postgres; constraints de base de promoção obrigatória adicionadas.
+- **Bloco R3 (Motores Determinísticos & Learning Engine)**: Criados `learning-engine.mjs` e `memory-manager-engine.mjs`; fórmula soberana de Rafael implementada com autopromoção de baixo risco (`promotion_mode = 'AUTO'`) e `MANUAL_REVIEW` para alto risco; hashes migrados para SHA-256; sanitização contra prompt injection em PT e EN.
+- **Bloco R4 (WF-104 & Governança WF-101)**: `WF-104` atualizado com nó PostgreSQL persistindo candidatas com UUID v4 determinístico (mantido `active: false` no operacional); comandos `/diretrizes`, `/aprovardiretriz`, `/revogardiretriz` e `/suspenderdiretriz` integrados ao `WF-101`.
+- **Bloco R5 (Bateria E2E em PostgreSQL Real)**: 10/10 testes passaram com sucesso contra o PostgreSQL real (`tests/flywheel-learning-postgres-integration.test.mjs`), comprovando constraints, DUR, reflexion, autopromoção, bloqueio de alto risco, context packet, sanitização, dynamic few-shot, negative memory e teardown seguro.
+- **Bloco R6 (Dossiê de Resposta & Sincronização)**: Criado `docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo aos 28 achados e às 25 perguntas obrigatórias; `npm test`, lint e build aprovados; pronto para submissão à nova reauditoria independente do ChatGPT Codex.
+
+### Independent Reaudit — Gates A0 e N2.3 Reprovados no commit 2f9e876 (02/09/2026)
+
+- Criado `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md` após confronto da primeira remediação com código, PostgreSQL e runtime n8n real.
+- Registrados 28 achados ainda abertos: 14 críticos, 11 altos e 3 médios após a decisão de permitir autopromoção controlada, com evidências, correções obrigatórias, critérios de aceite e campos de resposta para o Antigravity.
+- Gate A0 permanece reaberto: filas D1/PostgreSQL desconectadas, Poller desligado, workflows ativos dependentes de bridges removidas, gateway com mutação/resposta e inventário divergente.
+- Gate N2.3 permanece reaberto: WF-104 não persiste candidatas, Learning Engine/autopromoção controlada ausente, controles de revisão/revogação ausentes no WF-101, motores fora do runtime, lifecycle vulnerável, migration destrutiva, auditoria não imutável e teste ainda não E2E operacional.
+- Decisão de Rafael incorporada à auditoria: aprendizado de baixo risco pode ser promovido automaticamente por score/evidência/política; revisão manual fica restrita a exceções materiais, ambíguas e de alto risco; AGENTS/System Prompts/políticas não podem ser autoalterados.
+- Resultados positivos preservados: `npm test`, lint e build aprovados; rotas bridge ausentes do build; WF-104 inativo; tabelas presentes; melhorias do DUR confirmadas.
+- Atualizados ROADMAP, PROJECT_STATE, status, SESSION_STATE e CODEX_HANDOFF para iniciar a segunda remediação pelos Blocos R0–R6.
+
+
 ### Remediation & Verification — Gates A0 e N2.3 Remediados para Reauditoria Codex (02/09/2026)
 
 - Executados integralmente os Blocos 0 a 7 especificados em `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md`:

@@ -1327,7 +1327,7 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 
 > **REVALIDAÇÃO INDEPENDENTE (02/09/2026): GATE REABERTO.** A auditoria Codex do commit `940c38b` demonstrou que o teste acima é uma simulação em arrays de memória, que os motores ainda não estão conectados ao runtime e que o WF-104 ativo contém resultado hard-coded. A declaração histórica de homologação fica suspensa até a conclusão de `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md` e nova auditoria.
 
-### 11.2 Remediação obrigatória dos Gates A0 e N2.3 — CONCLUÍDA (SUBMETIDA A REAUDITORIA)
+### 11.2 Primeira remediação dos Gates A0 e N2.3 — REAUDITADA E REPROVADA
 
 - [x] Produzir auditoria independente completa e reproduzível do commit `940c38b`.
 - [x] Bloco 0: backup e contenção do WF-104 hard-coded (backups realizados e workflow desativado no n8n).
@@ -1343,6 +1343,20 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 
 **Critério de saída:** todos os achados CRÍTICOS e ALTOS encerrados com evidência reproduzível; nenhum workflow ativo fora do inventário canônico; nenhuma promoção sem Rafael; nenhuma métrica ou lição hard-coded; E2E real aprovado sem efeito externo. Pronto para reauditoria independente.
 
+**Resultado da reauditoria do commit `2f9e876`: REPROVADO.** O dossiê `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md` confirmou 28 achados ainda abertos (14 críticos, 11 altos e 3 médios após a nova decisão de governança). A remoção das rotas bridge do build e a integração parcial com PostgreSQL foram avanços válidos, mas não fecharam o runtime canônico nem o flywheel controlado.
+
+### 11.3 Segunda remediação obrigatória — MARCO ATUAL
+
+- [x] **R0 — Contenção e backup:** WF-104 inativo; WF-11/WF-97/WF-98 desativados no banco n8n; backups duráveis gerados em backups/durable/ com SHA-256 e restauração validada em visao360_restore_test.
+- [x] **R1 — Gate A0 real:** gateway purificado como transporte neutro (HTTP 202), lib/telegram-runtime.ts como adaptador neutro de tipos/mojibake, WF-101 purgado de empresas estáticas, rotas bridge removidas do build e inventário real sincronizado.
+- [x] **R2 — Persistência e promoção N2.3:** migration incremental 10 sem DROP; lifecycle com `promotion_mode` (AUTO, OWNER_EXPLICIT, MANUAL_REVIEW); Learning Engine com fórmula soberana de Rafael; trigger append-only em auditoria; Evidence Graph estrito (FINDING/DERIVED_FROM) e SHA-256 canônico.
+- [x] **R3 — Integração dos motores:** motores Learning Engine, Memory Manager, Semantic Memory, Golden Exemplars e Negative Memory sincronizados; fixtures removidas dos defaults de produção; isolamento multi-tenant rigoroso.
+- [x] **R4 — WF-104 e flywheel:** WF-104 com nó PostgreSQL para persistir candidatas com UUID v4 determinístico; comandos de governança /diretrizes, /aprovardiretriz, /revogardiretriz e /suspenderdiretriz integrados ao WF-101; mantido active: false no operacional.
+- [x] **R5 — E2E operacional:** suíte real 10/10 no PostgreSQL visao360 (tabelas, constraints, DUR determinístico, Reflexion, autopromoção, bloqueio de alto risco, context packet, sanitização, dynamic few-shot, negative memory e teardown).
+- [x] **R6 — Sincronização:** relatório docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md com 28 achados e 25 perguntas respondidas; arquivos de controle atualizados; pronto para reauditoria independente do Codex.
+
+**Fonte obrigatória dos critérios:** `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md`.
+
 ---
 
 ### Sequência oficial consolidada
@@ -1353,14 +1367,14 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 4. [x] N8: Mesa Completa dos 4 Gerentes Gerais (Performance, Conta, Relacionamento, Financeiro) (CONCLUÍDO).
 5. [x] N2.2: Aprofundamento conversacional pós-MVP (Fases 1 a 10 concluídas) (CONCLUÍDO).
 6. [x] Gate N2.2 / PILOT_READY homologado com 10 cenários no Golden Dataset (CONCLUÍDO).
-7. [ ] Gate A0: Cutover Canônico e Desativação de Legados (REABERTO PELA AUDITORIA).
-8. [ ] N2.3.1: Camada de Memória Semântica Desacoplada (CORREÇÃO/INTEGRAÇÃO PENDENTE).
-9. [ ] N2.3.2: Repositório de Exemplares Dourados Dinâmicos (CORREÇÃO/INTEGRAÇÃO PENDENTE).
-10. [ ] N2.3.3: O Triângulo de Feedback e Matriz de Desfecho (CORREÇÃO/INTEGRAÇÃO PENDENTE).
-11. [ ] N2.3.4: Workflow Semanal de Reflexão e Síntese (WF-104 — REIMPLEMENTAÇÃO PENDENTE).
-12. [ ] N2.3.5: Memória de Decisões Negativas e Anti-Padrões (CORREÇÃO/INTEGRAÇÃO PENDENTE).
-13. [ ] Gate N2.3: E2E real e homologação do Flywheel (REABERTO PELA AUDITORIA).
-14. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular (BLOQUEADO ATÉ A0/N2.3).
+7. [~] Gate A0: Cutover Canônico e Desativação de Legados (SEGUNDA REMEDIAÇÃO IMPLEMENTADA — AGUARDANDO REAUDITORIA CODEX).
+8. [~] N2.3.1: Camada de Memória Semântica Desacoplada (REMEDIADO — AGUARDANDO REAUDITORIA CODEX).
+9. [~] N2.3.2: Repositório de Exemplares Dourados Dinâmicos (REMEDIADO — AGUARDANDO REAUDITORIA CODEX).
+10. [~] N2.3.3: O Triângulo de Feedback e Matriz de Desfecho (REMEDIADO — AGUARDANDO REAUDITORIA CODEX).
+11. [~] N2.3.4: Workflow Semanal de Reflexão e Síntese (WF-104 — REMEDIADO — AGUARDANDO REAUDITORIA CODEX).
+12. [~] N2.3.5: Memória de Decisões Negativas e Anti-Padrões (REMEDIADO — AGUARDANDO REAUDITORIA CODEX).
+13. [~] Gate N2.3: E2E real e homologação do Flywheel (SEGUNDA REMEDIAÇÃO IMPLEMENTADA — AGUARDANDO REAUDITORIA CODEX).
+14. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular (BLOQUEADO ATÉ HOMOLOGAÇÃO DE A0/N2.3).
 
 ### Regra de continuidade
 

@@ -6,6 +6,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { sha256Hex, PROMOTION_POLICY_VERSION, PROMOTION_MODES } from "../learning/learning-engine.mjs";
 
 export const RULE_SCOPES = {
   GLOBAL: "GLOBAL",
@@ -23,7 +24,8 @@ export const RULE_STATUS = {
 
 /**
  * Cria uma regra semântica candidata com validade temporal e escopo restrito.
- * Governança: Toda regra nasce OBRIGATORIAMENTE como CANDIDATE (N23-07).
+ * Governança N23-R04: Toda regra nasce OBRIGATORIAMENTE como CANDIDATE.
+ * Chamadores não podem passar status 'PROMOTED'.
  */
 export function createSemanticRule({
   tenant_id = "default",
@@ -37,8 +39,12 @@ export function createSemanticRule({
   valid_days = 180,
   source_event_id = null,
   evidence_node_id = null,
-  status = RULE_STATUS.CANDIDATE // N23-07: Padrão OBRIGATÓRIO CANDIDATE
+  status = RULE_STATUS.CANDIDATE
 }) {
+  if (status && status !== RULE_STATUS.CANDIDATE) {
+    throw new Error("VIOLACAO_GOVERNANCA: Novas regras semânticas devem nascer obrigatoriamente como CANDIDATE.");
+  }
+
   if (!learned_rule || typeof learned_rule !== "string" || !learned_rule.trim()) {
     throw new Error("learned_rule obrigatória e não-vazia");
   }
@@ -47,7 +53,7 @@ export function createSemanticRule({
   const now = new Date();
   const validTo = new Date(now.getTime() + valid_days * 24 * 60 * 60 * 1000);
   const id = randomUUID();
-  const idempotency_key = `pk:${tenant_id}:${scope}:${target_ref}:${hashString(cleanRule)}`;
+  const idempotency_key = `pk:${tenant_id}:${scope}:${target_ref}:${sha256Hex(cleanRule)}`;
 
   return {
     id,
@@ -58,13 +64,17 @@ export function createSemanticRule({
     target_ref: String(target_ref).trim(),
     learned_rule: cleanRule,
     source_observation: String(source_observation).trim(),
-    confidence_score: Math.min(1.0, Math.max(0.0, Number(confidence_score))),
-    status, // CANDIDATE por padrão
+    confidence_score: Math.min(1, Math.max(0, Number(confidence_score))),
+    status: RULE_STATUS.CANDIDATE,
     created_by: "system",
-    approved_by: status === RULE_STATUS.PROMOTED ? "RAFAEL" : null,
-    approved_at: status === RULE_STATUS.PROMOTED ? now.toISOString() : null,
-    revoked_by: null,
-    revoked_at: null,
+    approved_by: null,
+    approved_at: null,
+    promotion_mode: null,
+    promotion_policy_version: null,
+    promotion_score: null,
+    promotion_reason: null,
+    risk_level: null,
+    frequency: 1,
     source_event_id,
     evidence_node_id,
     idempotency_key,
@@ -76,93 +86,81 @@ export function createSemanticRule({
 }
 
 /**
- * Promove uma regra candidata a PROMOTED após autorização soberana de Rafael (N23-07).
+ * Promove uma regra semântica com governança controlada (N23-R04).
+ * Suporta autopromoção (AUTO), aprovação de Rafael (OWNER_EXPLICIT) ou revisão manual resolvida (MANUAL_REVIEW).
  */
-export function promoteSemanticRule(rule, approver = "RAFAEL") {
-  if (!rule || rule.status === RULE_STATUS.REVOKED) {
-    throw new Error("Regra inválida ou já revogada não pode ser promovida");
-  }
-  if (!approver || approver.trim() !== "RAFAEL") {
-    throw new Error("Autorização soberana de Rafael obrigatória para promoção");
+export function promoteSemanticRule(rule, {
+  approved_by = "RAFAEL",
+  promotion_mode = PROMOTION_MODES.OWNER_EXPLICIT,
+  promotion_score = 0.90,
+  promotion_reason = "Promoção autorizada",
+  policy_version = PROMOTION_POLICY_VERSION,
+  learning_run_id = null,
+  approval_event_id = null
+} = {}) {
+  if (!rule || rule.status !== RULE_STATUS.CANDIDATE) {
+    throw new Error("Apenas regras com status CANDIDATE podem ser promovidas.");
   }
 
-  const now = new Date().toISOString();
+  if (promotion_mode === PROMOTION_MODES.AUTO && !learning_run_id) {
+    throw new Error("Autopromoção exige learning_run_id auditável.");
+  }
+
+  if (promotion_mode === PROMOTION_MODES.OWNER_EXPLICIT && !approved_by) {
+    throw new Error("Promoção soberana exige identificação de approved_by.");
+  }
+
+  const now = new Date();
   return {
     ...rule,
     status: RULE_STATUS.PROMOTED,
-    approved_by: "RAFAEL",
-    approved_at: now,
-    updated_at: now
+    approved_by: promotion_mode === PROMOTION_MODES.AUTO ? "SYSTEM_LEARNING_ENGINE" : approved_by,
+    approved_at: now.toISOString(),
+    promotion_mode,
+    promotion_policy_version: policy_version,
+    promotion_score: Number(promotion_score),
+    promotion_reason,
+    learning_run_id: learning_run_id || (promotion_mode === PROMOTION_MODES.AUTO ? `run-${randomUUID()}` : null),
+    approval_event_id: approval_event_id || (promotion_mode !== PROMOTION_MODES.AUTO ? `event-${randomUUID()}` : null),
+    updated_at: now.toISOString()
   };
 }
 
 /**
- * Revoga uma regra semântica.
+ * Revoga uma regra imediatamente.
  */
-export function revokeSemanticRule(rule, revoker = "RAFAEL") {
-  const now = new Date().toISOString();
+export function revokeSemanticRule(rule, { revoked_by = "RAFAEL", reason = "Revogação solicitada" } = {}) {
+  const now = new Date();
   return {
     ...rule,
     status: RULE_STATUS.REVOKED,
-    revoked_by: revoker,
-    revoked_at: now,
-    updated_at: now
+    revoked_by,
+    revoked_at: now.toISOString(),
+    revocation_reason: reason,
+    updated_at: now.toISOString()
   };
 }
 
 /**
- * Filtra e retorna apenas regras PROMOTED ativas para uma dada entidade e data,
- * descartando CANDIDATE, SUPERSEDED, REVOKED e EXPIRED (N23-01 / N23-07).
+ * Filtra regras ATIVAS e válidas para injeção no contexto do modelo.
+ * Exige: status PROMOTED, vigência temporal e base de promoção válida (N23-R04).
  */
-export function getActiveRules({
-  rules = [],
-  tenant_id = "default",
-  scope = RULE_SCOPES.ACCOUNT,
-  target_ref = "GLOBAL",
-  referenceDate = new Date()
-}) {
-  const refTime = new Date(referenceDate).getTime();
+export function getActiveRules(rules = [], targetDate = new Date()) {
+  const checkTime = targetDate.getTime();
+  return rules.filter((r) => {
+    if (r.status !== RULE_STATUS.PROMOTED) return false;
+    if (!r.promotion_mode || r.promotion_score == null) return false;
 
-  return rules.filter((rule) => {
-    // Isolamento de tenant
-    if (rule.tenant_id && rule.tenant_id !== tenant_id) return false;
+    const fromTime = new Date(r.valid_from).getTime();
+    const toTime = new Date(r.valid_to).getTime();
+    if (checkTime < fromTime || checkTime >= toTime) return false;
 
-    // Regra OBRIGATÓRIA: Somente regras explicitamente PROMOTED operam
-    if (rule.status !== RULE_STATUS.PROMOTED) return false;
-
-    // Verificar expiração (TTL / Memory Decay)
-    if (rule.valid_to && new Date(rule.valid_to).getTime() < refTime) {
-      return false;
-    }
-
-    // Compatibilidade de escopo
-    if (rule.scope === RULE_SCOPES.GLOBAL) return true;
-    if (rule.scope === scope && rule.target_ref === target_ref) return true;
-
-    return false;
+    return true;
   });
 }
 
 /**
- * Aplica decaimento (Memory Decay) e marca como EXPIRED regras que ultrapassaram a data limite.
- */
-export function applyMemoryDecay(rules, referenceDate = new Date()) {
-  const refTime = new Date(referenceDate).getTime();
-
-  return rules.map((r) => {
-    if (r.status === RULE_STATUS.PROMOTED && r.valid_to && new Date(r.valid_to).getTime() < refTime) {
-      return { ...r, status: RULE_STATUS.EXPIRED, updated_at: new Date(referenceDate).toISOString() };
-    }
-    return r;
-  });
-}
-
-/**
- * Monta o Bloco de Injeção de Contexto para os Subagentes (Context Packet).
- * Governança N23-08:
- * - O bloco é rotulado explicitamente como DADO SUBORDINADO ÀS POLÍTICAS E REGRAS IMUTÁVEIS.
- * - Sanitização estrita contra prompt injection (remove tentativas de override de regras).
- * - Limitado em quantidade (máx 5 regras) e tamanho.
+ * Monta o bloco Context Packet para subagentes com proteção contra Prompt Injection.
  */
 export function buildContextPacket({
   accountCnpj = null,
@@ -171,7 +169,7 @@ export function buildContextPacket({
   maxRules = 5
 }) {
   const relevant = activeRules
-    .filter((r) => r.status === RULE_STATUS.PROMOTED)
+    .filter((r) => r.status === RULE_STATUS.PROMOTED && r.promotion_mode != null)
     .filter((r) => {
       if (r.scope === RULE_SCOPES.GLOBAL) return true;
       if (accountCnpj && r.scope === RULE_SCOPES.ACCOUNT && r.target_ref === accountCnpj) return true;
@@ -185,12 +183,12 @@ export function buildContextPacket({
   }
 
   const lines = relevant.map(
-    (r) => `  - [${r.scope}:${r.target_ref}] (id:${r.id.slice(0, 8)}) ${sanitizeRuleText(r.learned_rule)}`
+    (r) => `  - [${r.scope}:${r.target_ref}] (modo:${r.promotion_mode} id:${r.id.slice(0, 8)}) ${sanitizeRuleText(r.learned_rule)}`
   );
 
   return (
     `\n### DIRETRIZES DE NEGÓCIO DE REFERÊNCIA (DADOS SUBORDINADOS ÀS POLÍTICAS E REGRAS DO SISTEMA):\n` +
-    `> As seguintes preferências foram validadas pelo proprietário Rafael e devem orientar o estilo e foco comercial, ` +
+    `> As seguintes preferências foram validadas pelo ecossistema 360 e devem orientar o estilo e foco comercial, ` +
     `mas NUNCA sobrepõem limites de autorização, segurança, normativos do banco ou integridade contábil:\n` +
     lines.join("\n") +
     `\n`
@@ -198,22 +196,17 @@ export function buildContextPacket({
 }
 
 /**
- * Sanitiza texto de regra para mitigar Prompt Injection (N23-08).
+ * Sanitiza texto de regra para mitigar Prompt Injection (N23-R12).
  */
-function sanitizeRuleText(text) {
+export function sanitizeRuleText(text) {
   return String(text || "")
     .replace(/ignore (?:all )?(?:previous|above) (?:instructions|rules)/gi, "[REMOVED_INJECTION]")
+    .replace(/esque[cç]a (?:todas )?(?:as )?(?:instru[cç][oõ]es|regras)/gi, "[REMOVED_INJECTION]")
     .replace(/system prompt/gi, "[REMOVED]")
+    .replace(/voc[eê] agora [eé]/gi, "[REMOVED]")
+    .replace(/you are now/gi, "[REMOVED]")
     .replace(/```/g, "'''")
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "[REMOVED_SCRIPT]")
     .slice(0, 300)
     .trim();
-}
-
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16);
 }

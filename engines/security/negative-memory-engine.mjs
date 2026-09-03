@@ -3,14 +3,17 @@
  * Marco N2.3.5 — Memória Negativa e Anti-Padrões (Negative Memory Layer)
  * Impede que a IA repita abordagens, produtos ou horários já rejeitados ou vetados por Rafael.
  * 
- * Governança N23-15 / N23-16:
+ * Governança N23-R06 / N23-R07 / N23-R14:
  * - Ciclo de vida estrito: CANDIDATE | ACTIVE | SUPERSEDED | REVOKED | EXPIRED.
- * - Normalização de acentuação, casing e termos.
- * - Integração navegável com o Evidence Graph (nós e arestas de linhagem).
- * - Identificadores UUID determinísticos com idempotência e isolamento por tenant.
+ * - Padrão obrigatório: CANDIDATE.
+ * - Matching determinístico com identificadores fortes e fronteiras de termos.
+ * - Saída 100% compatível com Evidence Graph (contracts/evidence-graph.schema.json):
+ *   node_type = 'FINDING' e relationship_type = 'DERIVED_FROM'.
+ * - SHA-256 canônico.
  */
 
 import { randomUUID } from "node:crypto";
+import { sha256Hex, PROMOTION_MODES } from "../learning/learning-engine.mjs";
 
 export const VETO_TOPICS = {
   PRODUCT: "PRODUCT",
@@ -29,14 +32,16 @@ export const NEGATIVE_STATUS = {
 
 /**
  * Cria um registro de anti-padrão/memória negativa.
+ * Governança N23-R06: Nascem obrigatoriamente como CANDIDATE.
  */
 export function createNegativeMemoryItem({
   tenant_id = "default",
   target_entity,
+  entity_id = null,
+  entity_type = "CLIENT",
   vetoed_topic = VETO_TOPICS.ARGUMENT,
   forbidden_action,
   reason,
-  status = NEGATIVE_STATUS.ACTIVE,
   created_by = "system",
   valid_days = 365,
   evidence_node_id = null
@@ -47,23 +52,28 @@ export function createNegativeMemoryItem({
 
   const cleanEntity = normalizeText(target_entity);
   const cleanAction = String(forbidden_action).trim();
-  const cleanReason = String(reason || "Veto registrado pelo usuário").trim();
+  const cleanReason = String(reason || "Veto registrado").trim();
   const now = new Date();
   const validTo = new Date(now.getTime() + valid_days * 24 * 60 * 60 * 1000);
   const id = randomUUID();
-  const idempotency_key = `neg:${tenant_id}:${cleanEntity}:${vetoed_topic}:${hashString(cleanAction)}`;
+  const idempotency_key = `neg:${tenant_id}:${cleanEntity}:${vetoed_topic}:${sha256Hex(cleanAction)}`;
 
   return {
     id,
     tenant_id,
     target_entity: cleanEntity,
+    entity_id: entity_id ? String(entity_id).trim() : null,
+    entity_type,
     vetoed_topic,
     forbidden_action: cleanAction,
     reason: cleanReason,
-    status,
+    status: NEGATIVE_STATUS.CANDIDATE, // N23-R06: Padrão CANDIDATE
     created_by,
-    approved_by: status === NEGATIVE_STATUS.ACTIVE ? "RAFAEL" : null,
-    approved_at: status === NEGATIVE_STATUS.ACTIVE ? now.toISOString() : null,
+    approved_by: null,
+    approved_at: null,
+    promotion_mode: null,
+    promotion_score: null,
+    risk_level: null,
     evidence_node_id,
     idempotency_key,
     valid_from: now.toISOString(),
@@ -73,81 +83,134 @@ export function createNegativeMemoryItem({
 }
 
 /**
- * Intercepta uma proposta antes do envio e valida contra as regras de Memória Negativa.
- * Governança N23-15:
- * - Apenas regras ACTIVE e dentro da vigência valid_to interceptam.
- * - Normaliza acentos e pontuação.
+ * Promove uma regra de Memória Negativa para ACTIVE.
  */
-export function interceptWithNegativeMemory({
-  tenant_id = "default",
-  proposal,
-  negativeMemoryRules = [],
-  referenceDate = new Date()
-}) {
-  const refTime = new Date(referenceDate).getTime();
-  const targetEntity = normalizeText(proposal.target_entity || proposal.client_name || "");
-  const proposalContent = normalizeText(
-    typeof proposal.content === "string" ? proposal.content : JSON.stringify(proposal)
-  );
-
-  const activeVetoes = negativeMemoryRules.filter((r) => {
-    if (r.tenant_id && r.tenant_id !== tenant_id) return false;
-    if (r.status !== NEGATIVE_STATUS.ACTIVE) return false;
-    if (r.valid_to && new Date(r.valid_to).getTime() < refTime) return false;
-    return true;
-  });
-
-  for (const veto of activeVetoes) {
-    const vetoEntity = normalizeText(veto.target_entity);
-    const vetoAction = normalizeText(veto.forbidden_action);
-
-    const matchesEntity = vetoEntity === "global" || targetEntity.includes(vetoEntity);
-
-    if (matchesEntity) {
-      if (proposalContent.includes(vetoAction)) {
-        return {
-          blocked: true,
-          reason_code: "NEGATIVE_MEMORY_VETO",
-          veto_rule_id: veto.id,
-          topic: veto.vetoed_topic,
-          message: `Bloqueado por Memória Negativa: "${veto.forbidden_action}". Motivo: ${veto.reason}`
-        };
-      }
-    }
-  }
-
-  return { blocked: false };
+export function promoteNegativeMemoryItem(item, {
+  approved_by = "RAFAEL",
+  promotion_mode = PROMOTION_MODES.OWNER_EXPLICIT,
+  promotion_score = 1.00,
+  risk_level = "LOW",
+  learning_run_id = null
+} = {}) {
+  return {
+    ...item,
+    status: NEGATIVE_STATUS.ACTIVE,
+    approved_by: promotion_mode === PROMOTION_MODES.AUTO ? "SYSTEM_LEARNING_ENGINE" : approved_by,
+    approved_at: new Date().toISOString(),
+    promotion_mode,
+    promotion_score: Number(promotion_score),
+    risk_level,
+    learning_run_id: learning_run_id || (promotion_mode === PROMOTION_MODES.AUTO ? `run-${randomUUID()}` : null)
+  };
 }
 
 /**
- * Cria nós e arestas de linhagem no Evidence Graph para registrar o veto ou a criação da regra (N23-16).
+ * Intercepta uma proposta antes do envio e valida contra as regras de Memória Negativa.
+ * Governança N23-R06 / N23-R14:
+ * - Apenas regras ACTIVE e dentro da vigência válida interceptam.
+ * - Matching rigoroso (fronteiras de termos ou ID exato).
  */
-export function createNegativeEvidenceNode({
-  negativeItem,
-  sourceOutcomeId = null
+export function interceptWithNegativeMemory({
+  tenant_id = "default",
+  entityName,
+  entityId = null,
+  proposedAction,
+  proposedProduct = null,
+  proposedChannel = null,
+  activeNegativeRules = []
 }) {
-  const nodeId = `ev-neg-${negativeItem.id.slice(0, 8)}`;
+  const normEntity = normalizeText(entityName);
+  const normAction = normalizeText(proposedAction);
+  const nowTime = Date.now();
+
+  for (const rule of activeNegativeRules) {
+    if (rule.status !== NEGATIVE_STATUS.ACTIVE) continue;
+    if (rule.tenant_id && rule.tenant_id !== tenant_id) continue;
+    if (rule.valid_to && new Date(rule.valid_to).getTime() <= nowTime) continue;
+
+    // Match de Entidade: Por ID exato (se disponível) ou por nome normalizado com limite seguro
+    const entityMatch = (entityId && rule.entity_id && rule.entity_id === entityId) ||
+      (rule.target_entity === normEntity) ||
+      (rule.target_entity === "global" || rule.target_entity === "todos");
+
+    if (!entityMatch) continue;
+
+    // Match do Veto
+    let actionBlocked = false;
+    const cleanForbidden = normalizeText(rule.forbidden_action);
+
+    if (rule.vetoed_topic === VETO_TOPICS.PRODUCT && proposedProduct) {
+      actionBlocked = normalizeText(proposedProduct).includes(cleanForbidden) || cleanForbidden.includes(normalizeText(proposedProduct)) || normAction.includes(cleanForbidden);
+    } else if (rule.vetoed_topic === VETO_TOPICS.CHANNEL && proposedChannel) {
+      actionBlocked = normalizeText(proposedChannel) === cleanForbidden;
+    } else {
+      // Matching de ação proibida: busca por expressão exata ou termo delimitado
+      const regex = new RegExp(`\\b${escapeRegExp(cleanForbidden)}\\b`, 'i');
+      actionBlocked = regex.test(normAction) || normAction.includes(cleanForbidden);
+    }
+
+    if (actionBlocked) {
+      return {
+        allowed: false,
+        intercepted_by_rule_id: rule.id,
+        reason: rule.reason,
+        forbidden_action: rule.forbidden_action,
+        topic: rule.vetoed_topic,
+        evidence_node_id: rule.evidence_node_id
+      };
+    }
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Cria nós e arestas para inserção no Evidence Graph 360.
+ * Governança N23-R07: Validação estrita com contracts/evidence-graph.schema.json:
+ * - node_type: "FINDING"
+ * - relationship_type: "DERIVED_FROM"
+ * - content_hash: sha256:<64 hex>
+ */
+export function createNegativeEvidenceNode(negativeItem, sourceOutcomeId = null) {
+  const nodeId = randomUUID();
+  const edgeId = randomUUID();
+  const now = new Date().toISOString();
+  const payload = {
+    finding_type: "NEGATIVE_CONSTRAINT",
+    target_entity: negativeItem.target_entity,
+    topic: negativeItem.vetoed_topic,
+    forbidden_action: negativeItem.forbidden_action,
+    reason: negativeItem.reason,
+    status: negativeItem.status
+  };
+  const contentHash = `sha256:${sha256Hex(payload)}`;
+
   const node = {
-    id: nodeId,
-    node_type: "NEGATIVE_CONSTRAINT",
-    label: `Anti-padrão: ${negativeItem.forbidden_action}`,
-    properties: {
-      target_entity: negativeItem.target_entity,
-      topic: negativeItem.vetoed_topic,
-      reason: negativeItem.reason,
-      status: negativeItem.status,
-      valid_to: negativeItem.valid_to
-    },
-    created_at: new Date().toISOString()
+    node_id: nodeId,
+    node_type: "FINDING", // N23-R07: Tipo canônico válido no schema
+    entity_id: negativeItem.id,
+    entity_version: 1,
+    content_hash: contentHash,
+    payload,
+    valid_from: negativeItem.valid_from,
+    valid_to: negativeItem.valid_to,
+    observed_at: now,
+    recorded_at: now,
+    superseded_at: null,
+    created_at: now
   };
 
   const edges = [];
   if (sourceOutcomeId) {
+    const edgePayload = { reason: "Derived from registered outcome" };
     edges.push({
-      source_id: nodeId,
-      target_id: sourceOutcomeId,
-      relation: "DERIVED_FROM_OUTCOME",
-      created_at: new Date().toISOString()
+      edge_id: edgeId,
+      relationship_type: "DERIVED_FROM", // N23-R07: Relação canônica válida no schema
+      from_node_id: nodeId,
+      to_node_id: sourceOutcomeId,
+      content_hash: `sha256:${sha256Hex({ from: nodeId, to: sourceOutcomeId })}`,
+      payload: edgePayload,
+      created_at: now
     });
   }
 
@@ -158,15 +221,12 @@ function normalizeText(text) {
   return String(text || "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, " ")
     .toLowerCase()
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16);
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

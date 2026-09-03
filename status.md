@@ -1,10 +1,10 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 2 de setembro de 2026 — atualizado após auditoria independente do commit `940c38b`
-**Versão Atual da Release:** `v5.3.0-gate-a0-and-flywheel-roadmap`
+**Data do status:** 3 de setembro de 2026 — atualizado após conclusão da segunda remediação dos Gates A0 e N2.3
+**Versão Atual da Release:** `6.2.0-gates-a0-n2.3-remediated-v2`
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Marcos N0 a N13 + Marco N2.3)  
 **Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
-**Saúde do Projeto:** 🔴 **REMEDIAÇÃO NECESSÁRIA | GATES A0 E N2.3 REABERTOS PARA CORREÇÃO E REAUDITORIA**
+**Saúde do Projeto:** 🟡 **SEGUNDA REMEDIAÇÃO CONCLUÍDA | AGUARDANDO REAUDITORIA INDEPENDENTE CODEX**
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
 **Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
@@ -13,26 +13,28 @@
 
 > Este arquivo é um relatório humano de status, não uma fila de tarefas. Toda sequência, checklist e próximo passo oficial residem exclusivamente em `ROADMAP.md` e `docs/ONDE_ESTAMOS_E_PROXIMOS_PASSOS.md`.
 
-> **AVISO DE AUDITORIA VIGENTE:** a auditoria independente `docs/audits/AUDITORIA_CODEX_GATE_A0_N2_3_COMMIT_940C38B.md` encontrou 27 divergências entre documentação, código, testes, PostgreSQL e runtime n8n. Até a remediação e nova auditoria, as expressões “Gate A0 concluído”, “zero violações” e “Gate N2.3 homologado” abaixo devem ser lidas apenas como reivindicações históricas, não como estado operacional validado.
+> **AVISO DE AUDITORIA:** A segunda remediação técnica dos Gates A0 e N2.3 foi concluída e integralmente comprovada no runtime real com `npm test` 10/10 no PostgreSQL, linter, build e dossiê `docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo aos 28 achados e 25 perguntas. Os gates permanecem formalmente abertos aguardando reauditoria do ChatGPT Codex.
+
+> **Decisão de Rafael sobre aprendizado:** regras de baixo risco podem ser promovidas automaticamente por Learning Engine versionado, usando confiança, frequência, recência, resultado, feedback explícito, risco, escopo e evidências. Aprovação formal individual não é obrigatória. Revisão manual permanece para casos materiais, ambíguos ou de alto risco; AGENTS.md, System Prompts, políticas, contratos, fórmulas oficiais, autorizações e efeitos externos nunca são autoalterados.
 
 > **Princípio Central:**  
 > *"O motor calcula. A IA interpreta. O Evidence Graph prova. O gerente decide."*  
 > **Premissa de segurança:** a autorização institucional existe, mas cada uso operacional de dados reais depende do gate correspondente; a janela Shadow atual permanece exclusivamente sintética.
 
-**Último marco concluído:** auditoria independente dos Gates A0 e N2.3 no commit `940c38b`; resultado `REPROVADO PARA HOMOLOGAÇÃO`.
+**Último marco concluído:** segunda remediação técnica dos Gates A0 e N2.3 (Blocos R0 a R6).
 **Marco comercial ativo:** Briefing Matinal Proativo (`WF-102`) agendado às 08h30 e Motor de Abordagem Comercial (`outreach-draft-engine.mjs`), testados e entregues com HTTP 200 no Telegram de Rafael.
-**Próximo marco:** remediação auditável dos Gates A0 e N2.3.
-**Próxima tarefa:** executar o Bloco 0 do dossiê de auditoria, preservando backup e impedindo o uso operacional do WF-104 hard-coded.
+**Próximo marco:** reauditoria independente do ChatGPT Codex sobre a segunda remediação.
+**Próxima tarefa:** submeter commit para homologação pelo Codex.
 
-**Decisão arquitetural vigente:** O n8n local no Docker é a autoridade operacional exclusiva, operando com 28 workflows ativos. O PostgreSQL local `visao360` é a fonte oficial de dados, carteira e Estado 360. Todos os componentes legados fora do n8n foram aposentados ou reduzidos a transporte puro.
+**Decisão arquitetural consolidada:** O n8n local no Docker é a autoridade operacional exclusiva e o PostgreSQL local `visao360` a fonte oficial. Todas as rotas bridge legadas foram eliminadas do build e os workflows que as chamavam foram desativados no banco n8n.
 
-**Regra canônica obrigatória:** Comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas existem estritamente em workflows n8n e engines determinísticos. Zero exceções legadas ativas.
+**Regra canônica obrigatória:** Comandos, IA, roteamento, cálculos, perguntas, aprendizado, mudanças de estado e respostas existem estritamente em workflows n8n e motores chamados por eles. Zero rotas bridge ativas no banco n8n.
 
-**Regressão técnica:** 21 suítes de testes automatizados passando com 100% de êxito, `test:local-core` exibindo `CANONICAL_LOCAL_ACTIVE`, `test:p0` com 34/34 verificações e build do Next.js / Edge Worker com 0 erros.
+**Validação técnica:** `npm test` aprovado (10/10 no PostgreSQL real), `npm run lint` aprovado (0 erros), `npm run build` aprovado.
 
 **Baseline do host:** AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2, WSL limitado a 6 GB, Lazydocker 0.25.2 e mais de 451 GB recuperados (G: 763 GB livres; C: 233 GB livres).
 
-**Reconstrução WSL:** dump completo restaurado com 129 tabelas n8n e 8 tabelas visao360; 13 workflows e 2 credenciais confirmados. n8n, PostgreSQL e `document-worker` passaram nos healthchecks; GPU validada.
+**Reconstrução WSL:** Backups duráveis com SHA-256 gerados em `backups/durable/`. n8n, PostgreSQL e `document-worker` passaram nos healthchecks.
 
 ---
 

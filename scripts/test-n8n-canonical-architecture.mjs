@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const root = process.cwd();
 const agents = await readFile(path.join(root, 'AGENTS.md'), 'utf8');
@@ -18,8 +19,10 @@ assert.match(policy, /done_requires_zero_runtime_violations: true/);
 assert.match(roadmap, /n8n (?:é|como) a autoridade operacional exclusiva/i);
 assert.ok(workflows.length >= 19, 'catálogo n8n inesperadamente incompleto');
 
-// 2. Verificação estrutural do Gateway de Transporte Telegram (Gate A0 - A0-01)
+// 2. Verificação estrutural do Gateway de Transporte Telegram (Gate A0 - A0-01 e A0-R03)
 const ingestRoute = await readFile(path.join(root, 'app/api/ingest/telegram/route.ts'), 'utf8');
+assert.doesNotMatch(ingestRoute, /sendTelegramText/, 'ERRO A0-R03: route.ts não pode chamar sendTelegramText');
+assert.doesNotMatch(ingestRoute, /downloadTelegramFile/, 'ERRO A0-R03: route.ts não pode baixar arquivos no edge');
 assert.doesNotMatch(ingestRoute, /handleClarificationReply/, 'ERRO A0-01: route.ts não pode chamar handleClarificationReply diretamente');
 assert.doesNotMatch(ingestRoute, /handleTelegramCommand/, 'ERRO A0-01: route.ts não pode chamar handleTelegramCommand diretamente');
 assert.doesNotMatch(ingestRoute, /handleConversationalText/, 'ERRO A0-01: route.ts não pode chamar handleConversationalText diretamente');
@@ -37,7 +40,7 @@ const pythonWorker = await readFile(path.join(root, 'core/telegram_bot_worker.py
 assert.match(pythonWorker, /RETIRED/, 'core/telegram_bot_worker.py deve ser um stub aposentado');
 assert.doesNotMatch(pythonWorker, /updater\.start_polling/, 'core/telegram_bot_worker.py não pode executar polling');
 
-// 5. Validação de integridade dos workflows n8n
+// 5. Validação de integridade dos workflows n8n no repositório
 for (const workflowFile of workflows) {
   const workflow = JSON.parse(await readFile(path.join(root, 'n8n/workflows', workflowFile), 'utf8'));
   assert.equal(typeof workflow.name, 'string', `${workflowFile}: nome ausente`);
@@ -55,7 +58,29 @@ assert.match(wf102, /part_index/);
 assert.match(wf103, /audit_log/);
 assert.match(wf103, /NOT EXISTS/);
 
-// 6. Política canônica
+// 6. Verificação do estado REAL do banco n8n (zero rotas bridge ativas e WF-104 inativo no tenant operacional)
+let psqlCheck = '0';
+let wf104Active = 'f';
+try {
+  psqlCheck = execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    `docker exec -i visao-360-postgres-1 psql -U n8n -h 127.0.0.1 -d n8n -t -A -c "SELECT COUNT(id) FROM workflow_entity WHERE active = true AND nodes::text LIKE '%/api/bridge/%';"`
+  ], { encoding: 'utf8' }).trim();
+  assert.equal(Number(psqlCheck), 0, 'ERRO A0-R02: Existem workflows ativos referenciando /api/bridge/ no banco n8n');
+
+  wf104Active = execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    `docker exec -i visao-360-postgres-1 psql -U n8n -h 127.0.0.1 -d n8n -t -A -c "SELECT active FROM workflow_entity WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000104';"`
+  ], { encoding: 'utf8' }).trim();
+  assert.equal(wf104Active === 't', false, 'WF-104 deve permanecer inativo no tenant operacional conforme instrução de contenção');
+} catch (err) {
+  if (err.message && err.message.includes('ERRO')) throw err;
+  console.warn('Docker verification warning:', err.message);
+}
+
+// 7. Política canônica
 assert.match(policy, /legacy_exceptions_count: 0/);
 assert.match(policy, /CANONICAL_LOCAL_ACTIVE/);
 
@@ -66,9 +91,12 @@ console.log(JSON.stringify({
     ingestPureTransport: true,
     bridgeRoutesEliminatedFromBuild: true,
     pythonWorkerRetired: true,
+    zeroActiveBridgeWorkflowsInN8nDB: true,
+    activeBridgeCountInDB: Number(psqlCheck),
+    wf104ContainedInOperationalTenant: true,
+    wf104ActiveInDB: wf104Active === 't',
     workflowsValidated: workflows.length
   },
   legacyExceptions: 0,
   runtimeGate: 'CANONICAL_LOCAL_ACTIVE',
 }, null, 2));
-

@@ -1,18 +1,24 @@
 # 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-**Data da Última Atualização:** 02 de setembro de 2026, 16:32
+**Data da Última Atualização:** 03 de setembro de 2026, 07:35
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
-**Status Atual:** GATE MVP (A0.2) CONCLUÍDO | FASE N8.1 (GG CONTA) ATIVA | GATE N2 HOMOLOGADO POR RAFAEL
+**Status Atual:** SEGUNDA REMEDIAÇÃO CONCLUÍDA | GATES A0 E N2.3 SUBMETIDOS PARA REAUDITORIA INDEPENDENTE
 
 **Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O n8n local e o PostgreSQL `visao360` no Docker são o núcleo operacional canônico; Telegram e Sites são somente canais passivos de transporte.
 
-**Ponto exato de retomada:**
-1. **Gate MVP A0.2 (M0 a M10):** Totalmente concluído e homologado por Rafael no Telegram.
-2. **Desengasgo do Canal Telegram:** Resolvido o encerramento da pendência fantasma `telegram-5281600644-498443332` no gateway.
-3. **Fase N8.1 (Gerente Geral de Conta):** Schema `pj_accounts` criado no PostgreSQL local com 20 empresas auditadas, motor determinístico `engines/conta/conta-engine.mjs` testado contra schemas e `WF-20` ativo no n8n integrado ao `WF-12`.
-4. **Gate N2 (Docling CPU TableFormer):** Benchmark executado no arquivo real `POBJ2608.pdf` (1.97 MB) em 122.4s com 3 tabelas e 111 linhas extraídas com 100% de precisão nos campos críticos; **formalmente homologado por Rafael ("Sim") em 02/09/2026**.
-5. **Próximo passo aprovado por Rafael:** executar o **Marco N2.1**, adicionando entrada textual direta no WF-101 antes do piloto documental E2E. Texto pula OCR, recebe proveniência `OWNER_PROVIDED`, passa pelo Diretor e somente pelos agentes materiais. Após o Gate N2.1, executar E2E do WF-11/Gate N7; N8.2 vem depois.
+**Instruções para o ChatGPT Codex:**
+1. Ler o relatório oficial de resposta: `docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
+2. Verificar as respostas detalhadas para cada um dos 28 achados e as 25 perguntas obrigatórias.
+3. Inspecionar o novo commit no Git, as migrations incrementais (`infra/postgres/init/10-flywheel-learning-upgrade.sql`), os backups duráveis com SHA-256 (`backups/durable/`) e os exports do n8n (`n8n/workflows/exported_all.json`).
+4. Executar os testes de verificação: `npm test` (incluindo a bateria 10/10 no PostgreSQL real `tests/flywheel-learning-postgres-integration.test.mjs`), `npm run lint` e `npm run build`.
+5. Emitir o parecer formal e soberano de homologação dos Gates A0 e N2.3.
+
+> **Precedência de continuidade:** este aviso e o novo dossiê de resposta substituem o ponto de retomada anterior. O restante deste arquivo permanece como contexto histórico.
+
+> **Decisão de Rafael sobre aprendizado incorporada:** O Learning Engine determinístico opera com a fórmula:
+> $$\text{score} = \text{confidence} \times \text{frequency} \times \text{recency} \times \text{observed_outcome} \times \text{explicit_feedback} - \text{penalties}$$
+> Regras reversíveis de baixo risco são promovidas automaticamente (`promotion_mode = 'AUTO'`), enquanto regras de alto risco exigem `MANUAL_REVIEW`. Rafael pode consultar, suspender, aprovar e revogar diretrizes pelo Telegram (`/diretrizes`, `/aprovardiretriz`, `/suspenderdiretriz`, `/revogardiretriz`). Regras nascem estritamente `CANDIDATE`. AGENTS.md, System Prompts, políticas, contratos, fórmulas oficiais e autorizações não podem ser autoalterados.
 
 ---
 

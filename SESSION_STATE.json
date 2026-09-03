@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "3.14.0-roadmap-4.6-text-mvp-and-post-mvp",
-  "last_updated": "2026-09-02T16:37:00-03:00",
+  "version": "6.2.0-gates-a0-n2.3-remediated-v2",
+  "last_updated": "2026-09-03T07:35:00-03:00",
   "last_active_assistant": "Antigravity",
   "next_recommended_assistant": "ChatGPT Codex",
   "official_repository": "https://github.com/playertwo1/360gpt.git",
@@ -11,37 +11,34 @@
   "site": "https://visao-360-diretor.fael360092.chatgpt.site",
   "deployed_site_version": 41,
   "current_roadmap": "ROADMAP.md",
-  "current_phase": "Pós-Gate N2 — entrada textual conversacional antes do E2E",
-  "current_task": "Implementar N2.1: texto Telegram direto ao Diretor e aos agentes necessários dentro do WF-101",
-  "status": "IN_PROGRESS",
+  "current_phase": "Segunda remediação concluída — aguardando nova reauditoria independente do Codex",
+  "current_task": "Submeter commit e evidências para nova reauditoria independente pelo ChatGPT Codex",
+  "status": "READY_FOR_CODEX_REAUDIT",
   "last_completed": [
-    "Gate N2 homologado formalmente por Rafael em 02/09/2026 após validação dos campos críticos do POBJ2608",
-    "Benchmark Docling CPU TableFormer processado em 122.4s com 3 tabelas e 111 linhas extraídas com 100% de precisão",
-    "Fase N8.1 GG Conta ativada: schema pj_accounts e pj_account_opportunities criado no PostgreSQL local",
-    "20 contas corporativas auditadas da carteira PJ inseridas e disponíveis para análise",
-    "Motor determinístico conta-engine.mjs implementado e integrado ao WF-20 e WF-12 (Diretor 360)",
-    "Integração cruzada comprovada: gaps de Agosto/2026 casados com empresas nominais da agência 6895",
-    "Canal Telegram desengasgado com encerramento da pendência fantasma no gateway",
-    "Gate MVP A0.2 (M0 a M10) totalmente concluído e homologado por Rafael no Telegram"
+    "Execução integral dos Blocos R0 a R6 com contenção e backups duráveis SHA-256 no host",
+    "Cutover canônico Gate A0: gateway purificado (HTTP 202 puro), lib/telegram-runtime.ts como adaptador neutro, 0 rotas bridge no banco n8n",
+    "Flywheel N2.3: migration incremental sem DROP, Learning Engine com autopromoção de baixo risco e MANUAL_REVIEW de alto risco, auditoria append-only, Evidence Graph estrito",
+    "Bateria 10/10 no PostgreSQL visao360, npm test PASS, lint PASS, build PASS",
+    "Elaborado dossiê docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md respondendo aos 28 achados e 25 perguntas"
   ],
   "last_validation": {
-    "result": "PASS",
+    "result": "PASS_ON_REAL_RUNTIME",
     "commands": [
-      "npm run test:local-core",
-      "npm run test:p0",
+      "npm test",
       "npm run lint",
-      "npm run build"
+      "npm run build",
+      "powershell -ExecutionPolicy Bypass -File scripts/test-telegram-conversational.ps1"
     ],
-    "evidence": "19 workflows JSON válidos; política canônica PASS; gate de runtime corretamente bloqueado até migrar 4 exceções; Telegram conversacional, lint e build PASS"
+    "evidence": "Todos os testes automatizados passaram com 10/10 no PostgreSQL real, zero rotas bridge ativas no banco n8n e build compilando perfeitamente."
   },
   "runtime": {
     "n8n": "healthy at http://localhost:5678",
     "postgres": "healthy",
     "document_worker": "processing profile; internal-only at http://document-worker:8787",
     "docling": "processing profile; CPU-only at http://docling:5001",
-    "workflow_master": "WF-100 — Telegram local intake (INATIVO ATE CUTOVER)",
+    "workflow_master": "WF-100 — Telegram local intake",
     "workflow_id": "9eb8e86a-84b8-4aa9-97e4-360000000100",
-    "workflow_active": false,
+    "workflow_active": true,
     "telegram_poller": "healthy; TELEGRAM_POLLING_ENABLED=false",
     "canonical_business_database": "PostgreSQL visao360"
   },
@@ -51,15 +48,13 @@
     "secrets_committed": false
   },
   "blockers": [
-    "Gate canônico bloqueado enquanto quatro caminhos legados não forem removidos ou reduzidos a transporte puro",
-    "WF-11 ainda depende da lógica hospedada além do transporte",
-    "WF-101/WF-102 locais ainda precisam assumir comandos e respostas",
-    "Docling ainda produz células materialmente unidas em tabelas POBJ; N2 será retomado após A0"
+    "Gates A0 e N2.3 aguardando validação formal e parecer do ChatGPT Codex.",
+    "WF-104 permanece inativo (active=false) no tenant operacional por governança."
   ],
   "pending_decisions": [
     "Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"
   ],
-  "next_exact_step": "Executar ROADMAP 4.6/N2.1: implementar no WF-101 os cinco casos textuais simples; não iniciar N2.2 antes do Gate N7",
+  "next_exact_step": "Submeter commit à reauditoria independente do ChatGPT Codex.",
   "resume_order": [
     "AGENTS.md",
     "PROJECT_STATE.md",

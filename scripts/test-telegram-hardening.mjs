@@ -10,14 +10,15 @@ const wf103 = await readFile('n8n/workflows/wf-103-local-error-contingency.json'
 
 // Hardening de segurança de entrada
 assert.match(route, /is_bot/);
-assert.match(route, /sendTelegramText/);
+assert.doesNotMatch(route, /sendTelegramText/, 'sendTelegramText é proibido no gateway de transporte (Marco A0)');
 assert.doesNotMatch(route, /parse_mode/);
 
 // Gate A0: Proibição estrita de handlers de negócio no gateway de transporte
 assert.doesNotMatch(route, /handleClarificationReply/);
 assert.doesNotMatch(route, /handleTelegramCommand/);
 assert.doesNotMatch(route, /handleConversationalText/);
-assert.match(route, /telegram_inbound_events/);
+assert.doesNotMatch(route, /downloadTelegramFile/);
+assert.doesNotMatch(route, /allocateShortProtocol/);
 
 // Limite de segurança Telegram
 assert.match(messages, /TELEGRAM_SAFE_LIMIT = 3600/);
