@@ -1,7 +1,7 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.2
+**Versão:** 2.3
 **Status:** APPROVED_DESIGN — implementação e homologação pendentes
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
@@ -20,7 +20,13 @@ O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada 
 
 ## Changelog
 
-### v2.3 — Flywheel de Aprendizado Contínuo e Governança Soberana
+### v2.4 — Quarta Remediação: AUTO Restrito a Preferências Estruturadas e Menor Privilégio
+
+- Restringido o modo `AUTO` estritamente a preferências estruturadas enumeradas (`RESPONSE_LENGTH`, `TABLE_PREFERENCE`, `TONE`, `SECTION_ORDER`), eliminando 100% de texto livre na autopromoção.
+- Aplicada a Migration 12 no PostgreSQL: revogado DML direto da role `visao360_app` sobre `promoted_knowledge` e criadas funções `SECURITY DEFINER` com auditoria atômica transacional.
+- Invariantes em nível de schema: constraints `chk_no_auto_textual` e `chk_no_inferred_global_active` garantindo proteção matemática contra bypass semântico e promoção indevida de regras globais.
+- WF-101 ativado, publicado e consolidado como controlador operacional canônico no n8n 2.x, com recuperação automática de leases expirados, verificação dinâmica de saúde operacional e rota documental com Docling TableFormer CPU.
+- `WF-104` e `AUTO_PROMOTION_ENABLED` mantidos inativos até autorização expressa e conclusão de homologação.
 
 - Formalizada a decisão soberana de Rafael sobre os modos de promoção de aprendizado (`AUTO`, `OWNER_EXPLICIT`, `MANUAL_REVIEW`).
 - Implementada autopromoção controlada exclusivamente para regras reversíveis de baixo risco (`LOW`) e categorias em allowlist positiva, com score >= 0.75 e frequência >= 2.

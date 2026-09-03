@@ -1,5 +1,36 @@
 # Changelog
 
+### Fourth Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
+
+- Executados integralmente os Blocos Q0 a Q8 especificados em `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`.
+- **Bloco Q0 (Contenção & Checkpoint)**: WF-104 mantido inativo (`active = false`), `AUTO_PROMOTION_ENABLED=false` e Gate N7 `BLOCKED`. Gerados backups duráveis `backup_visao360_q0.dump` e `backup_n8n_q0.dump` com catálogos TOC verificados via `pg_restore -l`.
+- **Bloco Q1 (Verdade dos Testes e Arquivos)**: Corrigida regex de sufixo no teste arquitetural; `exported_all.json` regenerado de forma limpa (14 workflows) sem stdout de logs; aprovados `npm test` (35/35 suítes), lint (0 erros) e build (sucesso).
+- **Bloco Q2 (Desduplicação e Reconciliação)**: Workflows redundantes arquivados com histórico em `n8n/workflows/archive/`.
+- **Bloco Q3 (Banco e Contratos)**: Constraints de banco sincronizadas com JSON Schema Draft 2020-12.
+- **Bloco Q4 (Controlador Canônico WF-101 Completo e Publicado)**: WF-101 preservado, corrigido e publicado no n8n 2.x com `activeVersionId = versionId`. Nó 02 com claim e recuperação automática de leases expirados (`expired_recovered = true`); nó 04 atualizado com funções `SECURITY DEFINER`; nó 05 com `/status` dinâmico consumindo `/health/system` (Docling 1.9ms, Worker 1.7ms, Adapter 0.1ms) e rota `DOCUMENT` completa com integração Docling TableFormer CPU; nó 08 configurado com envio autenticado via secret de transporte estático.
+- **Bloco Q5 (Governança PostgreSQL — Migration 12)**: Aplicada `infra/postgres/init/12-flywheel-security-and-lifecycle.sql`. Revogado DML direto de `visao360_app` sobre `promoted_knowledge`. Criadas 5 funções `SECURITY DEFINER` com auditoria atômica transacional e constraints estritas `chk_no_auto_textual` e `chk_no_inferred_global_active`.
+- **Bloco Q6 (AUTO Seguro e Preferências Estruturadas)**: `learning-engine.mjs` restringe o modo `AUTO` estritamente a preferências estruturadas enumeradas (`RESPONSE_LENGTH`, `TABLE_PREFERENCE`, `TONE`, `SECTION_ORDER`) com templates versionados, eliminando 100% de texto livre no modo AUTO. Avaliação fail-closed de risco alto contra evasões semânticas e exigência de evento soberano autenticado de Rafael para `OWNER_EXPLICIT`.
+- **Bloco Q7 (Bateria E2E Proporcional)**: Suíte adversarial com os 5 bypasses específicos do Codex 100% aprovada (`adversarial-corpus-quarta-remediacao.test.mjs`). Bateria E2E do Flywheel no PostgreSQL real 10/10 PASS (`flywheel-learning-postgres-integration.test.mjs`). Teste de cold start com reinicialização do container `visao-360-n8n-1` comprovando ativação automática de WF-100 e WF-101 com `activeVersionId` intacto.
+- **Bloco Q8 (Dossiê Formal de Resposta e Sincronização)**: Elaborado `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e às 30 perguntas obrigatórias do Codex. Sincronizados `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md`.
+
+### Errata de auditoria — WF-101 deve permanecer no núcleo canônico (03/09/2026)
+
+- Corrigida ambiguidade introduzida pelo auditor Codex: WF-101 não deve ser desativado, aposentado, removido ou arquivado.
+- Instrução canônica inequívoca: corrigir, publicar e ativar WF-101; durante edição, usar rascunho/teste para evitar processamento incorreto; confirmar operação após cold start em Q7.
+- Somente WF-104 e `AUTO_PROMOTION_ENABLED` devem permanecer desligados durante a quarta remediação.
+- Qualquer orientação anterior incompatível está formalmente revogada.
+
+### Independent Reaudit — Gates A0 e N2.3 Reprovados no commit d437a0c3 (03/09/2026)
+
+- Reauditados Git, Docker, n8n 2.36.7, PostgreSQL 17.6, workflows, migrations, motores e documentação da terceira remediação.
+- Confirmados avanços válidos: contenção dos loops legados após cold start, backups T0 com SHA-256 e catálogos legíveis, anti-TRUNCATE funcional, lint e build aprovados.
+- Gate A0 reaberto: WF-101 inativo e sem versão publicada; eventos presos em PROCESSING; ramo DOCUMENT sem chamada ao worker/Docling; transporte HTTPS não comprovado; export n8n inválido; `/status` hard-coded.
+- Gate N2.3 reaberto: conteúdo perigoso rotulado `STYLE_FORMATTING` é autopromovido; `visao360_app` contorna o motor; `structured_memory` aceita inferência global de confiança 0,10 como ACTIVE; WF-104 mantém política e valores hard-coded paralelos.
+- `npm test` falhou em `scripts/test-local-core-architecture.mjs:36`, revogando a declaração de 35/35 até nova execução completa.
+- Criado `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md` com 20 achados, Blocos Q0–Q8, critérios de aceite e 30 perguntas obrigatórias.
+- Atualizados AGENTS, ROADMAP, PROJECT_STATE, SESSION_STATE, CODEX_HANDOFF e status para retomada inequívoca.
+- Autopromoção deve permanecer desativada até usar preferências estruturadas enumeradas e proteção no PostgreSQL.
+
 ### Third Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
 
 - Concluídos integralmente os Blocos T0 a T7 especificados em `docs/audits/GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md` em resposta aos 28 achados da reauditoria independente do commit `2e34b9ad`.

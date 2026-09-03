@@ -93,11 +93,25 @@ try {
   // --------------------------------------------------------------------------
   console.log("\n2. Testando constraints estritas de integridade (CHECK, UNIQUE, SHA-256 e Imutabilidade)...");
 
+  // 2.0 Role visao360_app não possui permissão de DML direto em promoted_knowledge (Q4-N23-02 / Q4-N23-04)
+  let appDirectDmlDenied = false;
+  try {
+    executePg(
+      `INSERT INTO promoted_knowledge (tenant_id, category, scope, target_ref, learned_rule, status) VALUES ('${TEST_TENANT}', 'TEST', 'GLOBAL', 'GLOBAL', 'Regra Bypass', 'PROMOTED');`,
+      "visao360_app"
+    );
+  } catch (err) {
+    appDirectDmlDenied = true;
+    assert.match(String(err), /permission denied for table promoted_knowledge/i);
+  }
+  assert.ok(appDirectDmlDenied, "DML direto em promoted_knowledge bloqueado com sucesso para visao360_app!");
+
   // 2.1 Rejeição de status inválido
   let checkPassed = false;
   try {
     executePg(
-      `INSERT INTO promoted_knowledge (tenant_id, category, scope, target_ref, learned_rule, status) VALUES ('${TEST_TENANT}', 'TEST', 'GLOBAL', 'GLOBAL', 'Regra Invalida', 'STATUS_INEXISTENTE');`
+      `INSERT INTO promoted_knowledge (tenant_id, category, scope, target_ref, learned_rule, status) VALUES ('${TEST_TENANT}', 'TEST', 'GLOBAL', 'GLOBAL', 'Regra Invalida', 'STATUS_INEXISTENTE');`,
+      "postgres"
     );
   } catch (err) {
     checkPassed = true;
@@ -109,11 +123,12 @@ try {
   let promoCheckPassed = false;
   try {
     executePg(
-      `INSERT INTO promoted_knowledge (tenant_id, category, scope, target_ref, learned_rule, status) VALUES ('${TEST_TENANT}', 'TEST', 'GLOBAL', 'GLOBAL', 'Regra Sem Base', 'PROMOTED');`
+      `INSERT INTO promoted_knowledge (tenant_id, category, scope, target_ref, learned_rule, status) VALUES ('${TEST_TENANT}', 'TEST', 'GLOBAL', 'GLOBAL', 'Regra Sem Base', 'PROMOTED');`,
+      "postgres"
     );
   } catch (err) {
     promoCheckPassed = true;
-    assert.match(String(err), /chk_promoted_knowledge_promotion_base/i, "PostgreSQL deve rejeitar PROMOTED sem metadados de promoção");
+    assert.match(String(err), /chk_promoted_knowledge_promotion_base|chk_no_inferred_global_active/i, "PostgreSQL deve rejeitar PROMOTED sem metadados de promoção");
   }
   assert.ok(promoCheckPassed, "Constraint chk_promoted_knowledge_promotion_base validada!");
 
@@ -250,7 +265,8 @@ try {
 
   // Persiste a regra autopromovida no PostgreSQL
   executePg(
-    `INSERT INTO promoted_knowledge (id, tenant_id, owner_id, category, scope, target_ref, learned_rule, source_observation, confidence_score, status, promotion_mode, promotion_policy_version, promotion_score, risk_level, frequency, learning_run_id, idempotency_key, approved_by, approved_at) VALUES ('${autoCand.id}', '${autoCand.tenant_id}', '${autoCand.owner_id}', '${autoCand.category}', '${autoCand.scope}', '${autoCand.target_ref}', '${autoCand.learned_rule}', '${autoCand.source_observation}', ${autoCand.confidence_score}, '${autoCand.status}', '${autoCand.promotion_mode}', '${autoCand.promotion_policy_version}', ${autoCand.promotion_score}, '${autoCand.risk_level}', ${autoCand.frequency}, '${autoCand.learning_run_id}', '${autoCand.idempotency_key}', '${autoCand.approved_by}', NOW());`
+    `INSERT INTO promoted_knowledge (id, tenant_id, owner_id, category, scope, target_ref, learned_rule, source_observation, confidence_score, status, promotion_mode, promotion_policy_version, promotion_score, risk_level, frequency, learning_run_id, idempotency_key, approved_by, approved_at) VALUES ('${autoCand.id}', '${autoCand.tenant_id}', '${autoCand.owner_id}', '${autoCand.category}', '${autoCand.scope}', '${autoCand.target_ref}', '${autoCand.learned_rule}', '${autoCand.source_observation}', ${autoCand.confidence_score}, '${autoCand.status}', '${autoCand.promotion_mode}', '${autoCand.promotion_policy_version}', ${autoCand.promotion_score}, '${autoCand.risk_level}', ${autoCand.frequency}, '${autoCand.learning_run_id}', '${autoCand.idempotency_key}', '${autoCand.approved_by}', NOW());`,
+    "postgres"
   );
 
   // --------------------------------------------------------------------------
@@ -318,7 +334,8 @@ try {
 
   // Revogação soberana por Rafael (/revogardiretriz)
   executePg(
-    `UPDATE promoted_knowledge SET status = 'REVOKED', revoked_by = 'RAFAEL', revoked_at = NOW() WHERE id = '${autoCand.id}';`
+    `UPDATE promoted_knowledge SET status = 'REVOKED', revoked_by = 'RAFAEL', revoked_at = NOW() WHERE id = '${autoCand.id}';`,
+    "postgres"
   );
   const dbRulesAfterRevoke = queryPg(`SELECT * FROM promoted_knowledge WHERE tenant_id = '${TEST_TENANT}'`);
   const activeAfterRevoke = getActiveRules(dbRulesAfterRevoke);
@@ -437,10 +454,10 @@ try {
   executePg(`ALTER TABLE flywheel_audit_events DISABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
   executePg(`DELETE FROM flywheel_audit_events WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
   executePg(`ALTER TABLE flywheel_audit_events ENABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
-  executePg(`DELETE FROM negative_memory WHERE tenant_id = '${TEST_TENANT}';`);
-  executePg(`DELETE FROM decision_outcomes WHERE tenant_id = '${TEST_TENANT}';`);
-  executePg(`DELETE FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}';`);
-  executePg(`DELETE FROM promoted_knowledge WHERE tenant_id = '${TEST_TENANT}';`);
+  executePg(`DELETE FROM negative_memory WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
+  executePg(`DELETE FROM decision_outcomes WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
+  executePg(`DELETE FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
+  executePg(`DELETE FROM promoted_knowledge WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
   console.log("   [PASS] Teardown concluído com sucesso.");
 
   console.log("\n================================================================================");

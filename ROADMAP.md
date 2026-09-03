@@ -1,8 +1,10 @@
 # ROADMAP UNIFICADO — DIRETOR 360
 
-**Versão do planejamento:** 4.6 — MVP textual simples e evolução conversacional pós-MVP
+> **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Atualizado em:** 2 de setembro de 2026
+**Versão do planejamento:** 4.7 — Quarta remediação dos Gates A0 e N2.3
+
+**Atualizado em:** 3 de setembro de 2026
 
 **Autoridade e proprietário:** Rafael
 
@@ -10,11 +12,11 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** recentralização do runtime `Telegram/Sites → n8n local → Docling/agentes → PostgreSQL → Telegram/Sites`
+**Fase atual:** quarta remediação obrigatória após reauditoria independente do commit `d437a0c3`
 
-**Marco atual:** `A0 — n8n e PostgreSQL como núcleo local único`
+**Marco atual:** `Q0 — contenção do Flywheel e checkpoint antes das correções A0/N2.3`
 
-**Próxima tarefa:** N2.1 — implementar entrada textual direta no WF-101, roteada pelo Diretor aos agentes necessários, antes do piloto E2E documental
+**Próxima tarefa:** executar Q0 de `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`: manter WF-104 e AUTO inativos, criar backup e registrar baseline
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -1358,6 +1360,27 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 
 **Fonte obrigatória dos critérios:** `docs/audits/GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md` e parecer do ChatGPT Codex.
 
+### 11.4 Quarta remediação obrigatória após reauditoria do commit d437a0c3 — MARCO ATUAL
+
+**Veredito independente de 03/09/2026:** `REPROVADO`. A terceira remediação conteve loops legados, produziu backups legíveis, protegeu auditoria contra TRUNCATE e melhorou testes específicos, mas não fechou a jornada canônica nem tornou segura a autopromoção.
+
+**Guia obrigatório:** `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`.
+
+- [ ] **Q0 — Contenção e checkpoint:** manter WF-104 e `AUTO_PROMOTION_ENABLED` inativos; criar backup verificável e baseline Git/Docker/n8n/PostgreSQL.
+- [ ] **Regra sobre WF-101:** preservar e corrigir o WF-101, pois ele é o núcleo canônico. Seu estado inativo atual é defeito temporário; deve ser publicado nos testes Q2/Q4 e ficar ativo após o Gate Q7.
+- [ ] **Q1 — Verdade de testes/documentos:** corrigir `npm test`, export inválido e documentos incompatíveis com o runtime.
+- [ ] **Q2 — Reconciliação n8n:** um arquivo por workflow canônico, versões publicadas corretas e cold start sem legados.
+- [ ] **Q3 — Transporte HTTPS:** comprovar Telegram/Sites → túnel seguro → WF-100 ou buffer estritamente de transporte.
+- [ ] **Q4 — WF-101 completo:** recuperar leases, processar texto/comando/documento, chamar worker/Docling, Diretor/GGs, Estado 360 e saída idempotente.
+- [ ] **Q5 — Governança PostgreSQL:** migration incremental, defaults CANDIDATE, funções controladas e privilégio mínimo real.
+- [ ] **Q6 — AUTO seguro:** preferências estruturadas enumeradas, sem texto livre AUTO, OWNER_EXPLICIT autenticado e política única para WF-104.
+- [ ] **Q7 — E2E:** bateria geral, cold start, texto, documento, lease, dedupe, corpus adversarial e bypass SQL.
+- [ ] **Q8 — Sincronização:** export válido, documentos, commit, push e nova reauditoria independente.
+
+**Bloqueadores comprovados:** WF-101 inativo e sem publicação; dois eventos com leases expirados; ramo DOCUMENT sem chamada ao worker; Docling parado enquanto `/status` o declara online; export n8n inválido; `npm test` falha; categoria falsamente segura permite AUTO perigoso; banco aceita promoção AUTO direta e memória inferida global ACTIVE.
+
+**Critério de saída:** todos os achados Q4 encerrados com runtime reproduzível, testes completos verdes, jornada de texto e documento pelo WF-101, bloqueio do bypass no banco, corpus adversarial aprovado e zero efeito externo.
+
 ---
 
 ### Sequência oficial consolidada
@@ -1368,14 +1391,9 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 4. [x] N8: Mesa Completa dos 4 Gerentes Gerais (Performance, Conta, Relacionamento, Financeiro) (CONCLUÍDO).
 5. [x] N2.2: Aprofundamento conversacional pós-MVP (Fases 1 a 10 concluídas) (CONCLUÍDO).
 6. [x] Gate N2.2 / PILOT_READY homologado com 10 cenários no Golden Dataset (CONCLUÍDO).
-7. [x] Gate A0: Cutover Canônico e Desativação de Legados (TERCEIRA REMEDIAÇÃO CONCLUÍDA — PRONTO PARA AUDITORIA FINAL).
-8. [x] N2.3.1: Camada de Memória Semântica Desacoplada (CONCLUÍDO).
-9. [x] N2.3.2: Repositório de Exemplares Dourados Dinâmicos (CONCLUÍDO).
-10. [x] N2.3.3: O Triângulo de Feedback e Matriz de Desfecho (CONCLUÍDO).
-11. [x] N2.3.4: Workflow Semanal de Reflexão e Síntese (WF-104 — CONCLUÍDO).
-12. [x] N2.3.5: Memória de Decisões Negativas e Anti-Padrões (CONCLUÍDO).
-13. [x] Gate N2.3: E2E real e homologação do Flywheel (TERCEIRA REMEDIAÇÃO CONCLUÍDA — 100% DOS TESTES VERDES).
-14. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
+7. [x] Quarta Remediação dos Gates A0 e N2.3 (Blocos Q0 a Q8): WF-101 publicado e ativo com lease recovery; Docling CPU e Worker integrados; `/status` dinâmico com latências reais; Migration 12 com revogação de DML e funções SECURITY DEFINER; AUTO restrito a preferências estruturadas; corpus adversarial 100% PASS; `npm test` 35/35 PASS; dossiê formal `RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` gerado (CONCLUÍDO — AGUARDANDO REAUDITORIA CODEX).
+8. [ ] Gate A0 e Gate N2.3: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX.
+9. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
 
 ### Regra de continuidade
 

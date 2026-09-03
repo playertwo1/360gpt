@@ -2,17 +2,17 @@
  * engines/learning/learning-engine.mjs
  * Marco N2.3 — Learning Engine Determinístico de Autopromoção Controlada
  * 
- * Regra de Governança de Rafael:
- * - Regras aprendidas nascem obrigatoriamente como CANDIDATE.
- * - Aprendizado reversível e de baixo risco com score elevado é promovido automaticamente (promotion_mode = 'AUTO').
- * - Casos ambíguos, conflitantes, com amostra pequena ou de alto risco exigem revisão (promotion_mode = 'MANUAL_REVIEW').
- * - Feedback explícito de Rafael recebe peso superior a inferências silenciosas.
- * - Score: confidence * frequency_weight * recency_weight * outcome_weight * feedback_weight - penalties.
+ * Regra de Governança Estrita (Quarta Remediação):
+ * - Modo AUTO NÃO aceita texto livre arbitrário; restrito estritamente a preferências estruturadas enumeradas.
+ * - Categorias e preferências estruturadas: RESPONSE_LENGTH, TABLE_PREFERENCE, TONE, SECTION_ORDER.
+ * - Texto de contexto gerado exclusivamente por templates versionados e auditáveis.
+ * - OWNER_EXPLICIT exige evento soberano autenticado de Rafael (hash, event_id, owner_id).
+ * - Qualquer menção a efeitos externos, credenciais, fórmulas, retenção ou alçadas é classificada como HIGH RISK (fail-closed).
  */
 
 import { createHash } from 'node:crypto';
 
-export const PROMOTION_POLICY_VERSION = 'v2.3.0-controlled-autopromote';
+export const PROMOTION_POLICY_VERSION = 'v2.3.1-enumerated-preferences';
 
 export const RISK_LEVELS = {
   LOW: 'LOW',
@@ -25,6 +25,39 @@ export const PROMOTION_MODES = {
   OWNER_EXPLICIT: 'OWNER_EXPLICIT',
   MANUAL_REVIEW: 'MANUAL_REVIEW'
 };
+
+export const STRUCTURED_PREFERENCES = {
+  RESPONSE_LENGTH: new Set(['COMPACT', 'BALANCED', 'DETAILED']),
+  TABLE_PREFERENCE: new Set(['TABLE_FIRST', 'TEXT_FIRST']),
+  TONE: new Set(['DIRECT', 'EXECUTIVE', 'EXPLANATORY']),
+  SECTION_ORDER: new Set(['PERFORMANCE_FIRST', 'ACCOUNT_FIRST', 'GAPS_FIRST'])
+};
+
+export const PREFERENCE_TEMPLATES = {
+  'RESPONSE_LENGTH:COMPACT': 'Apresentar respostas e pareceres em formato compacto e direto ao ponto.',
+  'RESPONSE_LENGTH:BALANCED': 'Apresentar respostas em formato equilibrado com resumo executivo e métricas principais.',
+  'RESPONSE_LENGTH:DETAILED': 'Apresentar respostas detalhadas com todas as evidências e tabelas completas.',
+  'TABLE_PREFERENCE:TABLE_FIRST': 'Exibir dados quantitativos e tabelas antes de explicações textuais.',
+  'TABLE_PREFERENCE:TEXT_FIRST': 'Exibir síntese executiva textual antes das tabelas de apoio.',
+  'TONE:DIRECT': 'Utilizar tom executivo direto, claro e sem rodeios.',
+  'TONE:EXECUTIVE': 'Utilizar tom formal executivo focado em decisões de gestão.',
+  'TONE:EXPLANATORY': 'Utilizar tom didático e explicativo com fundamentação analítica.',
+  'SECTION_ORDER:PERFORMANCE_FIRST': 'Organizar parecer destacando indicadores e metas de Performance primeiro.',
+  'SECTION_ORDER:ACCOUNT_FIRST': 'Organizar parecer destacando contas e oportunidades prioritárias primeiro.',
+  'SECTION_ORDER:GAPS_FIRST': 'Organizar parecer destacando lacunas críticas e pontos a recuperar primeiro.'
+};
+
+/**
+ * Renderiza o texto formal a partir de uma preferência estruturada usando template versionado.
+ */
+export function renderStructuredPreferenceText(preferenceType, preferenceValue) {
+  const key = `${preferenceType}:${preferenceValue}`;
+  const template = PREFERENCE_TEMPLATES[key];
+  if (!template) {
+    throw new Error(`PREFERENCIA_ESTRUTURADA_INVALIDA: ${key} nao possui template versionado`);
+  }
+  return template;
+}
 
 /**
  * Calcula o score de aprendizado determinístico considerando a fórmula oficial:
@@ -42,43 +75,27 @@ export function calculateLearningScore({
   scope = 'DOMAIN',
   riskLevel = RISK_LEVELS.LOW
 }) {
-  // 1. Fator de Frequência: saturação logarítmica suave (mínimo 1 ocorrência)
   const frequencyWeight = Math.min(1.5, 0.7 + (Math.log2(Math.max(1, frequency)) * 0.3));
-
-  // 2. Fator de Recência: decaimento suave para eventos mais antigos que 30 dias
   const recencyWeight = Math.max(0.5, Math.exp(-0.015 * Math.max(0, recencyDays)));
-
-  // 3. Fator de Desfecho Observado (0.0 a 1.0)
   const outcomeWeight = Math.max(0.2, Math.min(1.0, observedOutcome));
-
-  // 4. Feedback Explícito de Rafael: peso de alavancagem superior
   const feedbackWeight = Math.max(0.1, Math.min(2.5, explicitFeedback));
 
-  // Produto base
   let baseScore = confidence * frequencyWeight * recencyWeight * outcomeWeight * feedbackWeight;
 
-  // Penalidades determinísticas
   let penalties = 0;
   if (hasConflict) penalties += 0.40;
   if (sampleSize < 3) penalties += 0.20;
   if (layoutChanged) penalties += 0.25;
-  if (scope === 'GLOBAL' && frequency < 3 && explicitFeedback < 1.5) penalties += 0.25;
-  if (riskLevel === RISK_LEVELS.HIGH) penalties += 0.35;
+  if (scope === 'GLOBAL') penalties += 0.35;
+  if (riskLevel === RISK_LEVELS.HIGH) penalties += 0.40;
 
   const finalScore = Math.max(0.000, Math.min(1.000, baseScore - penalties));
   return Number(finalScore.toFixed(3));
 }
 
-export const AUTO_PROMOTION_ALLOWED_CATEGORIES = new Set([
-  'STYLE_FORMATTING',
-  'COMMUNICATION_CADENCE',
-  'CONVERSATIONAL_PREFERENCE',
-  'PRESENTATION_ORDER',
-  'EXECUTIVE_SUMMARY_STYLE'
-]);
-
 /**
  * Avalia a elegibilidade de uma regra para Autopromoção vs Revisão Manual.
+ * Salvaguarda Estrita (Q4-N23-01): AUTO só aceita preferências estruturadas enumeradas.
  */
 export function evaluateCandidateRule({
   rule,
@@ -88,11 +105,11 @@ export function evaluateCandidateRule({
   explicitFeedback = 1.0,
   hasConflict = false,
   sampleSize = 5,
-  layoutChanged = false
+  layoutChanged = false,
+  ownerEvent = null
 }) {
   const riskLevel = determineRiskLevel(rule);
   const scope = String(rule.scope || 'DOMAIN').toUpperCase().trim();
-  const category = String(rule.category || '').toUpperCase().trim();
   const confidence = Number(rule.confidence_score || 0.85);
 
   const score = calculateLearningScore({
@@ -108,43 +125,79 @@ export function evaluateCandidateRule({
     riskLevel
   });
 
-  // 1. Risco ALTO, conflito material ou escopo GLOBAL: NUNCA autopromove; SEMPRE requer MANUAL_REVIEW
-  if (riskLevel === RISK_LEVELS.HIGH || hasConflict || scope === 'GLOBAL') {
+  // 1. Conflito material: SEMPRE requer MANUAL_REVIEW
+  if (hasConflict) {
     return {
       eligible_for_auto: false,
       promotion_mode: PROMOTION_MODES.MANUAL_REVIEW,
       score,
-      riskLevel: riskLevel === RISK_LEVELS.LOW && scope === 'GLOBAL' ? RISK_LEVELS.HIGH : riskLevel,
-      reason: hasConflict 
-        ? 'Conflito com outra diretriz ativa' 
-        : scope === 'GLOBAL'
-          ? 'Escopo global exige revisão manual obrigatória de Rafael'
-          : 'Classificação de risco elevado (exige validação de Rafael)',
+      riskLevel: RISK_LEVELS.HIGH,
+      reason: 'Conflito com outra diretriz ativa',
       policy_version: PROMOTION_POLICY_VERSION
     };
   }
 
-  // 2. Feedback explícito de aprovação de Rafael: elegível direto para OWNER_EXPLICIT
-  if (explicitFeedback >= 1.5) {
+  // 2. Feedback explícito de Rafael com evento soberano autenticado (Q4-N23-07)
+  const isOwnerAuthenticated = Boolean(
+    ownerEvent && 
+    ownerEvent.owner_id === 'rafael' && 
+    ownerEvent.source_event_id && 
+    /^[0-9a-f]{64}$/i.test(ownerEvent.event_hash || '')
+  );
+
+  if (explicitFeedback >= 1.5 && isOwnerAuthenticated) {
     return {
       eligible_for_auto: true,
       promotion_mode: PROMOTION_MODES.OWNER_EXPLICIT,
       score,
       riskLevel,
-      reason: 'Orientação explícita de Rafael validada',
+      reason: 'Orientação explícita com evento soberano autenticado de Rafael',
       policy_version: PROMOTION_POLICY_VERSION
     };
   }
 
-  // 3. Regra de baixo risco com categoria na allowlist estrita, score alto e recorrência comprovada (>= 2): AUTOPROMOVE
-  const isCategoryAllowedForAuto = AUTO_PROMOTION_ALLOWED_CATEGORIES.has(category);
-  if (riskLevel === RISK_LEVELS.LOW && isCategoryAllowedForAuto && score >= 0.75 && frequency >= 2 && !layoutChanged) {
+  // 3. Risco ALTO ou escopo GLOBAL sem aprovação de Rafael: NUNCA autopromove; requer MANUAL_REVIEW
+  if (riskLevel === RISK_LEVELS.HIGH || scope === 'GLOBAL') {
+    return {
+      eligible_for_auto: false,
+      promotion_mode: PROMOTION_MODES.MANUAL_REVIEW,
+      score,
+      riskLevel: RISK_LEVELS.HIGH,
+      reason: scope === 'GLOBAL'
+        ? 'Escopo global exige revisão manual obrigatória de Rafael'
+        : 'Classificação de risco elevado ou termos proibidos para modo autônomo',
+      policy_version: PROMOTION_POLICY_VERSION
+    };
+  }
+
+  // 3. Autopromoção (AUTO) — EXCLUSIVA para preferências estruturadas enumeradas (Q4-N23-01)
+  const prefType = rule.preference_type;
+  const prefValue = rule.preference_value;
+  const isStructuredPreference = prefType && 
+    STRUCTURED_PREFERENCES[prefType] && 
+    STRUCTURED_PREFERENCES[prefType].has(prefValue);
+
+  if (!isStructuredPreference) {
+    return {
+      eligible_for_auto: false,
+      promotion_mode: PROMOTION_MODES.MANUAL_REVIEW,
+      score,
+      riskLevel: RISK_LEVELS.HIGH,
+      reason: 'Bypass semântico bloqueado: modo AUTO restrito estritamente a preferências estruturadas enumeradas. Texto livre requer autorização soberana de Rafael.',
+      policy_version: PROMOTION_POLICY_VERSION
+    };
+  }
+
+  // Se for preferência estruturada válida de baixo risco com score alto e frequência >= 2:
+  if (riskLevel === RISK_LEVELS.LOW && score >= 0.75 && frequency >= 2 && !layoutChanged) {
+    const canonicalText = renderStructuredPreferenceText(prefType, prefValue);
     return {
       eligible_for_auto: true,
       promotion_mode: PROMOTION_MODES.AUTO,
       score,
-      riskLevel,
-      reason: `Autopromoção contínua (score: ${score} >= 0.75, freq: ${frequency} >= 2, categoria ${category} em allowlist)`,
+      riskLevel: RISK_LEVELS.LOW,
+      canonical_rule_text: canonicalText,
+      reason: `Autopromoção contínua de preferência estruturada (score: ${score} >= 0.75, freq: ${frequency} >= 2)`,
       policy_version: PROMOTION_POLICY_VERSION
     };
   }
@@ -155,27 +208,31 @@ export function evaluateCandidateRule({
     promotion_mode: score >= 0.50 ? PROMOTION_MODES.MANUAL_REVIEW : 'REJECTED_LOW_SCORE',
     score,
     riskLevel,
-    reason: !isCategoryAllowedForAuto
-      ? `Categoria ${category || 'N/A'} fora da allowlist de autopromoção (requer revisão manual)`
-      : score >= 0.50 
-        ? 'Aguardando maior recorrência ou validação' 
-        : 'Score insuficiente para promoção',
+    reason: score >= 0.50 
+      ? 'Aguardando maior recorrência ou validação' 
+      : 'Score insuficiente para promoção',
     policy_version: PROMOTION_POLICY_VERSION
   };
 }
 
+/**
+ * Classifica o nível de risco de forma estrita e fail-closed.
+ */
 export function determineRiskLevel(rule) {
-  const text = (rule.learned_rule || '').toLowerCase();
+  const text = (rule.learned_rule || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const category = (rule.category || '').toUpperCase().trim();
   const scope = (rule.scope || '').toUpperCase().trim();
 
-  // 1. Termos e tópicos sensíveis de alto risco (fail-closed absoluto)
+  // Padrões estritos de alto risco (fail-closed absoluto contra bypasses semânticos)
   const highRiskPatterns = [
-    /cr[eé]dito/, /limite/, /taxa/, /juros/, /spread/, /desconto/, /margem/,
-    /compliance/, /legal/, /jur[ií]dico/, /sigilo/, /privacidade/, /lgpd/, /reten[cç][aã]o/,
-    /f[oó]rmula/, /pobj/, /pontua[cç][aã]o/, /oficial/, /normativ[ao]/,
-    /autoriza[cç][aã]o/, /permiss[aã]o/, /acesso/, /credencial/, /token/, /segredo/,
-    /efeito externo/, /terceir[ao]s?/, /dispensar/, /sem an[aá]lise/, /bypass/
+    /credito/, /limite/, /taxa/, /juros/, /spread/, /desconto/, /margem/, /alvanc/,
+    /compliance/, /legal/, /juridico/, /sigilo/, /privacidade/, /lgpd/,
+    /retencao/, /nunca apague/, /guarde.*sempre/, /nao apagar/, /etern/,
+    /formula/, /pobj/, /pontuacao/, /oficial/, /normativ/, /regra de ponto/, /mudar ponto/,
+    /autorizacao/, /permissao/, /acesso/, /credencial/, /token/, /segredo/, /chave/, /api key/, /compartilhe.*chave/,
+    /alcada/, /irrestrita/, /qualquer pessoa/, /sem autorizacao/,
+    /efeito externo/, /mensagem.*cliente/, /envie.*automaticamente/, /sem me perguntar/, /whatsapp/, /disparo/,
+    /dispensar/, /sem analise/, /bypass/
   ];
 
   for (const pattern of highRiskPatterns) {
@@ -184,18 +241,17 @@ export function determineRiskLevel(rule) {
     }
   }
 
-  // 2. Escopo GLOBAL é de alto impacto sistêmico
   if (scope === 'GLOBAL') {
     return RISK_LEVELS.HIGH;
   }
 
-  // 3. Allowlist estrita de categorias positivas para LOW
-  if (AUTO_PROMOTION_ALLOWED_CATEGORIES.has(category)) {
+  // Apenas preferências estruturadas reconhecidas podem ser LOW
+  if (rule.preference_type && STRUCTURED_PREFERENCES[rule.preference_type]?.has(rule.preference_value)) {
     return RISK_LEVELS.LOW;
   }
 
-  // 4. Categorias fora da allowlist positiva não são elegíveis para LOW (fail-closed)
-  return RISK_LEVELS.MEDIUM;
+  // Qualquer texto livre que não seja preferência estruturada é no mínimo MEDIUM ou HIGH
+  return RISK_LEVELS.HIGH;
 }
 
 export function sha256Hex(data) {

@@ -33,7 +33,7 @@ const flywheelMigration = await readFile(path.join(root, 'infra/postgres/init/09
 for (const table of [
   'promoted_knowledge', 'golden_exemplars', 'decision_outcomes', 'negative_memory', 'flywheel_audit_events'
 ]) {
-  assert.match(flywheelMigration, new RegExp(`CREATE TABLE ${table}`));
+  assert.match(flywheelMigration, new RegExp(`CREATE TABLE (?:IF NOT EXISTS )?${table}`));
 }
 
 const workflowFiles = (await readdir(path.join(root, 'n8n/workflows'))).filter((name) => name.endsWith('.json'));

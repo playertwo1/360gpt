@@ -48,8 +48,8 @@ for (const workflowFile of workflows) {
 }
 
 const wf101 = await readFile(path.join(root, 'n8n/workflows/wf-101-local-dispatcher.json'), 'utf8');
-const wf102 = await readFile(path.join(root, 'n8n/workflows/wf-102-telegram-delivery.json'), 'utf8');
-const wf103 = await readFile(path.join(root, 'n8n/workflows/wf-103-local-error-contingency.json'), 'utf8');
+const wf102 = await readFile(path.join(root, 'n8n/workflows/archive/wf-102-telegram-delivery.json'), 'utf8');
+const wf103 = await readFile(path.join(root, 'n8n/workflows/wf-103-contingencia-local.json'), 'utf8');
 assert.match(wf101, /FOR UPDATE SKIP LOCKED/);
 assert.match(wf101, /conversation_messages/);
 assert.match(wf101, /Roteamento determinístico/);

@@ -1,22 +1,22 @@
-# 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-**Data da Última Atualização:** 03 de setembro de 2026, 14:05
+# TERMO DE AUDITORIA E HANDOFF — DIRETOR 360
+> **STATUS DA QUARTA REMEDIAÇÃO:** Blocos Q0 a Q8 CONCLUÍDOS e submetidos para nova reauditoria independente do ChatGPT Codex. Dossiê formal disponível em `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`. WF-101 publicado e ativo; WF-104 e AUTO_PROMOTION_ENABLED estritamente desligados; Gate N7 BLOCKED.
+
+**Data da Última Atualização:** 03 de setembro de 2026  
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
-**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
-**Status Atual:** TERCEIRA REMEDIAÇÃO CONCLUÍDA | GATES A0 E N2.3 SUBMETIDOS PARA HOMOLOGAÇÃO FORMAL
+**Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)  
+**Status Atual:** QUARTA REMEDIAÇÃO CONCLUÍDA NO RUNTIME REAL | AGUARDANDO REAUDITORIA CODEX  
 
 **Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O n8n local e o PostgreSQL `visao360` no Docker são o núcleo operacional canônico; Telegram e Sites são somente canais passivos de transporte.
 
-**Instruções para o ChatGPT Codex:**
-1. Ler o relatório oficial de resposta: `docs/audits/RESPOSTA_TERCEIRA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
-2. Verificar as evidências objetivas e código de cada um dos 28 achados abordados nos Blocos T0 a T7 (`docs/audits/GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md`).
-3. Inspecionar o novo commit no Git, as migrations (`infra/postgres/init/09-flywheel-learning.sql` purificada e `11-flywheel-permissions-and-constraints.sql`), os backups duráveis com SHA-256 (`backups/durable/backup_visao360_t0.dump`, `backup_n8n_t0.dump`) e os exports do n8n (`n8n/workflows/exported_all.json`).
-4. Executar os testes de verificação: `npm test` (35/35 suítes aprovadas com zero falhas, incluindo `tests/flywheel-learning-postgres-integration.test.mjs` 10/10 no PostgreSQL real executado pela role `visao360_app`), `npm run lint` e `npm run build`.
-5. Emitir o parecer formal e soberano de homologação dos Gates A0 e N2.3.
-
-> **Precedência de continuidade:** este aviso e o novo dossiê de resposta substituem o ponto de retomada anterior. O restante deste arquivo permanece como contexto histórico.
-
-> **Decisão de Rafael sobre aprendizado incorporada:** O Learning Engine determinístico opera com allowlist estrita de categorias de baixo risco e auto-promoção controlada (`score >= 0.75`, `frequency >= 2`), enquanto termos sensíveis (retenção, crédito, limites, taxas, compliance, fórmulas, efeitos externos, credenciais) e regras globais geram estritamente `MANUAL_REVIEW`. Rafael governa, inspeciona, aprova, suspende e revoga diretrizes pelo Telegram (`/diretrizes`, `/aprovardiretriz`, `/suspenderdiretriz`, `/revogardiretriz`). Todas as regras nascem estritamente como `CANDIDATE`. `AGENTS.md`, System Prompts, políticas, contratos, fórmulas oficiais e autorizações NUNCA podem ser autoalterados.
+**Evidências Concluídas da Quarta Remediação:**
+1. `npm test`: 35/35 suítes PASS, exit code 0.
+2. `tests/adversarial-corpus-quarta-remediacao.test.mjs`: 100% de contenção adversarial contra os 5 bypasses do Codex.
+3. `tests/flywheel-learning-postgres-integration.test.mjs`: 10/10 etapas aprovadas no PostgreSQL real.
+4. `npm run lint` (0 erros) e `npm run build` (sucesso).
+5. WF-101 ativo no n8n 2.x com `activeVersionId` idêntico a `versionId`, com claim, recuperação de leases expirados, monitoramento dinâmico de latência e rota documental integrada ao Docling TableFormer CPU.
+6. Migration 12 aplicada com revogação de DML da role `visao360_app` e funções `SECURITY DEFINER` com auditoria atômica transacional.
+7. Resposta técnica item a item aos 20 achados e às 30 perguntas obrigatórias do Codex em `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
 
 ---
 

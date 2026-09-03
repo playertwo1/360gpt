@@ -1,13 +1,23 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
-**Data do status:** 3 de setembro de 2026 — atualizado após conclusão da segunda remediação dos Gates A0 e N2.3
-**Versão Atual da Release:** `6.2.0-gates-a0-n2.3-remediated-v2`
+## Atualização 03/09/2026 — Quarta Remediação dos Gates A0 e N2.3 Concluída
+
+- **Status da Quarta Remediação:** Blocos Q0 a Q8 executados integralmente e validados no runtime real.
+- **Controlador Canônico WF-101:** Preservado, corrigido e publicado no n8n 2.x com `activeVersionId = versionId`. Recuperação automática de leases expirados ativa; nó 05 com monitoramento dinâmico de saúde (`/health/system`) e rota documental completa integrada ao Docling TableFormer CPU.
+- **Governança do Flywheel N2.3:** Migration 12 aplicada com revogação de DML da role `visao360_app` sobre `promoted_knowledge`, 5 funções `SECURITY DEFINER` com auditoria atômica transacional e constraints estritas `chk_no_auto_textual` e `chk_no_inferred_global_active`.
+- **AUTO Seguro:** Modo `AUTO` restrito estritamente a preferências estruturadas enumeradas em catálogo fechado, com templates versionados e eliminação de 100% de texto livre na autopromoção.
+- **Validação:** `npm test` 35/35 suítes PASS, suíte adversarial 100% PASS, bateria E2E do Flywheel no PostgreSQL real 10/10 PASS, lint com zero erros e build com sucesso.
+- **Dossiê Formal:** `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e 30 perguntas obrigatórias do Codex.
+- **Salvaguardas:** WF-104 inativo (`active: false`), `AUTO_PROMOTION_ENABLED=false` e Gate N7 `BLOCKED` aguardando homologação do auditor independente ChatGPT Codex.
+
+**Data do status:** 3 de setembro de 2026 — Quarta Remediação Concluída  
+**Versão Atual da Release:** `6.3.0-gates-a0-n2.3-quarta-remediacao`  
 **Estrutura de Roteiro:** Roadmap de Evolução Orientada à Confiança (Marcos N0 a N13 + Marco N2.3)  
-**Modo de Execução:** Webhook Telegram Cloudflare Ativo; Núcleo Local Docker Operacional; Polling Desligado
-**Saúde do Projeto:** 🟡 **SEGUNDA REMEDIAÇÃO CONCLUÍDA | AGUARDANDO REAUDITORIA INDEPENDENTE CODEX**
+**Modo de Execução:** Webhook Telegram Ativo; Núcleo Local Docker Operacional; WF-101 Ativo  
+**Saúde do Projeto:** 🟡 **QUARTA REMEDIAÇÃO CONCLUÍDA | AGUARDANDO REAUDITORIA CODEX**  
 **Autoridade Decisória:** Rafael (`fael@live.de` / `rafa.pedrosa1@gmail.com`)  
 **Propriedade e responsabilidade técnica:** projeto privado de Rafael; não há migração ou transferência planejada para ambiente institucional. Regras institucionais, quando aplicáveis a uma fonte de dados, limitam apenas o uso dessa fonte.  
-**Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.
+**Autorização institucional para dados reais:** `AUTORIZADO`, dentro do escopo institucional vigente; cada uso operacional exige finalidade, escopo, minimização, rastreabilidade, revisão humana e gate específico. Nenhuma fonte real está conectada.  
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`); `360.git` preservado como remoto legado.  
 **Site Hospedado na Nuvem:** `https://visao-360-diretor.fael360092.chatgpt.site`  
 

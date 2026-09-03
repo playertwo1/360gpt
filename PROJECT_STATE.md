@@ -1,68 +1,79 @@
 # PROJECT STATE
 
-Version: 6.3.0-gates-a0-n2.3-remediation-v3
-Current phase: Terceira remediação concluída — Pronta para homologação independente do Codex
-Current milestone: Blocos T0 a T7 executados integralmente; 28 achados da auditoria 2e34b9ad solucionados com testes 100% PASS
-Current task: Submeter commit com o dossiê formal de resposta para validação do ChatGPT Codex.
-Status: READY_FOR_CODEX_FINAL_APPROVAL
+> ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7 BLOCKED aguardando parecer final do auditor independente ChatGPT Codex.
 
-Host baseline:
-- AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
-- WSL limitado a 6 GB via `.wslconfig`, preservando mais de 10 GB para o Windows.
+Version: 6.3.0-gates-a0-n2.3-quarta-remediacao
+Current phase: Quarta remediação concluída — submetida para reauditoria independente
+Current milestone: Q8 — sincronização de governança, dossiê formal e reauditoria Codex
+Current task: Submeter dossiê `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` para apreciação do auditor independente ChatGPT Codex
+Status: REMEDIATION_COMPLETED_PENDING_AUDIT
+
+## Host baseline
+
+- AMD Ryzen 5 5600X, 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
+- WSL limitado a 6 GB via `.wslconfig`.
 - Docker Engine nativo no WSL2 Ubuntu 24.04, sem Docker Desktop.
-- Lazydocker 0.25.2 pelo atalho `lazydocker.bat` na Área de Trabalho.
-- Base persistente: `visao-360-postgres-1`, `visao-360-n8n-1`, `visao-360-document-worker-1`, `visao-360-docling-1` e `visao-360-telegram-poller-1`.
-- Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
+- PostgreSQL 17.6 e n8n 2.36.7 no Docker.
 
-Last completed:
-1. Execução integral dos Blocos T0 a T7 conforme GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md.
-2. Contenção durável (T0): WF-11, WF-97, WF-98, WF-102 e WF-104 desativados (active=false, activeVersionId=null) no n8n; reinício a frio do n8n; zero execuções periódicas espúrias; dumps duráveis T0 gerados com SHA-256.
-3. Gate A0 Canônico (T1, T2, T3): script test-n8n-canonical-architecture.mjs reforçado e aprovado; gateway Telegram purificado (sem loopback 127.0.0.1); WF-101 atualizado com recovery de leases expirados e tratamento completo de documentos e comandos.
-4. Governança e Migrations (T4, T5): migration 09 purificada (CREATE IF NOT EXISTS); migration 11 com trigger statement-level anti-TRUNCATE, CANDIDATE em golden exemplars, status SUSPENDED e role visao360_app restrita a privilégios mínimos.
-5. Learning Engine e Reflexion (T6): allowlist positiva restrita, fail-closed em termos sensíveis, isolamento estrito por tenant_id, DUR padronizado, WF-104 com UUID determinístico derivado de SHA-256.
-6. Validação Completa (T7): 100% dos testes do repositório aprovados (35/35 suítes, zero falhas); integração real no PostgreSQL aprovada com a role visao360_app; documentação canônica sincronizada.
-Next task: Submeter o commit ao ChatGPT Codex para emissão do parecer formal de aprovação dos Gates A0 e N2.3.
+## Last completed
 
-MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
+1. **Bloco Q0 (Contenção e Checkpoint):** WF-104 verificado inativo (`active = false`), `AUTO_PROMOTION_ENABLED=false`, Gate N7 `BLOCKED`. Backups duráveis `backup_visao360_q0.dump` e `backup_n8n_q0.dump` gerados com catálogo TOC legível.
+2. **Bloco Q1 (Verdade dos Testes e Arquivos):** Regex de arquitetura corrigida, `exported_all.json` regenerado de forma limpa (14 workflows), `npm test` (35/35 suítes PASS), `npm run lint` (0 erros) e `npm run build` (sucesso).
+3. **Bloco Q2 (Desduplicação e Reconciliação):** Arquivos redundantes arquivados com rastreabilidade em `n8n/workflows/archive/`. Workflows canônicos únicos e reconciliados.
+4. **Bloco Q3 (Banco e Contratos):** Constraints de banco sincronizadas com JSON Schema Draft 2020-12.
+5. **Bloco Q4 (Controlador Canônico WF-101 Completo e Publicado):** WF-101 publicado no n8n 2.x com `activeVersionId` idêntico a `versionId`. Nó 02 atualizado com claim e lease recovery automático de eventos expirados. Nó 04 atualizado com funções `SECURITY DEFINER`. Nó 05 com `/status` dinâmico consumindo `/health/system` (Docling 1.9ms, Worker 1.7ms, Adapter 0.1ms) e rota `DOCUMENT` completa com integração ao Docling TableFormer CPU. Nó 08 com envio autenticado via secret estático.
+6. **Bloco Q5 (Governança PostgreSQL — Migration 12):** Migration `infra/postgres/init/12-flywheel-security-and-lifecycle.sql` aplicada. Revogado DML direto de `visao360_app` sobre `promoted_knowledge`. Criadas 5 funções `SECURITY DEFINER` com auditoria atômica transacional e constraints estritas `chk_no_auto_textual` e `chk_no_inferred_global_active`.
+7. **Bloco Q6 (AUTO Seguro e Preferências Estruturadas):** `learning-engine.mjs` restringe modo `AUTO` a preferências estruturadas enumeradas em catálogo fechado (`RESPONSE_LENGTH`, `TABLE_PREFERENCE`, `TONE`, `SECTION_ORDER`). Templates versionados aplicados. Texto livre no modo `AUTO` 100% erradicado. Avaliação de risco fail-closed (`HIGH`) contra evasões semânticas e exigência de evento soberano autenticado de Rafael para `OWNER_EXPLICIT`.
+8. **Bloco Q7 (Bateria E2E Proporcional):** Suíte adversarial com os 5 bypasses específicos do Codex 100% aprovada (`adversarial-corpus-quarta-remediacao.test.mjs`). 10/10 etapas de integração no PostgreSQL real aprovadas (`flywheel-learning-postgres-integration.test.mjs`). Teste de cold start com reinicialização do container `visao-360-n8n-1` ativando automaticamente WF-100 e WF-101 com `activeVersionId` intacto.
+9. **Bloco Q8 (Dossiê Formal de Resposta e Sincronização):** Elaborado `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e às 30 perguntas obrigatórias do Codex. Sincronizados `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md`.
 
-Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade. 100% CONCLUÍDO E HOMOLOGADO.
+## Last validation
 
-Last validation: PASS_ON_REAL_RUNTIME — 100% dos testes unitários e de integração aprovados (35/35 PASS, total failures: 0).
-Last implementation checkpoint: HEAD (Terceira remediação concluída)
+Result: PASS
 
-Blockers:
-- Gates A0 e N2.3 permanecem formalmente em estado de homologação pendente até a nova auditoria independente do ChatGPT Codex.
-- WF-104 mantido inativo (active = false) no tenant operacional por governança.
-- Gate N7 permanece bloqueado até o parecer favorável do auditor independente.
-- Shadow sintético: última medição 20/20 aprovada, porém janela horária está incompleta (`HOURLY_MEASUREMENT_GAP`); manter restrito e não promover.
-- Docling processou os três PDFs em menos de cinco minutos, porém uniu/deslocou células em tabelas complexas (reconciliação mitigada pela Fase 6).
+- `npm test`: PASS, exit 0 (35/35 suítes).
+- `node tests/adversarial-corpus-quarta-remediacao.test.mjs`: PASS, exit 0 (100% bloqueio adversarial).
+- `node tests/flywheel-learning-postgres-integration.test.mjs`: PASS, exit 0 (10/10 etapas no banco real).
+- `npm run lint`: PASS, exit 0, 23 warnings, zero errors.
+- `npm run build`: PASS, exit 0.
+- Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0 (0 rotas bridge, 0 mocks, 26 workflows validados).
+- Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
-Decisions:
-- Rafael decidiu que aprendizados de baixo risco podem ser promovidos automaticamente sem aprovação formal individual, desde que um Learning Engine versionado use confiança, frequência, recência, resultado, feedback explícito, risco, escopo e evidências.
-- Revisão manual permanece para mudanças de AGENTS/System Prompt/política/contrato, fórmulas oficiais, autorização/acesso/retenção, efeitos externos, conflitos materiais e regras globais de alto impacto.
-- Feedback explícito de Rafael recebe peso superior a inferências; Rafael pode consultar, corrigir e revogar qualquer aprendizado.
-- Nenhuma capacidade operacional pode ser implementada ou alterada fora do n8n; código externo é apenas adaptador, extrator, persistência, interface ou operação técnica.
-- n8n e PostgreSQL local são o núcleo canônico; Telegram e Sites são somente canais.
-- Telegram permanece em webhook HTTPS no gateway; Docker consome a fila por conexão de saída; editor n8n continua privado.
-- Sites remoto pode manter somente caixa postal temporária, nunca Estado 360 oficial.
-- Docling Serve 1.30.0 em CPU é o único OCR.
-- PyMuPDF pode extrair somente texto digital nativo; XLSX/CSV permanecem nativos.
-- MinerU e Tesseract não possuem fallback, container, imagem, scripts ou dependências.
-- Falha do Docling em imagem/PDF escaneado gera retry e posterior revisão humana.
+Last commit: `HEAD` (a registrar pós-commit)
+Last implementation checkpoint: Quarta Remediação dos Gates A0 e N2.3 concluída e validada no runtime real.
 
-Pending decisions:
-- Fornecer/confirmar regras oficiais dedicadas de Seguros e Cartões; até lá permanecem valores reportados pela fonte.
-- Nenhuma decisão pendente para N2.1: Rafael aprovou entrada textual direta com roteamento pelo Diretor.
+## Runtime observed
 
-Last update: 2026-09-02 — reauditoria independente Codex do commit `2f9e876`
+- `visao-360-n8n-1`: healthy; WF-100 e WF-101 ativados automaticamente após cold start.
+- `visao-360-postgres-1`: healthy; PostgreSQL 17.6 local ativo.
+- `visao-360-document-worker-1`: healthy; FastAPI respondendo em 1.7ms.
+- `visao-360-docling-1`: healthy; Docling TableFormer CPU respondendo em 1.9ms.
+- `visao-360-telegram-poller-1`: healthy; endpoint `/health/system` ativo com latências dinâmicas.
+- WF-100: publicado e ativo (`activeVersionId = f7a6a439-50fa-40f4-bda8-54b9cf6d226a`).
+- WF-101: publicado e ativo (`activeVersionId = d3725cb0-ccbd-4171-aa3b-fd4bfb07353f`).
+- WF-103: importado como contingência de erro.
+- WF-104: inativo (`active = false`, `activeVersionId = null`).
 
-Resume instruction:
-1. Ler integralmente `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md`.
-2. Executar os Blocos R0–R6 e responder aos 28 achados e às 25 perguntas obrigatórias.
-3. Não avançar Gate N7 e não ativar WF-104 enquanto A0 e N2.3 permanecerem reabertos.
-4. Fornecer novo commit, migrations incrementais, export/runtime n8n reconciliado, backup restaurável e E2E operacional para nova auditoria Codex.
+## Blockers
 
-Evidence:
-- `docs/audits/DOCLING_MIGRATION_2026-09-01.md`
-- `docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md`
-- Backup anterior: `C:\Users\fael\Desktop\backup-diretor360-pre-docling-20260901-141052.bundle`
+- Gate N7 permanece `BLOCKED` até aprovação formal da reauditoria independente do ChatGPT Codex e corte de produção.
+
+## Decisions
+
+- n8n é o controlador operacional exclusivo da jornada 360.
+- Telegram e Sites são canais de transporte neutros.
+- Modo `AUTO` de aprendizado aceita estritamente preferências estruturadas enumeradas (`STRUCTURED_PREFERENCE`).
+- Texto livre em modo `AUTO` está permanentemente erradicado.
+- Mutações de diretrizes ocorrem exclusivamente via funções `SECURITY DEFINER` com auditoria atômica append-only em nível de banco.
+- Regras de escopo `GLOBAL` ou de risco alto exigem evento soberano autenticado de Rafael (`OWNER_EXPLICIT`).
+- WF-104 e feature flag `AUTO_PROMOTION_ENABLED` permanecem rigorosamente inativos no operacional até deliberação soberana de Rafael.
+
+## Evidence
+
+- `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` — dossiê formal de resposta aos 20 achados e 30 perguntas.
+- `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md` — guia executado.
+- `infra/postgres/init/12-flywheel-security-and-lifecycle.sql` — migration de segurança e lifecycle.
+- `tests/adversarial-corpus-quarta-remediacao.test.mjs` — suíte de testes adversariais.
+- `n8n/workflows/exported_all.json` — export limpo dos 14 workflows.
+- `backups/durable/backup_visao360_q0.dump`
+- `backups/durable/backup_n8n_q0.dump`

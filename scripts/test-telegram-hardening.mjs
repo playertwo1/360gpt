@@ -6,7 +6,7 @@ const route = await readFile('app/api/ingest/telegram/route.ts', 'utf8');
 const messages = await readFile('lib/telegram-messages.ts', 'utf8');
 const compose = await readFile('compose.n8n.yaml', 'utf8');
 const wf101 = await readFile('n8n/workflows/wf-101-local-dispatcher.json', 'utf8');
-const wf103 = await readFile('n8n/workflows/wf-103-local-error-contingency.json', 'utf8');
+const wf103 = await readFile('n8n/workflows/wf-103-contingencia-local.json', 'utf8');
 
 // Hardening de segurança de entrada
 assert.match(route, /is_bot/);

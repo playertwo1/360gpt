@@ -18,8 +18,8 @@ $catalog = Get-Content (Join-Path $repo 'engines/orchestration/telegram-commands
 $wf11 = Get-Content (Join-Path $repo 'n8n/workflows/wf-11-diretor-360-orquestrador-mvp.json') -Raw
 $wf13 = Get-Content (Join-Path $repo 'n8n/workflows/wf-13-gg-performance-mvp.json') -Raw
 $wf101 = Get-Content (Join-Path $repo 'n8n/workflows/wf-101-local-dispatcher.json') -Raw
-$wf102 = Get-Content (Join-Path $repo 'n8n/workflows/wf-102-telegram-delivery.json') -Raw
-$wf103 = Get-Content (Join-Path $repo 'n8n/workflows/wf-103-local-error-contingency.json') -Raw
+$wf102 = Get-Content (Join-Path $repo 'n8n/workflows/archive/wf-102-telegram-delivery.json') -Raw
+$wf103 = Get-Content (Join-Path $repo 'n8n/workflows/wf-103-contingencia-local.json') -Raw
 
 Write-Host '=== TELEGRAM CONVERSACIONAL E COMANDOS CANÔNICOS N8N ==='
 

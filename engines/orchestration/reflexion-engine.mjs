@@ -9,7 +9,7 @@
  * - Isolamento obrigatório por tenant_id.
  */
 
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import { calculateDecisionUtilityRate, MIN_OUTCOME_SAMPLE_SIZE } from "../feedback/decision-utility-engine.mjs";
 import { createSemanticRule, promoteSemanticRule, RULE_SCOPES } from "../knowledge/semantic-memory-engine.mjs";
 import { evaluateCandidateRule, PROMOTION_MODES, PROMOTION_POLICY_VERSION } from "../learning/learning-engine.mjs";
@@ -87,9 +87,19 @@ export function runWeeklyReflexion({
       // N23-R15: Escopo restrito ao indicador/domínio contextual, nunca GLOBAL em reflexões automáticas
       const scope = pattern.domain && pattern.domain !== "GERAL" ? RULE_SCOPES.INDICATOR : RULE_SCOPES.ACCOUNT;
       const targetRef = pattern.domain || "GERAL";
-      const category = pattern.editType === 'MADE_MORE_CONCISE' || pattern.editType === 'TEXT_LENGTH_REDUCED'
-        ? 'STYLE_FORMATTING'
-        : 'COMMUNICATION_CADENCE';
+      let preferenceType = null;
+      let preferenceValue = null;
+      let category = 'CUSTOM_PREFERENCE';
+
+      if (pattern.editType === 'MADE_MORE_CONCISE' || pattern.editType === 'TEXT_LENGTH_REDUCED') {
+        preferenceType = 'RESPONSE_LENGTH';
+        preferenceValue = 'COMPACT';
+        category = 'STRUCTURED_PREFERENCE';
+      } else if (pattern.editType === 'TABLE_REQUESTED') {
+        preferenceType = 'TABLE_PREFERENCE';
+        preferenceValue = 'TABLE_FIRST';
+        category = 'STRUCTURED_PREFERENCE';
+      }
 
       // 1. Cria candidata inicial
       const candidate = createSemanticRule({
@@ -99,6 +109,8 @@ export function runWeeklyReflexion({
         scope,
         target_ref: targetRef,
         learned_rule: ruleText,
+        preference_type: preferenceType,
+        preference_value: preferenceValue,
         source_observation: `Recorrência semanal (${pattern.count}x em ${pattern.domain}/${pattern.editType})`,
         confidence_score: 0.88,
         valid_days: 90
@@ -106,13 +118,20 @@ export function runWeeklyReflexion({
 
       // 2. Avalia com Learning Engine determinístico
       const hasExplicit = pattern.feedbackNotes.length > 0;
+      const ownerEvent = hasExplicit ? {
+        owner_id: 'rafael',
+        source_event_id: `outcome-${pattern.outcomes[0]?.id || 'seed'}`,
+        event_hash: createHash('sha256').update(pattern.feedbackNotes.join('|')).digest('hex')
+      } : null;
+
       const evalResult = evaluateCandidateRule({
         rule: candidate,
         frequency: pattern.count,
         recencyDays: 3,
         observedOutcome: 0.85,
         explicitFeedback: hasExplicit ? 1.8 : 1.0,
-        sampleSize: tenantOutcomes.length
+        sampleSize: tenantOutcomes.length,
+        ownerEvent
       });
 
       candidate.promotion_score = evalResult.score;

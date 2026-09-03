@@ -1,88 +1,53 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "1.1.0",
   "project": "Diretor 360",
-  "version": "6.3.0-gates-a0-n2.3-remediation-v3",
-  "last_updated": "2026-09-03T14:05:00-03:00",
-  "last_active_assistant": "Antigravity",
-  "next_recommended_assistant": "ChatGPT Codex",
-  "official_repository": "https://github.com/playertwo1/360gpt.git",
-  "legacy_repository": "https://github.com/playertwo1/360.git",
-  "branch": "main",
-  "site": "https://visao-360-diretor.fael360092.chatgpt.site",
-  "deployed_site_version": 41,
-  "current_roadmap": "ROADMAP.md",
-  "current_phase": "Terceira remediação concluída — aguardando parecer formal de aprovação do Codex",
-  "current_task": "Submeter commit com o dossiê formal de resposta para validação do ChatGPT Codex",
-  "status": "READY_FOR_CODEX_FINAL_APPROVAL",
-  "last_completed": [
-    "Execução integral dos Blocos T0 a T7 conforme GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md",
-    "Contenção durável T0: workflows legados inativados no banco n8n com active=false e activeVersionId=null, reinício a frio, backups físicos duráveis com SHA-256",
-    "Gate A0: test-n8n-canonical-architecture.mjs aprovado com fail-closed, gateway Telegram purificado (sem loopback), WF-101 com recovery de leases expirados e tratamento completo de documentos/comandos",
-    "Flywheel N2.3: migration 09 purificada (CREATE IF NOT EXISTS), migration 11 com trigger statement-level anti-TRUNCATE, CANDIDATE em golden_exemplars, status SUSPENDED e role visao360_app com privilégios mínimos",
-    "Learning Engine com allowlist positiva restrita, fail-closed em termos sensíveis, Reflexion com tenant_id obrigatório e DUR padronizado, WF-104 com UUID determinístico por SHA-256",
-    "100% dos testes do repositório aprovados (35/35 suítes, zero falhas), integração real 10/10 no PostgreSQL com a role visao360_app",
-    "Elaborado dossiê docs/audits/RESPOSTA_TERCEIRA_REMEDIACAO_CODEX_GATES_A0_N2_3.md respondendo aos 28 achados com evidências completas"
+  "version": "6.3.0-gates-a0-n2.3-quarta-remediacao",
+  "status": "REMEDIATION_COMPLETED_PENDING_AUDIT",
+  "current_phase": "Quarta remediacao concluida - submetida para reauditoria independente",
+  "current_milestone": "Q8 - sincronizacao de governanca, dossie formal e reauditoria Codex",
+  "current_task": "Submeter dossie docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md ao ChatGPT Codex",
+  "wf101_directive": "PRESERVADO, PUBLICADO E ATIVO no n8n 2.x; WF-104 e AUTO_PROMOTION_ENABLED estritamente desligados",
+  "audited_commit": "d437a0c3a6b9b51f4c5aa083a178661e3dde8f9e",
+  "remediation_commit": "HEAD",
+  "audit_date": "2026-09-03",
+  "gates": {
+    "A0": "REMEDIATED_PENDING_AUDIT",
+    "N2_3": "REMEDIATED_PENDING_AUDIT",
+    "N7": "BLOCKED"
+  },
+  "validated_progress": [
+    "WF-101 ativo no n8n 2.x com activeVersionId correspondente a versao publicada",
+    "Recuperacao automatica de leases expirados implementada e validada",
+    "Ramo DOCUMENT integrado ao document-worker e Docling TableFormer CPU",
+    "Comando /status dinâmico com medicoes reais de latencia em milissegundos",
+    "Migration 12 aplicada com revogacao de DML da role visao360_app e funcoes SECURITY DEFINER",
+    "Modo AUTO restrito estritamente a preferencias estruturadas enumeradas em catalogo fechado",
+    "Suite adversarial com os 5 bypasses do Codex 100% aprovada",
+    "Bateria E2E do Flywheel no PostgreSQL real 10/10 PASS",
+    "npm test com 35/35 suites PASS e exit code 0",
+    "npm run lint com zero erros e npm run build com sucesso",
+    "n8n/workflows/exported_all.json exportado limpo como JSON valido",
+    "Cold start verificado: n8n reinicia mantendo WF-100 e WF-101 ativados automaticamente",
+    "WF-104 contido e inativo (active = false)",
+    "Dossie formal RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md gerado com respostas aos 20 achados e 30 perguntas"
   ],
   "last_validation": {
-    "result": "PASS_ON_REAL_RUNTIME",
-    "commands": [
-      "npm test",
-      "npm run lint",
-      "npm run build",
-      "powershell -ExecutionPolicy Bypass -File scripts/test-telegram-conversational.ps1"
-    ],
-    "evidence": "Todos os testes automatizados passaram com 10/10 no PostgreSQL real, zero rotas bridge ativas no banco n8n e build compilando perfeitamente."
+    "date": "2026-09-03",
+    "npm_test": "PASS (35/35)",
+    "adversarial_test": "PASS (100%)",
+    "flywheel_test": "PASS (10/10)",
+    "npm_lint": "PASS (0 errors, 23 warnings)",
+    "npm_build": "PASS",
+    "canonical_n8n_test": "PASS (0 bridges, 0 mocks, 26 workflows validados)"
   },
-  "runtime": {
-    "n8n": "healthy at http://localhost:5678",
-    "postgres": "healthy",
-    "document_worker": "processing profile; internal-only at http://document-worker:8787",
-    "docling": "processing profile; CPU-only at http://docling:5001",
-    "workflow_master": "WF-100 — Telegram local intake",
-    "workflow_id": "9eb8e86a-84b8-4aa9-97e4-360000000100",
-    "workflow_active": true,
-    "telegram_poller": "healthy; TELEGRAM_POLLING_ENABLED=false",
-    "canonical_business_database": "PostgreSQL visao360"
-  },
-  "security": {
-    "external_effects_allowed": false,
-    "document_content_trust": "UNTRUSTED",
-    "secrets_committed": false
-  },
-  "blockers": [
-    "Gates A0 e N2.3 aguardando validação formal e parecer do ChatGPT Codex.",
-    "WF-104 permanece inativo (active=false) no tenant operacional por governança."
-  ],
-  "pending_decisions": [
-    "Regras dedicadas de Seguros e Cartões; efeitos externos permanecem proibidos"
-  ],
-  "next_exact_step": "Submeter commit à reauditoria independente do ChatGPT Codex.",
-  "resume_order": [
-    "AGENTS.md",
-    "PROJECT_STATE.md",
-    "ROADMAP.md",
-    "CHANGELOG.md",
-    "SESSION_STATE.json",
-    "CODEX_HANDOFF.md",
-    "git status"
-  ],
-  "canonical_files": {
-    "roadmap": "ROADMAP.md",
-    "project_state": "PROJECT_STATE.md",
-    "status": "status.md",
-    "changelog": "CHANGELOG.md",
-    "handoff": "CODEX_HANDOFF.md",
-    "account_switch_handoff": "docs/HANDOFF_ACCOUNT_SWITCH_2026-08-29.md",
-    "agents": "AGENTS.md",
-    "workflow": "n8n/workflows/wf-101-local-dispatcher.json",
-    "architecture_decision": "docs/arquitetura-agentes-360/ADR-002-N8N-NUCLEO-LOCAL.md",
-    "runtime_policy": "policies/n8n-canonical-architecture.yaml",
-    "telegram_transport": "services/telegram-poller/app.py",
-    "worker": "services/document-worker/app/main.py",
-    "extraction_contract": "contracts/document-extraction.schema.json"
-  },
-  "preserved_parallel_artifacts": [
-    "n8n/workflows/wf-360gemini.json — recebido de trabalho paralelo; ainda não homologado",
-    "docs/email-reports/EMAIL_20260829_054928_Sincronizacao_de_Handoff_Multi_IA_Conclu.md"
-  ]
+  "runtime_observed": {
+    "n8n": "ONLINE (Local Docker v2.36.7)",
+    "postgres": "ONLINE (Local Docker visao360 - 17.6)",
+    "docling": "ONLINE (1.9ms - TableFormer CPU)",
+    "document_worker": "ONLINE (1.7ms - FastAPI)",
+    "telegram_poller": "ONLINE (0.1ms - Adapter)",
+    "wf100": "ACTIVE (activeVersionId = f7a6a439-50fa-40f4-bda8-54b9cf6d226a)",
+    "wf101": "ACTIVE (activeVersionId = d3725cb0-ccbd-4171-aa3b-fd4bfb07353f)",
+    "wf104": "INACTIVE (active = false)"
+  }
 }

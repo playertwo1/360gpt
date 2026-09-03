@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import socket
 import threading
 import time
 import urllib.error
@@ -30,7 +31,7 @@ STATE_FILE = Path("/var/lib/director360/offset.json")
 POLLING_ENABLED = os.getenv("TELEGRAM_POLLING_ENABLED", "false").lower() == "true"
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 INGRESS_URL = os.getenv("N8N_TELEGRAM_INGRESS_URL", "").strip()
-TRANSPORT_SECRET = os.getenv("DIRECTOR360_TRANSPORT_SECRET", "").strip()
+TRANSPORT_SECRET = (os.getenv("DIRECTOR360_TRANSPORT_SECRET", "").strip() or os.getenv("BRIDGE_SHARED_SECRET", "").strip())
 LONG_POLL_SECONDS = max(1, min(50, int(os.getenv("TELEGRAM_LONG_POLL_SECONDS", "25"))))
 RETRY_SECONDS = max(1, int(os.getenv("TELEGRAM_RETRY_SECONDS", "5")))
 ALLOWED_CHAT_IDS = {
@@ -144,6 +145,39 @@ def polling_loop() -> None:
             time.sleep(RETRY_SECONDS)
 
 
+def check_system_health() -> dict[str, Any]:
+    now_iso = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+    services: dict[str, Any] = {
+        "telegram_poller": {"status": "ONLINE", "latency_ms": 0.1, "polling_enabled": POLLING_ENABLED}
+    }
+
+    # 1. Document Worker (FastAPI)
+    t0 = time.time()
+    try:
+        dw_resp = json_request("http://document-worker:8787/health", timeout=3)
+        services["document_worker"] = {
+            "status": "ONLINE",
+            "latency_ms": round((time.time() - t0) * 1000, 1),
+            "docling_enabled": dw_resp.get("docling_enabled", False)
+        }
+    except Exception as exc:
+        services["document_worker"] = {"status": "OFFLINE", "error": type(exc).__name__}
+
+    # 2. Docling TableFormer
+    t0 = time.time()
+    try:
+        doc_resp = json_request("http://docling:5001/health", timeout=3)
+        services["docling"] = {
+            "status": "ONLINE",
+            "latency_ms": round((time.time() - t0) * 1000, 1),
+            "details": doc_resp.get("status", "ok")
+        }
+    except Exception as exc:
+        services["docling"] = {"status": "OFFLINE", "error": type(exc).__name__}
+
+    return {"ok": True, "timestamp": now_iso, "services": services}
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "Director360Transport/1.0"
 
@@ -162,6 +196,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/health":
             self.send_json(200, {"ok": True, "polling_enabled": POLLING_ENABLED})
             return
+        if self.path == "/health/system":
+            self.send_json(200, check_system_health())
+            return
         self.send_json(404, {"ok": False})
 
     def do_POST(self) -> None:
@@ -173,12 +210,33 @@ class Handler(BaseHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             if self.path == "/send":
                 result = telegram_api("sendMessage", payload)
+                self.send_json(200, {"ok": True, "result": result.get("result")})
             elif self.path == "/action":
                 result = telegram_api("sendChatAction", payload)
+                self.send_json(200, {"ok": True, "result": result.get("result")})
+            elif self.path == "/file":
+                file_id = str(payload.get("file_id", "")).strip()
+                if not file_id:
+                    self.send_json(400, {"ok": False, "error": "MISSING_FILE_ID"})
+                    return
+                file_info = telegram_api("getFile", {"file_id": file_id})
+                file_path = file_info.get("result", {}).get("file_path")
+                if not file_path:
+                    self.send_json(404, {"ok": False, "error": "FILE_PATH_NOT_FOUND"})
+                    return
+                url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file_path}"
+                req = urllib.request.Request(url)
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    data = resp.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/octet-stream")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
             else:
                 self.send_json(404, {"ok": False})
                 return
-            self.send_json(200, {"ok": True, "result": result.get("result")})
         except (ValueError, json.JSONDecodeError, RuntimeError, urllib.error.URLError) as error:
             LOG.warning("requisição de saída rejeitada: %s", type(error).__name__)
             self.send_json(502, {"ok": False, "error": "TRANSPORT_FAILURE"})
