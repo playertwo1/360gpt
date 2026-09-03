@@ -19,8 +19,7 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
-    networks:
-      - data
+    networks: [data]
 
   n8n:
     image: docker.n8n.io/n8nio/n8n:2.36.7
@@ -28,6 +27,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - .env.n8n
     ports:
       - "127.0.0.1:5678:5678"
     environment:
@@ -49,6 +50,7 @@ services:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
       TZ: America/Sao_Paulo
+      AUTO_PROMOTION_ENABLED: ${AUTO_PROMOTION_ENABLED:-false}
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
       N8N_RUNNERS_MODE: internal
       N8N_RUNNERS_TASK_TIMEOUT: 420
@@ -88,9 +90,7 @@ services:
       timeout: 5s
       retries: 20
       start_period: 30s
-    networks:
-      - frontend
-      - data
+    networks: [frontend, data]
 
   docling:
     profiles: ["processing"]
@@ -111,24 +111,20 @@ services:
       DOCLING_SERVE_MAX_DOCUMENT_TIMEOUT: 300
       DOCLING_SERVE_MAX_SYNC_WAIT: 300
       UVICORN_WORKERS: 1
-    expose:
-      - "5001"
+    expose: ["5001"]
     volumes:
       - docling_models:/opt/app-root/src/.cache/docling
     mem_limit: 3g
     cpus: 2.0
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5001/health', timeout=5)"]
       interval: 15s
       timeout: 8s
       retries: 20
       start_period: 60s
-    networks:
-      - frontend
+    networks: [frontend]
 
   document-worker:
     profiles: ["processing"]
@@ -146,23 +142,18 @@ services:
       DOCLING_API_URL: http://docling:5001
       DOCLING_TIMEOUT_SECONDS: 300
       DOCLING_POLL_INTERVAL_SECONDS: 2
-    expose:
-      - "8787"
+    expose: ["8787"]
     read_only: true
-    tmpfs:
-      - /tmp:size=268435456,mode=1777
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    tmpfs: ["/tmp:size=268435456,mode=1777"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8787/health', timeout=3)"]
       interval: 10s
       timeout: 5s
       retries: 12
       start_period: 20s
-    networks:
-      - frontend
+    networks: [frontend]
 
   telegram-poller:
     profiles: ["telegram-local"]
@@ -179,29 +170,24 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
       TELEGRAM_ALLOWED_CHAT_IDS: ${TELEGRAM_ALLOWED_CHAT_IDS:-}
       N8N_TELEGRAM_INGRESS_URL: http://n8n:5678/webhook/director-360/telegram/inbound
-      DIRECTOR360_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET:-4075337d793cdb7fdf51fd3383918e232de65f81822ef8c74530e6b58c862cd8}
-      BRIDGE_SHARED_SECRET: ${BRIDGE_SHARED_SECRET:-4075337d793cdb7fdf51fd3383918e232de65f81822ef8c74530e6b58c862cd8}
+      DIRECTOR360_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET:?BRIDGE_SHARED_SECRET must be set in .env.n8n}
+      BRIDGE_SHARED_SECRET: ${BRIDGE_SHARED_SECRET:?BRIDGE_SHARED_SECRET must be set in .env.n8n}
       TELEGRAM_LONG_POLL_SECONDS: 25
       TELEGRAM_RETRY_SECONDS: 5
-    expose:
-      - "8790"
+    expose: ["8790"]
     volumes:
       - telegram_poller_data:/var/lib/director360
     read_only: true
-    tmpfs:
-      - /tmp:size=16777216,mode=1777
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    tmpfs: ["/tmp:size=16777216,mode=1777"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8790/health', timeout=3)"]
       interval: 15s
       timeout: 5s
       retries: 10
       start_period: 10s
-    networks:
-      - frontend
+    networks: [frontend]
 
 volumes:
   postgres_data:
