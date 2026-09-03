@@ -24,8 +24,8 @@ export function runWeeklyReflexion({
   minSample = MIN_OUTCOME_SAMPLE_SIZE,
   weekReference = new Date().toISOString().slice(0, 10)
 }) {
-  // Isolamento estrito por tenant (N23-R11)
-  const tenantOutcomes = outcomes.filter((o) => !o.tenant_id || o.tenant_id === tenant_id);
+  // Isolamento estrito por tenant (N23-R11): rejeita outcomes sem tenant_id
+  const tenantOutcomes = outcomes.filter((o) => o && o.tenant_id && o.tenant_id === tenant_id);
   const durReport = calculateDecisionUtilityRate(tenantOutcomes, minSample);
 
   if (durReport.status === "NOT_ENOUGH_DATA") {
@@ -84,15 +84,18 @@ export function runWeeklyReflexion({
       const ruleText = deriveRuleText(pattern);
       if (!ruleText) continue;
 
-      // N23-R15: Escopo restrito ao menor domínio demonstrável
-      const scope = pattern.domain !== "GERAL" ? RULE_SCOPES.INDICATOR : RULE_SCOPES.GLOBAL;
-      const targetRef = pattern.domain !== "GERAL" ? pattern.domain : "GLOBAL";
+      // N23-R15: Escopo restrito ao indicador/domínio contextual, nunca GLOBAL em reflexões automáticas
+      const scope = pattern.domain && pattern.domain !== "GERAL" ? RULE_SCOPES.INDICATOR : RULE_SCOPES.ACCOUNT;
+      const targetRef = pattern.domain || "GERAL";
+      const category = pattern.editType === 'MADE_MORE_CONCISE' || pattern.editType === 'TEXT_LENGTH_REDUCED'
+        ? 'STYLE_FORMATTING'
+        : 'COMMUNICATION_CADENCE';
 
       // 1. Cria candidata inicial
       const candidate = createSemanticRule({
         tenant_id,
         owner_id,
-        category: `APRENDIZADO_${pattern.domain}`,
+        category,
         scope,
         target_ref: targetRef,
         learned_rule: ruleText,
@@ -185,14 +188,23 @@ function formatWeeklyTelegramCard({
   autoPromoted,
   manualReviewRequired
 }) {
+  const durPct = typeof durReport.utility_rate_pct === 'number'
+    ? durReport.utility_rate_pct.toFixed(1)
+    : typeof durReport.dur_rate === 'number'
+      ? (durReport.dur_rate * 100).toFixed(1)
+      : '0.0';
+  const accepted = durReport.accepted_count ?? durReport.breakdown?.accepted ?? 0;
+  const edited = durReport.edited_count ?? durReport.breakdown?.edited ?? 0;
+  const rejected = durReport.rejected_count ?? durReport.breakdown?.rejected ?? 0;
+
   let card =
     `🧠 <b>Balanço Semanal de Aprendizado — Semana ${weekReference}</b>\n` +
     `• <b>Tenant:</b> <code>${tenant_id}</code>\n` +
     `• <b>Decisões Analisadas:</b> ${totalAnalyzed}\n` +
-    `• <b>Decision Utility Rate (DUR):</b> <b>${(durReport.dur_rate * 100).toFixed(1)}%</b>\n` +
-    `  - Aceitações integrais: ${durReport.accepted_count}\n` +
-    `  - Ajustes de Rafael: ${durReport.edited_count}\n` +
-    `  - Recusas: ${durReport.rejected_count}\n\n`;
+    `• <b>Decision Utility Rate (DUR):</b> <b>${durPct}%</b>\n` +
+    `  - Aceitações integrais: ${accepted}\n` +
+    `  - Ajustes de Rafael: ${edited}\n` +
+    `  - Recusas: ${rejected}\n\n`;
 
   if (autoPromoted.length > 0) {
     card += `⚡ <b>Aprendizados Autopromovidos (Baixo Risco):</b>\n`;

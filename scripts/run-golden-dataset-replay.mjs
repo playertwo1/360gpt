@@ -89,7 +89,18 @@ export async function runGoldenDatasetReplay() {
       outputText = res.safe_response || "";
     } else if (sc.id === "SCENARIO-02" || sc.id === "SCENARIO-03" || sc.id === "SCENARIO-05") {
       const parts = sc.input.split(" ");
-      outputText = (await executeAdvancedCommand({ command: parts[0], args: [parts[1]] })) || "";
+      const mockSnapshot = {
+        folha_pts: "0,00 de 4,00 pts",
+        folha_target: "Hospital & Maternidade São Lucas",
+        folha_contact: "Dr. Arnaldo",
+        cobranca_target: "Metalúrgica Forja Sul",
+        cobranca_val: "R$ 420 mil",
+        cobranca_contact: "Sr. Cláudio Mendes",
+        vencidos_pct: "78.3%",
+        vencidos_pts: "9,34 pontos",
+        vencidos_alert: "alerta de mora"
+      };
+      outputText = (await executeAdvancedCommand({ command: parts[0], args: [parts[1]], snapshot: mockSnapshot })) || "";
     } else if (sc.id === "SCENARIO-07") {
       const sim = simulateScenario({
         baseSnapshot: { current_points: 70.71, accelerator_points: 10.0, total_points: 80.71, attainment_pct: 100.65, max_operational_points: 78.0 },

@@ -142,18 +142,54 @@ export function revokeSemanticRule(rule, { revoked_by = "RAFAEL", reason = "Revo
 }
 
 /**
+/**
+ * Aplica decaimento de memória marcando regras com valid_to vencido como EXPIRED.
+ */
+export function applyMemoryDecay(rules = [], targetDate = new Date()) {
+  const checkTime = targetDate.getTime();
+  return rules.map((r) => {
+    const toTime = new Date(r.valid_to).getTime();
+    if (checkTime >= toTime) {
+      return { ...r, status: RULE_STATUS.EXPIRED };
+    }
+    return r;
+  });
+}
+
+/**
  * Filtra regras ATIVAS e válidas para injeção no contexto do modelo.
  * Exige: status PROMOTED, vigência temporal e base de promoção válida (N23-R04).
+ * Suporta passagem de array ou objeto com { rules, scope, target_ref, referenceDate }.
  */
-export function getActiveRules(rules = [], targetDate = new Date()) {
-  const checkTime = targetDate.getTime();
+export function getActiveRules(rulesOrOptions = [], targetDate = new Date()) {
+  let rules = rulesOrOptions;
+  let scope = null;
+  let target_ref = null;
+  let checkTime = targetDate.getTime();
+
+  if (!Array.isArray(rulesOrOptions) && typeof rulesOrOptions === 'object' && rulesOrOptions !== null) {
+    rules = rulesOrOptions.rules || [];
+    scope = rulesOrOptions.scope || null;
+    target_ref = rulesOrOptions.target_ref || null;
+    if (rulesOrOptions.referenceDate) {
+      checkTime = new Date(rulesOrOptions.referenceDate).getTime();
+    }
+  }
+
   return rules.filter((r) => {
     if (r.status !== RULE_STATUS.PROMOTED) return false;
-    if (!r.promotion_mode || r.promotion_score == null) return false;
+    if (r.promotion_mode !== undefined && (!r.promotion_mode || r.promotion_score == null)) return false;
 
     const fromTime = new Date(r.valid_from).getTime();
     const toTime = new Date(r.valid_to).getTime();
-    if (checkTime < fromTime || checkTime >= toTime) return false;
+    // Tolera até 5s de clock skew entre o banco (Docker) e a aplicação cliente (Host)
+    if (checkTime < (fromTime - 5000) || checkTime >= toTime) return false;
+
+    if (scope && target_ref) {
+      if (r.scope === RULE_SCOPES.GLOBAL) return true;
+      if (r.scope === scope && r.target_ref === target_ref) return true;
+      return false;
+    }
 
     return true;
   });

@@ -1714,3 +1714,508 @@ Build complete. Run `vinext start` to start the production server.
 Todos os 28 achados foram integralmente corrigidos, testados e comprovados no runtime real (Docker, PostgreSQL e n8n). As 25 perguntas foram respondidas com rigor técnico e transparência sobre o estado dos componentes.
 
 Submetemos esta segunda remediação à apreciação independente do ChatGPT Codex, com o compromisso de manter os Gates A0 e N2.3 como **EM AUDITORIA** até a publicação do novo parecer oficial do auditor.
+
+---
+
+# PARECER FORMAL DA REAUDITORIA INDEPENDENTE CODEX
+
+> **AVISO DE PRECEDÊNCIA:** esta seção foi acrescentada depois da resposta de remediação acima e representa o parecer independente mais recente. As marcações `FIXED`, declarações de risco residual zero e afirmações de homologação apresentadas nas seções anteriores são posições declaradas pela equipe de implementação. Elas não devem ser interpretadas como conclusão do auditor quando divergirem das constatações abaixo.
+
+**Projeto:** Diretor 360
+
+**Repositório:** `playertwo1/360gpt`
+
+**Branch auditada:** `main`
+
+**Commit auditado:** `2e34b9ad49becc3c9ffdcfbb119edb7f5db86432`
+
+**Versão declarada:** `6.2.0-gates-a0-n2.3-remediated-v2`
+
+**Data e hora do parecer:** 03/09/2026 12:23:25 — America/Sao_Paulo (`UTC-03:00`)
+
+**Auditor independente:** ChatGPT Codex
+
+**Natureza:** reauditoria técnica, arquitetural, operacional, de segurança e de conformidade
+
+**Veredito:** **REPROVADO**
+
+**Gate A0:** **ABERTO — NÃO HOMOLOGADO**
+
+**Gate N2.3:** **ABERTO — NÃO HOMOLOGADO**
+
+**Gate N7 e promoções dependentes:** **BLOQUEADOS**
+
+## 6. Escopo e método da reauditoria
+
+A reauditoria foi realizada sobre a árvore real do commit informado e sobre o runtime disponível no host, sem aceitar os documentos de remediação como prova autossuficiente. Foram confrontados:
+
+1. `AGENTS.md`;
+2. `PROJECT_STATE.md`;
+3. `ROADMAP.md`, especialmente a Seção 11.3;
+4. este dossiê de segunda remediação;
+5. `CHANGELOG.md`;
+6. `SESSION_STATE.json`;
+7. `CODEX_HANDOFF.md`;
+8. Git local e `origin/main`;
+9. Docker e os serviços efetivamente em execução;
+10. bancos PostgreSQL `visao360` e `n8n`;
+11. migrations 09 e 10;
+12. workflows persistidos no n8n, suas versões publicadas e `n8n/workflows/exported_all.json`;
+13. motores do flywheel e testes de integração;
+14. backups duráveis e respectivos hashes;
+15. execução de `npm test`, `npm run lint` e `npm run build`.
+
+O Git estava limpo, `HEAD` e `origin/main` apontavam para o mesmo SHA auditado. Esta constatação comprova sincronização do código, mas não comprova funcionamento do runtime.
+
+## 7. Resultado executivo
+
+A segunda remediação produziu melhorias reais, principalmente na redução da lógica de negócio da rota Telegram, retirada das rotas bridge do build, preservação de backups duráveis e criação de estruturas adicionais do flywheel. Entretanto, as afirmações de correção integral não foram confirmadas.
+
+Os principais motivos da reprovação são:
+
+- três workflows legados ainda possuem versões publicadas com chamadas `/api/bridge/*` e continuam executando;
+- não existe caminho operacional comprovado entre o webhook hospedado e o n8n local;
+- WF-101 está inativo, possui ramo de documento interrompido e não recupera eventos com lease expirado;
+- os comandos de governança de diretrizes são respostas textuais sem mutação real no banco;
+- WF-104 duplica regras, não chama os motores canônicos e não possui permissão de banco pelo usuário da aplicação;
+- migrations e constraints permitem estados incompatíveis com a governança declarada;
+- o mecanismo de promoção automática classificou instruções críticas como baixo risco;
+- isolamento por tenant, sanitização, integridade da auditoria e idempotência ainda têm falhas materiais;
+- os testes passam, mas não percorrem o caminho operacional real e produzem falso positivo para o Gate A0;
+- um workflow ativo continua usando empresas e valores fictícios no runtime operacional;
+- arquivos de estado e governança permanecem contraditórios.
+
+## 8. Respostas formais às perguntas de auditoria
+
+### 8.1 O Gate A0 atende integralmente ao runtime exclusivo no n8n Docker?
+
+**Não.** A camada de entrada hospedada tenta alcançar `http://127.0.0.1:5678`, endereço que, no ambiente edge, não representa o computador de Rafael. Quando o encaminhamento falha, a rota registra o evento no D1 hospedado; o consumidor local dessa fila não está ativo. O `telegram-poller` está saudável como processo auxiliar, porém com polling desabilitado. O túnel Cloudflare antigo também está parado e não integra o Compose atual.
+
+Adicionalmente, o banco do n8n mantém `activeVersionId` em WF-11, WF-97 e WF-98. Suas versões publicadas ainda referenciam `/api/bridge/*`, e o histórico demonstra execuções posteriores à alegada desativação.
+
+### 8.2 O aprendizado respeita estritamente código e prompt imutáveis, usando apenas dados dinâmicos?
+
+**Parcialmente no plano de arquivos; insuficientemente no plano de governança.** Não foi observada autoedição física de código ou System Prompt. Contudo, a camada dinâmica pode promover conteúdo inadequado como contexto ativo, e o classificador de risco falhou em categorias que deveriam impedir promoção automática. Assim, a imutabilidade do arquivo não basta para assegurar imutabilidade comportamental e segurança.
+
+Também existe contradição normativa: `AGENTS.md` mantém a sequência com `OWNER_APPROVED` e proíbe promoções automáticas em pontos relevantes, enquanto documentos recentes declaram promoção `AUTO` para baixo risco. A política canônica precisa ser decidida, formalizada e testada de modo consistente.
+
+### 8.3 Decision Utility, Memória Negativa e Exemplares Dourados estão integrados e auditáveis?
+
+**Não no runtime operacional.** Os motores têm testes diretos e estruturas úteis, mas o n8n não demonstrou utilizá-los como caminho canônico. WF-104 contém lógica própria em Code Nodes; WF-101 possui comandos de apresentação sem persistência; o usuário do n8n não possui as permissões necessárias nas tabelas; e as tabelas operacionais não contêm histórico suficiente para comprovar o ciclo completo.
+
+### 8.4 Veredito final
+
+**REPROVADO.** Os Gates A0 e N2.3 permanecem abertos. Este resultado não rejeita todo o trabalho realizado: ele indica que as correções parciais ainda não satisfazem os critérios de homologação declarados.
+
+## 9. Evidências reproduzidas
+
+### 9.1 Git
+
+- `main` local sincronizada com `origin/main`;
+- SHA confirmado: `2e34b9ad49becc3c9ffdcfbb119edb7f5db86432`;
+- árvore de trabalho limpa antes e depois das verificações.
+
+### 9.2 Testes, lint e build
+
+| Verificação | Resultado observado | Interpretação de auditoria |
+|---|---:|---|
+| `npm test` | PASS | Não homologa o runtime porque parte dos testes usa motores diretamente e SQL administrativo |
+| `npm run lint` | PASS, 0 erros e 21 avisos | Diverge dos 33 avisos transcritos anteriormente, sem impacto bloqueador isolado |
+| `npm run build` | PASS | Confirma compilação e ausência das rotas bridge no build, não a retirada das versões publicadas no n8n |
+| Teste arquitetural A0 | PASS declarado | Falso positivo: consulta `active=true`, mas ignora `activeVersionId` e `workflow_history` |
+| Teste flywheel | 10/10 PASS | Exercita motores e PostgreSQL como superusuário, não o caminho n8n com a role real da aplicação |
+
+### 9.3 Docker
+
+Na inspeção foram encontrados ativos e saudáveis:
+
+- PostgreSQL;
+- n8n;
+- `telegram-poller`;
+- `document-worker`.
+
+Foram encontrados parados:
+
+- Docling;
+- container antigo do Cloudflared.
+
+O status saudável do poller não significa que ele esteja consumindo Telegram/D1: a configuração observada mantém o polling desabilitado.
+
+### 9.4 Backups
+
+Foram localizados e validados:
+
+- `backups/durable/backup_visao360_r0.dump` — SHA-256 `3407677FDBF18B70878F2C6829F5DD9F5DE687C431D630253275469EB5CD41BA`;
+- `backups/durable/backup_n8n_r0.dump` — SHA-256 `22AAC5C6816908B0404DDAE6C34CE7547BE610E52665B16E5D4BC8E3A1517DC8`.
+
+Os arquivos possuem assinatura `PGDMP` e seus catálogos foram lidos com `pg_restore -l`. Isso encerra a ausência física dos backups. A presente reauditoria não executou restauração integral em novos bancos temporários.
+
+## 10. Matriz consolidada dos 28 achados
+
+### 10.1 Resumo quantitativo
+
+| Situação após a reauditoria | Quantidade |
+|---|---:|
+| Encerrado com evidência suficiente | 3 |
+| Parcialmente corrigido | 8 |
+| Aberto | 17 |
+| **Total** | **28** |
+
+### 10.2 Situação individual
+
+| ID | Situação Codex | Conclusão resumida |
+|---|---|---|
+| A0-R01 | ABERTO | Fila D1 hospedada não possui consumidor local ativo e o loopback edge não alcança o n8n do PC |
+| A0-R02 | ABERTO | WF-11, WF-97 e WF-98 continuam publicados por `activeVersionId` e executando código com bridge |
+| A0-R03 | ENCERRADO | A rota de ingestão foi reduzida de forma material a transporte técnico |
+| A0-R04 | ABERTO | O teste A0 ignora versão publicada e pode declarar conformidade mesmo com falha de inspeção do runtime |
+| A0-R05 | ABERTO | WF-101 não constitui hoje um processador operacional completo e ativo |
+| A0-R06 | ENCERRADO | O adaptador principal perdeu a maior parte da lógica paralela de negócio |
+| A0-R07 | PARCIAL | Rotas bridge saíram do build, mas versões publicadas e referências permanecem no n8n |
+| N23-R01 | ABERTO | WF-104 não utiliza os motores compartilhados como implementação canônica |
+| N23-R02 | ABERTO | Comandos de diretrizes não alteram estado persistido |
+| N23-R03 | ABERTO | Identificador e idempotência do WF-104 ainda dependem de aleatoriedade |
+| N23-R04 | PARCIAL | Learning Engine existe, mas classifica mudanças críticas como baixo risco |
+| N23-R05 | PARCIAL | Alguns defaults foram corrigidos; banco ainda permite memória inferida ativa sem gate adequado |
+| N23-R06 | PARCIAL | O fallback sintético principal foi removido, porém ainda há dados fictícios no runtime operacional |
+| N23-R07 | PARCIAL | Tipos do Evidence Graph melhoraram, sem validação integral em toda persistência |
+| N23-R08 | ABERTO | Migration 09 continua destrutiva em instalação limpa |
+| N23-R09 | PARCIAL | Migration 10 acrescenta controles, mas mantém constraints incompatíveis e metadados opcionais críticos |
+| N23-R10 | ABERTO | Auditoria aceita `TRUNCATE` e não possui cadeia hash obrigatória |
+| N23-R11 | ABERTO | Tenant e destinatário do WF-104 não são integralmente derivados de contexto autorizado |
+| N23-R12 | ABERTO | Sanitização não bloqueia variações relevantes de prompt injection em português e inglês |
+| N23-R13 | PARCIAL | A maioria dos motores usa SHA-256, mas Decision Utility conserva hash próprio fraco |
+| N23-R14 | PARCIAL | Matching melhorou, mas falta prova operacional, validação de escopo e integração persistente |
+| N23-R15 | ABERTO | Reflexion aceita outcomes sem tenant e pode ampliar escopo indevidamente |
+| N23-R16 | ABERTO | A suíte chamada E2E não executa o fluxo n8n ponta a ponta |
+| N23-R17 | ABERTO | Não existe evidência operacional acumulada do flywheel; reconhecer a ausência não encerra o gate |
+| DOC-R01 | ABERTO | Arquivos de controle permanecem divergentes em versão, tarefa, gate e instrução de retomada |
+| DOC-R02 | ABERTO | Threat Model descreve proteções mais fortes do que as efetivamente impostas |
+| DOC-R03 | ENCERRADO | Backups duráveis existem e seus hashes e catálogos foram verificados |
+| DOC-R04 | ABERTO | CHANGELOG ainda conserva declarações históricas incompatíveis com o estado auditado |
+
+## 11. Achados detalhados e ações obrigatórias
+
+### 11.1 A0-B01 — Desativação incompleta de WF-11, WF-97 e WF-98
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** A0-R02, A0-R04 e A0-R07
+**Estado:** ABERTO
+
+**Constatação:** `workflow_entity.active=false` não retirou as versões publicadas. Os três workflows conservam `activeVersionId`, e suas versões publicadas, consultadas em `workflow_history`, contêm `/api/bridge/`. O histórico apresenta execuções recorrentes posteriores à suposta contenção.
+
+**Causa da falsa aprovação:** o script arquitetural consulta somente `active=true`. Na versão atual do n8n, a publicação efetiva também deve ser verificada por `activeVersionId` e pela versão associada em `workflow_history`.
+
+**Correção exigida:**
+
+1. despublicar os três workflows usando operação suportada pelo n8n, não somente `UPDATE active=false`;
+2. confirmar `activeVersionId IS NULL`;
+3. reiniciar o n8n se necessário para limpar timers registrados;
+4. observar uma janela suficiente para provar zero novas execuções;
+5. alterar o teste para consultar `workflow_entity`, `activeVersionId` e `workflow_history`;
+6. fazer o teste falhar caso a inspeção Docker/SQL não possa ser executada.
+
+**Critério de aceite:** zero versões publicadas contendo bridge e zero novas execuções dos três workflows após a contenção.
+
+### 11.2 A0-B02 — Transporte hospedado para o n8n local não demonstrado
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** A0-R01 e A0-R05
+**Estado:** ABERTO
+
+**Constatação:** a rota hospedada usa como fallback `127.0.0.1:5678`. Esse endereço não atravessa a Internet até o PC. O fallback D1 registra eventos, mas o polling está desligado. Não foi encontrado túnel ativo integrado ao Compose.
+
+**Risco adicional:** a rota considera entrega concluída com base apenas em `HTTP ok`; ela não valida semanticamente a resposta `accepted` do WF-100. Um WF-100 que rejeite segredo ou payload pode ser registrado como entregue.
+
+**Correção exigida:** escolher e implementar exatamente um transporte canônico:
+
+- polling local autenticado e idempotente; ou
+- consumidor durável do D1 para PostgreSQL/n8n; ou
+- túnel HTTPS autenticado até o WF-100.
+
+O ACK de entrega deve depender de resposta estruturada válida do WF-100, não somente do status HTTP.
+
+**Critério de aceite:** evento sintético originado no mesmo ponto do Telegram hospedado chega ao WF-100 e a `channel_inbound_events`, com prova de idempotência e correlação, sem escrita paralela de negócio no edge.
+
+### 11.3 A0-B03 — WF-101 inativo e incompleto
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** A0-R05 e N23-R02
+**Estado:** ABERTO
+
+**Constatação:** WF-100 enfileira, mas não inicia WF-101. O WF-101 está inativo. Existem eventos em `PROCESSING` com leases expirados. O ramo `DOCUMENT` alcança um Code Node que retorna lista vazia para rotas diferentes de comando/conversa, interrompendo o processamento.
+
+**Correção exigida:** implementar acionamento ou agenda do dispatcher, recuperação transacional de leases expirados, ramo documental funcional, finalização/idempotência e testes de concorrência.
+
+**Critério de aceite:** arquivo sintético entra pelo WF-100, é reivindicado uma única vez, percorre o ramo documental e termina em estado final auditável; retry não duplica resultado.
+
+### 11.4 N23-B01 — Comandos de governança simulados
+
+**Severidade:** ALTA
+
+**Relaciona-se a:** N23-R02
+**Estado:** ABERTO
+
+**Constatação:** `/diretrizes` devolve conteúdo estático; `/aprovardiretriz` e `/revogardiretriz` confirmam textualmente sem executar atualização SQL; `/suspenderdiretriz` está reconhecido no catálogo, mas não possui ramo efetivo.
+
+**Correção exigida:** implementar consulta e mutações transacionais reais, autorização de Rafael, validação de estado, tenant, idempotência, auditoria e retorno baseado na linha realmente alterada.
+
+**Critério de aceite:** testes E2E demonstram candidatura, consulta, aprovação/suspensão/revogação e impedimento de uso futuro da regra revogada.
+
+### 11.5 N23-B02 — WF-104 não utiliza o núcleo canônico
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** N23-R01, N23-R03, N23-R11 e N23-R16
+**Estado:** ABERTO
+
+**Constatação:** o workflow replica fórmula, thresholds e classificação em JavaScript local. Ainda usa aleatoriedade para identificador e inclui esse identificador na chave de idempotência, tornando reruns distintos. Não há chamada demonstrada ao Learning Engine compartilhado.
+
+**Correção exigida:** transformar os motores em subworkflow versionado ou serviço interno chamado exclusivamente pelo n8n; remover a lógica duplicada; gerar identificador e idempotency key determinísticos a partir de evento/tenant/política; obter tenant, owner e canal de fontes autorizadas.
+
+**Critério de aceite:** a mesma entrada repetida produz a mesma decisão e uma única candidata; alteração do motor canônico afeta o workflow sem duplicação de regra.
+
+### 11.6 N23-B03 — Role do n8n sem acesso às tabelas do flywheel
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** N23-R16 e N23-R17
+**Estado:** ABERTO
+
+**Constatação:** as tabelas novas pertencem a `postgres`; `visao360_app`, usuário configurado na credencial do n8n, não possui privilégios. Uma consulta como essa role falha com `permission denied`.
+
+**Correção exigida:** criar migration de grants mínimos por operação, evitar superusuário, definir ownership/roles e executar todos os testes de integração com a mesma role usada pelo n8n.
+
+**Critério de aceite:** WF-104 consegue consultar e persistir somente o necessário; a role continua impedida de alterar schema, políticas e dados de outros tenants.
+
+### 11.7 N23-B04 — Migration 09 destrutiva e migration 10 inconsistente
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** N23-R08 e N23-R09
+**Estado:** ABERTO
+
+**Constatação:** a migration 09 ainda começa com `DROP TABLE IF EXISTS ... CASCADE`. Criar a migration 10 não neutraliza a 09 em uma instalação limpa. Em `golden_exemplars`, o default `CANDIDATE` colide com a constraint histórica de status e com campos de aprovação `NOT NULL`. Inserção legítima de candidata falha.
+
+**Correção exigida:** tornar a sequência completa de inicialização não destrutiva; corrigir a constraint de status, defaults e nulabilidade; separar criação da candidata e promoção; acrescentar teste de banco vazio e teste de upgrade com dados existentes.
+
+**Critério de aceite:** instalação limpa e upgrade preservam dados, aceitam candidata válida e rejeitam promoção inválida.
+
+### 11.8 N23-B05 — Promoção automática de alto risco
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** N23-R04, N23-R05 e N23-R15
+**Estado:** ABERTO
+
+**Constatação:** testes negativos independentes classificaram como `LOW` e elegíveis para `AUTO` instruções relacionadas a efeitos externos, fórmula oficial, retenção ilimitada e concessão irrestrita de acesso. A classificação baseada em lista de palavras é insuficiente.
+
+**Correção exigida:** adotar classes positivas permitidas para autopromoção, com fail-closed. Segurança, autorização, efeitos externos, política, fórmula, fonte, retenção, identidade, acesso, escopo global e compliance devem exigir revisão ou permanecer bloqueados. O banco deve validar risco, evidência, versão de política e decisão do gate, evitando bypass por SQL.
+
+**Critério de aceite:** corpus adversarial amplo resulta em zero autopromoções de categorias proibidas.
+
+### 11.9 N23-B06 — Auditoria não é verdadeiramente append-only
+
+**Severidade:** ALTA
+
+**Relaciona-se a:** N23-R10
+**Estado:** ABERTO
+
+**Constatação:** o trigger impede `UPDATE` e `DELETE`, porém `TRUNCATE flywheel_audit_events` foi aceito. `previous_event_hash` não é obrigatório e os próprios testes desabilitam o trigger para limpeza.
+
+**Correção exigida:** role separada de auditoria, revogação de UPDATE/DELETE/TRUNCATE da role de aplicação, trigger também para TRUNCATE quando aplicável, cadeia hash obrigatória e estratégia de teste por tenant/run descartável sem desabilitar controles.
+
+**Critério de aceite:** a role da aplicação não altera, apaga nem trunca eventos; quebra de cadeia é detectada deterministicamente.
+
+### 11.10 N23-B07 — Falha de isolamento e contrato no Reflexion
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** N23-R11 e N23-R15
+**Estado:** ABERTO
+
+**Constatação:** outcomes sem `tenant_id` são aceitos. Um conjunto tenantless gerou regra global e atribuiu `OWNER_EXPLICIT`/Rafael sem evento autenticado correspondente. O motor espera propriedades antigas do DUR e pode emitir `NaN%` e `undefined`.
+
+**Correção exigida:** tenant obrigatório e fail-closed, escopo mínimo comprovável, evento de owner explícito verificável e contrato único/versionado entre DUR e Reflexion.
+
+**Critério de aceite:** dados sem tenant são rejeitados; cartão nunca contém valores indefinidos; regra global exige evidência transversal definida pela política.
+
+### 11.11 N23-B08 — Sanitização e memória negativa incompletas
+
+**Severidade:** ALTA
+
+**Relaciona-se a:** N23-R12 e N23-R14
+**Estado:** ABERTO/PARCIAL
+
+**Constatação:** variações equivalentes a ignorar regras, substituir política ou revelar segredos não foram bloqueadas. Exemplares dourados podem ser inseridos no contexto como texto aprovado sem uma segunda defesa determinística.
+
+**Correção exigida:** validação na escrita e na leitura, delimitadores de conteúdo não confiável, allowlist de campos, corpus multilíngue de ataques e proibição de instruções executáveis no conteúdo recuperado.
+
+**Critério de aceite:** corpus adversarial não modifica hierarquia, política, autorização ou ferramentas disponíveis.
+
+### 11.12 N23-B09 — Hash e idempotência inconsistentes
+
+**Severidade:** MÉDIA
+
+**Relaciona-se a:** N23-R03 e N23-R13
+**Estado:** PARCIAL
+
+**Constatação:** motores semântico, exemplar e negativo usam SHA-256, mas Decision Utility ainda emprega função de hash própria não criptográfica. No WF-104, aleatoriedade interfere na idempotência.
+
+**Correção exigida:** usar SHA-256 canônico em todas as fronteiras e definir a chave a partir de dados estáveis e versionados.
+
+### 11.13 N23-B10 — Memória “semântica” não possui índice vetorial operacional
+
+**Severidade:** MÉDIA
+
+**Relaciona-se a:** N23-R17 e documentação de arquitetura
+**Estado:** ABERTO
+
+**Constatação:** não há extensão pgvector, coluna de embedding ou busca vetorial integrada ao n8n. A função de cosseno sobre arrays não constitui por si só memória semântica operacional. O mecanismo atual é filtragem categórica/exata.
+
+**Correção exigida:** ou implementar pgvector com embeddings, metadados, isolamento e recuperação testada, ou renomear a capacidade para refletir corretamente seu comportamento atual.
+
+### 11.14 A0/N23-B11 — Dados fictícios no runtime operacional
+
+**Severidade:** CRÍTICA
+
+**Relaciona-se a:** A0-R05 e N23-R06
+**Estado:** ABERTO
+
+**Constatação:** WF-102 permanece ativo e contém briefing com empresas, contatos, valores, pontos e faturamento fictícios. Isso viola o princípio de que fontes governam e pode produzir comunicação enganosa.
+
+**Correção exigida:** desativar/despublicar o workflow, mover fixtures para `test-data`/`OFFLINE_EVAL`, impedir dados sintéticos no runtime e criar teste que procure entidades fictícias em toda versão publicada.
+
+**Critério de aceite:** nenhuma resposta operacional pode conter dados sintéticos não provenientes de uma fixture explicitamente isolada.
+
+### 11.15 DOC-B01 — Estado documental contraditório
+
+**Severidade:** ALTA
+
+**Relaciona-se a:** DOC-R01, DOC-R02 e DOC-R04
+**Estado:** ABERTO
+
+**Constatação:**
+
+- `PROJECT_STATE.md` ainda mantém timestamp e instruções de retomada da remediação anterior;
+- `ROADMAP.md` conserva versão/tarefa corrente antiga no topo e declarações históricas conflitantes;
+- `CHANGELOG.md` mantém seções de “homologado” incompatíveis com a reabertura dos gates;
+- `AGENTS.md` e documentos recentes divergem sobre `OWNER_APPROVED` versus promoção `AUTO`;
+- o Threat Model descreve controles que não estão efetivamente impostos.
+
+**Correção exigida:** sincronizar os arquivos após as correções reais, mantendo histórico sem apresentar alegação antiga como estado vigente. Declarar explicitamente o modelo aprovado de aprendizado automático e seus limites.
+
+## 12. Deficiências da suíte atual
+
+Os testes devem continuar existindo, mas não podem ser usados como prova suficiente enquanto persistirem estes problemas:
+
+1. o teste A0 não consulta `activeVersionId` nem a versão publicada em `workflow_history`;
+2. falha na inspeção Docker é capturada e não reprova obrigatoriamente o gate;
+3. `legacyExceptions` e `runtimeGate` são declarados no relatório final sem derivação completa das evidências;
+4. o teste flywheel usa `postgres`, não `visao360_app`;
+5. motores são chamados diretamente fora do n8n;
+6. comandos Telegram não são executados de ponta a ponta;
+7. o teste desabilita proteção de auditoria durante o teardown;
+8. não existe teste de `TRUNCATE` pela role da aplicação;
+9. não existe teste de candidata Golden válida no schema final;
+10. não existe corpus adversarial suficiente para risco e prompt injection;
+11. não existe teste de contrato real entre Decision Utility e Reflexion;
+12. não existe teste que prove ausência de dados fictícios nas versões publicadas.
+
+## 13. Plano de terceira remediação recomendado
+
+### Bloco T0 — Contenção imediata
+
+- [ ] Despublicar WF-11, WF-97, WF-98 e WF-102 pelo mecanismo suportado do n8n.
+- [ ] Manter WF-104 inativo.
+- [ ] Suspender qualquer declaração `CANONICAL_LOCAL_ACTIVE`.
+- [ ] Preservar os backups existentes e criar novo checkpoint antes das migrations.
+
+### Bloco T1 — Verdade do runtime n8n
+
+- [ ] Corrigir o teste para `activeVersionId` + `workflow_history`.
+- [ ] Falhar fechado se Docker ou PostgreSQL não puderem ser consultados.
+- [ ] Verificar ausência de execuções posteriores à despublicação.
+- [ ] Gerar export novo somente depois de sincronizar banco e arquivos.
+
+### Bloco T2 — Transporte edge para local
+
+- [ ] Escolher uma única estratégia canônica.
+- [ ] Remover fallback de loopback inválido no edge.
+- [ ] Validar resposta estruturada `accepted` do WF-100.
+- [ ] Provar entrega, deduplicação, retry e recuperação.
+
+### Bloco T3 — WF-101 funcional
+
+- [ ] Implementar trigger/agenda e lease recovery.
+- [ ] Corrigir ramo `DOCUMENT`.
+- [ ] Implementar comandos com SQL real e autorização.
+- [ ] Remover mensagens que alegam mutação sem mutação comprovada.
+- [ ] Calcular `/status` a partir do estado real dos serviços.
+
+### Bloco T4 — Banco e migrations
+
+- [ ] Substituir/neutralizar migration 09 de maneira segura também em instalação limpa.
+- [ ] Corrigir Golden `CANDIDATE`, constraints e nulabilidade.
+- [ ] Tornar tenant, owner, evidence e idempotency key obrigatórios onde materiais.
+- [ ] Aplicar grants mínimos a `visao360_app`.
+- [ ] Implementar auditoria resistente a TRUNCATE e cadeia hash.
+
+### Bloco T5 — Learning Engine e Reflexion
+
+- [ ] Classificação fail-closed por classes permitidas.
+- [ ] Proibir AUTO em segurança, acesso, retenção, política, fórmula, autorização, efeitos externos e escopo global.
+- [ ] Corrigir contrato DUR/Reflexion.
+- [ ] Rejeitar dados sem tenant.
+- [ ] Remover atribuição de `OWNER_EXPLICIT` sem evento autenticado.
+- [ ] Uniformizar SHA-256 e idempotência.
+
+### Bloco T6 — Integração canônica
+
+- [ ] Expor motores por subworkflows ou serviço interno versionado.
+- [ ] Fazer WF-104 usar somente essa implementação.
+- [ ] Executar com credencial equivalente à produção.
+- [ ] Registrar decisão, política, versão, evidências e diretrizes aplicadas.
+
+### Bloco T7 — E2E e documentação
+
+- [ ] Criar teste WF-100 → WF-101 → motores → PostgreSQL → resposta sintética.
+- [ ] Testar retry, lease, concorrência, tenant e revogação.
+- [ ] Testar corpus adversarial e ausência de fixtures no runtime.
+- [ ] Sincronizar AGENTS, ROADMAP, PROJECT_STATE, CHANGELOG, SESSION_STATE e CODEX_HANDOFF.
+- [ ] Solicitar nova auditoria somente após evidências reproduzíveis.
+
+## 14. Critérios mínimos para nova submissão
+
+A próxima reauditoria deve receber, no mínimo:
+
+1. SHA exato do novo commit;
+2. export do n8n produzido depois das mudanças;
+3. consulta demonstrando `activeVersionId IS NULL` para legados;
+4. janela de execução demonstrando zero novos disparos legados;
+5. prova E2E do transporte escolhido;
+6. execução do WF-101 com documento sintético;
+7. execução dos comandos de diretriz com antes/depois no banco;
+8. testes executados como `visao360_app`;
+9. instalação limpa e upgrade preservando dados;
+10. testes negativos de alto risco, tenant, auditoria e prompt injection;
+11. prova de ausência de dados fictícios no runtime;
+12. arquivos de controle sincronizados e sem alegação antecipada de homologação.
+
+## 15. Decisão de gate e regra de continuidade
+
+Até que os critérios acima sejam atendidos:
+
+- Gate A0 permanece `OPEN / NOT_APPROVED`;
+- Gate N2.3 permanece `OPEN / NOT_APPROVED`;
+- WF-104 permanece inativo;
+- promoção de regras aprendidas no tenant operacional permanece suspensa;
+- Gate N7 e expansões dependentes permanecem bloqueados;
+- o sistema não deve se declarar `CANONICAL_LOCAL_ACTIVE`;
+- nenhuma ausência histórica deve ser preenchida artificialmente;
+- nenhuma evidência sintética deve ser apresentada como produção.
+
+**Parecer final do auditor independente:** a remediação foi relevante, porém insuficiente e parcialmente comprovada. O projeto pode continuar em desenvolvimento e correção controlada, mas os Gates A0 e N2.3 não estão homologados no commit auditado.

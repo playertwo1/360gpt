@@ -20,6 +20,14 @@ O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada 
 
 ## Changelog
 
+### v2.3 — Flywheel de Aprendizado Contínuo e Governança Soberana
+
+- Formalizada a decisão soberana de Rafael sobre os modos de promoção de aprendizado (`AUTO`, `OWNER_EXPLICIT`, `MANUAL_REVIEW`).
+- Implementada autopromoção controlada exclusivamente para regras reversíveis de baixo risco (`LOW`) e categorias em allowlist positiva, com score >= 0.75 e frequência >= 2.
+- Bloqueada terminantemente a autopromoção de regras globais, limites de crédito, taxas, compliance, sigilo bancário, privacidade, retenção de dados, fórmulas oficiais do POBJ e efeitos externos.
+- Instituídos comandos soberanos no Telegram para supervisão contínua (`/diretrizes`, `/aprovardiretriz`, `/suspenderdiretriz`, `/revogardiretriz`).
+- Proibida autoalteração de arquivos de sistema (`AGENTS.md`, System Prompts, políticas ou código); todo conhecimento promovido reside em tabelas dedicadas no PostgreSQL e é injetado como dados de contexto subordinados.
+
 ### v2.2 — n8n como autoridade operacional exclusiva
 
 - Tornado o n8n o único controlador canônico de entrada, roteamento, agentes, decisões, perguntas, aprendizagem, estado e saída.
@@ -340,13 +348,31 @@ Especialistas não têm abas na primeira fase. Rafael pode abrir agente, versão
 
 Uma conversa chega ao Diretor por pacote com pergunta, resumo, fatos, hipóteses, decisão, evidências, dependências, autorização de compartilhamento e referência à origem. A conversa inteira não circula automaticamente.
 
-### 3.3 Conhecimento transversal
+### 3.3 Conhecimento transversal e Aprendizado Contínuo (Decisão Soberana de Rafael)
 
 Escopos: `SESSION_ONLY`, `DOMAIN_ONLY`, `CLIENT_SPECIFIC`, `PORTFOLIO_GENERAL`, `CROSS_DOMAIN`, `OWNER_PREFERENCE`, `SYSTEM_POLICY` e `OFFICIAL_SOURCE`.
 
-Promoção: `OBSERVED → INTERPRETED → LEARNING_CANDIDATE → VALIDATED → OWNER_APPROVED → PROMOTED`. Alternativos: `REJECTED`, `CONTESTED`, `EXPIRED`, `SUPERSEDED`, `REVOKED`, `LOW_SAMPLE`, `INSUFFICIENT_EVIDENCE`.
+**Ciclo de Governança de Aprendizado (Marco N2.3):**
+Toda nova regra ou heurística nasce obrigatoriamente como `CANDIDATE` e segue um dos três modos de promoção determinísticos:
 
-Somente fatos confirmados, decisões e aprendizados promovidos entram como conhecimento reutilizável. Informação de uma empresa não é aplicada silenciosamente a outra.
+1. **Autopromoção Controlada (`AUTO`):**
+   - Aplica-se exclusivamente a regras operacionais reversíveis e de baixo risco (`LOW`) pertencentes à allowlist positiva estrita de categorias (`STYLE_FORMATTING`, `COMMUNICATION_CADENCE`, `CONVERSATIONAL_PREFERENCE`, `PRESENTATION_ORDER`, `EXECUTIVE_SUMMARY_STYLE`).
+   - Exige `score >= 0.75`, recorrência observada `frequency >= 2`, ausência de conflitos e isolamento por tenant.
+   - Escopo `GLOBAL` é estritamente proibido na autopromoção (apenas escopos de domínio ou indicador).
+   - Não requer aprovação manual formal uma a uma, aprendendo continuamente com o uso da agência.
+
+2. **Aprovação Explícita do Proprietário (`OWNER_EXPLICIT`):**
+   - Ativada quando Rafael fornece comando soberano direto no Telegram (`/aprovardiretriz <id>`) ou feedback explícito positivo ("está correto", "faça assim"), recebendo peso amplificado (1.8x).
+   - Rafael possui controle total para auditar, suspender e revogar qualquer regra a qualquer momento (`/diretrizes`, `/suspenderdiretriz <id>`, `/revogardiretriz <id>`).
+
+3. **Revisão Manual Obrigatória (`MANUAL_REVIEW`):**
+   - Exigida em casos de risco médio ou alto (`MEDIUM`, `HIGH`), regras de escopo global, conflitos entre diretrizes, amostra insuficiente ou tópicos sensíveis.
+   - **Bloqueio Absoluto de Autopromoção:** Limites de crédito, taxas, spread, margem, compliance, sigilo bancário, privacidade (LGPD), retenção ou expurgo de dados, fórmulas e pontuações do POBJ, permissões de acesso, credenciais e qualquer efeito externo (envio a clientes ou terceiros) NUNCA podem ser autopromovidos, exigindo estritamente aprovação formal de Rafael.
+   - **Imutabilidade de Políticas:** O sistema NUNCA autoaltera `AGENTS.md`, System Prompts, políticas ou código-fonte. Todo aprendizado promovido reside desacoplado em tabelas PostgreSQL (`promoted_knowledge`) e é injetado como dados subordinados às regras mestras.
+
+Status possíveis: `CANDIDATE`, `PROMOTED`, `SUSPENDED`, `SUPERSEDED`, `REVOKED`, `EXPIRED`. Alternativos de desfecho: `REJECTED`, `LOW_SAMPLE`, `INSUFFICIENT_EVIDENCE`.
+
+Somente fatos confirmados, decisões soberanas e aprendizados promovidos entram como conhecimento reutilizável via Context Packets. Informação de uma empresa não é aplicada silenciosamente a outra.
 
 ### 3.4 Catálogo e lifecycle
 

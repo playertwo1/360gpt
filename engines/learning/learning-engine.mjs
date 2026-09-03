@@ -69,6 +69,14 @@ export function calculateLearningScore({
   return Number(finalScore.toFixed(3));
 }
 
+export const AUTO_PROMOTION_ALLOWED_CATEGORIES = new Set([
+  'STYLE_FORMATTING',
+  'COMMUNICATION_CADENCE',
+  'CONVERSATIONAL_PREFERENCE',
+  'PRESENTATION_ORDER',
+  'EXECUTIVE_SUMMARY_STYLE'
+]);
+
 /**
  * Avalia a elegibilidade de uma regra para Autopromoção vs Revisão Manual.
  */
@@ -83,7 +91,8 @@ export function evaluateCandidateRule({
   layoutChanged = false
 }) {
   const riskLevel = determineRiskLevel(rule);
-  const scope = rule.scope || 'DOMAIN';
+  const scope = String(rule.scope || 'DOMAIN').toUpperCase().trim();
+  const category = String(rule.category || '').toUpperCase().trim();
   const confidence = Number(rule.confidence_score || 0.85);
 
   const score = calculateLearningScore({
@@ -99,14 +108,18 @@ export function evaluateCandidateRule({
     riskLevel
   });
 
-  // 1. Risco ALTO ou conflito material: NUNCA autopromove; SEMPRE requer MANUAL_REVIEW
-  if (riskLevel === RISK_LEVELS.HIGH || hasConflict) {
+  // 1. Risco ALTO, conflito material ou escopo GLOBAL: NUNCA autopromove; SEMPRE requer MANUAL_REVIEW
+  if (riskLevel === RISK_LEVELS.HIGH || hasConflict || scope === 'GLOBAL') {
     return {
       eligible_for_auto: false,
       promotion_mode: PROMOTION_MODES.MANUAL_REVIEW,
       score,
-      riskLevel,
-      reason: hasConflict ? 'Conflito com outra diretriz ativa' : 'Classificação de risco elevado (exige validação de Rafael)',
+      riskLevel: riskLevel === RISK_LEVELS.LOW && scope === 'GLOBAL' ? RISK_LEVELS.HIGH : riskLevel,
+      reason: hasConflict 
+        ? 'Conflito com outra diretriz ativa' 
+        : scope === 'GLOBAL'
+          ? 'Escopo global exige revisão manual obrigatória de Rafael'
+          : 'Classificação de risco elevado (exige validação de Rafael)',
       policy_version: PROMOTION_POLICY_VERSION
     };
   }
@@ -123,55 +136,66 @@ export function evaluateCandidateRule({
     };
   }
 
-  // 3. Regra de baixo risco com score alto e recorrência comprovada (>= 2): AUTOPROMOVE
-  if (riskLevel === RISK_LEVELS.LOW && score >= 0.75 && frequency >= 2 && !layoutChanged) {
+  // 3. Regra de baixo risco com categoria na allowlist estrita, score alto e recorrência comprovada (>= 2): AUTOPROMOVE
+  const isCategoryAllowedForAuto = AUTO_PROMOTION_ALLOWED_CATEGORIES.has(category);
+  if (riskLevel === RISK_LEVELS.LOW && isCategoryAllowedForAuto && score >= 0.75 && frequency >= 2 && !layoutChanged) {
     return {
       eligible_for_auto: true,
       promotion_mode: PROMOTION_MODES.AUTO,
       score,
       riskLevel,
-      reason: `Autopromoção contínua (score: ${score} >= 0.75, freq: ${frequency} >= 2, risco baixo)`,
+      reason: `Autopromoção contínua (score: ${score} >= 0.75, freq: ${frequency} >= 2, categoria ${category} em allowlist)`,
       policy_version: PROMOTION_POLICY_VERSION
     };
   }
 
-  // 4. Caso contrário: permanece CANDIDATE ou encaminha para revisão
+  // 4. Caso contrário: permanece CANDIDATE ou encaminha para revisão manual
   return {
     eligible_for_auto: false,
     promotion_mode: score >= 0.50 ? PROMOTION_MODES.MANUAL_REVIEW : 'REJECTED_LOW_SCORE',
     score,
     riskLevel,
-    reason: score >= 0.50 ? 'Aguardando maior recorrência ou validação' : 'Score insuficiente para promoção',
+    reason: !isCategoryAllowedForAuto
+      ? `Categoria ${category || 'N/A'} fora da allowlist de autopromoção (requer revisão manual)`
+      : score >= 0.50 
+        ? 'Aguardando maior recorrência ou validação' 
+        : 'Score insuficiente para promoção',
     policy_version: PROMOTION_POLICY_VERSION
   };
 }
 
-function determineRiskLevel(rule) {
+export function determineRiskLevel(rule) {
   const text = (rule.learned_rule || '').toLowerCase();
-  const category = (rule.category || '').toUpperCase();
+  const category = (rule.category || '').toUpperCase().trim();
+  const scope = (rule.scope || '').toUpperCase().trim();
 
-  if (
-    category.includes('CREDITO') ||
-    category.includes('COMPLIANCE') ||
-    category.includes('LEGAL') ||
-    text.includes('limite') ||
-    text.includes('taxa') ||
-    text.includes('juridico') ||
-    text.includes('aprovado sem analise') ||
-    text.includes('dispensar comprovante')
-  ) {
+  // 1. Termos e tópicos sensíveis de alto risco (fail-closed absoluto)
+  const highRiskPatterns = [
+    /cr[eé]dito/, /limite/, /taxa/, /juros/, /spread/, /desconto/, /margem/,
+    /compliance/, /legal/, /jur[ií]dico/, /sigilo/, /privacidade/, /lgpd/, /reten[cç][aã]o/,
+    /f[oó]rmula/, /pobj/, /pontua[cç][aã]o/, /oficial/, /normativ[ao]/,
+    /autoriza[cç][aã]o/, /permiss[aã]o/, /acesso/, /credencial/, /token/, /segredo/,
+    /efeito externo/, /terceir[ao]s?/, /dispensar/, /sem an[aá]lise/, /bypass/
+  ];
+
+  for (const pattern of highRiskPatterns) {
+    if (pattern.test(text) || pattern.test(category.toLowerCase())) {
+      return RISK_LEVELS.HIGH;
+    }
+  }
+
+  // 2. Escopo GLOBAL é de alto impacto sistêmico
+  if (scope === 'GLOBAL') {
     return RISK_LEVELS.HIGH;
   }
 
-  if (
-    category.includes('FINANCEIRO') ||
-    text.includes('telefone') ||
-    text.includes('desconto')
-  ) {
-    return RISK_LEVELS.MEDIUM;
+  // 3. Allowlist estrita de categorias positivas para LOW
+  if (AUTO_PROMOTION_ALLOWED_CATEGORIES.has(category)) {
+    return RISK_LEVELS.LOW;
   }
 
-  return RISK_LEVELS.LOW;
+  // 4. Categorias fora da allowlist positiva não são elegíveis para LOW (fail-closed)
+  return RISK_LEVELS.MEDIUM;
 }
 
 export function sha256Hex(data) {

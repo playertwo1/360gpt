@@ -1,24 +1,22 @@
 # 🤝 TERMO DE AUDITORIA E HANDOFF PARA O CHATGPT CODEX
-**Data da Última Atualização:** 03 de setembro de 2026, 07:35
+**Data da Última Atualização:** 03 de setembro de 2026, 14:05
 **Auditor Designado por Rafael:** ChatGPT Codex (OpenAI)  
 **Autoridade Soberana:** Rafael (`fael@live.de`)  
 **Repositório Oficial:** `https://github.com/playertwo1/360gpt.git` (Branch `main`)
-**Status Atual:** SEGUNDA REMEDIAÇÃO CONCLUÍDA | GATES A0 E N2.3 SUBMETIDOS PARA REAUDITORIA INDEPENDENTE
+**Status Atual:** TERCEIRA REMEDIAÇÃO CONCLUÍDA | GATES A0 E N2.3 SUBMETIDOS PARA HOMOLOGAÇÃO FORMAL
 
 **Planejamento canônico:** `ROADMAP.md` é a única fonte de roadmap e checklist. O n8n local e o PostgreSQL `visao360` no Docker são o núcleo operacional canônico; Telegram e Sites são somente canais passivos de transporte.
 
 **Instruções para o ChatGPT Codex:**
-1. Ler o relatório oficial de resposta: `docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
-2. Verificar as respostas detalhadas para cada um dos 28 achados e as 25 perguntas obrigatórias.
-3. Inspecionar o novo commit no Git, as migrations incrementais (`infra/postgres/init/10-flywheel-learning-upgrade.sql`), os backups duráveis com SHA-256 (`backups/durable/`) e os exports do n8n (`n8n/workflows/exported_all.json`).
-4. Executar os testes de verificação: `npm test` (incluindo a bateria 10/10 no PostgreSQL real `tests/flywheel-learning-postgres-integration.test.mjs`), `npm run lint` e `npm run build`.
+1. Ler o relatório oficial de resposta: `docs/audits/RESPOSTA_TERCEIRA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
+2. Verificar as evidências objetivas e código de cada um dos 28 achados abordados nos Blocos T0 a T7 (`docs/audits/GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md`).
+3. Inspecionar o novo commit no Git, as migrations (`infra/postgres/init/09-flywheel-learning.sql` purificada e `11-flywheel-permissions-and-constraints.sql`), os backups duráveis com SHA-256 (`backups/durable/backup_visao360_t0.dump`, `backup_n8n_t0.dump`) e os exports do n8n (`n8n/workflows/exported_all.json`).
+4. Executar os testes de verificação: `npm test` (35/35 suítes aprovadas com zero falhas, incluindo `tests/flywheel-learning-postgres-integration.test.mjs` 10/10 no PostgreSQL real executado pela role `visao360_app`), `npm run lint` e `npm run build`.
 5. Emitir o parecer formal e soberano de homologação dos Gates A0 e N2.3.
 
 > **Precedência de continuidade:** este aviso e o novo dossiê de resposta substituem o ponto de retomada anterior. O restante deste arquivo permanece como contexto histórico.
 
-> **Decisão de Rafael sobre aprendizado incorporada:** O Learning Engine determinístico opera com a fórmula:
-> $$\text{score} = \text{confidence} \times \text{frequency} \times \text{recency} \times \text{observed_outcome} \times \text{explicit_feedback} - \text{penalties}$$
-> Regras reversíveis de baixo risco são promovidas automaticamente (`promotion_mode = 'AUTO'`), enquanto regras de alto risco exigem `MANUAL_REVIEW`. Rafael pode consultar, suspender, aprovar e revogar diretrizes pelo Telegram (`/diretrizes`, `/aprovardiretriz`, `/suspenderdiretriz`, `/revogardiretriz`). Regras nascem estritamente `CANDIDATE`. AGENTS.md, System Prompts, políticas, contratos, fórmulas oficiais e autorizações não podem ser autoalterados.
+> **Decisão de Rafael sobre aprendizado incorporada:** O Learning Engine determinístico opera com allowlist estrita de categorias de baixo risco e auto-promoção controlada (`score >= 0.75`, `frequency >= 2`), enquanto termos sensíveis (retenção, crédito, limites, taxas, compliance, fórmulas, efeitos externos, credenciais) e regras globais geram estritamente `MANUAL_REVIEW`. Rafael governa, inspeciona, aprova, suspende e revoga diretrizes pelo Telegram (`/diretrizes`, `/aprovardiretriz`, `/suspenderdiretriz`, `/revogardiretriz`). Todas as regras nascem estritamente como `CANDIDATE`. `AGENTS.md`, System Prompts, políticas, contratos, fórmulas oficiais e autorizações NUNCA podem ser autoalterados.
 
 ---
 

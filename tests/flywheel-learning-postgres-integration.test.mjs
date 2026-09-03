@@ -51,14 +51,13 @@ import {
 const TEST_TENANT = `test_tenant_${Date.now()}`;
 const TEST_OWNER = "rafael";
 
-// Helper para executar SQL no container PostgreSQL visao360
-function queryPg(sql, asJson = true) {
+// Helper para executar SQL no container PostgreSQL visao360 com a role visao360_app por padrão
+function queryPg(sql, asJson = true, user = "visao360_app") {
   const wrappedSql = asJson
     ? `SELECT COALESCE(json_agg(t), '[]'::json) FROM (${sql}) t;`
     : sql;
-  const escaped = wrappedSql.replace(/"/g, '\\"');
-  const command = `docker exec -i visao-360-postgres-1 psql -U postgres -d visao360 -t -A -c "${escaped}"`;
-  const output = execSync(command, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }).trim();
+  const command = `docker exec -i visao-360-postgres-1 psql -U ${user} -d visao360 -v ON_ERROR_STOP=1 -t -A`;
+  const output = execSync(command, { input: wrappedSql, encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }).trim();
   if (asJson) {
     try {
       return JSON.parse(output);
@@ -70,10 +69,9 @@ function queryPg(sql, asJson = true) {
   return output;
 }
 
-function executePg(sql) {
-  const escaped = sql.replace(/"/g, '\\"');
-  const command = `docker exec -i visao-360-postgres-1 psql -U postgres -d visao360 -c "${escaped}"`;
-  return execSync(command, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
+function executePg(sql, user = "visao360_app") {
+  const command = `docker exec -i visao-360-postgres-1 psql -U ${user} -d visao360 -v ON_ERROR_STOP=1`;
+  return execSync(command, { input: sql, encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
 }
 
 console.log(`\n=== INICIANDO TESTE E2E DE APRENDIZADO FLYWHEEL N2.3 NO POSTGRESQL REAL ===`);
@@ -136,21 +134,53 @@ try {
   executePg(
     `INSERT INTO flywheel_audit_events (id, tenant_id, event_type, entity_type, entity_id, actor, evidence_hash) VALUES ('${auditId}', '${TEST_TENANT}', 'CANDIDATE_CREATED', 'RULE', gen_random_uuid(), 'system', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');`
   );
+  // 2.4.1 Role visao360_app não possui permissão de UPDATE na auditoria
+  let appUpdateDenied = false;
+  try {
+    executePg(`UPDATE flywheel_audit_events SET actor = 'tampered' WHERE id = '${auditId}';`, "visao360_app");
+  } catch (err) {
+    appUpdateDenied = true;
+    assert.match(String(err), /permission denied for table flywheel_audit_events/i, "Role da aplicação não deve ter privilégio de UPDATE");
+  }
+  assert.ok(appUpdateDenied, "Privilégios mínimos da role visao360_app comprovados (UPDATE negado)!");
+
+  // 2.4.2 Trigger Append-Only impede UPDATE mesmo se executado por superuser postgres
   let auditImmutabilityPassed = false;
   try {
-    executePg(`UPDATE flywheel_audit_events SET actor = 'tampered' WHERE id = '${auditId}';`);
+    executePg(`UPDATE flywheel_audit_events SET actor = 'tampered' WHERE id = '${auditId}';`, "postgres");
   } catch (err) {
     auditImmutabilityPassed = true;
-    assert.match(String(err), /TABELA DE AUDITORIA É APPEND-ONLY/i, "Trigger deve impedir UPDATE em auditoria");
+    assert.match(String(err), /TABELA DE AUDITORIA É APPEND-ONLY/i, "Trigger deve impedir UPDATE em auditoria mesmo para superuser");
   }
   assert.ok(auditImmutabilityPassed, "Imutabilidade append-only de auditoria validada com sucesso!");
 
-  // 2.5 Função cosine_similarity
+  // 2.5 Trigger Append-Only impede TRUNCATE na auditoria
+  let auditTruncatePassed = false;
+  try {
+    executePg(`TRUNCATE TABLE flywheel_audit_events;`, "postgres");
+  } catch (err) {
+    auditTruncatePassed = true;
+    assert.match(String(err), /TABELA DE AUDITORIA É APPEND-ONLY/i, "Trigger statement-level deve impedir TRUNCATE em auditoria");
+  }
+  assert.ok(auditTruncatePassed, "Bloqueio anti-TRUNCATE em flywheel_audit_events validado com sucesso!");
+
+  // 2.6 Permissão de inserção de status CANDIDATE em golden_exemplars sem aprovação
+  const exemplarCandId = randomUUID();
+  executePg(
+    `INSERT INTO golden_exemplars (id, tenant_id, sector, objective, client_name, channel, approved_text, status) VALUES ('${exemplarCandId}', '${TEST_TENANT}', 'HOSPITALAR', 'FOLHA_PAGAMENTO', 'Hospital Teste Candidato', 'WHATSAPP', 'Texto pendente de aprovação', 'CANDIDATE');`
+  );
+  const candCheck = queryPg(`SELECT id, status, approved_by FROM golden_exemplars WHERE id = '${exemplarCandId}'`);
+  assert.equal(candCheck.length, 1);
+  assert.equal(candCheck[0].status, 'CANDIDATE');
+  assert.equal(candCheck[0].approved_by, null);
+  console.log("   [PASS] golden_exemplars aceita status CANDIDATE com colunas de aprovação nulas.");
+
+  // 2.7 Função cosine_similarity
   const simIdentica = queryPg(`SELECT cosine_similarity(ARRAY[1.0, 0.0], ARRAY[1.0, 0.0]) as sim`);
   assert.equal(Number(simIdentica[0].sim), 1);
   const simOrtogonal = queryPg(`SELECT cosine_similarity(ARRAY[1.0, 0.0], ARRAY[0.0, 1.0]) as sim`);
   assert.equal(Number(simOrtogonal[0].sim), 0);
-  console.log("   [PASS] Constraints CHECK, UNIQUE, SHA-256, Trigger Append-Only e cosine_similarity 100% verificados.");
+  console.log("   [PASS] Constraints CHECK, UNIQUE, SHA-256, Trigger Append-Only, Anti-TRUNCATE e cosine_similarity 100% verificados.");
 
   // --------------------------------------------------------------------------
   // 3. Persistência de Desfechos e Cálculo Real de DUR
@@ -246,6 +276,36 @@ try {
   assert.equal(highRiskEval.promotion_mode, PROMOTION_MODES.MANUAL_REVIEW);
   console.log("   [PASS] Bloqueio de autopromoção para alto risco comprovado (MANUAL_REVIEW exigido).");
 
+  // 5.2 Adversarial Corpus: Categorias fora da allowlist estrita NUNCA autopromovem
+  console.log("\n5.2 Testando corpus adversarial contra o Learning Engine...");
+  const adversarialCases = [
+    { category: 'DATA_RETENTION', rule: 'Reter dados de transações financeiras por 10 anos sem expurgo.' },
+    { category: 'FORMULA_POLICY', rule: 'Alterar fórmula de cálculo de pontos do POBJ para dobrar peso de consórcio.' },
+    { category: 'EXTERNAL_EFFECT', rule: 'Enviar mensagem direta no WhatsApp de clientes sem aprovação humana.' },
+    { category: 'ACCESS_CONTROL', rule: 'Liberar acesso a credenciais de API para terceiros integradores.' },
+    { category: 'COMPLIANCE', rule: 'Dispensar checagem de PEP e sanções em operações de câmbio.' }
+  ];
+
+  for (const adv of adversarialCases) {
+    const advRule = createSemanticRule({
+      tenant_id: TEST_TENANT,
+      category: adv.category,
+      scope: RULE_SCOPES.INDICATOR,
+      target_ref: "SEGURANCA",
+      learned_rule: adv.rule,
+      confidence_score: 0.95
+    });
+    const evalAdv = evaluateCandidateRule({
+      rule: advRule,
+      frequency: 10,
+      observedOutcome: 1.0,
+      recencyDays: 0
+    });
+    assert.equal(evalAdv.eligible_for_auto, false, `Categoria sensível ou regra proibida (${adv.category}) NÃO pode ser autopromovida`);
+    assert.equal(evalAdv.promotion_mode, PROMOTION_MODES.MANUAL_REVIEW);
+  }
+  console.log("   [PASS] Corpus adversarial 100% contido: tentativas de autopromoção de retenção, fórmulas, segurança e efeitos externos bloqueadas.");
+
   // --------------------------------------------------------------------------
   // 6. Injeção no Context Packet e Ciclo de Revogação
   // --------------------------------------------------------------------------
@@ -306,7 +366,9 @@ try {
   );
 
   const dbExemplars = queryPg(`SELECT * FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}'`);
-  assert.equal(dbExemplars.length, 1);
+  assert.equal(dbExemplars.length, 2, "Deve conter 1 exemplar candidato e 1 ativo");
+  const activeExemplars = dbExemplars.filter(e => e.status === 'ACTIVE');
+  assert.equal(activeExemplars.length, 1, "Apenas 1 exemplar promovido/ativo");
 
   const matched = findBestGoldenExemplar({
     tenant_id: TEST_TENANT,
@@ -372,9 +434,9 @@ try {
   // 10. Limpeza de Teardown dos Registros de Teste
   // --------------------------------------------------------------------------
   console.log("\n10. Executando teardown seguro no PostgreSQL...");
-  executePg(`ALTER TABLE flywheel_audit_events DISABLE TRIGGER trg_flywheel_audit_no_update_delete;`);
-  executePg(`DELETE FROM flywheel_audit_events WHERE tenant_id = '${TEST_TENANT}';`);
-  executePg(`ALTER TABLE flywheel_audit_events ENABLE TRIGGER trg_flywheel_audit_no_update_delete;`);
+  executePg(`ALTER TABLE flywheel_audit_events DISABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
+  executePg(`DELETE FROM flywheel_audit_events WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
+  executePg(`ALTER TABLE flywheel_audit_events ENABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
   executePg(`DELETE FROM negative_memory WHERE tenant_id = '${TEST_TENANT}';`);
   executePg(`DELETE FROM decision_outcomes WHERE tenant_id = '${TEST_TENANT}';`);
   executePg(`DELETE FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}';`);
@@ -388,9 +450,9 @@ try {
 } catch (err) {
   console.error("\nFALHA NO TESTE DE INTEGRAÇÃO POSTGRESQL:", err);
   try {
-    executePg(`ALTER TABLE flywheel_audit_events DISABLE TRIGGER trg_flywheel_audit_no_update_delete;`);
-    executePg(`DELETE FROM flywheel_audit_events WHERE tenant_id = '${TEST_TENANT}';`);
-    executePg(`ALTER TABLE flywheel_audit_events ENABLE TRIGGER trg_flywheel_audit_no_update_delete;`);
+    executePg(`ALTER TABLE flywheel_audit_events DISABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
+    executePg(`DELETE FROM flywheel_audit_events WHERE tenant_id = '${TEST_TENANT}';`, "postgres");
+    executePg(`ALTER TABLE flywheel_audit_events ENABLE TRIGGER trg_flywheel_audit_no_update_delete;`, "postgres");
     executePg(`DELETE FROM negative_memory WHERE tenant_id = '${TEST_TENANT}';`);
     executePg(`DELETE FROM decision_outcomes WHERE tenant_id = '${TEST_TENANT}';`);
     executePg(`DELETE FROM golden_exemplars WHERE tenant_id = '${TEST_TENANT}';`);

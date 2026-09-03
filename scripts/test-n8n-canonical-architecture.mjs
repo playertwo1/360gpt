@@ -58,31 +58,86 @@ assert.match(wf102, /part_index/);
 assert.match(wf103, /audit_log/);
 assert.match(wf103, /NOT EXISTS/);
 
-// 6. Verificação do estado REAL do banco n8n (zero rotas bridge ativas e WF-104 inativo no tenant operacional)
-let psqlCheck = '0';
-let wf104Active = 'f';
-try {
-  psqlCheck = execFileSync('powershell.exe', [
-    '-NoProfile',
-    '-Command',
-    `docker exec -i visao-360-postgres-1 psql -U n8n -h 127.0.0.1 -d n8n -t -A -c "SELECT COUNT(id) FROM workflow_entity WHERE active = true AND nodes::text LIKE '%/api/bridge/%';"`
-  ], { encoding: 'utf8' }).trim();
-  assert.equal(Number(psqlCheck), 0, 'ERRO A0-R02: Existem workflows ativos referenciando /api/bridge/ no banco n8n');
+// 6. Verificação do estado REAL do banco n8n (zero rotas bridge ativas/publicadas, zero mocks operacionais e contenção estrita)
+let activeBridgeCount = 0;
+let activeMockCount = 0;
+let wf104Active = false;
+let legacyUnpublished = false;
 
-  wf104Active = execFileSync('powershell.exe', [
+try {
+  const bridgeQuery = `@'
+SELECT COUNT(*) FROM (
+  SELECT we.id
+  FROM workflow_entity we
+  LEFT JOIN workflow_history wh ON wh."versionId" = we."activeVersionId"
+  WHERE (we.active = true OR we."activeVersionId" IS NOT NULL)
+    AND (we.nodes::text LIKE '%/api/bridge/%' OR (wh.nodes IS NOT NULL AND wh.nodes::text LIKE '%/api/bridge/%'))
+) sub;
+'@ | docker exec -i visao-360-postgres-1 psql -U n8n -d n8n -t -A`;
+
+  const psqlCheck = execFileSync('powershell.exe', [
     '-NoProfile',
     '-Command',
-    `docker exec -i visao-360-postgres-1 psql -U n8n -h 127.0.0.1 -d n8n -t -A -c "SELECT active FROM workflow_entity WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000104';"`
+    bridgeQuery
   ], { encoding: 'utf8' }).trim();
-  assert.equal(wf104Active === 't', false, 'WF-104 deve permanecer inativo no tenant operacional conforme instrução de contenção');
+  activeBridgeCount = Number(psqlCheck);
+  assert.equal(activeBridgeCount, 0, 'ERRO A0-R02: Existem workflows ativos ou publicados referenciando /api/bridge/ no banco n8n');
+
+  const mockQuery = `@'
+SELECT COUNT(*) FROM (
+  SELECT we.id
+  FROM workflow_entity we
+  LEFT JOIN workflow_history wh ON wh."versionId" = we."activeVersionId"
+  WHERE (we.active = true OR we."activeVersionId" IS NOT NULL)
+    AND (
+      we.nodes::text ILIKE '%Hospital%Lucas%' 
+      OR we.nodes::text ILIKE '%Forja Sul%'
+      OR (wh.nodes IS NOT NULL AND (wh.nodes::text ILIKE '%Hospital%Lucas%' OR wh.nodes::text ILIKE '%Forja Sul%'))
+    )
+) sub;
+'@ | docker exec -i visao-360-postgres-1 psql -U n8n -d n8n -t -A`;
+
+  const mockCheck = execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    mockQuery
+  ], { encoding: 'utf8' }).trim();
+  activeMockCount = Number(mockCheck);
+  assert.equal(activeMockCount, 0, 'ERRO A0/N23-B11: Existem dados fictícios (Hospital/Forja Sul) em workflows ativos ou publicados');
+
+  const legacyQuery = `@'
+SELECT COUNT(*) FROM workflow_entity 
+WHERE id IN ('9eb8e86a-84b8-4aa9-97e4-360000000011', 'NIMQv2jpUC2JDMhT', 'xkoDMhM2ZW1LDDS8', '9eb8e86a-84b8-4aa9-97e4-360000000102')
+  AND (active = true OR "activeVersionId" IS NOT NULL);
+'@ | docker exec -i visao-360-postgres-1 psql -U n8n -d n8n -t -A`;
+
+  const legacyCheck = execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    legacyQuery
+  ], { encoding: 'utf8' }).trim();
+  assert.equal(Number(legacyCheck), 0, 'ERRO T0: Workflows legados (WF-11, WF-97, WF-98, WF-102) continuam ativos ou publicados');
+  legacyUnpublished = true;
+
+  const wf104Query = `@'
+SELECT COUNT(*) FROM workflow_entity 
+WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000104'
+  AND (active = true OR "activeVersionId" IS NOT NULL);
+'@ | docker exec -i visao-360-postgres-1 psql -U n8n -d n8n -t -A`;
+
+  const wf104Check = execFileSync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    wf104Query
+  ], { encoding: 'utf8' }).trim();
+  assert.equal(Number(wf104Check), 0, 'WF-104 deve permanecer inativo no tenant operacional conforme instrução de contenção');
+  wf104Active = false;
 } catch (err) {
-  if (err.message && err.message.includes('ERRO')) throw err;
-  console.warn('Docker verification warning:', err.message);
+  throw new Error(`FALHA CRÍTICA DE VERIFICAÇÃO ARQUITETURAL NO POSTGRESQL/N8N: ${err.message}`);
 }
 
 // 7. Política canônica
 assert.match(policy, /legacy_exceptions_count: 0/);
-assert.match(policy, /CANONICAL_LOCAL_ACTIVE/);
 
 console.log(JSON.stringify({
   status: 'PASS',
@@ -91,12 +146,12 @@ console.log(JSON.stringify({
     ingestPureTransport: true,
     bridgeRoutesEliminatedFromBuild: true,
     pythonWorkerRetired: true,
-    zeroActiveBridgeWorkflowsInN8nDB: true,
-    activeBridgeCountInDB: Number(psqlCheck),
-    wf104ContainedInOperationalTenant: true,
-    wf104ActiveInDB: wf104Active === 't',
+    zeroActiveBridgeWorkflowsInN8nDB: activeBridgeCount === 0,
+    activeBridgeCountInDB: activeBridgeCount,
+    zeroActiveMockEntitiesInDB: activeMockCount === 0,
+    legacyWorkflowsUnpublished: legacyUnpublished,
+    wf104ContainedInOperationalTenant: !wf104Active,
     workflowsValidated: workflows.length
   },
-  legacyExceptions: 0,
-  runtimeGate: 'CANONICAL_LOCAL_ACTIVE',
+  runtimeVerification: 'VERIFIED_ON_N8N_POSTGRES_RUNTIME'
 }, null, 2));

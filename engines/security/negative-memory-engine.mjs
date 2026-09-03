@@ -61,7 +61,7 @@ export function createNegativeMemoryItem({
   return {
     id,
     tenant_id,
-    target_entity: cleanEntity,
+    target_entity: String(target_entity).trim(),
     entity_id: entity_id ? String(entity_id).trim() : null,
     entity_type,
     vetoed_topic,
@@ -130,7 +130,8 @@ export function interceptWithNegativeMemory({
 
     // Match de Entidade: Por ID exato (se disponível) ou por nome normalizado com limite seguro
     const entityMatch = (entityId && rule.entity_id && rule.entity_id === entityId) ||
-      (rule.target_entity === normEntity) ||
+      (normalizeText(rule.target_entity) === normEntity) ||
+      (rule.target_entity === entityName) ||
       (rule.target_entity === "global" || rule.target_entity === "todos");
 
     if (!entityMatch) continue;
@@ -229,4 +230,26 @@ function normalizeText(text) {
 
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function recordNegativeDecision(opts) {
+  const item = createNegativeMemoryItem(opts);
+  item.status = NEGATIVE_STATUS.ACTIVE;
+  return item;
+}
+
+export function checkSafetyInterception({ target_entity, proposed_action, proposed_topic, negativeMemory = [] } = {}) {
+  const res = interceptWithNegativeMemory({
+    entityName: target_entity,
+    proposedAction: proposed_action,
+    proposedProduct: proposed_action,
+    activeNegativeRules: negativeMemory
+  });
+  return {
+    safe: res.allowed,
+    violation: res.allowed ? null : `Ação bloqueada pela Memória Negativa: ${res.reason}`,
+    blocked: !res.allowed,
+    interception_reason: res.reason,
+    matched_rule: res.matchedRule
+  };
 }

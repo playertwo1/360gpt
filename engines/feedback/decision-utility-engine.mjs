@@ -9,7 +9,7 @@
  * - Conjuntos vazios ou inferiores à amostra mínima retornam NOT_ENOUGH_DATA e taxa null.
  */
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 export const OUTCOME_TYPES = {
   ACEITO_INTEGRAL: "ACEITO_INTEGRAL",
@@ -27,8 +27,10 @@ export function recordDecisionOutcome({
   recommendation_id,
   domain = "RELACIONAMENTO",
   proposed_payload,
+  proposed_text,
   outcome_type = OUTCOME_TYPES.ACEITO_INTEGRAL,
   final_payload = null,
+  final_text = null,
   feedback_note = "",
   evidence_node_id = null
 }) {
@@ -36,8 +38,11 @@ export function recordDecisionOutcome({
     throw new Error("recommendation_id obrigatório");
   }
 
-  const propText = typeof proposed_payload === "string" ? proposed_payload : JSON.stringify(proposed_payload);
-  const finText = final_payload ? (typeof final_payload === "string" ? final_payload : JSON.stringify(final_payload)) : propText;
+  const rawProp = proposed_payload !== undefined ? proposed_payload : (proposed_text || "");
+  const rawFin = final_payload !== null ? final_payload : (final_text !== null ? final_text : rawProp);
+
+  const propText = typeof rawProp === "string" ? rawProp : JSON.stringify(rawProp);
+  const finText = typeof rawFin === "string" ? rawFin : JSON.stringify(rawFin);
 
   const delta = computeLexicalDelta(propText, finText, outcome_type);
   const id = randomUUID();
@@ -113,24 +118,33 @@ export function calculateDecisionUtilityRate(outcomes = [], minSample = MIN_OUTC
       status: "NOT_ENOUGH_DATA",
       total: 0,
       utility_rate_pct: null,
+      dur_rate: 0,
       meets_target: false,
       reason: "Nenhum desfecho registrado",
+      accepted_count: 0,
+      edited_count: 0,
+      rejected_count: 0,
       breakdown: { accepted: 0, edited: 0, rejected: 0 }
     };
   }
+
+  const breakdown = countOutcomes(outcomes);
 
   if (outcomes.length < minSample) {
     return {
       status: "NOT_ENOUGH_DATA",
       total: outcomes.length,
       utility_rate_pct: null,
+      dur_rate: 0,
       meets_target: false,
       reason: `Amostra insuficiente (${outcomes.length}/${minSample} mínimo)`,
-      breakdown: countOutcomes(outcomes)
+      accepted_count: breakdown.accepted,
+      edited_count: breakdown.edited,
+      rejected_count: breakdown.rejected,
+      breakdown
     };
   }
 
-  const breakdown = countOutcomes(outcomes);
   const usefulCount = breakdown.accepted + breakdown.edited;
   const rate = (usefulCount / outcomes.length) * 100;
 
@@ -138,7 +152,11 @@ export function calculateDecisionUtilityRate(outcomes = [], minSample = MIN_OUTC
     status: "SUFFICIENT_SAMPLE",
     total: outcomes.length,
     utility_rate_pct: Number(rate.toFixed(2)),
+    dur_rate: Number((rate / 100).toFixed(4)),
     meets_target: rate >= 85.0,
+    accepted_count: breakdown.accepted,
+    edited_count: breakdown.edited,
+    rejected_count: breakdown.rejected,
     breakdown
   };
 }
@@ -158,10 +176,18 @@ function countOutcomes(outcomes) {
 }
 
 function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16);
+  return createHash('sha256').update(String(str), 'utf8').digest('hex').slice(0, 16);
+}
+
+export const computeTextDelta = computeLexicalDelta;
+
+export function calibrateConfidenceScore({ baseConfidence = 0.8, historicalOutcomes = [] } = {}) {
+  // Calibração puramente de UX/utilidade para apresentação (nunca confiança de modelo/cálculo)
+  const dur = calculateDecisionUtilityRate(historicalOutcomes, 1);
+  if (dur.status === "NOT_ENOUGH_DATA" && (!historicalOutcomes || historicalOutcomes.length === 0)) return baseConfidence;
+  const usefulCount = dur.breakdown.accepted + dur.breakdown.edited;
+  const total = historicalOutcomes.length || 1;
+  const rate = usefulCount / total;
+  if (rate >= 0.85) return Math.min(1.0, Number((baseConfidence + 0.15).toFixed(2)));
+  return Math.max(0.0, Number((baseConfidence - 0.25).toFixed(2)));
 }

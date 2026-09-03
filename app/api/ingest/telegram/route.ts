@@ -87,26 +87,31 @@ export async function POST(request: Request) {
   const ownerId = env.TELEGRAM_OWNER_ACCOUNT_USER_ID?.trim() || chatId;
   const receivedAt = Date.now();
 
-  // Encaminhamento ao webhook interno do n8n (WF-100)
-  const ingressUrl = env.N8N_TELEGRAM_INGRESS_URL || 'http://127.0.0.1:5678/webhook/director-360/telegram/inbound';
+  // Encaminhamento ao webhook interno do n8n (WF-100) quando configurado
+  const ingressUrl = env.N8N_TELEGRAM_INGRESS_URL?.trim() || '';
   const transportSecret = env.DIRECTOR360_TRANSPORT_SECRET || env.BRIDGE_SHARED_SECRET || '';
   let deliveredToN8n = false;
 
-  try {
-    const n8nResp = await fetch(ingressUrl, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-director360-transport': transportSecret,
-      },
-      body: JSON.stringify(update),
-      signal: AbortSignal.timeout(4000),
-    });
-    if (n8nResp.ok) {
-      deliveredToN8n = true;
+  if (ingressUrl) {
+    try {
+      const n8nResp = await fetch(ingressUrl, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-director360-transport': transportSecret,
+        },
+        body: JSON.stringify(update),
+        signal: AbortSignal.timeout(4000),
+      });
+      if (n8nResp.ok) {
+        const body = (await n8nResp.json().catch(() => null)) as { accepted?: boolean } | null;
+        if (body?.accepted === true) {
+          deliveredToN8n = true;
+        }
+      }
+    } catch {
+      // Falha de transporte/timeout capturada sem quebrar resposta do gateway
     }
-  } catch {
-    // Modo edge/nativo
   }
 
   // Persistência na caixa postal técnica de transporte para consumo assíncrono (D1 se disponível)

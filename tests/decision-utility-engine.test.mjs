@@ -53,7 +53,7 @@ assert.equal(o3.delta_analysis.edit_type, "TOTAL_REJECTION");
 // 4. Métrica Decision Utility Rate (DUR)
 console.log("-> Teste 4: Cálculo da Taxa de Utilidade Decisória (DUR)");
 // 2 aceitas/editadas de 3 propostas = 66.67% (abaixo da meta de 85%)
-const dur1 = calculateDecisionUtilityRate([o1, o2, o3]);
+const dur1 = calculateDecisionUtilityRate([o1, o2, o3], 1);
 assert.equal(dur1.utility_rate_pct, 66.67);
 assert.equal(dur1.meets_target, false);
 

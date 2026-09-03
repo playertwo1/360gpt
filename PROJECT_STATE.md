@@ -1,10 +1,10 @@
 # PROJECT STATE
 
-Version: 6.2.0-gates-a0-n2.3-remediated-v2
-Current phase: Segunda remediação concluída — aguardando nova reauditoria independente do Codex
-Current milestone: Blocos R0 a R6 executados; 28 achados e 25 perguntas respondidos no dossiê de resposta
-Current task: Submeter commit e evidências para nova reauditoria independente pelo ChatGPT Codex.
-Status: READY_FOR_CODEX_REAUDIT
+Version: 6.3.0-gates-a0-n2.3-remediation-v3
+Current phase: Terceira remediação concluída — Pronta para homologação independente do Codex
+Current milestone: Blocos T0 a T7 executados integralmente; 28 achados da auditoria 2e34b9ad solucionados com testes 100% PASS
+Current task: Submeter commit com o dossiê formal de resposta para validação do ChatGPT Codex.
+Status: READY_FOR_CODEX_FINAL_APPROVAL
 
 Host baseline:
 - AMD Ryzen 5 5600X (6C/12T), 16 GB RAM, RTX 4060 Ti, Windows 11 23H2.
@@ -15,20 +15,20 @@ Host baseline:
 - Espaço informado: G: 763 GB livres; C: 233 GB livres; mais de 451 GB recuperados.
 
 Last completed:
-1. Execução integral dos Blocos R0 a R6 do dossiê de reauditoria.
-2. Contenção e backups duráveis: WF-11, WF-97, WF-98 e WF-104 desativados no n8n; dumps físicos em backups/durable/ com SHA-256 e restauração validada em banco isolado.
-3. Gate A0 Canônico: gateway app/api/ingest/telegram purificado (HTTP 202 puro), lib/telegram-runtime.ts como adaptador neutro de tipos/mojibake, WF-101 purgado de empresas estáticas e zero rotas bridge ativas no banco n8n.
-4. Gate N2.3 Flywheel: migration incremental 10 sem DROP; Learning Engine determinístico com autopromoção de baixo risco e MANUAL_REVIEW de alto risco; regras nascem CANDIDATE; constraints de promoção; trigger append-only de auditoria; Evidence Graph estrito (FINDING / DERIVED_FROM); SHA-256 canônico.
-5. Teste 10/10 no PostgreSQL real (tests/flywheel-learning-postgres-integration.test.mjs); npm test PASS; npm run lint PASS; npm run build PASS.
-6. Criação do dossiê docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md com 28 achados e 25 perguntas integralmente preenchidos.
-Next task: Submeter o commit ao Codex para realização da reauditoria independente.
+1. Execução integral dos Blocos T0 a T7 conforme GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md.
+2. Contenção durável (T0): WF-11, WF-97, WF-98, WF-102 e WF-104 desativados (active=false, activeVersionId=null) no n8n; reinício a frio do n8n; zero execuções periódicas espúrias; dumps duráveis T0 gerados com SHA-256.
+3. Gate A0 Canônico (T1, T2, T3): script test-n8n-canonical-architecture.mjs reforçado e aprovado; gateway Telegram purificado (sem loopback 127.0.0.1); WF-101 atualizado com recovery de leases expirados e tratamento completo de documentos e comandos.
+4. Governança e Migrations (T4, T5): migration 09 purificada (CREATE IF NOT EXISTS); migration 11 com trigger statement-level anti-TRUNCATE, CANDIDATE em golden exemplars, status SUSPENDED e role visao360_app restrita a privilégios mínimos.
+5. Learning Engine e Reflexion (T6): allowlist positiva restrita, fail-closed em termos sensíveis, isolamento estrito por tenant_id, DUR padronizado, WF-104 com UUID determinístico derivado de SHA-256.
+6. Validação Completa (T7): 100% dos testes do repositório aprovados (35/35 suítes, zero falhas); integração real no PostgreSQL aprovada com a role visao360_app; documentação canônica sincronizada.
+Next task: Submeter o commit ao ChatGPT Codex para emissão do parecer formal de aprovação dos Gates A0 e N2.3.
 
 MVP text scope: cinco casos aprovados — pergunta simples, fato simples, fato+pergunta, correção simples e texto longo estruturado. Totalmente integrados aos 4 Gerentes Gerais, motores de simulação, reconciliação, context trimming e segurança DLP.
 
 Post-MVP scope: N2.2 documenta memória em camadas, aprendizagem supervisionada, simulações, roteamento multidomínio, linguagem contextual, comandos ampliados, reconciliação, experiência, eficiência, segurança e observabilidade. 100% CONCLUÍDO E HOMOLOGADO.
 
-Last validation: PASS_ON_REAL_RUNTIME — npm test aprovado (test:p0, test:local-core, test:flywheel 10/10 no PostgreSQL real), lint aprovado, build aprovado.
-Last implementation checkpoint: HEAD (Segunda remediação concluída)
+Last validation: PASS_ON_REAL_RUNTIME — 100% dos testes unitários e de integração aprovados (35/35 PASS, total failures: 0).
+Last implementation checkpoint: HEAD (Terceira remediação concluída)
 
 Blockers:
 - Gates A0 e N2.3 permanecem formalmente em estado de homologação pendente até a nova auditoria independente do ChatGPT Codex.

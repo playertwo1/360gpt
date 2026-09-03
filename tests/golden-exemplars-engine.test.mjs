@@ -8,14 +8,40 @@ import {
 
 console.log("=== INICIANDO BATERIA DE TESTES DO MARCO N2.3.2 (EXEMPLARES DOURADOS DINÂMICOS) ===");
 
+const testExemplars = [
+  {
+    id: "00000000-0000-4000-8000-000000000001",
+    tenant_id: "default",
+    sector: SECTORS.HOSPITALAR,
+    objective: OBJECTIVES.FOLHA_PAGAMENTO,
+    client_name: "Hospital Modelo Referência",
+    channel: "WHATSAPP",
+    approved_text: "Olá Dr. Arnaldo, estruturamos uma proposta com abertura de contas presencial na agência.",
+    rating: 5,
+    status: "ACTIVE"
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000002",
+    tenant_id: "default",
+    sector: SECTORS.METALMECANICA,
+    objective: OBJECTIVES.COBRANCA_PIX,
+    client_name: "Metalúrgica Modelo Ltda",
+    channel: "WHATSAPP",
+    approved_text: "Sr. Cláudio, montamos uma proposta de cobrança híbrida com PIX.",
+    rating: 5,
+    status: "ACTIVE"
+  }
+];
+
 // 1. Match exato para Hospitalar + Folha
 console.log("-> Teste 1: Match exato para Hospitalar + Folha");
 const ex1 = findBestGoldenExemplar({
   sector: SECTORS.HOSPITALAR,
   objective: OBJECTIVES.FOLHA_PAGAMENTO,
-  channel: "WHATSAPP"
+  channel: "WHATSAPP",
+  exemplars: testExemplars
 });
-assert.equal(ex1.client_name, "Hospital & Maternidade São Lucas S/A");
+assert.equal(ex1.client_name, "Hospital Modelo Referência");
 assert.equal(ex1.rating, 5);
 assert.match(ex1.approved_text, /Dr\. Arnaldo/);
 
@@ -24,9 +50,10 @@ console.log("-> Teste 2: Match exato para Metalmecânica + Cobrança");
 const ex2 = findBestGoldenExemplar({
   sector: SECTORS.METALMECANICA,
   objective: OBJECTIVES.COBRANCA_PIX,
-  channel: "WHATSAPP"
+  channel: "WHATSAPP",
+  exemplars: testExemplars
 });
-assert.equal(ex2.client_name, "Metalúrgica Forja Sul Ltda");
+assert.equal(ex2.client_name, "Metalúrgica Modelo Ltda");
 assert.match(ex2.approved_text, /Sr\. Cláudio/);
 
 // 3. Fallback inteligente quando setor não mapeado
@@ -34,15 +61,15 @@ console.log("-> Teste 3: Fallback por objetivo quando setor é genérico");
 const exFallback = findBestGoldenExemplar({
   sector: "COMERCIO_VAREJO",
   objective: OBJECTIVES.COBRANCA_PIX,
-  channel: "WHATSAPP"
+  channel: "WHATSAPP",
+  exemplars: testExemplars
 });
 assert.equal(exFallback.objective, OBJECTIVES.COBRANCA_PIX);
 
 // 4. Formatação de bloco Dynamic Few-Shot
 console.log("-> Teste 4: Formatação de bloco Dynamic Few-Shot");
 const block = formatFewShotExemplarBlock(ex1);
-assert.match(block, /EXEMPLO DOURADO DE REFERÊNCIA/i);
-assert.match(block, /Imite a objetividade/i);
-assert.match(block, /Dr\. Arnaldo/i);
+assert.match(block, /EXEMPLAR DOURADO DE REFERÊNCIA/i);
+assert.match(block, /Utilize o tom/i);
 
 console.log("\nTODOS OS TESTES DO MARCO N2.3.2 PASSARAM COM SUCESSO! 🟢");

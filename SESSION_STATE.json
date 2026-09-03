@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "Diretor 360",
-  "version": "6.2.0-gates-a0-n2.3-remediated-v2",
-  "last_updated": "2026-09-03T07:35:00-03:00",
+  "version": "6.3.0-gates-a0-n2.3-remediation-v3",
+  "last_updated": "2026-09-03T14:05:00-03:00",
   "last_active_assistant": "Antigravity",
   "next_recommended_assistant": "ChatGPT Codex",
   "official_repository": "https://github.com/playertwo1/360gpt.git",
@@ -11,15 +11,17 @@
   "site": "https://visao-360-diretor.fael360092.chatgpt.site",
   "deployed_site_version": 41,
   "current_roadmap": "ROADMAP.md",
-  "current_phase": "Segunda remediação concluída — aguardando nova reauditoria independente do Codex",
-  "current_task": "Submeter commit e evidências para nova reauditoria independente pelo ChatGPT Codex",
-  "status": "READY_FOR_CODEX_REAUDIT",
+  "current_phase": "Terceira remediação concluída — aguardando parecer formal de aprovação do Codex",
+  "current_task": "Submeter commit com o dossiê formal de resposta para validação do ChatGPT Codex",
+  "status": "READY_FOR_CODEX_FINAL_APPROVAL",
   "last_completed": [
-    "Execução integral dos Blocos R0 a R6 com contenção e backups duráveis SHA-256 no host",
-    "Cutover canônico Gate A0: gateway purificado (HTTP 202 puro), lib/telegram-runtime.ts como adaptador neutro, 0 rotas bridge no banco n8n",
-    "Flywheel N2.3: migration incremental sem DROP, Learning Engine com autopromoção de baixo risco e MANUAL_REVIEW de alto risco, auditoria append-only, Evidence Graph estrito",
-    "Bateria 10/10 no PostgreSQL visao360, npm test PASS, lint PASS, build PASS",
-    "Elaborado dossiê docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md respondendo aos 28 achados e 25 perguntas"
+    "Execução integral dos Blocos T0 a T7 conforme GUIA_ANTIGRAVITY_TERCEIRA_REMEDIACAO_A0_N2_3.md",
+    "Contenção durável T0: workflows legados inativados no banco n8n com active=false e activeVersionId=null, reinício a frio, backups físicos duráveis com SHA-256",
+    "Gate A0: test-n8n-canonical-architecture.mjs aprovado com fail-closed, gateway Telegram purificado (sem loopback), WF-101 com recovery de leases expirados e tratamento completo de documentos/comandos",
+    "Flywheel N2.3: migration 09 purificada (CREATE IF NOT EXISTS), migration 11 com trigger statement-level anti-TRUNCATE, CANDIDATE em golden_exemplars, status SUSPENDED e role visao360_app com privilégios mínimos",
+    "Learning Engine com allowlist positiva restrita, fail-closed em termos sensíveis, Reflexion com tenant_id obrigatório e DUR padronizado, WF-104 com UUID determinístico por SHA-256",
+    "100% dos testes do repositório aprovados (35/35 suítes, zero falhas), integração real 10/10 no PostgreSQL com a role visao360_app",
+    "Elaborado dossiê docs/audits/RESPOSTA_TERCEIRA_REMEDIACAO_CODEX_GATES_A0_N2_3.md respondendo aos 28 achados com evidências completas"
   ],
   "last_validation": {
     "result": "PASS_ON_REAL_RUNTIME",

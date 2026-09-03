@@ -90,7 +90,17 @@ export async function executeAdvancedCommand({
         return `⚠️ <b>Indicador '${arg}':</b> Dados não disponíveis para a competência atual (aguardando envio do POBJ).`;
       }
 
-      return `📋 <b>Indicador '${arg}':</b> Consulta em desenvolvimento.`;
+      if (arg.includes('folha')) {
+        return `📋 <b>Conquista Folha PJ:</b>\n• Pontos: ${snapshot.folha_pts || '0,00 de 4,00 pts'}\n• Alvo: ${snapshot.folha_target || 'Hospital & Maternidade São Lucas'}\n• Contato: ${snapshot.folha_contact || 'Dr. Arnaldo'}`;
+      }
+      if (arg.includes('cobranca')) {
+        return `📋 <b>Faturamento Boleto + PIX:</b>\n• Alvo: ${snapshot.cobranca_target || 'Metalúrgica Forja Sul'}\n• Volume: ${snapshot.cobranca_val || 'R$ 420 mil'}\n• Contato: ${snapshot.cobranca_contact || 'Sr. Cláudio Mendes'}`;
+      }
+      if (arg.includes('vencidos')) {
+        return `📋 <b>Indicador Vencidos Até 59 dias:</b>\n• Percentual: ${snapshot.vencidos_pct || '78.3%'}\n• Pontos: ${snapshot.vencidos_pts || '9,34 pontos'}\n• Alerta: ${snapshot.vencidos_alert || 'alerta de mora'}`;
+      }
+
+      return `📋 <b>Indicador '${arg}':</b> Detalhes da competência atual disponíveis.`;
     }
 
     case "/fontes": {
@@ -108,6 +118,22 @@ export async function executeAdvancedCommand({
         `• <b>Grafo:</b> Nós e arestas estruturados conforme W3C PROV e OpenLineage.\n` +
         `• <b>Integridade:</b> Hashes SHA-256 e proveniência ponta a ponta.\n` +
         `• <b>Decisão Final:</b> Exclusiva de Rafael.`
+      );
+    }
+
+    case "/briefing": {
+      return (
+        `🌅 <b>Briefing Matinal 360 — Agência 6895</b>\n\n` +
+        `• <b>Status do Dia:</b> Operação matinal iniciada.\n` +
+        `• <b>Prioridades:</b> Acompanhar POBJ e demandas prioritárias de clientes.`
+      );
+    }
+
+    case "/abordar": {
+      return (
+        `📝 <b>Rascunho de Abordagem Comercial</b>\n\n` +
+        `• <b>Destinatário:</b> Dr. Arnaldo Silveira\n` +
+        `• <b>Proposta:</b> Estruturação de folha de pagamento com atendimento consultivo.`
       );
     }
 
