@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import {
-  MEMORY_LAYERS,
   assembleAgentContext,
   queryKnowledgeAboutEntity
 } from "../engines/orchestration/layered-memory-engine.mjs";

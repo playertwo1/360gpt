@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import {
-  UX_BADGES,
   RESPONSE_MODES,
   parseUserModePreference,
   formatAdaptiveResponse

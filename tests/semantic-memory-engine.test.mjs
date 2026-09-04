@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import {
   RULE_SCOPES,
-  RULE_STATUS,
   createSemanticRule,
   promoteSemanticRule,
   getActiveRules,

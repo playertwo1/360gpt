@@ -5,7 +5,7 @@
 
 export function generateMorningBriefing({
   agencyCode = "6895 - VJ-SAO FIDELIS",
-  competence = "Agosto/2026",
+  _competence = "Agosto/2026",
   ownerName = "Rafael",
   currentPoints = 80.71,
   attainmentPct = 100.65,

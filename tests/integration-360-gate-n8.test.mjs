@@ -1,9 +1,5 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import Ajv from "ajv";
 import { processConversationInput } from "../engines/orchestration/conversation-intent-engine.mjs";
-import { assessCommitment, prepareAccountApproach } from "../engines/relationship/relationship-engine.mjs";
-import { calculateProductFinancials, evaluateFinancialState } from "../engines/financeiro/financial-engine.mjs";
 
 console.log("=== INICIANDO BATERIA DE TESTES DO MARCO N8.4 (GATE N8 — INTEGRAÇÃO 360) ===");
 

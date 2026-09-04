@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import { evaluateAccount, evaluatePortfolio } from "../engines/conta/conta-engine.mjs";
+import { evaluatePortfolio } from "../engines/conta/conta-engine.mjs";
 
 console.log("=== TESTE DE INTEGRAÇÃO CONTA x PERFORMANCE ===");
 

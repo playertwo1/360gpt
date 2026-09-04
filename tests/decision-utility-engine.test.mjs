@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import {
   OUTCOME_TYPES,
   recordDecisionOutcome,
-  computeTextDelta,
   calculateDecisionUtilityRate,
   calibrateConfidenceScore
 } from "../engines/feedback/decision-utility-engine.mjs";

@@ -12,7 +12,7 @@ export function calculateProductFinancials({
   product,
   volume = 0,
   headcount = 0,
-  termMonths = 12
+  _termMonths = 12
 }) {
   switch (product) {
     case 'FOLHA_DE_PAGAMENTO': {
@@ -77,8 +77,8 @@ export function calculateProductFinancials({
  */
 export function evaluateFinancialState({
   budgetItems = [],
-  accounts = [],
-  opportunities = [],
+  _accounts = [],
+  _opportunities = [],
   baseDate = '2026-08-28',
   requestId = null
 }) {

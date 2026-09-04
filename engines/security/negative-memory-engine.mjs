@@ -238,7 +238,7 @@ export function recordNegativeDecision(opts) {
   return item;
 }
 
-export function checkSafetyInterception({ target_entity, proposed_action, proposed_topic, negativeMemory = [] } = {}) {
+export function checkSafetyInterception({ target_entity, proposed_action, _proposed_topic, negativeMemory = [] } = {}) {
   const res = interceptWithNegativeMemory({
     entityName: target_entity,
     proposedAction: proposed_action,

@@ -9,7 +9,7 @@
  * - Isolamento obrigatório por tenant_id.
  */
 
-import { randomUUID, createHash } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { calculateDecisionUtilityRate, MIN_OUTCOME_SAMPLE_SIZE } from "../feedback/decision-utility-engine.mjs";
 import { createSemanticRule, promoteSemanticRule, RULE_SCOPES } from "../knowledge/semantic-memory-engine.mjs";
 import { evaluateCandidateRule, PROMOTION_MODES, PROMOTION_POLICY_VERSION } from "../learning/learning-engine.mjs";
@@ -266,7 +266,7 @@ export async function findRealRafaelApprovalEvent(db, { ownerId = 'rafael', tena
     );
     if (!res.rows || res.rows.length === 0) return null;
     return res.rows[0];
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 }

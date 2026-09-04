@@ -11,8 +11,7 @@ import {
   evaluateCandidateRule,
   determineRiskLevel,
   RISK_LEVELS,
-  PROMOTION_MODES,
-  renderStructuredPreferenceText
+  PROMOTION_MODES
 } from '../engines/learning/learning-engine.mjs';
 
 console.log('=== TESTE ADVERSARIAL QUARTA REMEDIAÇÃO: GATES A0 & N2.3 ===\n');

@@ -107,7 +107,7 @@ export async function isAuthenticatedRafaelApproval(db, { eventId, ownerId = 'ra
       [String(eventId), String(ownerId), String(tenantId), rawPayload ? String(rawPayload) : null]
     );
     return result.rows?.[0]?.ok === true;
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }

@@ -1,8 +1,8 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
 import fs from "node:fs";
 import { evaluateAccount, evaluatePortfolio } from "../engines/conta/conta-engine.mjs";
 
-const schema = JSON.parse(fs.readFileSync("contracts/performance-conta-plan-response.schema.json", "utf8"));
+const _schema = JSON.parse(fs.readFileSync("contracts/performance-conta-plan-response.schema.json", "utf8"));
 
 // 1. Teste de conta hospitalar com folha
 const hospCase = {

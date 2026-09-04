@@ -339,9 +339,9 @@ if (isCorrection) {
     const scoreStr = Number(snap.pobj_score).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const competence = snap.competence || snap.competencia || 'Competência Atual';
     replyText =
-      `📊 <b>Posição Consolidada POBJ — Agência 6895 (VJ-São Fidélis)</b>\\n\\n` +
-      `• <b>Pontuação Atual:</b> <code>${scoreStr} pontos</code>\\n` +
-      `• <b>Competência:</b> ${competence}\\n` +
+      '📊 <b>Posição Consolidada POBJ — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+      '• <b>Pontuação Atual:</b> <code>' + scoreStr + ' pontos</code>\\n' +
+      '• <b>Competência:</b> ' + competence + '\\n' +
       '• <b>Status:</b> CONSOLIDADO no Estado 360\\n\\n' +
       'Envie /pobj para ver o detalhamento ou envie novo PDF a qualquer momento.';
   } else {
@@ -354,15 +354,15 @@ if (isCorrection) {
   if (x.inserted_fact_id) {
     replyText =
       '✅ <b>Informação Registrada (Fonte: Rafael)</b>\\n\\n' +
-      `• <b>Fato Informado:</b> "${textContent}"\\n` +
-      `• <b>ID do Registro:</b> <code>${x.inserted_fact_id}</code>\\n` +
+      '• <b>Fato Informado:</b> \"' + textContent + '\"\\n' +
+      '• <b>ID do Registro:</b> <code>' + x.inserted_fact_id + '</code>\\n' +
       '• <b>Proveniência:</b> <code>OWNER_PROVIDED</code> (Memória Estruturada)\\n' +
       '• <b>Persistência:</b> Confirmada no PostgreSQL visao360.\\n\\n' +
       '💡 <i>Envie o PDF do POBJ para confrontar este fato com as metas oficiais da agência.</i>';
   } else {
     replyText =
       '⚠️ <b>Fato Recebido</b>\\n\\n' +
-      `• <b>Mensagem:</b> "${textContent}"\\n` +
+      '• <b>Mensagem:</b> \"' + textContent + '\"\\n' +
       '• <b>Status:</b> Não foi possível confirmar a persistência neste momento.\\n\\n' +
       'Por favor, tente novamente ou envie o PDF do POBJ oficial.';
   }

@@ -36,7 +36,7 @@ for (const c of expectedContainers) {
       report.alerts.push(`Container ${c} em estado ${out}`);
       report.status = "DEGRADED";
     }
-  } catch (err) {
+  } catch (_err) {
     report.containers[c] = "ERROR_INSPECTING";
     report.alerts.push(`Não foi possível inspecionar container ${c}`);
     report.status = "DEGRADED";

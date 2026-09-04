@@ -5,7 +5,7 @@
 // Retorna exit 0 se limpo, exit 1 se encontrar segredos.
 
 import { execSync } from 'node:child_process';
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 // Padrões proibidos em arquivos versionados
@@ -64,9 +64,9 @@ scanDir(ROOT);
 
 // Verifica também via git diff (arquivos staged ou modified vs HEAD)
 try {
-  const gitOutput = execSync('git diff HEAD --name-only 2>/dev/null', {
+  execSync('git diff HEAD --name-only 2>/dev/null', {
     encoding: 'utf8', cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe']
-  }).trim();
+  });
   // Apenas verifica se não há conflito de merge pendente
 } catch { /* git pode não estar disponível */ }
 

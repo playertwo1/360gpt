@@ -41,7 +41,7 @@ const KEY_ACCOUNTS_CONTACTS = {
 export function generateOutreachDraft({
   accountKey = "hospital-sao-lucas",
   channel = OUTREACH_CHANNELS.WHATSAPP,
-  topic = "FOLHA"
+  _topic = "FOLHA"
 }) {
   const normKey = accountKey.toLowerCase().replace(/[^a-z0-9]/g, "");
   let target = KEY_ACCOUNTS_CONTACTS["hospital-sao-lucas"];

@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import {
-  ALL_DOMAINS,
   routeRequestProgressively
 } from "../engines/orchestration/progressive-router.mjs";
 

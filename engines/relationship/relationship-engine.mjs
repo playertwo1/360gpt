@@ -128,7 +128,7 @@ export function prepareAccountApproach({
 /**
  * Avalia a carteira de contatos para apoiar os gaps de metas de Performance.
  */
-export function evaluateRelationshipPortfolio({ accounts = [], contacts = [], targetGaps = [] }) {
+export function evaluateRelationshipPortfolio({ accounts = [], contacts = [], _targetGaps = [] }) {
   const approaches = [];
 
   for (const acc of accounts) {
