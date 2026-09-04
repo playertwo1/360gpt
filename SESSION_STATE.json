@@ -22,17 +22,19 @@
     "Recuperacao automatica de leases expirados implementada e validada",
     "Ramo DOCUMENT integrado ao document-worker e Docling TableFormer CPU",
     "Comando /status dinâmico com medicoes reais de latencia em milissegundos",
-    "Migrations 13, 14, 15 e 16 aplicadas com revogacao de DML da role visao360_app e funcoes SECURITY DEFINER",
+    "Migrations 13 a 17 aplicadas com revogacao estrita de DML da role visao360_app e propriedade transferida para postgres",
+    "Funcao soberana approve_promotion_by_rafael com single-use e hash criptografico recalculado",
+    "Pre-commit hook ativo em .git/hooks/pre-commit garantindo integridade sintatica e zero lint warnings antes de qualquer commit",
     "Modo AUTO restrito estritamente a preferencias estruturadas enumeradas em catalogo fechado com fail-closed",
     "Validacao soberana de Rafael delegada exclusivamente ao PostgreSQL (validate_rafael_approval_event)",
     "Suite adversarial com os 12 bypasses do relatorio 100% aprovada (tests/adversarial-gate-n7a.test.mjs)",
     "Script ofensivo scripts/audit-adversarial-test.mjs aprovado com 7/7 ataques bloqueados",
     "Bateria E2E do Flywheel no PostgreSQL real 10/10 PASS",
     "npm test com 56/56 suites PASS e exit code 0",
-    "npm run lint com zero erros e npm run build com sucesso",
+    "npm run lint com zero erros e zero warnings e npm run build com sucesso",
     "Cold start verificado: n8n reinicia mantendo WF-100, WF-101 e WF-103 ativados automaticamente",
     "WF-104 contido e inativo (active = false)",
-    "Guia completo de tunel Cloudflare nomeado para webhook Telegram documentado (docs/infra/CLOUDFLARE_TUNNEL_WEBHOOK_SETUP.md)"
+    "Dumps fisicos Q0 atualizados e catalogados com SHA-256 (backup_visao360_q0.dump e backup_n8n_q0.dump)"
   ],
   "last_validation": {
     "date": "2026-09-04",

@@ -1,5 +1,16 @@
 # Changelog
 
+### Fifth Remediation Complete — Gates N7/N7A Remediados e Blindados no Runtime Real (04/09/2026)
+
+- **Lockdown e Segregação de Privilégios (Migration 17)**: Aplicada `infra/postgres/init/17-gate-n7-cleanup-and-lockdown.sql`. Transferida propriedade de `channel_updates`, `channel_inbound_events` e `flywheel_audit_events` para `postgres`. Revogado DML direto (`INSERT, UPDATE, DELETE, TRUNCATE`) da role de aplicação `visao360_app`. Expurgo de dados inconsistentes/órfãos e `VACUUM (ANALYZE)`.
+- **Aprovação Soberana de Diretrizes**: Implementada `approve_promotion_by_rafael` com single-use através de `owner_approval_consumptions`, recálculo obrigatório do hash SHA-256 e validação cruzada do evento real Telegram via `validate_rafael_approval_event`. Eliminadas funções legadas `owner_promote_candidate` e `insert_flywheel_audit_event`.
+- **WF-101 Core Dispatcher Refatorado**: Atualizado e sincronizado no banco `n8n` (`workflow_entity`). Nó 04 atualizado com invocação soberana de `approve_promotion_by_rafael`; nó 05 com `/pobj` e `/metas` consumindo dinamicamente `state_snapshots` e confirmação de fatos via `inserted_fact_id`; nó 08 com envio autenticado via `INTERNAL_TRANSPORT_SECRET`; nó 09 concluindo com lease explícito de 10 minutos durante status `PROCESSING` em DOCUMENT/IMAGE.
+- **Pre-commit Hook de Sanidade**: Configurado `.git/hooks/pre-commit` bloqueando preventivamente qualquer commit com erro sintático em `scripts/update-wf-101.mjs` ou violação do ESLint.
+- **ESLint e Tipagem 100% Limpos**: Eliminadas 28 variáveis/imports não utilizados; `npm run lint` atinge **0 erros e 0 warnings**.
+- **Bateria Adversarial Estrita**: 7/7 ataques bloqueados no banco em `scripts/audit-adversarial-test.mjs` e 12/12 asserções aprovadas em `tests/adversarial-gate-n7a.test.mjs`.
+- **Suíte Completa Aprovada**: `npm test` aprovado com exit code 0 em 56/56 suítes (N7 security, P0, Local Core, Flywheel 10/10 no PostgreSQL real, Adversarial).
+- **Backups Físicos Q0 Atualizados**: Dumps binários customizados do PostgreSQL gerados e catalogados: `backup_visao360_q0.dump` (SHA-256 `31c92f1798b7787111d96c95a0db1302fc8f7ece2bb49f691cdf7d2ca24e5abf`) e `backup_n8n_q0.dump` (SHA-256 `02cbc964fb6bf13b69abfe31108d549103cc23b1ccb850c5f841e43cb9d960b8`).
+
 ### Fourth Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
 
 - Executados integralmente os Blocos Q0 a Q8 especificados em `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`.

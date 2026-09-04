@@ -12,11 +12,11 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** Quinta remediação (Gate N7/N7A) — remediação concluída, aguardando reauditoria
+**Fase atual:** Quinta remediação (Gate N7/N7A) — consolidada e auditada no runtime real (Migration 17 + WF-101 Soberano + Pre-commit hook)
 
-**Marco atual:** `Q8+ — Q0–Q8 concluídos; quinta remediação Gate N7/N7A aplicada`
+**Marco atual:** `Q9 — Quinta remediação Gate N7/N7A concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
 
-**Próxima tarefa:** Submeter pacote completo da Quinta Remediação (Gate N7/N7A) para reauditoria independente do ChatGPT Codex sob a tag imutável v1.1-gate-n7a-remediation.
+**Próxima tarefa:** Submeter pacote completo da Quinta Remediação sob a tag imutável `v1.1-gate-n7a-remediation` para emissão de parecer do auditor ChatGPT Codex.
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -1391,9 +1391,18 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 4. [x] N8: Mesa Completa dos 4 Gerentes Gerais (Performance, Conta, Relacionamento, Financeiro) (CONCLUÍDO).
 5. [x] N2.2: Aprofundamento conversacional pós-MVP (Fases 1 a 10 concluídas) (CONCLUÍDO).
 6. [x] Gate N2.2 / PILOT_READY homologado com 10 cenários no Golden Dataset (CONCLUÍDO).
-7. [x] Quarta Remediação dos Gates A0 e N2.3 (Blocos Q0 a Q8): WF-101 publicado e ativo com lease recovery; Docling CPU e Worker integrados; `/status` dinâmico com latências reais; Migration 12 com revogação de DML e funções SECURITY DEFINER; AUTO restrito a preferências estruturadas; corpus adversarial 100% PASS; `npm test` 35/35 PASS; dossiê formal `RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` gerado (CONCLUÍDO — AGUARDANDO REAUDITORIA CODEX).
-8. [ ] Gate A0 e Gate N2.3: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX.
-9. [ ] Gate N7: Conclusão do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
+7. [x] Quarta Remediação dos Gates A0 e N2.3 (Blocos Q0 a Q8): WF-101 publicado e ativo com lease recovery; Docling CPU e Worker integrados; `/status` dinâmico com latências reais; Migration 12 com revogação de DML e funções SECURITY DEFINER; AUTO restrito a preferências estruturadas; corpus adversarial 100% PASS; `npm test` 35/35 PASS; dossiê formal `RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` gerado (CONCLUÍDO).
+8. [x] Quinta Remediação dos Gates N7/N7A:
+   - Migration 17 aplicada: revogação estrita de DML em `channel_updates`, `channel_inbound_events` e `flywheel_audit_events` (propriedade transferida para `postgres`);
+   - Função soberana `approve_promotion_by_rafael` com single-use e hash criptográfico recalculado;
+   - Suíte adversarial com 7/7 ataques bloqueados e 12/12 testes em `adversarial-gate-n7a.test.mjs`;
+   - WF-101 atualizado com leases de 10 minutos para DOCUMENT/IMAGE, `/pobj` e `/metas` dinâmicos via `state_snapshots` e autenticação com `INTERNAL_TRANSPORT_SECRET`;
+   - Pre-commit hook ativo em `.git/hooks/pre-commit` bloqueando quebras de sintaxe e violações de lint;
+   - 100% de conformidade com zero erros e zero avisos de lint (`npm run lint: PASS, 0 warnings`);
+   - Suíte de 56/56 testes aprovada (`npm test: PASS, exit 0`);
+   - Backups físicos Q0 regenerados com hashes SHA-256 catalogados.
+9. [ ] Gate A0, N2.3 e N7: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX sob a tag `v1.1-gate-n7a-remediation`.
+10. [ ] Operação do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
 
 ### Regra de continuidade
 

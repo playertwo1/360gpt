@@ -73,8 +73,8 @@ Last implementation checkpoint: Quinta Remediação dos Gates N7/N7A concluída 
 
 - `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` — dossiê formal de resposta aos 20 achados e 30 perguntas.
 - `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md` — guia executado.
-- `infra/postgres/init/12-flywheel-security-and-lifecycle.sql` — migration de segurança e lifecycle.
-- `tests/adversarial-corpus-quarta-remediacao.test.mjs` — suíte de testes adversariais.
+- `infra/postgres/init/17-gate-n7-cleanup-and-lockdown.sql` — migration de lockdown e revogação estrita de DML.
+- `tests/adversarial-gate-n7a.test.mjs` — suíte adversarial do Gate N7A.
 - `n8n/workflows/exported_all.json` — export limpo dos 14 workflows.
-- `backups/durable/backup_visao360_q0.dump`
-- `backups/durable/backup_n8n_q0.dump`
+- `backups/durable/backup_visao360_q0.dump` (SHA-256: `31c92f1798b7787111d96c95a0db1302fc8f7ece2bb49f691cdf7d2ca24e5abf`)
+- `backups/durable/backup_n8n_q0.dump` (SHA-256: `02cbc964fb6bf13b69abfe31108d549103cc23b1ccb850c5f841e43cb9d960b8`)
