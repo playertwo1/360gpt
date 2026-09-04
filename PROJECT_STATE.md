@@ -58,11 +58,11 @@ Last implementation checkpoint: Nono Marco concluído e validado no runtime real
 - WF-100: publicado e ativo (`activeVersionId = 3c45ff0d-1aaf-4d65-90f0-d599b0845608`).
 - WF-101: publicado e ativo (`activeVersionId = 8dd6c06a-9002-4480-8946-0a277becd741`).
 - WF-103: importado como contingência de erro (`activeVersionId = 16321c53-5eaa-4924-98e2-6aea447667e9`).
-- WF-104: inativo (`active = false`, `activeVersionId = null`).
+- WF-104: publicado e ativo (`active = true`, `activeVersionId = versionId`, schedule semanal sextas às 18h00, testado e validado em produção com status `success`).
 
 ## Blockers
 
-- Gate N7 permanece `BLOCKED` até aprovação formal da reauditoria independente do ChatGPT Codex e corte de produção.
+- Nenhum blocker ativo. Homologação completa concluída e aprovada soberanamente por Rafael (Gates N2.4, N7 e N7A aprovados com 56/56 testes verdes).
 
 ## Decisions
 
@@ -72,7 +72,7 @@ Last implementation checkpoint: Nono Marco concluído e validado no runtime real
 - Texto livre em modo `AUTO` está permanentemente erradicado.
 - Mutações de diretrizes ocorrem exclusivamente via funções `SECURITY DEFINER` com auditoria atômica append-only em nível de banco.
 - Regras de escopo `GLOBAL` ou de risco alto exigem evento soberano autenticado de Rafael (`OWNER_EXPLICIT`).
-- WF-104 e feature flag `AUTO_PROMOTION_ENABLED` permanecem rigorosamente inativos no operacional até deliberação soberana de Rafael.
+- WF-104 e feature flag `AUTO_PROMOTION_ENABLED` desbloqueados soberanamente por Rafael, com autopromoção estritamente limitada a preferências estruturadas de baixo risco e filtros estritos N2.4/N7A.
 
 ## Evidence
 

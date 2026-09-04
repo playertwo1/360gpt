@@ -46,7 +46,7 @@
         "query": "WITH lock_check AS (\n  SELECT pg_try_advisory_xact_lock(104104) AS acquired\n)\nSELECT \n  lock_check.acquired,\n  d.id,\n  d.tenant_id,\n  d.domain,\n  d.proposed_payload,\n  d.outcome_type,\n  d.final_payload,\n  d.feedback_note,\n  d.delta_analysis,\n  d.created_at\nFROM lock_check\nLEFT JOIN (\n  SELECT id, tenant_id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, created_at\n  FROM decision_outcomes\n  WHERE tenant_id = COALESCE($1, 'default')\n    AND created_at >= NOW() - INTERVAL '7 days'\n  ORDER BY created_at ASC\n  LIMIT 25\n) d ON lock_check.acquired = true;",
         "options": {
           "queryBatching": "single",
-          "queryReplacement": "={{[$json.body?.tenant_id || 'default']}}"
+          "queryReplacement": "={{[$json.body && $json.body.tenant_id ? $json.body.tenant_id : ($json.tenant_id || 'default')]}}"
         }
       },
       "id": "fetch-outcomes",
@@ -111,7 +111,7 @@
           "parameters": [
             {
               "name": "X-Director360-Transport",
-              "value": "={{$env.INTERNAL_TRANSPORT_SECRET || ''}}"
+              "value": "={{$env.DIRECTOR360_TRANSPORT_SECRET || $env.INTERNAL_TRANSPORT_SECRET || ''}}"
             }
           ]
         },
