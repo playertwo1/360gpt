@@ -67,9 +67,14 @@ BEGIN
     END IF;
   END IF;
 
-  IF v_ie.event_kind <> 'COMMAND' OR v_ie.text_content !~* ('^' || p_expected_command || '([[:space:]]|$)') THEN
-    RAISE EXCEPTION 'evento não é um comando de aprovação (comando: %)', v_ie.text_content;
-  END IF;
+  -- Normalização Unicode NFKC e remoção de caracteres de controle/espaços invisíveis
+  DECLARE
+    v_norm_text text := regexp_replace(normalize(coalesce(v_ie.text_content, ''), NFKC), '[\u200B-\u200D\uFEFF]', '', 'g');
+  BEGIN
+    IF v_ie.event_kind <> 'COMMAND' OR v_norm_text !~* ('^' || p_expected_command || '([[:space:]]|$)') THEN
+      RAISE EXCEPTION 'evento não é um comando de aprovação (comando: %)', v_ie.text_content;
+    END IF;
+  END;
 
   IF EXISTS (SELECT 1 FROM public.owner_approval_consumptions WHERE source_event_id = v_ie.inbound_event_id::text) THEN
     RAISE EXCEPTION 'evento % já foi usado — reuso bloqueado (single-use)', p_event_id;
@@ -126,13 +131,17 @@ BEGIN
     p_inbound_event_id::text, v_ie.owner_id, v_ie.tenant_id, '/aprovardiretriz', v_ie.text_content
   );
 
-  -- 3. Valida se o argumento do comando coincide com o candidate_id fornecido
-  v_cmd_target := trim(substring(v_ie.text_content from '(?i)^/aprovardiretriz\s+([0-9a-fA-F-]{36})'));
-  IF v_cmd_target IS NOT NULL AND v_cmd_target <> '' THEN
-    IF v_cmd_target::uuid <> p_candidate_id THEN
-      RAISE EXCEPTION 'id da diretriz no comando (%) diverge da candidata (%)', v_cmd_target, p_candidate_id;
+  -- 3. Valida se o argumento do comando coincide com o candidate_id fornecido (com normalização Unicode)
+  DECLARE
+    v_norm_cmd text := regexp_replace(normalize(coalesce(v_ie.text_content, ''), NFKC), '[\u200B-\u200D\uFEFF]', '', 'g');
+  BEGIN
+    v_cmd_target := trim(substring(v_norm_cmd from '(?i)^/aprovardiretriz\s+([0-9a-fA-F-]{36})'));
+    IF v_cmd_target IS NOT NULL AND v_cmd_target <> '' THEN
+      IF v_cmd_target::uuid <> p_candidate_id THEN
+        RAISE EXCEPTION 'id da diretriz no comando (%) diverge da candidata (%)', v_cmd_target, p_candidate_id;
+      END IF;
     END IF;
-  END IF;
+  END;
 
   -- 4. Carrega a candidata em promoted_knowledge
   SELECT * INTO v_candidate

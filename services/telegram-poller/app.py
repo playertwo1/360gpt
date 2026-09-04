@@ -228,8 +228,20 @@ class Handler(BaseHTTPRequestHandler):
                 req = urllib.request.Request(url)
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     data = resp.read()
+
+                # Validação de Assinatura de Arquivo (Magic Bytes)
+                is_pdf = data.startswith(b"%PDF-")
+                is_jpeg = data.startswith(b"\xFF\xD8\xFF")
+                is_png = data.startswith(b"\x89PNG\r\n\x1a\n")
+
+                if not (is_pdf or is_jpeg or is_png):
+                    LOG.warning("arquivo rejeitado por magic bytes inválidos: cabeçalho %r", data[:16])
+                    self.send_json(415, {"ok": False, "error": "UNSUPPORTED_MEDIA_TYPE_MAGIC_BYTES"})
+                    return
+
+                content_type = "application/pdf" if is_pdf else ("image/jpeg" if is_jpeg else "image/png")
                 self.send_response(200)
-                self.send_header("Content-Type", "application/octet-stream")
+                self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 self.wfile.write(data)

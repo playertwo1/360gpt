@@ -245,15 +245,40 @@ BEGIN
 END;
 $$;
 
--- 5. Privilégios mínimos estritos: Revoga de PUBLIC e concede a visao360_app
+-- 5. Reaper de Leases Órfãos (Evitar travamento silencioso da fila se vazia)
+CREATE OR REPLACE FUNCTION public.reap_stale_inbound_leases()
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public
+AS $$
+DECLARE
+  v_reaped_count integer;
+BEGIN
+  UPDATE public.channel_inbound_events
+  SET status = CASE WHEN attempt_count >= 5 THEN 'FAILED' ELSE 'QUEUED' END,
+      lease_token = NULL,
+      lease_expires_at = NULL,
+      last_error_code = 'LEASE_TIMEOUT_AUTO_REAPED'
+  WHERE status = 'PROCESSING'
+    AND lease_expires_at < now();
+
+  GET DIAGNOSTICS v_reaped_count = ROW_COUNT;
+  RETURN v_reaped_count;
+END;
+$$;
+
+-- 6. Privilégios mínimos estritos: Revoga de PUBLIC e concede a visao360_app
 REVOKE ALL ON FUNCTION public.ingest_channel_update(text,text,text,text,text,text,boolean,jsonb,text,text,text,text) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.claim_next_inbound_event(text,integer) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.complete_inbound_event(uuid,uuid,uuid) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.fail_inbound_event(uuid,uuid,text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.reap_stale_inbound_leases() FROM PUBLIC;
 
 GRANT EXECUTE ON FUNCTION public.ingest_channel_update(text,text,text,text,text,text,boolean,jsonb,text,text,text,text) TO visao360_app;
 GRANT EXECUTE ON FUNCTION public.claim_next_inbound_event(text,integer) TO visao360_app;
 GRANT EXECUTE ON FUNCTION public.complete_inbound_event(uuid,uuid,uuid) TO visao360_app;
 GRANT EXECUTE ON FUNCTION public.fail_inbound_event(uuid,uuid,text) TO visao360_app;
+GRANT EXECUTE ON FUNCTION public.reap_stale_inbound_leases() TO visao360_app;
 
 COMMIT;
