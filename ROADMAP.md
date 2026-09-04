@@ -2,21 +2,21 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 9.0 — Nono Marco: Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling
+**Versão do planejamento:** 11.0 — Décimo Primeiro Marco: Camada Conversacional Contextual do Diretor 360 (Telegram)
 
 **Atualizado em:** 4 de setembro de 2026
 
 **Autoridade e proprietário:** Rafael
 
-**Repositório oficial:** `https://github.com/playertwo1/360gpt.git` — branch `main`
+**Repositório oficial:** `https://github.com/playertwo1/360.git` e `https://github.com/playertwo1/360gpt.git` — branch `main`
 
 **Estado atual:** `OPERATIONAL_READY`
 
-**Fase atual:** Ativação Operacional — Humanização Conversacional e Homologação da Esteira Documental Completa (Docling Dual-Port + Gemini API Flash)
+**Fase atual:** Runtime Canônico Pleno — Camada Conversacional Contextual e Multi-Turno Homologada (Gemini 3.6 Flash + PostgreSQL visao360)
 
-**Marco atual:** `Q10 — Humanização Conversacional e Homologação da Esteira Documental Completa`
+**Marco atual:** `Q12 — Camada Conversacional Contextual, Multi-Turno e Resiliente`
 
-**Próxima tarefa:** Monitoramento da esteira comercial e consolidação de novos snapshots operacionais para a Agência 6895.
+**Próxima tarefa:** Supervisão executiva contínua da esteira comercial e diálogo de negócios contínuo com Rafael (Agência 6895).
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 

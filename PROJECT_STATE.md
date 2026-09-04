@@ -2,10 +2,10 @@
 
 > TOPOLOGIA CANÔNICA HOMOLOGADA: WF-100, WF-101, WF-103 e WF-104 ativos, publicados e sincronizados no n8n 2.x com activeVersionId = versionId. Flag AUTO_PROMOTION_ENABLED=true habilitada no PostgreSQL e no container n8n, com filtros estritos de segurança e governança soberana de Rafael ativa.
 
-Version: 11.0.0-ativacao-wf104-flywheel-governance
-Current phase: Runtime Canônico Pleno — Ativação e Homologação do WF-104 (Flywheel Reflexion Engine)
-Current milestone: Q11 — Ativação do WF-104 e Governança Contínua Soberana
-Current task: Supervisão executiva contínua da esteira comercial e aprendizado auditado para Rafael (Agência 6895)
+Version: 12.0.0-conversational-telegram-core
+Current phase: Runtime Canônico Pleno — Camada Conversacional Contextual e Multi-Turno Homologada
+Current milestone: Q12 — Camada Conversacional Contextual, Multi-Turno e Resiliente do Diretor 360
+Current task: Supervisão executiva contínua da esteira comercial e diálogo contínuo de negócios com Rafael (Agência 6895)
 Status: FULLY_OPERATIONAL_HOMOLOGATED
 
 ## Host baseline
@@ -32,18 +32,20 @@ Status: FULLY_OPERATIONAL_HOMOLOGATED
 13. **Oitavo Marco (Custom Reply Keyboard e Projeção Dinâmica POBJ):** Migration 21 aplicada no PostgreSQL `visao360` (`21-estado-360-producao-and-pobj-projection.sql`), criando tabela `estado_360_producao` e funções determinísticas `get_estado_360_resumo` e `get_pobj_run_rate` (cálculo dinâmico de dias úteis, ritmo atual, projeção de fechamento e ritmo necessário). Custom Reply Keyboard persistente implementado no Telegram com 4 atalhos (`📊 Resumo Executivo`, `🎯 POBJ & Metas`, `📑 Pendências`, `⚙️ Status do Sistema`). Roteamento determinístico no nó 03, construção de `reply_markup` em JavaScript puro no nó 05, persistência com retorno `$8::json AS reply_markup` no nó 07 e despacho pelo nó 08. `compose.n8n.yaml` atualizado com `N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"` e secrets de transporte injetados. `AGENTS.md` Seção 1.3 atualizada com postura de parceiro de trincheira e braço direito operacional de Rafael (Agência 6895). Validação E2E concluída com sucesso para os 4 botões e `npm test` aprovado com 56/56 suítes (exit code 0).
 14. **Nono Marco (Humanização Conversacional & Extrator Gemini Docling):** `AGENTS.md` atualizado nas seções 1.3 (tom parceiro de trincheira na Agência 6895), 3.3 (preferência soberana `TONE: PEER_COLLABORATIVE` e `FORMAT: NATURAL_CONVERSATION`), 9.5 (7 etapas como modelo mental interno analítico, sem cabeçalhos rígidos no chat e com fechamento colaborativo) e 11 (salvaguarda item 23 na auto-auditoria pré-resposta). Worker documental (`document-worker`) recompilado com suporte dual-port (8787 para poller e 8000 para `/v1/document/process` com payload JSON). Aliases de rede Docker `docling_worker` e `docling-worker` adicionados à rede `frontend`. Extrator estruturado Gemini homologado com OpenAPI schema e `models/gemini-3.5-flash:generateContent`. `GEMINI_API_KEY` injetada com segurança no ambiente n8n. 100% da suíte `npm test` aprovada (56/56 suítes, exit code 0) e `npm run lint` limpo.
 15. **Décimo Marco (Ativação Canônica do WF-104 e Homologação do Flywheel):** Migration 22 (`22-wf104-flywheel-audit-and-flags.sql`) aplicada e validada no PostgreSQL real. Flag `AUTO_PROMOTION_ENABLED` desbloqueada soberanamente em `system_flags` e `runtime_feature_flags`, com sincronização automática entre `key/value` e `flag_name/flag_value`. Cadastro prévio do Chat ID de Rafael (`5281600644`) em `owner_channel_allowlist` e `sovereign_approval_allowlist`. Funções `insert_flywheel_audit_event` e sobrecargas transacionais (`claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event`, `insert_structured_memory`) criadas com `SECURITY DEFINER` e permissões concedidas a `visao360_app`. WF-104 totalmente refatorado com advisory lock 104104, cálculo determinístico de DUR, filtros estritos de autopromoção (categorias em allowlist, score >= 0.75, freq >= 2, risco estritamente LOW, proibição total de escopo GLOBAL autônomo e encaminhamento a MANUAL_REVIEW), nós transacionais de persistência e auditoria, e schedule trigger `0 18 * * 5`. Workflow ativado e sincronizado no n8n com `active = true` e `activeVersionId = versionId`. Bateria completa de testes 100% aprovada (56/56 suítes, 7/7 ataques adversariais contidos, 16/16 testes unitários, exit code 0).
+16. **Décimo Primeiro Marco (Camada Conversacional Contextual & 10 Casos Obrigatórios):** Erradicação completa do fallback estático de mensagens livres no menu (`🎛️ Painel Operacional Ativo... Selecione uma opção rápida...`). Integração do modelo `gemini-3.6-flash` com `response_mime_type: "application/json"`, compensação de pensamentos (`maxOutputTokens: 2000`, `temperature: 0.3`). Context Builder executivo com dados da agência 6895 (fechamento de agosto com 77,45 pts regulares e 109,29% com aceleradores, metas de setembro pendentes de publicação oficial pela Matriz e pendências materiais). Sessão multi-turno persistente atômica em `conversation_threads(current_state, session_context)` amarrando respostas monossilábicas ou curtas ("Sim", "Não", "Rotativo", "Pode") à dúvida pendente (`pending_question`, `pending_action`, `pending_data`). Migration 24 aplicada (`idx_conversation_threads_chat_id`, tabela `operational_candidate_facts` com constraint `chk_provenance_owner` e RPC `record_operational_fact`). Suíte dos 10 Casos Obrigatórios (`tests/conversational-core-ten-cases.test.mjs`) adicionada ao `npm test` e aprovada com 10/10 casos verdes (exit code 0).
 
 ## Last validation
 
 Result: PASS
 
-- `npm test`: PASS, exit 0 (56/56 suítes, 16/16 testes adversariais).
-- `node tests/adversarial-corpus-quarta-remediacao.test.mjs`: PASS, exit 0 (100% bloqueio adversarial).
+- `npm test`: PASS, exit 0 (todas as suítes de segurança, arquitetura, flywheel, adversariais e os 10 casos conversacionais).
+- `node tests/conversational-core-ten-cases.test.mjs`: PASS, exit 0 (10/10 casos obrigatórios aprovados).
+- `node tests/adversarial-gate-n7a.test.mjs`: PASS, exit 0 (16/16 testes adversariais).
 - `node tests/flywheel-learning-postgres-integration.test.mjs`: PASS, exit 0 (10/10 etapas no banco real).
 - `npm run lint`: PASS, exit 0, 0 warnings, zero errors.
 - `npm run build`: PASS, exit 0.
-- Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0 (0 rotas bridge, 0 mocks, 26 workflows validados).
-- Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
+- Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0.
+- `compose.n8n.yaml`: `N8N_BLOCK_RUNNER_ENV_ACCESS: "false"` configurado e ativo. Container `visao-360-n8n-1` healthy.
 
 Last commit: `b6e67c2` (docs(agents): humanizacao conversacional do diretor 360 e homologacao do extrator gemini docling)
 Last implementation checkpoint: Nono Marco concluído e validado no runtime real (Humanização conversacional do Diretor 360 no AGENTS.md, Docling dual-port e extrator estruturado Gemini).

@@ -1,7 +1,7 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.7
+**Versão:** 2.8
 **Status:** APPROVED_DESIGN — implementação e homologação concluídas
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
@@ -19,6 +19,15 @@ O runtime canônico homologado opera com quatro workflows canônicos: `WF-100` p
 ---
 
 ## Changelog
+
+### v2.8 — Camada Conversacional Contextual do Diretor 360 (Telegram)
+
+- Homologada e ativada a Camada Conversacional Contextual no Telegram com o modelo `gemini-3.6-flash`, eliminando em 100% das mensagens livres o fallback prematuro no menu estático (`🎛️ Painel Operacional Ativo...`).
+- Implementado Context Builder executivo com dados operacionais reais da agência 6895 (VJ-São Fidélis): fechamento de agosto (77,45 pts regulares / 109,29% com aceleradores), metas de setembro aguardando publicação da Matriz e pendências materiais conhecidas (Consórcio Expert +0,33 pt no ServiceNow, Bradesco Expresso 0,75 pt até o 5º dia útil).
+- Gestão de sessão e continuidade multi-turno: persistência atômica de `current_state` e `session_context` (`pending_question`, `pending_action`, `pending_data`) na tabela `conversation_threads`, permitindo resolver respostas monossilábicas ou curtas ("Sim", "Não", "Rotativo", "Pode") com base na interação anterior.
+- Migration 24 aplicada: índice rápido `idx_conversation_threads_chat_id`, tabela `operational_candidate_facts` com constraint `chk_provenance_owner` e RPC `record_operational_fact` com `SECURITY DEFINER`. Fatos operacionais livres acolhidos com proveniência estrita `OWNER_PROVIDED`.
+- Preservação estrita dos 34 comandos e menu de atalhos operacionais (`/menu`, `/comandos`), bem como do pipeline documental assíncrono (Docling TableFormer CPU / PyMuPDF e Gemini Vision) na rota `DOCUMENT`.
+- Suíte de 10 testes obrigatórios (`tests/conversational-core-ten-cases.test.mjs`) adicionada ao `npm test`: 10/10 casos aprovados, exit code 0.
 
 ### v2.7 — Ativação Canônica do WF-104 e Homologação do Flywheel com Governança Soberana
 

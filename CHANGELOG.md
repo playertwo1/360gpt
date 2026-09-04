@@ -1,5 +1,38 @@
 # Changelog
 
+### Eleventh Milestone Complete — Camada Conversacional Contextual do Diretor 360 e 10 Casos Obrigatórios (04/09/2026)
+
+- **Evolução Conversacional Natural no Telegram (Gemini 3.6 Flash)**:
+  - Eliminada a queda precoce/automática de texto livre no menu estático (`🎛️ Painel Operacional Ativo... Selecione uma opção rápida...`).
+  - Integrado o modelo upstream `gemini-3.6-flash` com `response_mime_type: "application/json"`, compensação de pensamentos/reasoning com `maxOutputTokens: 2000`, `temperature: 0.3`.
+  - Context Builder executivo injetando o contexto comercial real da agência 6895 (VJ-São Fidélis): fechamento de agosto (77,45 pts regulares, 109,29% com aceleradores), metas de setembro aguardando publicação oficial pela Matriz e pendências materiais conhecidas (Consórcio Expert +0,33 pt no ServiceNow, Bradesco Expresso 0,75 pt até o 5º dia útil).
+- **Gestão de Sessão Multi-Turno e Continuidade**:
+  - Persistência atômica de `current_state` e `session_context` (`pending_question`, `pending_action`, `pending_data`) na tabela `conversation_threads` via CTE no nó 07 do WF-101.
+  - Resolução contextual contínua de respostas curtas ou monossilábicas ("Sim", "Não", "Rotativo", "Pode") ancoradas na pergunta pendente anterior, sem abrir o menu estático.
+  - Transição de tópicos respeitosa e natural quando Rafael muda de assunto.
+- **Migration 24 e Acolhimento de Fatos Operacionais (`OWNER_PROVIDED`)**:
+  - Criada e aplicada `infra/postgres/init/24-conversational-indexes-and-facts.sql`.
+  - Índice rápido `idx_conversation_threads_chat_id` em `conversation_threads(chat_id)`.
+  - Tabela `operational_candidate_facts` com constraint `chk_provenance_owner` e RPC `record_operational_fact(...)` (`SECURITY DEFINER`).
+  - Fatos operacionais livres ("Liberei 18 mil", "Abri 2 contas PJ") acolhidos pelo Diretor e persistidos com proveniência estrita `OWNER_PROVIDED`, sem gerar regras globais nem contornar os gates N2.4/N7A.
+- **Fail-Safe Conversacional Contextual**:
+  - Em caso de indisponibilidade da API externa, o sistema responde com texto parceiro e contextualizado, nunca exibindo o menu estático de comandos.
+  - Comandos canônicos (34 comandos) e menu de atalhos (`/menu`, `/comandos`) mantidos 100% íntegros como atalhos operacionais rápidos.
+  - Esteira documental assíncrona (Docling TableFormer CPU / PyMuPDF e Gemini Vision) mantida intacta na rota `DOCUMENT`.
+- **Bateria dos 10 Casos Obrigatórios Homologada**:
+  - Implementado `tests/conversational-core-ten-cases.test.mjs` cobrindo rigorosamente:
+    - Teste A: Continuidade após aviso de POBJ («Vou te enviar os dados» gera resposta parceira, NÃO o menu);
+    - Teste B: Dado operacional em texto livre («Liberei 18 mil» é acolhido com proveniência `OWNER_PROVIDED`);
+    - Teste C: Resposta curta contextual («Sim» resolvido via `pending_question`);
+    - Teste D: Comando direto («/menu», «/pobj», «/status» na rota `COMMAND`);
+    - Teste E: Documento (PDF mantido na rota `DOCUMENT`);
+    - Teste F: Texto não é tratado como documento (sem OCR);
+    - Teste G: Isolamento de memória por `chat_id` no PostgreSQL;
+    - Teste H: Governança preservada (conversa livre NÃO altera `promoted_knowledge`);
+    - Teste I: Proteção contra prompt injection em texto livre;
+    - Teste J: Sequência multi-turno longa (10 turnos) mantendo coerência com 0 quedas no menu.
+  - Adicionado ao `npm test`: 100% verde (`PASS`, exit code 0).
+
 ### Tenth Milestone Complete — Ativação Canônica do WF-104 e Homologação do Flywheel com Governança Soberana (04/09/2026)
 
 - **Ativação e Publicação do WF-104 no n8n**:
