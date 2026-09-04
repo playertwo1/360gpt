@@ -2,7 +2,7 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 8.0 — Oitavo Marco: Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ no WF-101
+**Versão do planejamento:** 9.0 — Nono Marco: Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling
 
 **Atualizado em:** 4 de setembro de 2026
 
@@ -12,9 +12,9 @@
 
 **Estado atual:** `OPERATIONAL_READY`
 
-**Fase atual:** Ativação Operacional — Custom Reply Keyboard e Projeção Dinâmica POBJ no WF-101 (Migration 21 + 4 Atalhos E2E 100% Operacionais)
+**Fase atual:** Ativação Operacional — Humanização Conversacional e Homologação da Esteira Documental Completa (Docling Dual-Port + Gemini API Flash)
 
-**Marco atual:** `Q9+ — Custom Keyboard e Projeção Dinâmica POBJ em Produção Real; 4 atalhos operacionais`
+**Marco atual:** `Q10 — Humanização Conversacional e Homologação da Esteira Documental Completa`
 
 **Próxima tarefa:** Monitoramento da esteira comercial e consolidação de novos snapshots operacionais para a Agência 6895.
 

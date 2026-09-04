@@ -13,5 +13,5 @@ RUN useradd --create-home --uid 10001 worker \
     && chown -R worker:worker /app
 USER worker
 
-EXPOSE 8787
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8787", "--workers", "1"]
+EXPOSE 8787 8000
+CMD ["python", "-m", "app.main"]

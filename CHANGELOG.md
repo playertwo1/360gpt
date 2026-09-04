@@ -1,5 +1,23 @@
 # Changelog
 
+### Ninth Milestone Complete — Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling (04/09/2026)
+
+- **Humanização Conversacional do Diretor 360 (AGENTS.md)**:
+  - **Seção 1.3 (Tom de voz e postura)**: Posicionamento como parceiro de trincheira e braço direito operacional de Rafael na gestão comercial da Agência 6895 (VJ-São Fidélis). Uso de prosa em primeira pessoa / plural colaborativo ("a gente", "fechamos o dia em"), linguagem de esteira (rodar proposta, fôlego de produção, bater meta) e proibição absoluta de introduções engessadas e fórmulas burocráticas ("Prezado", "Como um modelo de IA").
+  - **Seção 3.3 (Fixação de Preferência Soberana)**: Formalizada diretriz sob `OWNER_PREFERENCE` com `TONE: PEER_COLLABORATIVE` e `FORMAT: NATURAL_CONVERSATION`, assegurando precedência sobre formatações corporativas genéricas em canais de mensageria direta sem comprometer a integridade dos dados subjacentes.
+  - **Seção 9.5 (Entrega executiva e conversação)**: Estrutura de 7 etapas redefinida como modelo mental interno de raciocínio analítico, dispensando títulos e rótulos mecânicos no Telegram. Instituído fechamento conversacional obrigatório devolvendo a palavra de forma colaborativa e objetiva a Rafael.
+  - **Seção 11 (Auto-auditoria pré-resposta)**: Adicionada salvaguarda (item 23) determinando que comunicação parceira e ausência de disclaimers burocráticos ou introduções formais no chat não configuram falha de auditoria se os dados e restrições tiverem sido estritamente respeitados na camada de dados.
+- **Homologação da Esteira Documental (Docling Worker Dual-Port & Gemini Extractor)**:
+  - Recompilado container `document-worker` com suporte dual-port simultâneo: porta 8787 (Telegram Poller multipart) e porta 8000 (novo endpoint `/v1/document/process` com payload JSON).
+  - Implementado endpoint `/v1/document/process` em `services/document-worker/app/main.py` com autenticação via `X-Director360-Transport`, download seguro pelo poller e extração estruturada routed (Docling TableFormer CPU / PyMuPDF).
+  - Configurados aliases de rede Docker `docling_worker` e `docling-worker` na rede `frontend`.
+  - Homologada integração com Google Gemini API (`models/gemini-3.5-flash:generateContent`) com schema OpenAPI estruturado, extraindo tipo de documento, valor total monetário, contraparte e tabelas em JSON estrito.
+  - Injetada variável `GEMINI_API_KEY` com segurança no ambiente do container n8n via `compose.n8n.yaml`.
+- **Validação de Testes e Governança**:
+  - `npm test`: 56/56 suítes aprovadas com exit code 0 (`PASS`), incluindo 16/16 testes ofensivos adversariais.
+  - `npm run lint`: 0 erros, 0 warnings.
+  - Paridade e integridade sincronizadas entre os repositórios `Codex` e `Downloads\A`.
+
 ### Eighth Milestone Complete — Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ no WF-101 (04/09/2026)
 
 - **Custom Reply Keyboard Persistente no Telegram**:

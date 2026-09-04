@@ -57,6 +57,7 @@ services:
       NODE_FUNCTION_ALLOW_BUILTIN: crypto
       DIRECTOR360_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET}
       INTERNAL_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
       N8N_BLOCK_RUNNER_ENV_ACCESS: "true"
       N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
       N8N_UNVERIFIED_PACKAGES_ENABLED: "false"
@@ -144,7 +145,10 @@ services:
       DOCLING_API_URL: http://docling:5001
       DOCLING_TIMEOUT_SECONDS: 300
       DOCLING_POLL_INTERVAL_SECONDS: 2
-    expose: ["8787"]
+      DIRECTOR360_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET}
+      INTERNAL_TRANSPORT_SECRET: ${BRIDGE_SHARED_SECRET}
+      TELEGRAM_POLLER_URL: http://telegram-poller:8790
+    expose: ["8787", "8000"]
     read_only: true
     tmpfs: ["/tmp:size=268435456,mode=1777"]
     security_opt: ["no-new-privileges:true"]
@@ -155,7 +159,11 @@ services:
       timeout: 5s
       retries: 12
       start_period: 20s
-    networks: [frontend]
+    networks:
+      frontend:
+        aliases:
+          - docling_worker
+          - docling-worker
 
   telegram-poller:
     profiles: ["telegram-local"]

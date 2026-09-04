@@ -475,3 +475,87 @@ def normalize_text(value: str) -> str:
 
 def safe_name(value: str) -> str:
     return "".join("_" if char in "\\/\x00" or ord(char) < 32 else char for char in value)[:120]
+
+
+class DocumentProcessJSONRequest(BaseModel):
+    document_url: str | None = None
+    file_id: str | None = None
+    tenant_id: str | None = None
+    extract_tables: bool = True
+    output_format: str = "markdown"
+
+
+@app.post("/v1/document/process")
+async def process_document_json(
+    req: DocumentProcessJSONRequest,
+    x_director360_transport: Annotated[str | None, Header()] = None,
+) -> dict[str, Any]:
+    expected_secret = (
+        os.getenv("DIRECTOR360_TRANSPORT_SECRET", "")
+        or os.getenv("INTERNAL_TRANSPORT_SECRET", "")
+        or os.getenv("BRIDGE_SHARED_SECRET", "")
+    )
+    if expected_secret and x_director360_transport and x_director360_transport != expected_secret:
+        raise HTTPException(401, "unauthorized_transport")
+
+    content: bytes | None = None
+    file_name = "documento.pdf"
+
+    if req.file_id:
+        poller_url = os.getenv("TELEGRAM_POLLER_URL", "http://telegram-poller:8790").rstrip("/")
+        timeout = httpx.Timeout(30.0, connect=5.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            headers = {"X-Director360-Transport": expected_secret} if expected_secret else {}
+            resp = await client.post(
+                f"{poller_url}/file",
+                json={"file_id": req.file_id},
+                headers=headers,
+            )
+            if resp.status_code != 200:
+                raise HTTPException(502, f"failed_to_download_from_poller: {resp.status_code}")
+            content = resp.content
+    elif req.document_url:
+        timeout = httpx.Timeout(30.0, connect=5.0)
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp = await client.get(req.document_url)
+            if resp.status_code != 200:
+                raise HTTPException(502, f"failed_to_download_url: {resp.status_code}")
+            content = resp.content
+    else:
+        raise HTTPException(400, "missing_file_id_or_document_url")
+
+    if not content:
+        raise HTTPException(422, "empty_document_content")
+
+    digest = f"sha256:{hashlib.sha256(content).hexdigest()}"
+    extracted = await extract_pdf_routed(content, file_name, digest)
+
+    return {
+        "ok": True,
+        "tenant_id": req.tenant_id,
+        "file_id": req.file_id,
+        "document_markdown": extracted.markdown,
+        "tables_count": len(extracted.tables),
+        "sections_count": len(extracted.sections),
+        "page_count": extracted.page_count,
+        "extraction_method": extracted.extraction_method,
+        "content_hash": digest,
+        "warnings": extracted.warnings,
+    }
+
+
+def main():
+    import uvicorn
+
+    async def run_both():
+        cfg1 = uvicorn.Config(app, host="0.0.0.0", port=8787, log_level="info")
+        cfg2 = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
+        s1 = uvicorn.Server(cfg1)
+        s2 = uvicorn.Server(cfg2)
+        await asyncio.gather(s1.serve(), s2.serve())
+
+    asyncio.run(run_both())
+
+
+if __name__ == "__main__":
+    main()

@@ -2,9 +2,9 @@
 
 > ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7A BLOCKED aguardando parecer final da reauditoria independente.
 
-Version: 9.0.0-custom-keyboard-pobj-dynamic
-Current phase: Ativação Operacional — Custom Reply Keyboard e Projeção Dinâmica POBJ no WF-101
-Current milestone: Q9 — Custom Keyboard e Consolidação Dinâmica POBJ em Produção Real
+Version: 10.0.0-humanizacao-diretor360-extrator-gemini
+Current phase: Ativação Operacional — Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling
+Current milestone: Q10 — Humanização Conversacional e Homologação da Esteira Documental Completa
 Current task: Monitoramento operacional e suporte de esteira comercial para Rafael (Agência 6895)
 Status: OPERATIONAL_READY
 
@@ -30,6 +30,7 @@ Status: OPERATIONAL_READY
 11. **Sexta Remediação (Inbound RPCs & Soberania Canônica):** Migrations 18 e 19 aplicadas. Migration 18 implementa RPCs `SECURITY DEFINER` (`ingest_channel_update`, `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event`) para gerenciar todo o ciclo de transporte sem expor DML direto sobre `channel_updates` e `channel_inbound_events`. Migration 19 unifica assinatura canônica soberana `approve_promotion_by_rafael(uuid, uuid)`, valida correspondência de UUID entre comando e candidata, protege contra divergência de hash SHA-256 e amarra ativação de memórias ao Evidence Graph. WF-100 refatorado no nó 03 para consumir `ingest_channel_update(...)`, sincronizado com `nodes_match = true` no n8n. 100% da suíte de testes aprovada (`npm test`).
 12. **Sétima Remediação (Migration 20 Hardening & WF-101 RPCs):** Migration 20 (`20-governance-and-integrity-hardening.sql`) aplicada e validada no PostgreSQL real. Allowlist fail-closed obrigatória com `P0001`, target mandatório em `/aprovardiretriz` exigindo UUID canônico coincidente com `p_candidate_id` com `P0002`, validação de hash canônico e proteção contra adulteração de payload, validação estrita de evidência com UUID e existência no Evidence Graph com `P0003`, views simétricas `sovereign_approval_allowlist` e `sovereign_evidence_nodes`. WF-101 refatorado nos nós 02 (claim via RPC), 04 (consumo de snapshot dinâmico), 05 (eliminação de mocks estáticos de POBJ/metas, confirmação de persistência via `inserted_fact_id`), 08 (header de transporte dinâmico) e 09 (complete via RPC). 16/16 testes ofensivos em `tests/adversarial-gate-n7a.test.mjs` e 100% da suíte `npm test` aprovados.
 13. **Oitavo Marco (Custom Reply Keyboard e Projeção Dinâmica POBJ):** Migration 21 aplicada no PostgreSQL `visao360` (`21-estado-360-producao-and-pobj-projection.sql`), criando tabela `estado_360_producao` e funções determinísticas `get_estado_360_resumo` e `get_pobj_run_rate` (cálculo dinâmico de dias úteis, ritmo atual, projeção de fechamento e ritmo necessário). Custom Reply Keyboard persistente implementado no Telegram com 4 atalhos (`📊 Resumo Executivo`, `🎯 POBJ & Metas`, `📑 Pendências`, `⚙️ Status do Sistema`). Roteamento determinístico no nó 03, construção de `reply_markup` em JavaScript puro no nó 05, persistência com retorno `$8::json AS reply_markup` no nó 07 e despacho pelo nó 08. `compose.n8n.yaml` atualizado com `N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"` e secrets de transporte injetados. `AGENTS.md` Seção 1.3 atualizada com postura de parceiro de trincheira e braço direito operacional de Rafael (Agência 6895). Validação E2E concluída com sucesso para os 4 botões e `npm test` aprovado com 56/56 suítes (exit code 0).
+14. **Nono Marco (Humanização Conversacional & Extrator Gemini Docling):** `AGENTS.md` atualizado nas seções 1.3 (tom parceiro de trincheira na Agência 6895), 3.3 (preferência soberana `TONE: PEER_COLLABORATIVE` e `FORMAT: NATURAL_CONVERSATION`), 9.5 (7 etapas como modelo mental interno analítico, sem cabeçalhos rígidos no chat e com fechamento colaborativo) e 11 (salvaguarda item 23 na auto-auditoria pré-resposta). Worker documental (`document-worker`) recompilado com suporte dual-port (8787 para poller e 8000 para `/v1/document/process` com payload JSON). Aliases de rede Docker `docling_worker` e `docling-worker` adicionados à rede `frontend`. Extrator estruturado Gemini homologado com OpenAPI schema e `models/gemini-3.5-flash:generateContent`. `GEMINI_API_KEY` injetada com segurança no ambiente n8n. 100% da suíte `npm test` aprovada (56/56 suítes, exit code 0) e `npm run lint` limpo.
 
 ## Last validation
 
@@ -43,8 +44,8 @@ Result: PASS
 - Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0 (0 rotas bridge, 0 mocks, 26 workflows validados).
 - Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
-Last commit: `c3699ae` (feat(migration-20): blindagem de governanca, RPCs no WF-101, fail-closed P0001-P0003 e remocao de mocks)
-Last implementation checkpoint: Sétima Remediação dos Gates A0, N2.3 e N7 concluída e validada no runtime real (Migration 20 e WF-101 RPCs).
+Last commit: `b6e67c2` (docs(agents): humanizacao conversacional do diretor 360 e homologacao do extrator gemini docling)
+Last implementation checkpoint: Nono Marco concluído e validado no runtime real (Humanização conversacional do Diretor 360 no AGENTS.md, Docling dual-port e extrator estruturado Gemini).
 
 ## Runtime observed
 
