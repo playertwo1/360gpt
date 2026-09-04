@@ -18,7 +18,10 @@
       "name": "01 Disparo Sexta-feira 18h00",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-560, -40]
+      "position": [
+        -560,
+        -40
+      ]
     },
     {
       "parameters": {
@@ -31,13 +34,16 @@
       "name": "01 Disparo manual webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-560, 160],
+      "position": [
+        -560,
+        160
+      ],
       "webhookId": "d360-reflexion-trigger-v1"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, tenant_id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, created_at FROM decision_outcomes WHERE tenant_id = COALESCE($1, 'default') AND created_at >= NOW() - INTERVAL '7 days' ORDER BY created_at ASC;",
+        "query": "WITH lock_check AS (\n  SELECT pg_try_advisory_xact_lock(104104) AS acquired\n)\nSELECT \n  lock_check.acquired,\n  d.id,\n  d.tenant_id,\n  d.domain,\n  d.proposed_payload,\n  d.outcome_type,\n  d.final_payload,\n  d.feedback_note,\n  d.delta_analysis,\n  d.created_at\nFROM lock_check\nLEFT JOIN (\n  SELECT id, tenant_id, domain, proposed_payload, outcome_type, final_payload, feedback_note, delta_analysis, created_at\n  FROM decision_outcomes\n  WHERE tenant_id = COALESCE($1, 'default')\n    AND created_at >= NOW() - INTERVAL '7 days'\n  ORDER BY created_at ASC\n  LIMIT 25\n) d ON lock_check.acquired = true;",
         "options": {
           "queryBatching": "single",
           "queryReplacement": "={{[$json.body?.tenant_id || 'default']}}"
@@ -47,7 +53,10 @@
       "name": "02 Consultar Desfechos da Semana",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [-320, 60],
+      "position": [
+        -320,
+        60
+      ],
       "credentials": {
         "postgres": {
           "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
@@ -58,28 +67,34 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const { createHash } = require('crypto');\nconst items = $input.all();\nconst outcomes = items.map(i => i.json).filter(j => j && j.id && j.tenant_id);\nconst tenant_id = outcomes[0]?.tenant_id || 'default';\nconst total = outcomes.length;\nconst minSample = 5;\nconst nowIso = new Date().toISOString().slice(0, 10);\n\nif (total < minSample) {\n  const card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n    `📅 <i>Semana: ${nowIso}</i> | Tenant: <code>${tenant_id}</code>\\n\\n` +\n    `• <b>Amostra insuficiente na semana:</b> ${total} registros observados (Mínimo: ${minSample}).\\n` +\n    `• Nenhuma diretriz foi inferida para preservar a integridade das políticas.\\n` +\n    `• O motor continuará acumulando desfechos.`;\n  return [{ json: { chat_id: 5281600644, text: card, insufficient: true, total, no_candidates: true } }];\n}\n\nlet accepted = 0;\nlet edited = 0;\nlet rejected = 0;\nconst patterns = {};\n\nfor (const o of outcomes) {\n  if (o.outcome_type === 'ACEITO_INTEGRAL') accepted++;\n  else if (o.outcome_type === 'EDITADO_POR_RAFAEL') {\n    edited++;\n    const key = `${o.domain || 'GERAL'}:${o.delta_analysis?.edit_type || 'MODIFICADO'}`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n  else if (o.outcome_type === 'RECUSADO_COM_MOTIVO') {\n    rejected++;\n    const key = `${o.domain || 'GERAL'}:REJEITADO`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n}\n\nconst useful = accepted + edited;\nconst durPct = ((useful / total) * 100).toFixed(1);\nconst statusIcon = durPct >= 85.0 ? '🟢 <b>META BATIDA</b>' : '🟡 <b>ABAIXO DA META</b>';\n\nfunction deterministicUuid(seed) {\n  const hash = createHash('sha256').update(seed, 'utf8').digest('hex');\n  return [\n    hash.slice(0, 8),\n    hash.slice(8, 12),\n    '5' + hash.slice(13, 16),\n    ((parseInt(hash.slice(16, 18), 16) & 0x3f) | 0x80).toString(16) + hash.slice(18, 20),\n    hash.slice(20, 32)\n  ].join('-');\n}\n\nconst candidates = [];\nfor (const [key, count] of Object.entries(patterns)) {\n  if (count >= 2) {\n    const [dom, type] = key.split(':');\n    let rule = `Ajustar propostas em ${dom} conforme preferências de Rafael.`;\n    let risk = 'LOW';\n    let category = 'COMMUNICATION_CADENCE';\n    if (type === 'MADE_MORE_CONCISE') {\n      rule = `Em ${dom}, gerar propostas mais concisas e diretas.`;\n      category = 'STYLE_FORMATTING';\n    } else if (type === 'EXPANDED_DETAILS') {\n      rule = `Em ${dom}, detalhar os impactos operacionais antes do envio.`;\n      category = 'STYLE_FORMATTING';\n    } else if (type === 'REJEITADO') {\n      rule = `Em ${dom}, reavaliar ofertas e argumentos previamente recusados.`;\n      risk = 'HIGH';\n      category = 'COMPLIANCE';\n    }\n    \n    const seed = `${tenant_id}:${dom}:${type}:${rule}`;\n    const candidateId = deterministicUuid(seed);\n    const isAuto = risk === 'LOW' && count >= 2 && (category === 'STYLE_FORMATTING' || category === 'COMMUNICATION_CADENCE');\n    const promotion_mode = isAuto ? 'AUTO' : 'MANUAL_REVIEW';\n    const status = isAuto ? 'PROMOTED' : 'CANDIDATE';\n    const score = isAuto ? 0.880 : 0.650;\n    const learning_run_id = `run-${candidateId.slice(0, 8)}`;\n    const idempotency_key = `pk:${tenant_id}:${dom}:${deterministicUuid(dom + ':' + type).slice(0, 16)}`;\n\n    candidates.push({\n      id: candidateId,\n      tenant_id,\n      category,\n      scope: 'DOMAIN',\n      target_ref: dom,\n      learned_rule: rule,\n      confidence_score: 0.88,\n      status,\n      promotion_mode,\n      promotion_policy_version: 'v2.3.0-controlled-autopromote',\n      promotion_score: score,\n      risk_level: risk,\n      frequency: count,\n      learning_run_id,\n      idempotency_key\n    });\n  }\n}\n\nlet card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n  `📅 <i>Semana: ${nowIso}</i> | Tenant: <code>${tenant_id}</code>\\n` +\n  `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n  `📊 <b>Métricas de Assertividade da IA:</b>\\n` +\n  `• <b>Total de Propostas:</b> ${total}\\n` +\n  `• <b>Úteis / Aceitas:</b> ${useful} (${durPct}% de utilidade)\\n` +\n  `• <b>Ajustadas por Você:</b> ${edited}\\n` +\n  `• <b>Recusadas:</b> ${rejected}\\n` +\n  `• <b>Status da Meta (DUR ≥ 85%):</b> ${statusIcon}\\n\\n`;\n\nconst autoPromoted = candidates.filter(c => c.promotion_mode === 'AUTO');\nconst manualReview = candidates.filter(c => c.promotion_mode === 'MANUAL_REVIEW');\n\nif (autoPromoted.length > 0) {\n  card += `⚡ <b>Autopromovidas (Baixo Risco):</b>\\n`;\n  for (const c of autoPromoted) {\n    card += `  ✓ <b>${c.learned_rule}</b> (Score: ${c.promotion_score})\\n`;\n  }\n  card += `\\n`;\n}\n\nif (manualReview.length > 0) {\n  card += `🔍 <b>Revisões Solicitadas a Rafael (Alto Risco):</b>\\n`;\n  for (const c of manualReview) {\n    card += `  • <code>/aprovardiretriz ${c.id}</code> — ${c.learned_rule}\\n`;\n  }\n}\n\nif (candidates.length === 0) {\n  card += `💡 Nenhuma divergência recorrente detectada nesta semana. Sistema estável.\\n`;\n}\n\ncard += `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n<i>Diretrizes salvas no banco de dados com isolamento por tenant.</i>`;\n\nif (candidates.length === 0) {\n  return [{ json: { chat_id: 5281600644, text: card, no_candidates: true } }];\n}\nreturn candidates.map(c => ({ json: { ...c, chat_id: 5281600644, text: card } }));"
+        "jsCode": "const { createHash } = require('crypto');\nconst items = $input.all();\n\n// 1. Verificação de concorrência / advisory lock\nconst firstItem = items[0]?.json;\nif (firstItem && firstItem.acquired === false) {\n  return [{\n    json: {\n      chat_id: 5281600644,\n      text: '⚠️ <b>Reflexion Engine Semanal (WF-104)</b>\\n\\nExecução ignorada: outro processo de reflexão já está em andamento (lock 104104 ocupado).',\n      lock_busy: true,\n      no_candidates: true\n    }\n  }];\n}\n\n// 2. Filtrar desfechos válidos da semana (descartando nulos da outer join)\nconst outcomes = items\n  .map(i => i.json)\n  .filter(j => j && j.id && j.tenant_id);\n\nconst tenant_id = outcomes[0]?.tenant_id || 'default';\nconst total = outcomes.length;\nconst minSample = 5;\nconst nowIso = new Date().toISOString().slice(0, 10);\n\nif (total < minSample) {\n  const card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n    `📅 <i>Semana: ${nowIso}</i> | Tenant: <code>${tenant_id}</code>\\n\\n` +\n    `• <b>Amostra insuficiente na semana:</b> ${total} registros observados (Mínimo: ${minSample}).\\n` +\n    `• Nenhuma diretriz foi inferida para preservar a integridade das políticas.\\n` +\n    `• O motor continuará acumulando desfechos.`;\n  return [{ json: { chat_id: 5281600644, text: card, insufficient: true, total, no_candidates: true } }];\n}\n\nlet accepted = 0;\nlet edited = 0;\nlet rejected = 0;\nconst patterns = {};\n\nfor (const o of outcomes) {\n  if (o.outcome_type === 'ACEITO_INTEGRAL') accepted++;\n  else if (o.outcome_type === 'EDITADO_POR_RAFAEL') {\n    edited++;\n    const key = `${o.domain || 'GERAL'}:${o.delta_analysis?.edit_type || 'MODIFICADO'}`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n  else if (o.outcome_type === 'RECUSADO_COM_MOTIVO') {\n    rejected++;\n    const key = `${o.domain || 'GERAL'}:REJEITADO`;\n    patterns[key] = (patterns[key] || 0) + 1;\n  }\n}\n\nconst useful = accepted + edited;\nconst durPct = ((useful / total) * 100).toFixed(1);\nconst statusIcon = durPct >= 85.0 ? '🟢 <b>META BATIDA</b>' : '🟡 <b>ABAIXO DA META</b>';\n\nfunction deterministicUuid(seed) {\n  const hash = createHash('sha256').update(seed, 'utf8').digest('hex');\n  return [\n    hash.slice(0, 8),\n    hash.slice(8, 12),\n    '5' + hash.slice(13, 16),\n    ((parseInt(hash.slice(16, 18), 16) & 0x3f) | 0x80).toString(16) + hash.slice(18, 20),\n    hash.slice(20, 32)\n  ].join('-');\n}\n\nconst candidates = [];\nfor (const [key, count] of Object.entries(patterns)) {\n  if (count >= 2) {\n    const [dom, type] = key.split(':');\n    let rule = `Ajustar propostas em ${dom} conforme preferências de Rafael.`;\n    let risk = 'LOW';\n    let category = 'COMMUNICATION_CADENCE';\n    if (type === 'MADE_MORE_CONCISE') {\n      rule = `Em ${dom}, gerar propostas mais concisas e diretas.`;\n      category = 'STYLE_FORMATTING';\n    } else if (type === 'EXPANDED_DETAILS') {\n      rule = `Em ${dom}, detalhar os impactos operacionais antes do envio.`;\n      category = 'STYLE_FORMATTING';\n    } else if (type === 'REJEITADO') {\n      rule = `Em ${dom}, reavaliar ofertas e argumentos previamente recusados.`;\n      risk = 'HIGH';\n      category = 'COMPLIANCE';\n    }\n    \n    const seed = `${tenant_id}:${dom}:${type}:${rule}`;\n    const candidateId = deterministicUuid(seed);\n    const learning_run_id = `run-${candidateId.slice(0, 8)}`;\n    const idempotency_key = `pk:${tenant_id}:${dom}:${deterministicUuid(dom + ':' + type).slice(0, 16)}`;\n    const score = 0.650;\n\n    // Lockdown de privilégio: WF-104 NUNCA autopromove diretamente nem assume aprovação de Rafael.\n    // Todas as regras propostas entram estritamente como CANDIDATE / MANUAL_REVIEW.\n    candidates.push({\n      id: candidateId,\n      tenant_id,\n      category,\n      scope: 'INDICATOR',\n      target_ref: dom,\n      learned_rule: rule,\n      confidence_score: 0.88,\n      status: 'CANDIDATE',\n      promotion_mode: 'MANUAL_REVIEW',\n      promotion_policy_version: 'v2.3.2-db-authoritative',\n      promotion_score: score,\n      risk_level: risk,\n      frequency: count,\n      learning_run_id,\n      idempotency_key\n    });\n  }\n}\n\nlet card = `🧠 <b>Balanço Semanal de Aprendizado 360 (WF-104)</b>\\n` +\n  `📅 <i>Semana: ${nowIso}</i> | Tenant: <code>${tenant_id}</code>\\n` +\n  `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n` +\n  `📊 <b>Métricas de Assertividade da IA:</b>\\n` +\n  `• <b>Total de Propostas:</b> ${total}\\n` +\n  `• <b>Úteis / Aceitas:</b> ${useful} (${durPct}% de utilidade)\\n` +\n  `• <b>Ajustadas por Você:</b> ${edited}\\n` +\n  `• <b>Recusadas:</b> ${rejected}\\n` +\n  `• <b>Status da Meta (DUR ≥ 85%):</b> ${statusIcon}\\n\\n`;\n\nif (candidates.length > 0) {\n  card += `🔍 <b>Diretrizes Candidatas Submetidas para Revisão Soberana:</b>\\n`;\n  for (const c of candidates) {\n    card += `  • <code>/aprovardiretriz ${c.id}</code>\\n    <i>${c.learned_rule}</i>\\n`;\n  }\n  card += `\\n`;\n} else {\n  card += `💡 Nenhuma divergência recorrente detectada nesta semana. Sistema estável.\\n\\n`;\n}\n\ncard += `━━━━━━━━━━━━━━━━━━━━━━━━━━\\n<i>Candidatas registradas no PostgreSQL via create_learning_candidate.</i>`;\n\nif (candidates.length === 0) {\n  return [{ json: { chat_id: 5281600644, text: card, no_candidates: true } }];\n}\n\n// Gestão de memória do n8n: purga objetos pesados e retorna apenas metadados necessários\nreturn candidates.map(c => ({\n  json: {\n    id: c.id,\n    tenant_id: c.tenant_id,\n    category: c.category,\n    scope: c.scope,\n    target_ref: c.target_ref,\n    learned_rule: c.learned_rule,\n    confidence_score: c.confidence_score,\n    risk_level: c.risk_level,\n    frequency: c.frequency,\n    learning_run_id: c.learning_run_id,\n    idempotency_key: c.idempotency_key,\n    text: card,\n    chat_id: 5281600644\n  }\n}));"
       },
       "id": "format-reflexion",
       "name": "03 Calcular DUR e Avaliar Candidatas",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-80, 60]
+      "position": [
+        -80,
+        60
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO promoted_knowledge (id, tenant_id, owner_id, category, scope, target_ref, learned_rule, confidence_score, status, promotion_mode, promotion_policy_version, promotion_score, risk_level, frequency, learning_run_id, idempotency_key, approved_by, approved_at) VALUES ($1::uuid, $2, 'rafael', $3, $4, $5, $6, $7::numeric, $8, $9, $10, $11::numeric, $12, $13::integer, $14, $15, CASE WHEN $9 = 'AUTO' THEN 'SYSTEM_LEARNING_ENGINE' ELSE NULL END, CASE WHEN $9 = 'AUTO' THEN NOW() ELSE NULL END) ON CONFLICT (tenant_id, idempotency_key) DO UPDATE SET updated_at = NOW(), frequency = promoted_knowledge.frequency + 1 RETURNING id, tenant_id, status, promotion_mode, learned_rule, $16 AS text, $17::bigint AS chat_id;",
+        "query": "SELECT create_learning_candidate(\n  $1,\n  'rafael',\n  $2,\n  $3,\n  $4,\n  $5,\n  $6::numeric,\n  $7,\n  $8::integer,\n  $9,\n  $10,\n  NULL\n) AS candidate_id, $11 AS text, $12::bigint AS chat_id;",
         "options": {
           "queryBatching": "single",
-          "queryReplacement": "={{[$json.id, $json.tenant_id, $json.category, $json.scope, $json.target_ref, $json.learned_rule, $json.confidence_score, $json.status, $json.promotion_mode, $json.promotion_policy_version, $json.promotion_score, $json.risk_level, $json.frequency, $json.learning_run_id, $json.idempotency_key, $json.text, $json.chat_id]}}"
+          "queryReplacement": "={{[$json.tenant_id, $json.category, $json.scope, $json.target_ref, $json.learned_rule, $json.confidence_score, $json.risk_level, $json.frequency, $json.learning_run_id, $json.idempotency_key, $json.text, $json.chat_id]}}"
         }
       },
       "id": "persist-candidates",
       "name": "04 Persistir Candidatas no Postgres",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [160, 60],
+      "position": [
+        160,
+        60
+      ],
       "credentials": {
         "postgres": {
           "id": "3db02591-5cd1-47ef-ac68-3cdb4b213602",
@@ -96,7 +111,7 @@
           "parameters": [
             {
               "name": "X-Director360-Transport",
-              "value": "={{$env.BRIDGE_SHARED_SECRET}}"
+              "value": "={{$env.INTERNAL_TRANSPORT_SECRET || ''}}"
             }
           ]
         },
@@ -118,7 +133,10 @@
       "name": "05 Enviar Telegram Rafael",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [400, 60]
+      "position": [
+        400,
+        60
+      ]
     }
   ],
   "connections": {

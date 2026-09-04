@@ -1312,12 +1312,15 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
 - [x] Calibração dinâmica do `confidence_score`: recomendações frequentemente aceitas ganham mais autonomia; recomendações frequentemente recusadas passam a exigir `REVIEW_REQUIRED` preventivo.
 - [x] Exibir e auditar a métrica de `Decision Utility Rate` em tempo real (homologado com 90.0% na suíte E2E, acima da meta de $\ge 85\%$).
 
-#### N2.3.4 Workflow Semanal de Reflexão e Síntese (WF-104 — Reflexion Engine) — CONCLUÍDO (02/09/2026)
+#### N2.3.4 Workflow Semanal de Reflexão e Síntese (WF-104 — Reflexion Engine) — REFORMADO SOB CONTENÇÃO (04/09/2026)
 
-- [x] Workflow n8n assíncrono agendado para sextas-feiras às 18h00 (`n8n/workflows/wf-104-weekly-reflexion.json` ativo no Docker).
+- [x] Workflow n8n assíncrono mantido inativo (`n8n/workflows/wf-104-weekly-reflexion.json` com `active: false` sob contenção do Gate N7).
+- [x] Concorrência e conciliação transacional: implementado advisory lock (`pg_try_advisory_xact_lock(104104)`) e paginação estrita (`LIMIT 25`).
+- [x] Lockdown de privilégio: eliminação de modos `OWNER_EXPLICIT` e `approved_by = 'rafael'` gerados internamente pelo worker; candidatas entram estritamente como `CANDIDATE` / `MANUAL_REVIEW`.
+- [x] Idempotência e integridade de persistência: delegação exclusiva à procedure homologada `create_learning_candidate` com hash e auditoria atômica transacional.
+- [x] Gestão de memória do n8n: purga de payloads pesados intermediários e transporte seguro via `INTERNAL_TRANSPORT_SECRET`.
 - [x] Varredura das conversas, deltas, edições e recusas da semana no PostgreSQL via `engines/orchestration/reflexion-engine.mjs`.
-- [x] Síntese de lições emergentes e eliminação de ruídos (regras sem recorrência comprovada são descartadas).
-- [x] Emissão de Card Executivo compacto no Telegram com as lições candidatas da semana para aprovação soberana em 1 clique (`/aprovar_todas` ou `/aprovardiretriz <id>`).
+- [x] Emissão de Card Executivo compacto no Telegram com comando soberano para revisão (`/aprovardiretriz <candidate_id>`).
 
 #### N2.3.5 Memória de Decisões Negativas e Anti-Padrões (Negative Memory) — CONCLUÍDO (02/09/2026)
 
