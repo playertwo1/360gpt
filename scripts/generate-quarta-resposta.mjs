@@ -381,7 +381,7 @@ Em estrito cumprimento ao documento \`docs/audits/REAUDITORIA_E_GUIA_QUARTA_REME
 
 ### P07. Onde Estado 360 e Evidence Graph são persistidos?
 **Resposta:** No banco de dados relacional PostgreSQL \`visao360\` rodando no container local \`visao-360-postgres-1\`:
-- O **Estado 360** reside nas tabelas \`daily_snapshots\`, \`accounts_360\` e correlatas sob isolamento de \`tenant_id = 'rafael-360'\`.
+- O **Estado 360** reside nas tabelas \`state_snapshots\`, \`accounts_360\` e correlatas sob isolamento de \`tenant_id = 'rafael-360'\`.
 - O **Evidence Graph** reside na tabela \`audit_log\` e nas tabelas de linhagem W3C PROV append-only (\`flywheel_audit_events\`, com tipos de nó \`FINDING\`, \`OBSERVATION\`, \`TRANSFORMATION\` e relações \`DERIVED_FROM\` protegidas por SHA-256).
 
 ### P08. Qual caminho HTTPS liga o webhook ao WF-100?

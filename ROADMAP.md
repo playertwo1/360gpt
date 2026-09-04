@@ -16,7 +16,7 @@
 
 **Marco atual:** `Q8+ — Q0–Q8 concluídos; quinta remediação Gate N7/N7A aplicada`
 
-**Próxima tarefa:** executar Q0 de `docs/audits/REAUDITORIA_E_GUIA_QUARTA_REMEDIACAO_A0_N2_3_COMMIT_D437A0C.md`: manter WF-104 e AUTO inativos, criar backup e registrar baseline
+**Próxima tarefa:** Submeter pacote completo da Quinta Remediação (Gate N7/N7A) para reauditoria independente do ChatGPT Codex sob a tag imutável v1.1-gate-n7a-remediation.
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
