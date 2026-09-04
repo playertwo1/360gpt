@@ -1,7 +1,7 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.5
+**Versão:** 2.6
 **Status:** APPROVED_DESIGN — implementação e homologação pendentes
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
@@ -19,6 +19,13 @@ O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada 
 ---
 
 ## Changelog
+
+### v2.6 — Sexta Remediação: Inbound RPCs, Assinatura Soberana Canônica e Desbloqueio WF-100/101
+
+- Implementadas RPCs `SECURITY DEFINER` na Migration 18 (`ingest_channel_update`, `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event`), eliminando denial of service gerado por revogação de DML direto sem quebrar o princípio do menor privilégio para `visao360_app`.
+- WF-100 refatorado no nó 03 para ingestão segura via `ingest_channel_update(...)`, sincronizado no n8n (`workflow_entity` e `workflow_history`) com paridade estrita (`nodes_match = true`).
+- Migration 19 unifica assinatura soberana `approve_promotion_by_rafael(p_candidate_id uuid, p_inbound_event_id uuid)` com verificação estrita de correspondência de ID no comando `/aprovardiretriz <UUID>` e recálculo obrigatório de hash SHA-256 com proteção contra adulteração de payload.
+- `activate_structured_memory` atualizada para verificar integridade e existência do nó no Evidence Graph (`evidence_nodes`).
 
 ### v2.5 — Quinta Remediação: Gates N7/N7A — Lockdown Transacional e Validação Soberana
 

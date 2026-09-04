@@ -1,5 +1,22 @@
 # Changelog
 
+### Sixth Remediation Complete — Inbound RPCs, Soberania Canônica e Desbloqueio WF-100/WF-101 (04/09/2026)
+
+- **Eliminação de DoS Autoimposto via Inbound RPCs (Migration 18)**: Aplicada `infra/postgres/init/18-rpc-inbound-lifecycle.sql` criando funções controladas com `SECURITY DEFINER` e `search_path = pg_catalog, public` para gerenciar todo o ciclo de vida de ingestão sem expor DML direto sobre `channel_updates` e `channel_inbound_events`:
+  - `ingest_channel_update(...)`: valida token de transporte, deduplica com `ON CONFLICT DO NOTHING`, insere em `channel_updates` e enfileira em `channel_inbound_events`.
+  - `claim_next_inbound_event(...)`: recupera leases expirados e seleciona próximo evento com `FOR UPDATE SKIP LOCKED`.
+  - `complete_inbound_event(...)`: conclui entrega ou mantém lease de 10 minutos para rotas assíncronas (`DOCUMENT`, `IMAGE`).
+  - `fail_inbound_event(...)`: registra falhas com incremento de contadores de tentativa.
+- **Aprovação Soberana de Rafael com Assinatura Canônica (Migration 19)**: Aplicada `infra/postgres/init/19-sovereign-approval-and-audit-resilience.sql`:
+  - Dropadas as sobrecargas antigas de `approve_promotion_by_rafael` e unificada a assinatura canônica `approve_promotion_by_rafael(p_candidate_id uuid, p_inbound_event_id uuid)`.
+  - Validação de correspondência estrita entre o argumento do comando `/aprovardiretriz <UUID>` e a candidata (`p_candidate_id`), garantindo que nenhuma diretriz seja aprovada sem comando explícito coincidente de Rafael.
+  - Verificação de hash SHA-256 e consistência criptográfica com proteção contra adulteração de payload em `validate_rafael_approval_event`.
+  - Ativação de memória estruturada vinculada obrigatoriamente ao Evidence Graph em `activate_structured_memory`.
+- **WF-100 Telegram Intake Atualizado**: Nó 03 refatorado para usar `ingest_channel_update(...)`, eliminando bloqueios de permissão para `visao360_app` e mantendo a integridade referencial e o isolamento de privilégios. Sincronizado no n8n (`workflow_entity` e `workflow_history`) com `nodes_match = true`.
+- **Validação de Testes e Segurança**:
+  - `npm test`: 100% aprovado com exit code 0 (56/56 suítes cobrindo Gates N7/N7A, P0, Local Core, Flywheel real e bateria adversarial).
+  - Testes adversariais comprovam isolamento da role `visao360_app` (DML direto negado em `golden_exemplars`, `decision_outcomes`, `negative_memory`, `flywheel_audit_events`), rejeição de hash divergente, bloqueio por flag desabilitada e paridade no banco n8n.
+
 ### Fifth Remediation Complete — Gates N7/N7A Remediados e Blindados no Runtime Real (04/09/2026)
 
 - **Lockdown e Segregação de Privilégios (Migration 17)**: Aplicada `infra/postgres/init/17-gate-n7-cleanup-and-lockdown.sql`. Transferida propriedade de `channel_updates`, `channel_inbound_events` e `flywheel_audit_events` para `postgres`. Revogado DML direto (`INSERT, UPDATE, DELETE, TRUNCATE`) da role de aplicação `visao360_app`. Expurgo de dados inconsistentes/órfãos e `VACUUM (ANALYZE)`.

@@ -2,11 +2,11 @@
 
 > ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7A BLOCKED aguardando parecer final da reauditoria independente.
 
-Version: 7.0.0-gate-n7a-quinta-remediacao
-Current phase: Quinta remediação — Gate N7/N7A — remediação concluída, aguardando reauditoria
+Version: 7.1.0-gate-n7a-sexta-remediacao
+Current phase: Sexta remediação — Inbound RPCs & Soberania Canônica — remediação concluída, aguardando reauditoria
 Current milestone: Q9 — Gate N7A lockdown e reauditoria
-Current task: Submeter dossiê `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` para apreciação do auditor independente ChatGPT Codex
-Status: QUINTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
+Current task: Submeter comprovações da Sexta Remediação para apreciação do auditor independente ChatGPT Codex
+Status: SEXTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
 
 ## Host baseline
 
@@ -27,6 +27,7 @@ Status: QUINTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
 8. **Bloco Q7 (Bateria E2E Proporcional):** Suíte adversarial com os 5 bypasses específicos do Codex 100% aprovada (`adversarial-corpus-quarta-remediacao.test.mjs`). 10/10 etapas de integração no PostgreSQL real aprovadas (`flywheel-learning-postgres-integration.test.mjs`). Teste de cold start com reinicialização do container `visao-360-n8n-1` ativando automaticamente WF-100 e WF-101 com `activeVersionId` intacto.
 9. **Bloco Q8 (Dossiê Formal de Resposta e Sincronização):** Elaborado `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e às 30 perguntas obrigatórias do Codex. Sincronizados `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md`.
 10. **Quinta Remediação (Gate N7/N7A):** Migrations 13-17 aplicadas. Migration 15 implementa funções transacionais seguras (`insert_structured_memory`, `activate_structured_memory`, `insert_flywheel_audit_event`, `insert_golden_exemplar`) com bloqueio de memória global inferida. Migration 16 implementa `validate_rafael_approval_event` (evento real do Telegram, hash recomputado, uso único), `approve_promotion_by_rafael` e `system_flags` com fail-closed. `learning-engine.mjs` exporta `isAuthenticatedRafaelApproval` delegando ao PostgreSQL. `reflexion-engine.mjs` exporta `findRealRafaelApprovalEvent` consultando tabela real. WF-101 nó 09 corrigido para não marcar DOCUMENT/IMAGE como COMPLETED prematuramente. `update-wf-101.mjs` corrigido: dados POBJ dinâmicos via `state_snapshots`, fatos confirmados via `inserted_fact_id`, secret por env var. WF-104 reformado internamente mantendo `active = false` (advisory lock 104104, `LIMIT 25`, sem privilégios indevidos, persistência atômica via `create_learning_candidate` e `INTERNAL_TRANSPORT_SECRET`).
+11. **Sexta Remediação (Inbound RPCs & Soberania Canônica):** Migrations 18 e 19 aplicadas. Migration 18 implementa RPCs `SECURITY DEFINER` (`ingest_channel_update`, `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event`) para gerenciar todo o ciclo de transporte sem expor DML direto sobre `channel_updates` e `channel_inbound_events`. Migration 19 unifica assinatura canônica soberana `approve_promotion_by_rafael(uuid, uuid)`, valida correspondência de UUID entre comando e candidata, protege contra divergência de hash SHA-256 e amarra ativação de memórias ao Evidence Graph. WF-100 refatorado no nó 03 para consumir `ingest_channel_update(...)`, sincronizado com `nodes_match = true` no n8n. 100% da suíte de testes aprovada (`npm test`).
 
 ## Last validation
 

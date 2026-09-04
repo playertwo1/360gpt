@@ -2,9 +2,9 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 5.0 — Quinta remediação dos Gates N7/N7A
+**Versão do planejamento:** 6.0 — Sexta remediação: Inbound RPCs, Soberania Canônica e Desbloqueio WF-100/101
 
-**Atualizado em:** 3 de setembro de 2026
+**Atualizado em:** 4 de setembro de 2026
 
 **Autoridade e proprietário:** Rafael
 
@@ -12,11 +12,11 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** Quinta remediação (Gate N7/N7A) — consolidada e auditada no runtime real (Migration 17 + WF-101 Soberano + Pre-commit hook)
+**Fase atual:** Sexta remediação — Inbound RPCs & Soberania Canônica — consolidada e auditada no runtime real (Migrations 18 e 19 + WF-100 RPC + Pre-commit hook)
 
-**Marco atual:** `Q9 — Quinta remediação Gate N7/N7A concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
+**Marco atual:** `Q9 — Sexta remediação concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
 
-**Próxima tarefa:** Submeter pacote completo da Quinta Remediação sob a tag imutável `v1.1-gate-n7a-remediation` para emissão de parecer do auditor ChatGPT Codex.
+**Próxima tarefa:** Submeter pacote completo da Sexta Remediação para emissão de parecer do auditor ChatGPT Codex.
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
