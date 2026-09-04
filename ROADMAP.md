@@ -2,7 +2,7 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 6.0 — Sexta remediação: Inbound RPCs, Soberania Canônica e Desbloqueio WF-100/101
+**Versão do planejamento:** 7.0 — Sétima remediação: Migration 20 Hardening, WF-101 RPCs e Testes Ofensivos P0001-P0003
 
 **Atualizado em:** 4 de setembro de 2026
 
@@ -12,11 +12,11 @@
 
 **Estado atual:** `IN_PROGRESS`
 
-**Fase atual:** Sexta remediação — Inbound RPCs & Soberania Canônica — consolidada e auditada no runtime real (Migrations 18 e 19 + WF-100 RPC + Pre-commit hook)
+**Fase atual:** Sétima remediação — Migration 20 Hardening & WF-101 RPCs — consolidada e auditada no runtime real (Migration 20 + WF-101 RPCs + Testes P0001-P0003 16/16)
 
-**Marco atual:** `Q9 — Sexta remediação concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
+**Marco atual:** `Q9 — Sétima remediação concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
 
-**Próxima tarefa:** Submeter pacote completo da Sexta Remediação para emissão de parecer do auditor ChatGPT Codex.
+**Próxima tarefa:** Submeter pacote completo da Sétima Remediação para emissão de parecer do auditor ChatGPT Codex.
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -1404,8 +1404,18 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
    - 100% de conformidade com zero erros e zero avisos de lint (`npm run lint: PASS, 0 warnings`);
    - Suíte de 56/56 testes aprovada (`npm test: PASS, exit 0`);
    - Backups físicos Q0 regenerados com hashes SHA-256 catalogados.
-9. [ ] Gate A0, N2.3 e N7: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX sob a tag `v1.1-gate-n7a-remediation`.
-10. [ ] Operação do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
+9. [x] Sexta Remediação dos Gates A0, N2.3 e N7:
+   - Migrations 18 e 19 aplicadas: RPCs `ingest_channel_update`, `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event` com `SECURITY DEFINER`;
+   - Assinatura canônica soberana `approve_promotion_by_rafael(uuid, uuid)`;
+   - WF-100 nó 03 refatorado para usar `ingest_channel_update` com paridade no n8n.
+10. [x] Sétima Remediação dos Gates A0, N2.3 e N7:
+   - Migration 20 aplicada: allowlist fail-closed obrigatória (`P0001`), target mandatório no `/aprovardiretriz` com UUID canônico (`P0002`), validação criptográfica de hash de payload, validação estrita de evidência no Evidence Graph (`P0003`) e views simétricas de governança;
+   - WF-101 refatorado: nós 02 (claim via RPC), 04 (snapshot dinâmico), 05 (remoção de mocks estáticos de POBJ/metas, confirmação de persistência de fatos), 08 (header autenticado dinâmico) e 09 (complete via RPC);
+   - Paridade estrita no banco n8n entre `workflow_entity` e `workflow_history` (`nodes_match = true`);
+   - Bateria de testes ofensivos ampliada para 16/16 testes em `tests/adversarial-gate-n7a.test.mjs` cobrindo todas as 9 vulnerabilidades apontadas;
+   - 100% da suíte `npm test` aprovada com exit code 0.
+11. [ ] Gate A0, N2.3 e N7: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX sob a tag `v1.1-gate-n7a-remediation`.
+12. [ ] Operação do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
 
 ### Regra de continuidade
 

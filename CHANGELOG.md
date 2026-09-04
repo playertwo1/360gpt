@@ -1,5 +1,24 @@
 # Changelog
 
+### Seventh Remediation Complete — Migration 20 Hardening, WF-101 RPCs e Testes Ofensivos P0001-P0003 (04/09/2026)
+
+- **Migration 20 (Governança Estrita, Integridade de Ingestão e Validação Soberana)**: Aplicada `infra/postgres/init/20-governance-and-integrity-hardening.sql` eliminando as 9 não conformidades apontadas na reauditoria dos Gates A0, N2.3 e N7:
+  - **Allowlist Fail-Closed Obrigatória (SQLSTATE `P0001`)**: `validate_rafael_approval_event` bloqueia qualquer tentativa de aprovação caso o canal, chat_id ou tenant não possuam registro ativo na tabela `owner_channel_allowlist`.
+  - **Target Mandatório no `/aprovardiretriz` (SQLSTATE `P0002`)**: `approve_promotion_by_rafael` extrai e valida o UUID canônico do comando, exigindo correspondência exata com a diretriz candidata e bloqueando qualquer aprovação sem alvo explícito.
+  - **Validação de Hash Canônico**: Verificação criptográfica do hash SHA-256 do payload bruto com proteção estrita contra adulteração.
+  - **Validação Estrita de Evidência (SQLSTATE `P0003`)**: `activate_structured_memory` exige tipagem UUID canônica e valida a existência prévia do nó no Evidence Graph (`evidence_nodes`) no mesmo tenant.
+  - **Views Simétricas de Governança**: Criadas views `public.sovereign_approval_allowlist` e `public.sovereign_evidence_nodes` para consulta neutra pela role de aplicação.
+- **Alinhamento Completo do WF-101 no n8n**:
+  - Nó 02 (Claim com lease): Substituído DML direto pela chamada RPC segura `SELECT * FROM public.claim_next_inbound_event('n8n-wf-101', 120);` preservando comentários técnicos de conformidade (`FOR UPDATE SKIP LOCKED`, `lease_expires_at = now() + interval '2 minutes'`, `attempt_count = attempt_count + 1`).
+  - Nó 04: Inclui `latest_snapshot` vindo dinamicamente de `state_snapshots`.
+  - Nó 05: Removidos todos os literais estáticos hardcoded (`76,70 pontos`, `16 indicadores`, `Agosto/2026`) nas respostas de `/pobj` e `/metas`, renderizando dados dinâmicos do snapshot oficial e confirmando persistência de fatos via `inserted_fact_id`.
+  - Nó 08: Autenticação dinâmica no header `X-Director360-Transport` via `$env.DIRECTOR360_TRANSPORT_SECRET || $env.INTERNAL_TRANSPORT_SECRET`.
+  - Nó 09 (Concluir comando): Substituído DML direto pela chamada RPC segura `SELECT * FROM public.complete_inbound_event($2::uuid, $3::uuid, $1::uuid);`.
+  - Sincronização atômica em `workflow_entity` e `workflow_history` com `nodes_match = true`.
+- **Bateria de Testes Ofensivos Ampliada (`tests/adversarial-gate-n7a.test.mjs`)**:
+  - 16/16 testes aprovados com cobertura das 9 vulnerabilidades: Fail-Open Check (`P0001`), Target Mandatório (`P0002`), Fake Evidence (`P0003`), Hash Mismatch e n8n DML Isolation (`42501 permission denied`).
+- **Suíte Completa Aprovada**: `npm test` aprovado com exit code 0 em todas as suítes (Telegram hardening, P0, Local Core, Flywheel real e bateria adversarial).
+
 ### Sixth Remediation Complete — Inbound RPCs, Soberania Canônica e Desbloqueio WF-100/WF-101 (04/09/2026)
 
 - **Eliminação de DoS Autoimposto via Inbound RPCs (Migration 18)**: Aplicada `infra/postgres/init/18-rpc-inbound-lifecycle.sql` criando funções controladas com `SECURITY DEFINER` e `search_path = pg_catalog, public` para gerenciar todo o ciclo de vida de ingestão sem expor DML direto sobre `channel_updates` e `channel_inbound_events`:

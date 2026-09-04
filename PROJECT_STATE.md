@@ -2,11 +2,11 @@
 
 > ERRATA CODEX RESOLVIDA: WF-101 corrigido, publicado e ativo com activeVersionId no n8n 2.x e reconciliado após cold start. WF-104 permanece estritamente desligado (active: false), AUTO_PROMOTION_ENABLED=false em .env.n8n e Gate N7A BLOCKED aguardando parecer final da reauditoria independente.
 
-Version: 7.1.0-gate-n7a-sexta-remediacao
-Current phase: Sexta remediação — Inbound RPCs & Soberania Canônica — remediação concluída, aguardando reauditoria
+Version: 8.0.0-migration-20-hardened
+Current phase: Sétima remediação — Migration 20 Hardening & WF-101 RPCs — remediação concluída, aguardando reauditoria
 Current milestone: Q9 — Gate N7A lockdown e reauditoria
-Current task: Submeter comprovações da Sexta Remediação para apreciação do auditor independente ChatGPT Codex
-Status: SEXTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
+Current task: Submeter comprovações da Sétima Remediação (Migration 20 e WF-101 RPCs) para apreciação do auditor independente ChatGPT Codex
+Status: SETIMA_REMEDIACAO_COMPLETED_PENDING_AUDIT
 
 ## Host baseline
 
@@ -28,12 +28,13 @@ Status: SEXTA_REMEDIACAO_COMPLETED_PENDING_AUDIT
 9. **Bloco Q8 (Dossiê Formal de Resposta e Sincronização):** Elaborado `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo individualmente aos 20 achados e às 30 perguntas obrigatórias do Codex. Sincronizados `ROADMAP.md`, `PROJECT_STATE.md`, `CHANGELOG.md` e `AGENTS.md`.
 10. **Quinta Remediação (Gate N7/N7A):** Migrations 13-17 aplicadas. Migration 15 implementa funções transacionais seguras (`insert_structured_memory`, `activate_structured_memory`, `insert_flywheel_audit_event`, `insert_golden_exemplar`) com bloqueio de memória global inferida. Migration 16 implementa `validate_rafael_approval_event` (evento real do Telegram, hash recomputado, uso único), `approve_promotion_by_rafael` e `system_flags` com fail-closed. `learning-engine.mjs` exporta `isAuthenticatedRafaelApproval` delegando ao PostgreSQL. `reflexion-engine.mjs` exporta `findRealRafaelApprovalEvent` consultando tabela real. WF-101 nó 09 corrigido para não marcar DOCUMENT/IMAGE como COMPLETED prematuramente. `update-wf-101.mjs` corrigido: dados POBJ dinâmicos via `state_snapshots`, fatos confirmados via `inserted_fact_id`, secret por env var. WF-104 reformado internamente mantendo `active = false` (advisory lock 104104, `LIMIT 25`, sem privilégios indevidos, persistência atômica via `create_learning_candidate` e `INTERNAL_TRANSPORT_SECRET`).
 11. **Sexta Remediação (Inbound RPCs & Soberania Canônica):** Migrations 18 e 19 aplicadas. Migration 18 implementa RPCs `SECURITY DEFINER` (`ingest_channel_update`, `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event`) para gerenciar todo o ciclo de transporte sem expor DML direto sobre `channel_updates` e `channel_inbound_events`. Migration 19 unifica assinatura canônica soberana `approve_promotion_by_rafael(uuid, uuid)`, valida correspondência de UUID entre comando e candidata, protege contra divergência de hash SHA-256 e amarra ativação de memórias ao Evidence Graph. WF-100 refatorado no nó 03 para consumir `ingest_channel_update(...)`, sincronizado com `nodes_match = true` no n8n. 100% da suíte de testes aprovada (`npm test`).
+12. **Sétima Remediação (Migration 20 Hardening & WF-101 RPCs):** Migration 20 (`20-governance-and-integrity-hardening.sql`) aplicada e validada no PostgreSQL real. Allowlist fail-closed obrigatória com `P0001`, target mandatório em `/aprovardiretriz` exigindo UUID canônico coincidente com `p_candidate_id` com `P0002`, validação de hash canônico e proteção contra adulteração de payload, validação estrita de evidência com UUID e existência no Evidence Graph com `P0003`, views simétricas `sovereign_approval_allowlist` e `sovereign_evidence_nodes`. WF-101 refatorado nos nós 02 (claim via RPC), 04 (consumo de snapshot dinâmico), 05 (eliminação de mocks estáticos de POBJ/metas, confirmação de persistência via `inserted_fact_id`), 08 (header de transporte dinâmico) e 09 (complete via RPC). 16/16 testes ofensivos em `tests/adversarial-gate-n7a.test.mjs` e 100% da suíte `npm test` aprovados.
 
 ## Last validation
 
 Result: PASS
 
-- `npm test`: PASS, exit 0 (56/56 suítes).
+- `npm test`: PASS, exit 0 (56/56 suítes, 16/16 testes adversariais).
 - `node tests/adversarial-corpus-quarta-remediacao.test.mjs`: PASS, exit 0 (100% bloqueio adversarial).
 - `node tests/flywheel-learning-postgres-integration.test.mjs`: PASS, exit 0 (10/10 etapas no banco real).
 - `npm run lint`: PASS, exit 0, 0 warnings, zero errors.
@@ -42,7 +43,7 @@ Result: PASS
 - Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
 Last commit: `HEAD` (a registrar pós-commit)
-Last implementation checkpoint: Quinta Remediação dos Gates N7/N7A concluída e validada no runtime real (Migration 17 lockdown).
+Last implementation checkpoint: Sétima Remediação dos Gates A0, N2.3 e N7 concluída e validada no runtime real (Migration 20 e WF-101 RPCs).
 
 ## Runtime observed
 

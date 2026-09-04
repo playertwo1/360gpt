@@ -4,7 +4,16 @@ import { execSync } from 'node:child_process';
 const wfPath = 'n8n/workflows/wf-101-local-dispatcher.json';
 const wf = JSON.parse(fs.readFileSync(wfPath, 'utf8'));
 
-const TRANSPORT_SECRET = process.env.INTERNAL_TRANSPORT_SECRET || '';
+const TRANSPORT_SECRET = process.env.DIRECTOR360_TRANSPORT_SECRET || process.env.INTERNAL_TRANSPORT_SECRET || '';
+
+// 0. Atualizar nó 02: Claim via RPC da Migration 18
+const node02 = wf.nodes.find(n => n.name === '02 Claim com lease');
+if (node02) {
+  node02.parameters.query = `-- claim via RPC (usa FOR UPDATE SKIP LOCKED internamente)
+-- lease_expires_at = now() + interval '2 minutes'
+-- attempt_count = attempt_count + 1
+SELECT * FROM public.claim_next_inbound_event('n8n-wf-101', 120);`;
+}
 
 // 1. Atualizar nó 04: Persistir conversa antes de interpretar
 const node04 = wf.nodes.find(n => n.name === '04 Persistir conversa antes de interpretar');
@@ -105,7 +114,20 @@ SELECT
     WHERE cu.channel = p.channel AND (cu.external_update_id = p.ext_msg_id OR cu.message_id = p.ext_msg_id)
     ORDER BY cu.received_at DESC
     LIMIT 1
-  ) AS raw_update_payload
+  ) AS raw_update_payload,
+  (
+    SELECT json_build_object(
+      'pobj_score', (ss.snapshot->>'pobj_score')::numeric,
+      'competence', ss.snapshot->>'competence',
+      'agency', ss.snapshot->>'agency',
+      'pobj_target', (ss.snapshot->>'pobj_target')::numeric,
+      'source_file', ss.snapshot->>'source_file'
+    )
+    FROM state_snapshots ss
+    WHERE ss.tenant_id = p.tenant_id OR ss.tenant_id = 'tenant-owner'
+    ORDER BY ss.generated_at DESC
+    LIMIT 1
+  ) AS latest_snapshot
 FROM params p;`;
 }
 
@@ -285,11 +307,21 @@ if (x.route === 'COMMAND') {
       text = \`⚠️ Diretriz não encontrada para revogação: <code>\${arg}</code>\`;
     }
   } else if (cmd === '/pobj' || cmd === '/metas') {
-    text = '📊 <b>Posição Consolidada POBJ — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
-      '• <b>Pontuação Calculada:</b> <code>76,70 pontos</code>\\n' +
-      '• <b>Indicadores Avaliados:</b> 16 indicadores oficiais\\n' +
-      '• <b>Status:</b> CONSOLIDADO (Competência Agosto/2026)\\n' +
-      '• <b>Parecer Executivo:</b> Projeção consolidada no snapshot oficial visao360.';
+    const snap = x.latest_snapshot;
+    if (snap && snap.pobj_score !== null && snap.pobj_score !== undefined) {
+      const scoreStr = Number(snap.pobj_score).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const competence = snap.competence || snap.competencia || 'Competência Atual';
+      const agency = snap.agency || 'Agência 6895 (VJ-São Fidélis)';
+      text = '📊 <b>Posição Consolidada POBJ — ' + agency + '</b>\\n\\n' +
+        '• <b>Pontuação Calculada:</b> <code>' + scoreStr + ' pontos</code>\\n' +
+        '• <b>Competência:</b> ' + competence + '\\n' +
+        '• <b>Status:</b> CONSOLIDADO no Estado 360\\n' +
+        '• <b>Parecer Executivo:</b> Projeção consolidada no snapshot oficial visao360.';
+    } else {
+      text = '📊 <b>Posição Consolidada POBJ</b>\\n\\n' +
+        '⚠️ <i>Ainda não há dados consolidados de POBJ para a sua agência no Estado 360.</i>\\n\\n' +
+        'Envie o PDF do seu relatório oficial POBJ para consolidação automática.';
+    }
   } else if (cmd === '/fontes') {
     text = '🗂️ <b>Registro de Fontes Autorizadas</b>\\n\\n1. <b>Relatório POBJ Oficial:</b> <i>PDF enviado via canal oficial</i>\\n2. <b>Base PostgreSQL:</b> <code>visao360</code>\\n3. <b>Decisões de Rafael:</b> <code>OWNER_PROVIDED</code> (Soberano)';
   } else if (cmd === '/evidencias') {
@@ -314,7 +346,7 @@ function parseMoney(raw) {
   if (mMil) return parseFloat(mMil[1].replace(/\\./g, '').replace(',', '.')) * 1000;
   if (s.includes(',') && s.includes('.')) s = s.replace(/\\./g, '').replace(',', '.');
   else if (s.includes(',')) s = s.replace(',', '.');
-  const val = parseFloat(s.replace(/[^\d.-]/g, ''));
+  const val = parseFloat(s.replace(/[^\\d.-]/g, ''));
   return Number.isFinite(val) ? val : 0;
 }
 
@@ -327,7 +359,7 @@ if (isCorrection) {
   const val = parseMoney(textContent);
   replyText =
     '✏️ <b>Correção Registrada com Sucesso</b>\\n\\n' +
-    \`• <b>Dado Corrigido:</b> Valor R$ \${fmt(val)} registrado com vínculo <code>SUPERSEDES</code>.\\n\` +
+    '• <b>Dado Corrigido:</b> Valor R$ ' + fmt(val) + ' registrado com vínculo <code>SUPERSEDES</code>.\\n' +
     '• <b>Auditoria:</b> O valor anterior permanece no histórico para rastreabilidade; os recálculos subsequentes utilizarão esta versão corrigida.\\n\\n' +
     'Estado 360 atualizado conforme autorização soberana de Rafael.';
 } else if (normalized.includes('como esta') || normalized.includes('pobj')) {
@@ -383,25 +415,16 @@ if (node08) {
     parameters: [
       {
         name: 'X-Director360-Transport',
-        value: TRANSPORT_SECRET ? TRANSPORT_SECRET : '={{$env.INTERNAL_TRANSPORT_SECRET || \'\'}}'
+        value: '={{$env.DIRECTOR360_TRANSPORT_SECRET || $env.INTERNAL_TRANSPORT_SECRET || \'\'}}'
       }
     ]
   };
 }
 
-// 4. Atualizar nó 09: Concluir comando preservando lease explícito durante PROCESSING
+// 4. Atualizar nó 09: Concluir comando via RPC da Migration 18
 const node09 = wf.nodes.find(n => n.name === '09 Concluir comando');
 if (node09) {
-  node09.parameters.query = `WITH delivered AS (
-  UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id
-)
-UPDATE channel_inbound_events
-SET status = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN 'PROCESSING' ELSE 'COMPLETED' END,
-    completed_at = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN NULL ELSE now() END,
-    lease_token = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN lease_token ELSE NULL END,
-    lease_expires_at = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN now() + interval '10 minutes' ELSE NULL END
-WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid
-RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;`;
+  node09.parameters.query = `SELECT * FROM public.complete_inbound_event($2::uuid, $3::uuid, $1::uuid);`;
 }
 
 // 5. Normalizar nome do workflow removendo transição
@@ -413,9 +436,12 @@ console.log('WF-101 atualizado com sucesso e autenticação direta no nó 08 con
 try {
   const nodesJson = JSON.stringify(wf.nodes).replace(/'/g, "''");
   const name = wf.name.replace(/'/g, "''");
-  const sql = `UPDATE workflow_entity SET name = '${name}', nodes = '${nodesJson}'::json, "updatedAt" = NOW() WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000101';`;
-  execSync('docker exec -i visao-360-postgres-1 psql -U n8n -d n8n', { input: sql, stdio: ['pipe', 'pipe', 'pipe'] });
-  console.log('WF-101 sincronizado com sucesso no banco n8n!');
+  const sql = `
+    UPDATE workflow_entity SET name = '${name}', nodes = '${nodesJson}'::json, "updatedAt" = NOW() WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000101';
+    UPDATE workflow_history h SET nodes = w.nodes, connections = w.connections, "updatedAt" = NOW() FROM workflow_entity w WHERE h."workflowId" = w.id AND h."versionId" = w."versionId" AND w.id = '9eb8e86a-84b8-4aa9-97e4-360000000101';
+  `;
+  execSync('docker exec -i visao-360-postgres-1 psql -U n8n -d n8n -v ON_ERROR_STOP=1', { input: sql, stdio: ['pipe', 'pipe', 'pipe'] });
+  console.log('WF-101 sincronizado com sucesso no banco n8n (entity + history)!');
 } catch (err) {
   console.warn('Aviso ao sincronizar no n8n DB:', err.message);
 }

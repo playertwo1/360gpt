@@ -134,17 +134,17 @@ test('validate_rafael_approval_event rejeita evento inexistente', () => {
 });
 
 test('validate_rafael_approval_event bloqueia hash divergente', () => {
-  // Insere um evento real com hash de um payload específico
+  // Insere um evento real com hash de um payload específico usando tenant autorizado
   const realPayload = '/aprovardiretriz test-candidata-uuid';
   const extId = `test-adv-hash-${Date.now()}`;
 
   runSql(`
     INSERT INTO channel_updates (channel, external_update_id, tenant_id, owner_id, chat_id, payload, payload_hash, status)
-    VALUES ('TELEGRAM', '${extId}', 'test-adv', 'rafael', '5281600644', '{}',
+    VALUES ('TELEGRAM', '${extId}', 'tenant-owner', 'rafael', '5281600644', '{}',
             'sha256:' || encode(sha256(convert_to('${realPayload}', 'UTF8')), 'hex'), 'RECEIVED');
     INSERT INTO channel_inbound_events
       (inbound_event_id, channel, external_update_id, tenant_id, owner_id, chat_id, event_kind, text_content, status)
-    VALUES (gen_random_uuid(), 'TELEGRAM', '${extId}', 'test-adv', 'rafael', '5281600644',
+    VALUES (gen_random_uuid(), 'TELEGRAM', '${extId}', 'tenant-owner', 'rafael', '5281600644',
             'COMMAND', '${realPayload}', 'COMPLETED');
   `, { user: 'postgres' });
 
@@ -158,7 +158,7 @@ test('validate_rafael_approval_event bloqueia hash divergente', () => {
     SELECT validate_rafael_approval_event(
       '${eventId}'::text,
       'rafael'::text,
-      'test-adv'::text,
+      'tenant-owner'::text,
       '/aprovardiretriz'::text,
       'payload errado que muda o hash'::text
     );
@@ -176,6 +176,118 @@ test('validate_rafael_approval_event bloqueia hash divergente', () => {
     /hash|adulterado|diverge|mismatch/i,
     `Esperava erro de hash mas recebeu: ${result.error}`
   );
+});
+
+// ─── 4b. Novos Testes Ofensivos da Migration 20 (Gates A0, N2.3, N7) ─────────
+
+test('Fail-Open Check: chat ou tenant não cadastrado na allowlist dispara P0001', () => {
+  const extId = `test-failopen-${Date.now()}`;
+  runSql(`
+    INSERT INTO channel_updates (channel, external_update_id, tenant_id, owner_id, chat_id, payload, payload_hash, status)
+    VALUES ('TELEGRAM', '${extId}', 'tenant-unauthorized', 'rafael', '9999999999', '{}',
+            'sha256:abcd', 'RECEIVED');
+    INSERT INTO channel_inbound_events
+      (inbound_event_id, channel, external_update_id, tenant_id, owner_id, chat_id, event_kind, text_content, status)
+    VALUES (gen_random_uuid(), 'TELEGRAM', '${extId}', 'tenant-unauthorized', 'rafael', '9999999999',
+            'COMMAND', '/aprovardiretriz 11111111-1111-1111-1111-111111111111', 'COMPLETED');
+  `, { user: 'postgres' });
+
+  const ieRes = runSql(`SELECT inbound_event_id::text FROM channel_inbound_events WHERE external_update_id = '${extId}';`);
+  const eventId = ieRes.output;
+
+  const result = expectSqlError(`
+    SELECT validate_rafael_approval_event(
+      '${eventId}'::text,
+      'rafael'::text,
+      'tenant-unauthorized'::text,
+      '/aprovardiretriz'::text
+    );
+  `);
+
+  runSql(`
+    DELETE FROM channel_inbound_events WHERE external_update_id = '${extId}';
+    DELETE FROM channel_updates WHERE external_update_id = '${extId}';
+  `, { user: 'postgres' });
+
+  assert.ok(result.error, 'Deveria ter retornado erro P0001 de allowlist fail-closed');
+  assert.match(result.error, /não autorizado para aprovação soberana|P0001/i);
+});
+
+test('No-Target Approval: /aprovardiretriz sem UUID ou com target divergente dispara P0002', () => {
+  const extId = `test-notarget-${Date.now()}`;
+  const candidateId = 'a1111111-1111-1111-1111-111111111111';
+
+  runSql(`
+    INSERT INTO promoted_knowledge
+      (id, tenant_id, owner_id, category, scope, target_ref, learned_rule, status, promotion_mode)
+    VALUES ('${candidateId}'::uuid, 'tenant-owner', 'rafael', 'STYLE', 'GLOBAL', 'GLOBAL', 'Regra sem target', 'CANDIDATE', 'MANUAL_REVIEW')
+    ON CONFLICT (id) DO UPDATE SET status = 'CANDIDATE';
+
+    INSERT INTO channel_updates (channel, external_update_id, tenant_id, owner_id, chat_id, payload, payload_hash, status)
+    VALUES ('TELEGRAM', '${extId}', 'tenant-owner', 'rafael', '5281600644', '{}',
+            'sha256:' || encode(sha256(convert_to('/aprovardiretriz', 'UTF8')), 'hex'), 'RECEIVED');
+    INSERT INTO channel_inbound_events
+      (inbound_event_id, channel, external_update_id, tenant_id, owner_id, chat_id, event_kind, text_content, status)
+    VALUES (gen_random_uuid(), 'TELEGRAM', '${extId}', 'tenant-owner', 'rafael', '5281600644',
+            'COMMAND', '/aprovardiretriz', 'COMPLETED');
+  `, { user: 'postgres' });
+
+  const ieRes = runSql(`SELECT inbound_event_id::text FROM channel_inbound_events WHERE external_update_id = '${extId}';`);
+  const eventId = ieRes.output;
+
+  const result = expectSqlError(`
+    SELECT approve_promotion_by_rafael(
+      '${candidateId}'::uuid,
+      '${eventId}'::uuid
+    );
+  `);
+
+  runSql(`
+    DELETE FROM channel_inbound_events WHERE external_update_id = '${extId}';
+    DELETE FROM channel_updates WHERE external_update_id = '${extId}';
+    DELETE FROM promoted_knowledge WHERE id = '${candidateId}'::uuid;
+  `, { user: 'postgres' });
+
+  assert.ok(result.error, 'Deveria ter retornado erro P0002 de target mandatório');
+  assert.match(result.error, /identificador da diretriz deve ser explicitamente fornecido|P0002/i);
+});
+
+test('Fake Evidence: evidence_id não-UUID ou inexistente em activate_structured_memory dispara P0003', () => {
+  const memId = 'b2222222-2222-2222-2222-222222222222';
+  runSql(`
+    INSERT INTO structured_memory
+      (id, tenant_id, owner_id, memory_type, scope, target_ref, origin, data, confidence_score, status)
+    VALUES ('${memId}'::uuid, 'tenant-owner', 'rafael', 'PREFERENCE', 'DOMAIN', 'CONTA', 'OWNER_PROVIDED',
+            '{"fact_text": "teste evidencia"}', 1.0, 'CANDIDATE')
+    ON CONFLICT (id) DO UPDATE SET status = 'CANDIDATE';
+  `, { user: 'postgres' });
+
+  // Caso 1: string não UUID
+  const res1 = expectSqlError(`
+    SELECT activate_structured_memory('${memId}'::uuid, 'fake-evidence'::text);
+  `);
+  assert.ok(res1.error, 'Deveria rejeitar formato de evidência não-UUID');
+  assert.match(res1.error, /formato UUID obrigatório|P0003/i);
+
+  // Caso 2: UUID que não existe em evidence_nodes
+  const fakeUuid = '00000000-0000-0000-0000-000000000000';
+  const res2 = expectSqlError(`
+    SELECT activate_structured_memory('${memId}'::uuid, '${fakeUuid}'::uuid);
+  `);
+  assert.ok(res2.error, 'Deveria rejeitar UUID de evidência inexistente no tenant');
+  assert.match(res2.error, /inexistente ou inválida para o tenant|P0003/i);
+
+  runSql(`DELETE FROM structured_memory WHERE id = '${memId}'::uuid;`, { user: 'postgres' });
+});
+
+test('n8n DML Isolation: UPDATE ou INSERT direto em channel_inbound_events por visao360_app é negado (42501)', () => {
+  const resUpdate = expectSqlError(`UPDATE channel_inbound_events SET status = 'COMPLETED' WHERE false;`);
+  assert.ok(resUpdate.error, 'Deveria negar UPDATE direto');
+  assert.match(resUpdate.error, /permission denied|not granted/i);
+
+  const resInsert = expectSqlError(`INSERT INTO channel_inbound_events (channel) VALUES ('TELEGRAM');`);
+  assert.ok(resInsert.error, 'Deveria negar INSERT direto');
+  assert.match(resInsert.error, /permission denied|not granted/i);
 });
 
 // ─── 5. Sistema_flags AUTO_PROMOTION_ENABLED=false bloqueia (achado 7) ───────
