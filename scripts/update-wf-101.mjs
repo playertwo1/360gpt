@@ -224,6 +224,20 @@ function parseMoney(raw) {
   return Number.isFinite(val) ? val : 0;
 }
 
+const isAudioOrVoice = Boolean(
+  x.event_kind === 'AUDIO' ||
+  x.event_kind === 'VOICE' ||
+  x.raw_update_payload?.message?.voice ||
+  x.raw_update_payload?.message?.audio ||
+  x.raw_update_payload?.message?.video_note
+);
+
+if (isAudioOrVoice) {
+  const replyText = '🎙️ <b>Mensagem de Áudio / Voz Recebida</b>\\n\\n' +
+    'Fala, Rafael! Ainda só leio texto, PDF e imagem, me manda em mensagem ou documento que a gente resolve na hora!';
+  return [{ json: { ...x, text: replyText, reply_markup: defaultKeyboard } }];
+}
+
 if (x.route === 'DOCUMENT') {
   const docId = x.inbound_event_id ? String(x.inbound_event_id).slice(0, 8).toUpperCase() : 'DOC-01';
   const msg = x.raw_update_payload?.message || {};
@@ -678,13 +692,79 @@ if (isCorrection) {
       '💡 <i>Se tiver o PDF oficial do POBJ, envie para confrontarmos com as metas da agência na hora!</i>';
   }
 } else {
-  replyText =
-    '🎛️ <b>Painel Operacional Ativo</b>\\n\\n' +
-    'Fala, Rafael! Tô na escuta na agência <b>6895 (VJ-São Fidélis)</b>.\\n\\n' +
-    'Selecione uma opção rápida abaixo ou envie um documento para análise:\\n' +
-    '• 📊 <b>Resumo Executivo</b> | 🎯 <b>POBJ & Metas</b>\\n' +
-    '• 📑 <b>Pendências</b> | ⚙️ <b>Status do Sistema</b>\\n\\n' +
-    'Ou mande uma mensagem direta (ex: <i>\"Liberei 50k de giro\"</i> ou o PDF do POBJ)!';
+  let aiReply = '';
+  const geminiKey = (typeof $env !== 'undefined' ? $env.GEMINI_API_KEY : '') || '';
+  if (geminiKey && textContent.length >= 3) {
+    try {
+      const snap = x.latest_snapshot || {};
+      const rr = x.pobj_run_rate || {};
+      const res = x.estado_resumo || {};
+      const contextData = {
+        agencia: '6895 (VJ-São Fidélis)',
+        gerente: 'Rafael',
+        competencia_atual: 'Setembro/2026',
+        metas_setembro_publicadas: Boolean(res.total_meta > 0),
+        fechamento_agosto: {
+          pontos_regulares: 77.45,
+          percentual_base: '99,29%',
+          percentual_consolidado: '109,29% (com +10% de Aceleradores)',
+          teto_regular: 78.00,
+          destaques: 'Crédito PJ (222,32% com R$ 1,70M), Limite Rotativo e Encanta BRA no teto de 150%',
+          gargalos: 'Spread PJ zerado (perda de 7,00 pts), Ligadas (Cartões 16,64%, Seguros 12,02%), Captação Líquida (-R$ 22.155,50)',
+          acoes_imediatas: 'Consórcio Expert (+0,33 pt no ServiceNow hoje 04/09), Bradesco Expresso (0,75 pt em risco até 5º dia útil)'
+        },
+        run_rate_setembro: rr,
+        pendencias: x.pendencias_lista || []
+      };
+
+      const promptPayload = {
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: 'Você é o Diretor Geral 360, parceiro executivo de trincheira de Rafael na gestão comercial da agência 6895 (VJ-São Fidélis).\\n' +
+                  'Fale como um par experiente que senta na mesa ao lado: cadência natural, primeira pessoa/plural colaborativo (\"a gente\", \"nossa esteira\"), parágrafos curtos (2 a 3 linhas), foco em fechamento e ações práticas.\\n' +
+                  'Proibido: fórmulas engessadas (\"Prezado\", \"Como um modelo de IA\", \"Segue a análise\").\\n\\n' +
+                  'DADOS REAIS DO ESTADO 360:\\n' + JSON.stringify(contextData) + '\\n\\n' +
+                  'MENSAGEM DE RAFAEL:\\n\"' + textContent + '\"\\n\\n' +
+                  'Responda diretamente a Rafael em português em até 3 parágrafos curtos:'
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 600
+        }
+      };
+
+      const gResp = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + geminiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(promptPayload)
+      });
+      if (gResp.ok) {
+        const gJson = await gResp.json();
+        const cand = gJson.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (cand && cand.trim()) aiReply = cand.trim();
+      }
+    } catch (e) {
+      // Fallback silencioso para o painel operacional
+    }
+  }
+
+  if (aiReply) {
+    replyText = aiReply;
+  } else {
+    replyText =
+      '🎛️ <b>Painel Operacional Ativo</b>\\n\\n' +
+      'Fala, Rafael! Tô na escuta na agência <b>6895 (VJ-São Fidélis)</b>.\\n\\n' +
+      'Selecione uma opção rápida abaixo ou envie um documento para análise:\\n' +
+      '• 📊 <b>Resumo Executivo</b> | 🎯 <b>POBJ & Metas</b>\\n' +
+      '• 📑 <b>Pendências</b> | ⚙️ <b>Status do Sistema</b>\\n\\n' +
+      'Ou mande uma mensagem direta (ex: <i>\"Liberei 50k de giro\"</i> ou o PDF do POBJ)!';
+  }
 }
 
 return [{ json: { ...x, text: replyText, reply_markup: defaultKeyboard } }];`;
