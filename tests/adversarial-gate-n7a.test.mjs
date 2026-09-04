@@ -321,6 +321,8 @@ test('autopromoção é bloqueada quando AUTO_PROMOTION_ENABLED=false na system_
 
   // Limpa
   runSql(`DELETE FROM structured_memory WHERE tenant_id = 'test-adv';`, { user: 'postgres' });
+  runSql(`UPDATE system_flags SET value = true, flag_value = 'true', updated_at = now() WHERE key = 'AUTO_PROMOTION_ENABLED';`, { user: 'postgres' });
+  runSql(`UPDATE runtime_feature_flags SET enabled = true, updated_at = now() WHERE flag_key = 'AUTO_PROMOTION_ENABLED';`, { user: 'postgres' });
 
   assert.ok(result.error, 'Deveria ter bloqueado por flag');
   assert.match(

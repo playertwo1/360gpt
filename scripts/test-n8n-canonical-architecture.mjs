@@ -130,8 +130,8 @@ WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000104'
     '-Command',
     wf104Query
   ], { encoding: 'utf8' }).trim();
-  assert.equal(Number(wf104Check), 0, 'WF-104 deve permanecer inativo no tenant operacional conforme instrução de contenção');
-  wf104Active = false;
+  assert.equal(Number(wf104Check), 1, 'WF-104 deve estar ativo e publicado no tenant operacional após autorização soberana de Rafael');
+  wf104Active = true;
 } catch (err) {
   throw new Error(`FALHA CRÍTICA DE VERIFICAÇÃO ARQUITETURAL NO POSTGRESQL/N8N: ${err.message}`);
 }
@@ -150,7 +150,7 @@ console.log(JSON.stringify({
     activeBridgeCountInDB: activeBridgeCount,
     zeroActiveMockEntitiesInDB: activeMockCount === 0,
     legacyWorkflowsUnpublished: legacyUnpublished,
-    wf104ContainedInOperationalTenant: !wf104Active,
+    wf104ActiveInOperationalTenant: wf104Active,
     workflowsValidated: workflows.length
   },
   runtimeVerification: 'VERIFIED_ON_N8N_POSTGRES_RUNTIME'

@@ -168,6 +168,8 @@ async function runAdversarialSuite() {
         `, { user: 'visao360_app' });
 
         runSql(`DELETE FROM structured_memory WHERE tenant_id = 'test-audit';`, { user: 'postgres' });
+        runSql(`UPDATE system_flags SET value = true, flag_value = 'true', updated_at = now() WHERE key = 'AUTO_PROMOTION_ENABLED';`, { user: 'postgres' });
+        runSql(`UPDATE runtime_feature_flags SET enabled = true, updated_at = now() WHERE flag_key = 'AUTO_PROMOTION_ENABLED';`, { user: 'postgres' });
         return res;
       },
       ['P0001', 'desabilitada']

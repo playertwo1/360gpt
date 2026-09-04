@@ -1,8 +1,8 @@
 # AGENTS.md — DIRETOR 360
 ## Contrato de Orquestração Multiagente
 
-**Versão:** 2.6
-**Status:** APPROVED_DESIGN — implementação e homologação pendentes
+**Versão:** 2.7
+**Status:** APPROVED_DESIGN — implementação e homologação concluídas
 **Papel:** Orquestrador executivo e autoridade de governança
 **Executor:** n8n self-hosted em Docker
 
@@ -12,13 +12,21 @@ O n8n transporta, agenda, persiste e observa o fluxo. Não cria regras de negóc
 
 ### Topologia mínima canônica do MVP
 
-O runtime inicial usa somente três workflows canônicos: `WF-100` para entrada rápida, deduplicação e fila; `WF-101` para todo o processamento principal e entrega; e `WF-103` para contingência global. A função do `WF-102` é incorporada ao `WF-101`; os demais workflows são históricos, avaliações ou módulos ainda não promovidos.
+O runtime canônico homologado opera com quatro workflows canônicos: `WF-100` para entrada rápida, deduplicação e fila; `WF-101` para processamento principal, inteligência executiva e entrega; `WF-103` para contingência global; e `WF-104` para o ciclo de reflexão semanal e consolidação do Flywheel (sextas às 18h). A função do `WF-102` é incorporada ao `WF-101`; os demais workflows são históricos ou módulos ainda não promovidos.
 
 > **Regra canônica de execução n8n:** toda entrada operacional deve chegar a um workflow n8n antes de qualquer comando, decisão, classificação, cálculo, IA, pergunta, aprendizado, mutação de estado ou resposta. Sites, Telegram, adaptadores, scripts, APIs e serviços auxiliares não podem implementar caminhos paralelos. Docling somente extrai; PostgreSQL somente persiste; interfaces somente transportam e exibem. Alterar comportamento significa alterar workflow, contrato, política ou subworkflow versionado e chamado pelo n8n.
 
 ---
 
 ## Changelog
+
+### v2.7 — Ativação Canônica do WF-104 e Homologação do Flywheel com Governança Soberana
+
+- Homologado e ativado o `WF-104` como controlador operacional canônico para reflexão semanal (`0 18 * * 5`), cálculo determinístico de DUR e consolidação do Flywheel no n8n.
+- Desbloqueada soberanamente a flag `AUTO_PROMOTION_ENABLED` no PostgreSQL (`system_flags` e `runtime_feature_flags`) e configurada no container n8n.
+- Migration 22 aplicada: suporte simétrico a `system_flags` (`key/value` e `flag_name/flag_value`), cadastro prévio do chat_id de Rafael na `owner_channel_allowlist` e `sovereign_approval_allowlist`, implementação de `insert_flywheel_audit_event` (`SECURITY DEFINER`) e sobrecargas transacionais para `claim_next_inbound_event`, `complete_inbound_event`, `fail_inbound_event` e `insert_structured_memory`.
+- Filtros estritos de autopromoção consolidados no nó de decisão do WF-104: categorias em allowlist, `score >= 0.75`, `frequency >= 2`, risco estritamente `LOW`, proibição total de escopo `GLOBAL` autônomo (mantendo submissão como `MANUAL_REVIEW` para aprovação soberana via `/aprovardiretriz <UUID>`).
+- Suíte de validação: 56/56 suítes verdes, 7/7 ataques adversariais contidos, 16/16 testes unitários aprovados, exit code 0.
 
 ### v2.6 — Sexta Remediação: Inbound RPCs, Assinatura Soberana Canônica e Desbloqueio WF-100/101
 

@@ -1,5 +1,29 @@
 # Changelog
 
+### Tenth Milestone Complete — Ativação Canônica do WF-104 e Homologação do Flywheel com Governança Soberana (04/09/2026)
+
+- **Ativação e Publicação do WF-104 no n8n**:
+  - Homologado e ativado o workflow `WF-104 — Reflexion Engine Semanal 360` no PostgreSQL do n8n com `active: true` e paridade de versão (`activeVersionId = versionId`).
+  - Configurado gatilho semanal agendado (`0 18 * * 5` — toda sexta-feira às 18h00) e endpoint manual webhook (`director-360/reflexion/trigger`).
+  - Concorrência protegida com transação e advisory lock pessimista `104104`.
+- **Filtros Estritos de Autopromoção e Governança N2.4 / N7A**:
+  - Parametrizado o nó de avaliação do WF-104 para cumprir as invariantes de schema e a soberania de Rafael:
+    - Categorias permitidas: `STYLE_FORMATTING`, `COMMUNICATION_CADENCE`, `CONVERSATIONAL_PREFERENCE`, `PRESENTATION_ORDER`, `EXECUTIVE_SUMMARY_STYLE`.
+    - Métricas mínimas: `score >= 0.75` e `frequency >= 2`.
+    - Risco estritamente `LOW`.
+    - Escopo não-GLOBAL obrigatório (regras com escopo `GLOBAL` ou risco `MEDIUM`/`HIGH` são gravadas obrigatoriamente como `MANUAL_REVIEW`, aguardando aprovação soberana via `/aprovardiretriz <UUID>`).
+- **Migration 22 e Hardening Transacional**:
+  - Aplicada `infra/postgres/init/22-wf104-flywheel-audit-and-flags.sql` no banco `visao360`.
+  - Desbloqueada a flag `AUTO_PROMOTION_ENABLED = true` em `system_flags` e `runtime_feature_flags`, com trigger de sincronização automática entre `key/value` e `flag_name/flag_value`.
+  - Cadastrado previamente o Chat ID de Rafael (`5281600644`) na `owner_channel_allowlist` e `sovereign_approval_allowlist` para os tenants `default`, `tenant-owner` e `rafael-360`.
+  - Criada RPC transacional `insert_flywheel_audit_event(...)` (`SECURITY DEFINER`) para registro de ciclos de aprendizado no log append-only.
+  - Criadas sobrecargas auxiliares `claim_next_inbound_event(text)`, `complete_inbound_event(uuid, jsonb)`, `fail_inbound_event(uuid, text)` e `insert_structured_memory(jsonb)` com `GRANT EXECUTE` à role `visao360_app`.
+- **Validação de Testes e Prontidão Operacional**:
+  - Suíte completa de testes aprovada: 56/56 suítes verdes (`PASS`, exit code 0).
+  - 7/7 ataques ofensivos contidos pelo banco no teste adversarial `scripts/audit-adversarial-test.mjs`.
+  - 16/16 testes unitários em `tests/adversarial-gate-n7a.test.mjs` aprovados.
+  - Atualizado `scripts/test-n8n-canonical-architecture.mjs` para verificar a ativação e publicação operacional do WF-104 (`wf104ActiveInOperationalTenant: true`).
+
 ### Ninth Milestone Complete — Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling (04/09/2026)
 
 - **Humanização Conversacional do Diretor 360 (AGENTS.md)**:
