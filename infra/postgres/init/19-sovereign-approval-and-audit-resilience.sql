@@ -169,10 +169,13 @@ BEGIN
       updated_at = v_now
   WHERE id = p_candidate_id;
 
-  -- 6. Registra consumo único do evento
-  INSERT INTO public.owner_approval_consumptions(source_event_id, tenant_id, owner_id, candidate_id, consumed_at)
-  VALUES(v_ie.inbound_event_id::text, v_ie.tenant_id, v_ie.owner_id, p_candidate_id, v_now)
-  ON CONFLICT (source_event_id) DO NOTHING;
+  -- 6. Registra consumo único do evento (rejeita corrida ou reuso com erro estrito)
+  BEGIN
+    INSERT INTO public.owner_approval_consumptions(source_event_id, tenant_id, owner_id, candidate_id, consumed_at)
+    VALUES(v_ie.inbound_event_id::text, v_ie.tenant_id, v_ie.owner_id, p_candidate_id, v_now);
+  EXCEPTION WHEN unique_violation THEN
+    RAISE EXCEPTION 'evento % já foi consumido — reuso bloqueado (single-use)', p_inbound_event_id;
+  END;
 
   -- 7. Grava evento no log de auditoria append-only
   v_payload := jsonb_build_object(
