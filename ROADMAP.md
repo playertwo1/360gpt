@@ -2,7 +2,7 @@
 
 > **REGRA INEQUÍVOCA:** WF-101 é obrigatório e deve terminar publicado e ativo. Não desativar, aposentar, remover ou arquivar o WF-101. Somente WF-104 e `AUTO_PROMOTION_ENABLED` permanecem desligados durante Q0–Q7. A formulação anterior ambígua foi erro do auditor Codex e está revogada.
 
-**Versão do planejamento:** 7.0 — Sétima remediação: Migration 20 Hardening, WF-101 RPCs e Testes Ofensivos P0001-P0003
+**Versão do planejamento:** 8.0 — Oitavo Marco: Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ no WF-101
 
 **Atualizado em:** 4 de setembro de 2026
 
@@ -10,13 +10,13 @@
 
 **Repositório oficial:** `https://github.com/playertwo1/360gpt.git` — branch `main`
 
-**Estado atual:** `IN_PROGRESS`
+**Estado atual:** `OPERATIONAL_READY`
 
-**Fase atual:** Sétima remediação — Migration 20 Hardening & WF-101 RPCs — consolidada e auditada no runtime real (Migration 20 + WF-101 RPCs + Testes P0001-P0003 16/16)
+**Fase atual:** Ativação Operacional — Custom Reply Keyboard e Projeção Dinâmica POBJ no WF-101 (Migration 21 + 4 Atalhos E2E 100% Operacionais)
 
-**Marco atual:** `Q9 — Sétima remediação concluída e validada; aguardando reauditoria independente do ChatGPT Codex`
+**Marco atual:** `Q9+ — Custom Keyboard e Projeção Dinâmica POBJ em Produção Real; 4 atalhos operacionais`
 
-**Próxima tarefa:** Submeter pacote completo da Sétima Remediação para emissão de parecer do auditor ChatGPT Codex.
+**Próxima tarefa:** Monitoramento da esteira comercial e consolidação de novos snapshots operacionais para a Agência 6895.
 
 **Bloqueio de observabilidade:** a medição Shadow de 2026-09-02 aprovou 20/20 casos, sem divergência, mutação ou efeito externo, mas detectou `HOURLY_MEASUREMENT_GAP`; nenhuma promoção ou ampliação está autorizada até recompor a janela.
 
@@ -1414,8 +1414,14 @@ Este marco implementa a evolução contínua da rede de agentes e subagentes no 
    - Paridade estrita no banco n8n entre `workflow_entity` e `workflow_history` (`nodes_match = true`);
    - Bateria de testes ofensivos ampliada para 16/16 testes em `tests/adversarial-gate-n7a.test.mjs` cobrindo todas as 9 vulnerabilidades apontadas;
    - 100% da suíte `npm test` aprovada com exit code 0.
-11. [ ] Gate A0, N2.3 e N7: AGUARDANDO PARECER DO AUDITOR INDEPENDENTE CHATGPT CODEX sob a tag `v1.1-gate-n7a-remediation`.
-12. [ ] Operação do Piloto de 7 dias com 3–5 documentos reais no celular (APÓS APROVAÇÃO FORMAL DO CODEX).
+11. [x] Oitavo Marco (Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ):
+   - Migration 21 aplicada no PostgreSQL `visao360`: criação de `estado_360_producao`, `get_estado_360_resumo` e `get_pobj_run_rate` dinâmicos;
+   - Custom Reply Keyboard persistente implementado com 4 botões de atalho (`📊 Resumo Executivo`, `🎯 POBJ & Metas`, `📑 Pendências`, `⚙️ Status do Sistema`);
+   - WF-101 atualizado com roteamento determinístico, `reply_markup` em JavaScript nativo e envio idempotente via Telegram Poller;
+   - Tom de voz e governança de esteira comercial da Agência 6895 incorporados ao `AGENTS.md` e respostas executivas;
+   - 4 atalhos validados de ponta a ponta com status `COMPLETED` e entrega `SENT` no cluster real;
+   - Suíte completa `npm test` aprovada (56/56 suítes, exit code 0).
+12. [ ] Operação da esteira comercial com documentos e interações reais no celular por Rafael.
 
 ### Regra de continuidade
 

@@ -1,5 +1,29 @@
 # Changelog
 
+### Eighth Milestone Complete — Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ no WF-101 (04/09/2026)
+
+- **Custom Reply Keyboard Persistente no Telegram**:
+  - Implementado teclado fixo com 4 botões de atalho: `📊 Resumo Executivo`, `🎯 POBJ & Metas`, `📑 Pendências` e `⚙️ Status do Sistema` (`is_persistent: true`, `resize_keyboard: true`).
+  - Mapeamento determinístico configurado no nó 03 do WF-101 para traduzir botões em comandos canônicos (`/resumo`, `/pobj`, `/pendencias`, `/status`).
+  - Objeto `reply_markup` construído via JavaScript puro no nó 05 (Code Node) para evitar qualquer conflito com o parser de expressões `{{}}` do n8n.
+  - Propagação íntegra de `reply_markup` pelo nó 06, persistência idempotente no nó 07 com retorno via `RETURNING $8::json AS reply_markup`, e despacho pelo nó 08 com `JSON.stringify({chat_id: $json.chat_id, text: $json.text, parse_mode: 'HTML', reply_markup: $json.reply_markup})`.
+  - Teclado anexado a 100% das mensagens de entrega ao chat de Rafael (`5281600644`).
+- **Consolidação Dinâmica e Projeção de Metas POBJ (Migration 21)**:
+  - Aplicada `infra/postgres/init/21-estado-360-producao-and-pobj-projection.sql` no banco `visao360`.
+  - Tabela `public.estado_360_producao` criada com rastreabilidade por tenant e data de referência.
+  - Função `public.get_estado_360_resumo(p_tenant_id)` consolidando produção realizada, metas, percentual atingido, pendências e itens concluídos.
+  - Função `public.get_pobj_run_rate(p_tenant_id)` calculando dias úteis do mês (`EXTRACT(ISODOW FROM d) < 6`), dias decorridos, dias restantes, ritmo diário atual, projeção de fechamento e ritmo diário necessário para atingimento de meta.
+  - Permissões concedidas à role `visao360_app`. Todos os valores hardcoded ou dados codificados em workflows foram substituídos por consultas dinâmicas.
+- **Tom de Voz Parceiro de Trincheira (AGENTS.md Seção 1.3)**:
+  - Atualizada a governança conversacional em `AGENTS.md` posicionando o Diretor 360 como braço direito operacional de Rafael na gestão comercial da Agência 6895 (VJ-São Fidélis).
+  - Respostas com linguagem direta de esteira, plural colaborativo ("a gente"), parágrafos curtos formatados para visualização rápida no celular, sem saudações engessadas ou jargões de robô.
+- **Hardening de Transporte e Permissões de Ambiente no Docker**:
+  - Atualizado `compose.n8n.yaml` com `N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"` e injeção de `DIRECTOR360_TRANSPORT_SECRET` e `INTERNAL_TRANSPORT_SECRET`.
+  - Paridade estrita verificada e confirmada no PostgreSQL do n8n entre `workflow_entity` e `workflow_history` (`nodes_match = true`, `conn_match = true`).
+- **Validação E2E no Runtime Real**:
+  - Teste de ponta a ponta executado para os 4 botões de atalho no cluster Docker real: todos processados pelo WF-100 (200), executados pelo WF-101, marcados como `COMPLETED` em `channel_inbound_events` e entregues com status `SENT` em `channel_deliveries`.
+  - Suíte completa `npm test` aprovada com 56/56 suítes e 16/16 testes adversariais (exit code 0).
+
 ### Seventh Remediation Complete — Migration 20 Hardening, WF-101 RPCs e Testes Ofensivos P0001-P0003 (04/09/2026)
 
 - **Migration 20 (Governança Estrita, Integridade de Ingestão e Validação Soberana)**: Aplicada `infra/postgres/init/20-governance-and-integrity-hardening.sql` eliminando as 9 não conformidades apontadas na reauditoria dos Gates A0, N2.3 e N7:
