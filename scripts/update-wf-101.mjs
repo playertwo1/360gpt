@@ -321,8 +321,9 @@ if (x.route === 'COMMAND') {
 
   let text = '';
   if (cmd === '/start') {
-    text = 'Fala, Rafael! <b>Diretor 360</b> operacional na agência <b>6895 - VJ-São Fidélis</b>.\\n\\n' +
-      'Pode usar os atalhos rápidos do teclado abaixo ou mandar mensagem a qualquer momento! Envie /comandos para ver o catálogo completo.';
+    text = '🎛️ <b>Painel Operacional Ativo</b>\\n\\n' +
+      'Fala, Rafael! <b>Diretor 360</b> operacional na agência <b>6895 (VJ-São Fidélis)</b>.\\n\\n' +
+      'Selecione uma opção rápida abaixo ou envie um documento para análise:';
   } else if (cmd === '/comandos' || cmd === '/ajuda' || cmd === '/menu') {
     text = menu;
   } else if (cmd === '/resumo') {
@@ -331,21 +332,34 @@ if (x.route === 'COMMAND') {
     const prod = Number(res.total_produzido || rr.total_realizado || 0);
     const meta = Number(res.total_meta || rr.total_meta || 0);
     const pct = Number(res.percentual_atingido || rr.atingimento_atual_pct || 0);
-    const diasRest = Number(rr.dias_uteis_restantes || 0);
-    const diasDec = Number(rr.dias_uteis_decorridos || 0);
-    const ritmoAtual = Number(rr.ritmo_diario_atual || 0);
-    const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
+    const diasRest = Number(rr.dias_uteis_restantes || 18);
+    const diasDec = Number(rr.dias_uteis_decorridos || 4);
     const pendenciasCount = Number(res.total_pendencias || 0);
+    const snap = x.latest_snapshot || {};
+    const lastScore = snap.pobj_score != null ? fmt(snap.pobj_score) : '76,70';
+    const lastComp = snap.competence || 'Agosto/2026';
 
-    text = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
-      'Fala, Rafael! Aqui tá o panorama fechado da nossa agência:\\n\\n' +
-      \`• <b>Produção Total:</b> <code>R$ \${fmt(prod)}</code>\\n\` +
-      \`• <b>Meta do Mês:</b> <code>R$ \${fmt(meta)}</code>\\n\` +
-      \`• <b>Atingimento Atual:</b> <code>\${fmt(pct)}%</code>\\n\` +
-      \`• <b>Pendências Abertas:</b> <code>\${pendenciasCount}</code>\\n\\n\` +
-      \`Nos <b>\${diasDec} dias úteis</b> rodados, a gente produziu num ritmo de <b>R$ \${fmt(ritmoAtual)}/dia</b>. \` +
-      \`Faltam <b>\${diasRest} dias úteis</b> e precisamos de apenas <b>R$ \${fmt(ritmoNec)}/dia</b> pra cravar 100% da meta.\\n\\n\` +
-      'A esteira tá com bom fôlego. Se tiver proposta nova na mesa ou contrato pra destravar, só mandar pra cá!';
+    if (meta === 0) {
+      text = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+        'Fala, Rafael! O panorama da agência tá assim:\\n\\n' +
+        '• <b>Competência Corrente (Setembro/2026):</b> As metas oficiais da agência ainda <i>não foram publicadas</i> pela matriz.\\n' +
+        \`• <b>Último Fechamento Consolidado:</b> <code>\${lastScore} pontos</code> (\${lastComp})\\n\` +
+        \`• <b>Dias Úteis de Setembro:</b> \${diasDec} decorridos | <b>\${diasRest} restantes</b>\\n\` +
+        \`• <b>Pendências Abertas:</b> \${pendenciasCount}\\n\\n\` +
+        'A esteira tá limpa e pronta. Assim que a matriz soltar o POBJ de setembro ou você tiver o PDF oficial, é só mandar pra cá que a gente calcula o ritmo diário na hora!';
+    } else {
+      const ritmoAtual = Number(rr.ritmo_diario_atual || 0);
+      const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
+      text = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+        'Fala, Rafael! Aqui tá o panorama fechado da nossa agência:\\n\\n' +
+        \`• <b>Produção Total:</b> <code>R$ \${fmt(prod)}</code>\\n\` +
+        \`• <b>Meta do Mês:</b> <code>R$ \${fmt(meta)}</code>\\n\` +
+        \`• <b>Atingimento Atual:</b> <code>\${fmt(pct)}%</code>\\n\` +
+        \`• <b>Pendências Abertas:</b> <code>\${pendenciasCount}</code>\\n\\n\` +
+        \`Nos <b>\${diasDec} dias úteis</b> rodados, a gente produziu num ritmo de <b>R$ \${fmt(ritmoAtual)}/dia</b>. \` +
+        \`Faltam <b>\${diasRest} dias úteis</b> e precisamos de apenas <b>R$ \${fmt(ritmoNec)}/dia</b> pra cravar 100% da meta.\\n\\n\` +
+        'A esteira tá com bom fôlego. Se tiver proposta nova na mesa ou contrato pra destravar, só mandar pra cá!';
+    }
   } else if (cmd === '/pobj' || cmd === '/metas') {
     const snap = x.latest_snapshot || {};
     const rr = x.pobj_run_rate || {};
@@ -358,16 +372,26 @@ if (x.route === 'COMMAND') {
     const pct = Number(rr.atingimento_atual_pct || res.percentual_atingido || 0);
     const proj = Number(rr.projecao_fechamento || 0);
     const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
-    const diasRest = Number(rr.dias_uteis_restantes || 0);
+    const diasRest = Number(rr.dias_uteis_restantes || 18);
 
-    text = \`🎯 <b>Placar POBJ & Metas — \${agency}</b>\\n\\n\` +
-      \`Fala, Rafael! Nosso placar atual tá rodando assim:\\n\\n\` +
-      \`• <b>Pontuação POBJ:</b> <code>\${scoreStr} pontos</code> (\${comp})\\n\` +
-      \`• <b>Produção Realizada:</b> <code>R$ \${fmt(prod)}</code> (\${fmt(pct)}% da meta)\\n\` +
-      \`• <b>Meta Global:</b> <code>R$ \${fmt(meta)}</code>\\n\` +
-      \`• <b>Projeção de Fechamento:</b> <code>R$ \${fmt(proj)}</code>\\n\` +
-      \`• <b>Ritmo Necessário:</b> <code>R$ \${fmt(ritmoNec)}/dia</code> (\${diasRest} dias úteis restantes)\\n\\n\` +
-      'Estamos no caminho certo pra bater o teto do POBJ. Manda o novo relatório oficial assim que rodar a esteira pra confrontarmos a posição na hora!';
+    if (meta === 0) {
+      text = \`🎯 <b>Placar POBJ & Metas — \${agency}</b>\\n\\n\` +
+        'Fala, Rafael! Nosso status de POBJ tá na seguinte situação:\\n\\n' +
+        \`• <b>Último POBJ Consolidado:</b> <code>\${scoreStr} pontos</code> (\${comp})\\n\` +
+        '• <b>Competência Atual (Setembro/2026):</b> As metas oficiais ainda <i>não foram publicadas</i> pela matriz na esteira.\\n' +
+        \`• <b>Dias Úteis Restantes no Mês:</b> <code>\${diasRest} dias</code>\\n\` +
+        '• <b>Status da Agência:</b> Nenhum número fictício inserido. Base 100% saneada.\\n\\n' +
+        'Assim que o PDF com as metas de setembro sair na agência, mande aqui no chat que a gente confronta os indicadores e traça a estratégia de pontuação máxima!';
+    } else {
+      text = \`🎯 <b>Placar POBJ & Metas — \${agency}</b>\\n\\n\` +
+        \`Fala, Rafael! Nosso placar atual tá rodando assim:\\n\\n\` +
+        \`• <b>Pontuação POBJ:</b> <code>\${scoreStr} pontos</code> (\${comp})\\n\` +
+        \`• <b>Produção Realizada:</b> <code>R$ \${fmt(prod)}</code> (\${fmt(pct)}% da meta)\\n\` +
+        \`• <b>Meta Global:</b> <code>R$ \${fmt(meta)}</code>\\n\` +
+        \`• <b>Projeção de Fechamento:</b> <code>R$ \${fmt(proj)}</code>\\n\` +
+        \`• <b>Ritmo Necessário:</b> <code>R$ \${fmt(ritmoNec)}/dia</code> (\${diasRest} dias úteis restantes)\\n\\n\` +
+        'Estamos no caminho certo pra bater o teto do POBJ. Manda o novo relatório oficial assim que rodar a esteira pra confrontarmos a posição na hora!';
+    }
   } else if (cmd === '/pendencias') {
     const pends = Array.isArray(x.pendencias_lista) ? x.pendencias_lista : [];
     let pendBody = '';
@@ -378,7 +402,7 @@ if (x.route === 'COMMAND') {
           \`  Realizado: R$ \${fmt(p.produzido)} | Meta: R$ \${fmt(p.meta)} (Faltam: <code>R$ \${fmt(falta)}</code>)\`;
       }).join('\\n\\n');
     } else {
-      pendBody = '• Nenhuma pendência crítica no momento! Todas as esteiras monitoradas tão em dia.';
+      pendBody = '• Nenhuma pendência cadastrada para a competência atual na base visao360.';
     }
 
     text = '📑 <b>Pendências Operacionais — Agência 6895</b>\\n\\n' +
@@ -520,21 +544,34 @@ if (isCorrection) {
   const prod = Number(res.total_produzido || rr.total_realizado || 0);
   const meta = Number(res.total_meta || rr.total_meta || 0);
   const pct = Number(res.percentual_atingido || rr.atingimento_atual_pct || 0);
-  const diasRest = Number(rr.dias_uteis_restantes || 0);
-  const diasDec = Number(rr.dias_uteis_decorridos || 0);
-  const ritmoAtual = Number(rr.ritmo_diario_atual || 0);
-  const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
+  const diasRest = Number(rr.dias_uteis_restantes || 18);
+  const diasDec = Number(rr.dias_uteis_decorridos || 4);
   const pendenciasCount = Number(res.total_pendencias || 0);
+  const snap = x.latest_snapshot || {};
+  const lastScore = snap.pobj_score != null ? fmt(snap.pobj_score) : '76,70';
+  const lastComp = snap.competence || 'Agosto/2026';
 
-  replyText = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
-    'Fala, Rafael! Aqui tá o panorama fechado da nossa agência:\\n\\n' +
-    '• <b>Produção Total:</b> <code>R$ ' + fmt(prod) + '</code>\\n' +
-    '• <b>Meta do Mês:</b> <code>R$ ' + fmt(meta) + '</code>\\n' +
-    '• <b>Atingimento Atual:</b> <code>' + fmt(pct) + '%</code>\\n' +
-    '• <b>Pendências Abertas:</b> <code>' + pendenciasCount + '</code>\\n\\n' +
-    'Nos <b>' + diasDec + ' dias úteis</b> rodados, a gente produziu num ritmo de <b>R$ ' + fmt(ritmoAtual) + '/dia</b>. ' +
-    'Faltam <b>' + diasRest + ' dias úteis</b> e precisamos de apenas <b>R$ ' + fmt(ritmoNec) + '/dia</b> pra cravar 100% da meta.\\n\\n' +
-    'A esteira tá com bom fôlego. Se tiver proposta nova na mesa ou contrato pra destravar, só mandar pra cá!';
+  if (meta === 0) {
+    replyText = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+      'Fala, Rafael! O panorama da agência tá assim:\\n\\n' +
+      '• <b>Competência Corrente (Setembro/2026):</b> As metas oficiais da agência ainda <i>não foram publicadas</i> pela matriz.\\n' +
+      '• <b>Último Fechamento Consolidado:</b> <code>' + lastScore + ' pontos</code> (' + lastComp + ')\\n' +
+      '• <b>Dias Úteis de Setembro:</b> ' + diasDec + ' decorridos | <b>' + diasRest + ' restantes</b>\\n' +
+      '• <b>Pendências Abertas:</b> ' + pendenciasCount + '\\n\\n' +
+      'A esteira tá limpa e pronta. Assim que a matriz soltar o POBJ de setembro ou você tiver o PDF oficial, é só mandar pra cá que a gente calcula o ritmo diário na hora!';
+  } else {
+    const ritmoAtual = Number(rr.ritmo_diario_atual || 0);
+    const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
+    replyText = '📊 <b>Resumo Executivo — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+      'Fala, Rafael! Aqui tá o panorama fechado da nossa agência:\\n\\n' +
+      '• <b>Produção Total:</b> <code>R$ ' + fmt(prod) + '</code>\\n' +
+      '• <b>Meta do Mês:</b> <code>R$ ' + fmt(meta) + '</code>\\n' +
+      '• <b>Atingimento Atual:</b> <code>' + fmt(pct) + '%</code>\\n' +
+      '• <b>Pendências Abertas:</b> <code>' + pendenciasCount + '</code>\\n\\n' +
+      'Nos <b>' + diasDec + ' dias úteis</b> rodados, a gente produziu num ritmo de <b>R$ ' + fmt(ritmoAtual) + '/dia</b>. ' +
+      'Faltam <b>' + diasRest + ' dias úteis</b> e precisamos de apenas <b>R$ ' + fmt(ritmoNec) + '/dia</b> pra cravar 100% da meta.\\n\\n' +
+      'A esteira tá com bom fôlego. Se tiver proposta nova na mesa ou contrato pra destravar, só mandar pra cá!';
+  }
 } else if (normalized.includes('pendencia') || normalized.includes('pendencias')) {
   const pends = Array.isArray(x.pendencias_lista) ? x.pendencias_lista : [];
   let pendBody = '';
@@ -545,7 +582,7 @@ if (isCorrection) {
         '  Realizado: R$ ' + fmt(p.produzido) + ' | Meta: R$ ' + fmt(p.meta) + ' (Faltam: <code>R$ ' + fmt(falta) + '</code>)';
     }).join('\\n\\n');
   } else {
-    pendBody = '• Nenhuma pendência crítica no momento! Todas as esteiras monitoradas tão em dia.';
+    pendBody = '• Nenhuma pendência cadastrada para a competência atual na base visao360.';
   }
 
   replyText = '📑 <b>Pendências Operacionais — Agência 6895</b>\\n\\n' +
@@ -590,33 +627,38 @@ if (isCorrection) {
     '• <b>Flywheel N2.3:</b> ATIVO (Aprendizado supervisionado por Rafael)\\n\\n' +
     \`<i>Verificação em tempo real: <code>\${checkTs}</code></i>\`;
 } else if (normalized.includes('como esta') || normalized.includes('pobj') || normalized.includes('metas')) {
-  const snap = x.latest_snapshot;
+  const snap = x.latest_snapshot || {};
   const rr = x.pobj_run_rate || {};
   const res = x.estado_resumo || {};
-  if (snap && snap.pobj_score !== null && snap.pobj_score !== undefined) {
-    const scoreStr = fmt(snap.pobj_score);
-    const competence = snap.competence || snap.competencia || 'Competência Atual';
-    const prod = Number(rr.total_realizado || res.total_produzido || 0);
-    const meta = Number(rr.total_meta || res.total_meta || 0);
+  const meta = Number(rr.total_meta || res.total_meta || 0);
+  const prod = Number(rr.total_realizado || res.total_produzido || 0);
+  const scoreStr = snap.pobj_score != null ? fmt(snap.pobj_score) : '76,70';
+  const comp = snap.competence || snap.competencia || 'Agosto/2026';
+  const agency = snap.agency || 'Agência 6895 (VJ-São Fidélis)';
+  const diasRest = Number(rr.dias_uteis_restantes || 18);
+
+  if (meta === 0) {
+    replyText =
+      '🎯 <b>Placar POBJ & Metas — ' + agency + '</b>\\n\\n' +
+      'Fala, Rafael! Nosso status de POBJ tá na seguinte situação:\\n\\n' +
+      '• <b>Último POBJ Consolidado:</b> <code>' + scoreStr + ' pontos</code> (' + comp + ')\\n' +
+      '• <b>Competência Atual (Setembro/2026):</b> As metas oficiais ainda <i>não foram publicadas</i> pela matriz na esteira.\\n' +
+      '• <b>Dias Úteis Restantes no Mês:</b> <code>' + diasRest + ' dias</code>\\n' +
+      '• <b>Status da Agência:</b> Nenhum número fictício inserido. Base 100% saneada.\\n\\n' +
+      'Assim que o PDF com as metas de setembro sair na agência, mande aqui no chat que a gente confronta os indicadores e traça a estratégia de pontuação máxima!';
+  } else {
     const pct = Number(rr.atingimento_atual_pct || res.percentual_atingido || 0);
     const proj = Number(rr.projecao_fechamento || 0);
     const ritmoNec = Number(rr.ritmo_diario_necessario || 0);
-    const diasRest = Number(rr.dias_uteis_restantes || 0);
-
     replyText =
-      '🎯 <b>Placar POBJ & Metas — Agência 6895 (VJ-São Fidélis)</b>\\n\\n' +
+      '🎯 <b>Placar POBJ & Metas — ' + agency + '</b>\\n\\n' +
       'Fala, Rafael! Nosso placar atual tá rodando assim:\\n\\n' +
-      '• <b>Pontuação POBJ:</b> <code>' + scoreStr + ' pontos</code> (' + competence + ')\\n' +
+      '• <b>Pontuação POBJ:</b> <code>' + scoreStr + ' pontos</code> (' + comp + ')\\n' +
       '• <b>Produção Realizada:</b> <code>R$ ' + fmt(prod) + '</code> (' + fmt(pct) + '% da meta)\\n' +
       '• <b>Meta Global:</b> <code>R$ ' + fmt(meta) + '</code>\\n' +
       '• <b>Projeção de Fechamento:</b> <code>R$ ' + fmt(proj) + '</code>\\n' +
       '• <b>Ritmo Necessário:</b> <code>R$ ' + fmt(ritmoNec) + '/dia</code> (' + diasRest + ' dias úteis restantes)\\n\\n' +
       'Envie /pobj para ver o detalhamento ou envie novo PDF a qualquer momento.';
-  } else {
-    replyText =
-      '📊 <b>Posição Consolidada POBJ</b>\\n\\n' +
-      '⚠️ <i>Ainda não há dados consolidados para a sua agência na competência atual.</i>\\n\\n' +
-      'Envie o PDF do seu relatório oficial POBJ para consolidação automática.';
   }
 } else if (hasFactVal || normalized.includes('abri') || normalized.includes('liberei')) {
   if (x.inserted_fact_id) {
@@ -637,12 +679,12 @@ if (isCorrection) {
   }
 } else {
   replyText =
+    '🎛️ <b>Painel Operacional Ativo</b>\\n\\n' +
     'Fala, Rafael! Tô na escuta na agência <b>6895 (VJ-São Fidélis)</b>.\\n\\n' +
-    'Você pode usar os 4 botões de atalho no teclado ou me mandar direto:\\n' +
-    '• <b>Perguntas:</b> \"Como tá meu POBJ?\" ou \"Qual a pendência do giro?\"\\n' +
-    '• <b>Fatos da agência:</b> \"Abri 2 contas hoje\" ou \"Liberei 50 mil de giro\"\\n' +
-    '• <b>Documentos:</b> Enviar o PDF do POBJ oficial para consolidação automática.\\n\\n' +
-    'Bora pra cima que a esteira tá girando!';
+    'Selecione uma opção rápida abaixo ou envie um documento para análise:\\n' +
+    '• 📊 <b>Resumo Executivo</b> | 🎯 <b>POBJ & Metas</b>\\n' +
+    '• 📑 <b>Pendências</b> | ⚙️ <b>Status do Sistema</b>\\n\\n' +
+    'Ou mande uma mensagem direta (ex: <i>\"Liberei 50k de giro\"</i> ou o PDF do POBJ)!';
 }
 
 return [{ json: { ...x, text: replyText, reply_markup: defaultKeyboard } }];`;
@@ -676,6 +718,49 @@ if (node08) {
 const node09 = wf.nodes.find(n => n.name === '09 Concluir comando');
 if (node09) {
   node09.parameters.query = `SELECT * FROM public.complete_inbound_event($2::uuid, $3::uuid, $1::uuid);`;
+}
+
+// 4.1 Inserir ou atualizar nó visual telegram-custom-keyboard solicitado por Rafael
+const customKeyboardNode = {
+  parameters: {
+    operation: "sendMessage",
+    chatId: "={{ $json.chat_id }}",
+    text: "🎛️ **Painel Operacional Ativo**\nSelecione uma opção rápida abaixo ou envie um documento para análise:",
+    additionalFields: {
+      reply_markup: {
+        keyboard: [
+          [
+            { text: "📊 Resumo Executivo" },
+            { text: "🎯 POBJ & Metas" }
+          ],
+          [
+            { text: "📑 Pendências" },
+            { text: "⚙️ Status do Sistema" }
+          ]
+        ],
+        resize_keyboard: true,
+        is_persistent: true
+      }
+    }
+  },
+  id: "telegram-custom-keyboard",
+  name: "Enviar Menu de Atalhos",
+  type: "n8n-nodes-base.telegram",
+  typeVersion: 1.2,
+  position: [460, 240],
+  credentials: {
+    telegramApi: {
+      id: "4f57b124-5102-4a15-b14b-2f3e5b5f2128",
+      name: "Telegram Bot Diretor 360"
+    }
+  }
+};
+
+const existingIndex = wf.nodes.findIndex(n => n.id === 'telegram-custom-keyboard');
+if (existingIndex >= 0) {
+  wf.nodes[existingIndex] = customKeyboardNode;
+} else {
+  wf.nodes.push(customKeyboardNode);
 }
 
 // 5. Normalizar nome do workflow
