@@ -42,7 +42,7 @@ Result: PASS
 - Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0 (0 rotas bridge, 0 mocks, 26 workflows validados).
 - Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
-Last commit: `HEAD` (a registrar pós-commit)
+Last commit: `c3699ae` (feat(migration-20): blindagem de governanca, RPCs no WF-101, fail-closed P0001-P0003 e remocao de mocks)
 Last implementation checkpoint: Sétima Remediação dos Gates A0, N2.3 e N7 concluída e validada no runtime real (Migration 20 e WF-101 RPCs).
 
 ## Runtime observed
