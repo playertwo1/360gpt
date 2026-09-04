@@ -35,13 +35,13 @@ Result: PASS
 - `npm test`: PASS, exit 0 (56/56 suítes).
 - `node tests/adversarial-corpus-quarta-remediacao.test.mjs`: PASS, exit 0 (100% bloqueio adversarial).
 - `node tests/flywheel-learning-postgres-integration.test.mjs`: PASS, exit 0 (10/10 etapas no banco real).
-- `npm run lint`: PASS, exit 0, 23 warnings, zero errors.
+- `npm run lint`: PASS, exit 0, 0 warnings, zero errors.
 - `npm run build`: PASS, exit 0.
 - Teste n8n canônico (`node scripts/test-n8n-canonical-architecture.mjs`): PASS, exit 0 (0 rotas bridge, 0 mocks, 26 workflows validados).
 - Teste ponta a ponta: Inbound `ecd100c6` completado com sucesso e Delivery `d31a1c46` enviado via Telegram com latências reais dinâmicas.
 
 Last commit: `HEAD` (a registrar pós-commit)
-Last implementation checkpoint: Quinta Remediação dos Gates N7/N7A concluída e validada no runtime real.
+Last implementation checkpoint: Quinta Remediação dos Gates N7/N7A concluída e validada no runtime real (Migration 17 lockdown).
 
 ## Runtime observed
 

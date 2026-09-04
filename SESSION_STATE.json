@@ -39,7 +39,7 @@
     "npm_test": "PASS (56/56 suites)",
     "adversarial_test": "PASS (12/12 node test + 7/7 offensive attacks blocked)",
     "flywheel_test": "PASS (10/10)",
-    "npm_lint": "PASS (0 errors, 23 warnings)",
+    "npm_lint": "PASS (0 errors, 0 warnings)",
     "npm_build": "PASS",
     "canonical_n8n_test": "PASS (0 bridges, 0 mocks, 26 workflows validados)"
   },

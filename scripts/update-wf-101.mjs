@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { execSync } from 'node:child_process';
 
 const wfPath = 'n8n/workflows/wf-101-local-dispatcher.json';
 const wf = JSON.parse(fs.readFileSync(wfPath, 'utf8'));
@@ -38,13 +39,9 @@ thread AS (
   RETURNING conversation_message_id
 ),
 rule_approval AS (
-  SELECT owner_promote_candidate(
+  SELECT approve_promotion_by_rafael(
     p.command_arg::uuid,
-    p.tenant_id,
-    p.owner_id,
-    p.inbound_event_id::text,
-    encode(sha256(convert_to(p.inbound_event_id::text || '|' || p.owner_id, 'UTF8')), 'hex'),
-    'Aprovação soberana explícita por comando Telegram'
+    p.inbound_event_id
   ) AS ok,
   pk.id, pk.category, pk.learned_rule, pk.status
   FROM params p
@@ -379,18 +376,46 @@ if (isCorrection) {
 return [{ json: { ...x, text: replyText } }];`;
 }
 
-// 3. Atualizar nó 08: Enviar pelo adaptador (header autenticado estático)
+// 3. Atualizar nó 08: Enviar pelo adaptador (header autenticado dinâmico)
 const node08 = wf.nodes.find(n => n.name === '08 Enviar pelo adaptador');
 if (node08) {
   node08.parameters.headerParameters = {
     parameters: [
       {
         name: 'X-Director360-Transport',
-        value: TRANSPORT_SECRET
+        value: TRANSPORT_SECRET ? TRANSPORT_SECRET : '={{$env.INTERNAL_TRANSPORT_SECRET || \'\'}}'
       }
     ]
   };
 }
 
+// 4. Atualizar nó 09: Concluir comando preservando lease explícito durante PROCESSING
+const node09 = wf.nodes.find(n => n.name === '09 Concluir comando');
+if (node09) {
+  node09.parameters.query = `WITH delivered AS (
+  UPDATE channel_deliveries SET status='SENT', sent_at=now() WHERE delivery_id=$1::uuid RETURNING delivery_id
+)
+UPDATE channel_inbound_events
+SET status = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN 'PROCESSING' ELSE 'COMPLETED' END,
+    completed_at = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN NULL ELSE now() END,
+    lease_token = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN lease_token ELSE NULL END,
+    lease_expires_at = CASE WHEN event_kind IN ('DOCUMENT', 'IMAGE') THEN now() + interval '10 minutes' ELSE NULL END
+WHERE inbound_event_id=$2::uuid AND lease_token=$3::uuid
+RETURNING inbound_event_id, EXISTS(SELECT 1 FROM delivered) AS delivered;`;
+}
+
+// 5. Normalizar nome do workflow removendo transição
+wf.name = 'WF-101: Core Dispatcher';
+
 fs.writeFileSync(wfPath, JSON.stringify(wf, null, 2), 'utf8');
 console.log('WF-101 atualizado com sucesso e autenticação direta no nó 08 configurada!');
+
+try {
+  const nodesJson = JSON.stringify(wf.nodes).replace(/'/g, "''");
+  const name = wf.name.replace(/'/g, "''");
+  const sql = `UPDATE workflow_entity SET name = '${name}', nodes = '${nodesJson}'::json, "updatedAt" = NOW() WHERE id = '9eb8e86a-84b8-4aa9-97e4-360000000101';`;
+  execSync('docker exec -i visao-360-postgres-1 psql -U n8n -d n8n', { input: sql, stdio: ['pipe', 'pipe', 'pipe'] });
+  console.log('WF-101 sincronizado com sucesso no banco n8n!');
+} catch (err) {
+  console.warn('Aviso ao sincronizar no n8n DB:', err.message);
+}
