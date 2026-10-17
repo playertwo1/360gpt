@@ -503,7 +503,7 @@
 - Compose e guardas Docling aprovados; smoke do worker, lint e build aprovados.
 - POBJ2608 processado em 142,6 s e pico Docling de 1,87 GiB; gate funcional permanece bloqueado pelas células unidas produzidas na origem Docling.
 
-## [3.5.0] - 2026-09-01
+## 3.5.0 — 2026-09-01
 
 ### Added
 - **Otimização Global de Hardware (.wslconfig):** Configuração personalizada para AMD Ryzen 5 5600X (6C/12T) e 16 GB RAM (`memory=6GB`, `processors=6`, `autoMemoryReclaim=gradual`, `sparseVhd=true`, `swap=2GB`, `localhostForwarding=true`, `guiApplications=false`), liberando permanentemente mais de 10 GB de RAM para o Windows.
@@ -550,13 +550,13 @@
 - Arquivo continua autenticado, preservado no R2 e auditado; conteúdo é tratado como não confiável e instruções internas do documento são ignoradas.
 - A chave Gemini está armazenada apenas como segredo do ambiente hospedado, nunca no Git.
 
-## [3.2.39] - 2026-08-29
+## 3.2.39 — 2026-08-29
 
 ### Changed
 - Simplificado o envio POBJ para exigir somente o arquivo; competência e data-base são inferidas automaticamente quando presentes.
 - Mantida revisão humana obrigatória quando a inferência não for possível.
 
-## [3.2.38] - 2026-08-29
+## 3.2.38 — 2026-08-29
 
 ### Changed
 - Registrada aprovação de Rafael para uso somente leitura supervisionado da reconciliação POBJ de agosto.
@@ -564,7 +564,7 @@
 ### Security
 - Fonte permanece `DRAFT` e desconectada até o gate técnico; nenhum processamento ou efeito externo foi iniciado.
 
-## [3.2.37] - 2026-08-29
+## 3.2.37 — 2026-08-29
 
 ### Added
 - Registro DRAFT da reconciliação das três planilhas POBJ de agosto, com fonte principal, hashes e métricas coincidentes.
@@ -572,12 +572,12 @@
 ### Security
 - Fonte real permanece `INACTIVE`; escopo limitado a `meta`, `realizado` e `periodo`, sem efeitos externos.
 
-## [3.2.36] - 2026-08-29
+## 3.2.36 — 2026-08-29
 
 ### Changed
 - Revalidada a preparação de ingestão sintética C1/C2: carteira PJ, plano diário, especialistas de Conta e linhagem.
 
-## [3.2.35] - 2026-08-29
+## 3.2.35 — 2026-08-29
 
 ### Changed
 - Validação sintética A5 concluída: catálogo fechado, autorização humana, bloqueio de ações indevidas e idempotência.
@@ -585,7 +585,7 @@
 ### Security
 - Nenhuma ação externa real foi executada; efeitos permanecem condicionados a autorização específica.
 
-## [3.2.34] - 2026-08-29
+## 3.2.34 — 2026-08-29
 
 ### Added
 - Onda A4 somente leitura supervisionada validada para os quatro domínios, com Evidence Graph íntegro.
@@ -593,12 +593,12 @@
 ### Security
 - Despacho humano obrigatório preservado; nenhum efeito externo foi executado.
 
-## [3.2.33] - 2026-08-29
+## 3.2.33 — 2026-08-29
 
 ### Changed
 - Gate P8 e primeiro canary sintético Performance aprovados por Rafael após revisão humana.
 
-## [3.2.32] - 2026-08-29
+## 3.2.32 — 2026-08-29
 
 ### Added
 - Primeiro canary sintético de Performance autorizado e executado: 10 casos, revisão humana pendente em todos.
@@ -606,18 +606,18 @@
 ### Security
 - Canary permaneceu sem mutações de estado e sem efeitos externos.
 
-## [3.2.31] - 2026-08-29
+## 3.2.31 — 2026-08-29
 
 ### Added
 - Regra explícita `N3_CONSORCIO_EXPERT_LINEAR`, com cálculo linear, mínimo positivo e tetos distintos para POBJ (100%) e PADE (150%).
 - Registrados peso PJ Negócios (5 pontos) e fluxo de ajustes até o 4º dia útil via ServiceNow com parecer regional.
 
-## [3.2.30] - 2026-08-29
+## 3.2.30 — 2026-08-29
 
 ### Changed
 - P2.3 atualizado para refletir as faixas versionadas de ausência de contato (0–30, 31–60, 61–90 e >90 dias), já cobertas pelos testes determinísticos.
 
-## [3.2.29] - 2026-08-29
+## 3.2.29 — 2026-08-29
 
 ### Fixed
 - Protegida a rota `/api/evidence-graph` com autenticação e autorização do painel.
@@ -626,7 +626,7 @@
 ### Changed
 - Artefatos Python compilados deixaram de ser versionados via `.gitignore`.
 
-## [3.2.28] - 2026-08-29
+## 3.2.28 — 2026-08-29
 
 ### Changed
 - Homologada a janela supervisionada de `PERFORMANCE_EXECUTABILITY_PLAN` em A3, com três observações consecutivas aprovadas (30/30 casos).
@@ -635,7 +635,7 @@
 ### Security
 - Execuções permaneceram em `SHADOW` e `SYNTHETIC_ONLY`, sem dados reais, mutações, efeitos externos ou agentes `ACTIVE`.
 
-## [3.2.27] - 2026-08-28
+## 3.2.27 — 2026-08-28
 
 ### Added
 - Motor determinístico de plano de executabilidade da Performance em SHADOW, sem seleção de empresas ou efeitos externos.
@@ -643,7 +643,7 @@
 ### Security
 - O plano é consultivo, exige seleção de conta posterior e preserva zero mutações e efeitos externos.
 
-## [3.2.26] - 2026-08-28
+## 3.2.26 — 2026-08-28
 
 ### Changed
 - Primeira expansão A3 homologada: `PERFORMANCE_GAP_SCENARIOS` completou três medições sintéticas consecutivas aprovadas.
@@ -651,7 +651,7 @@
 ### Security
 - As 30 execuções preservaram escopo sintético, zero erro, divergência, custo, mutação e efeito externo; próxima expansão requer nova autorização.
 
-## [3.2.25] - 2026-08-28
+## 3.2.25 — 2026-08-28
 
 ### Added
 - Motor determinístico de gaps e cenários da Performance, em SHADOW sintético supervisionado.
@@ -659,7 +659,7 @@
 ### Security
 - O motor só calcula estados e distâncias; não altera dados nem permite efeitos externos.
 
-## [3.2.24] - 2026-08-28
+## 3.2.24 — 2026-08-28
 
 ### Changed
 - A2 homologado após três medições consecutivas do `PERFORMANCE_SCORING_STATE` em SHADOW sintético.
@@ -667,7 +667,7 @@
 ### Security
 - As 30 execuções mantiveram zero erros, divergências, custo, mutações de estado e efeitos externos; A3 continua bloqueada por autorização explícita.
 
-## [3.2.23] - 2026-08-28
+## 3.2.23 — 2026-08-28
 
 ### Added
 - Gate de execução A2 e teste de rollback da capacidade Performance em SHADOW.
@@ -675,7 +675,7 @@
 ### Security
 - O gate bloqueia execução com capacidade inativa, fonte fora de escopo, campo não autorizado, mutação de estado ou efeito externo.
 
-## [3.2.22] - 2026-08-28
+## 3.2.22 — 2026-08-28
 
 ### Changed
 - A2 iniciada com a única capacidade `PERFORMANCE_SCORING_STATE` em `SHADOW` supervisionado.
@@ -683,7 +683,7 @@
 ### Security
 - A2 aceita somente fixtures sintéticas e os campos mínimos `meta`, `realizado` e `periodo`; fonte POBJ real, efeitos externos e mutações de estado de negócio continuam proibidos.
 
-## [3.2.21] - 2026-08-28
+## 3.2.21 — 2026-08-28
 
 ### Changed
 - A1 do GG Performance homologado após aprovação explícita de Rafael na interface `/canary` para os dez casos sintéticos.
@@ -691,7 +691,7 @@
 ### Security
 - A aprovação registrada em D1 preserva `SYNTHETIC_ONLY`; não houve promoção de agente, conexão de fonte real, mutação de estado nem efeito externo.
 
-## [3.2.20] - 2026-08-28
+## 3.2.20 — 2026-08-28
 
 ### Added
 - Aba `/canary` para Rafael revisar os dez casos da Onda 3 do GG Performance diretamente no site, sem alterar o painel principal.
@@ -705,7 +705,7 @@
 ### Changed
 - Versão 30 publicada em `https://visao-360-diretor.fael360092.chatgpt.site`, com a migração D1 da revisão Canary incluída.
 
-## [3.2.19] - 2026-08-28
+## 3.2.19 — 2026-08-28
 
 ### Fixed
 - Simulador legado de canary deixou de fabricar decisões, hashes, concordância ou overrides atribuídos a Rafael.
@@ -714,7 +714,7 @@
 ### Security
 - Decisões humanas agora só podem existir após revisão explícita; validações confirmaram 14/14 testes e lint aprovados.
 
-## [3.2.18] - 2026-08-28
+## 3.2.18 — 2026-08-28
 
 ### Added
 - Onda 3 do canary sintético do GG Performance, com dez casos POBJ determinísticos e telemetria de custo/latência.
@@ -725,7 +725,7 @@
 ### Security
 - Nenhuma decisão ou override humano foi fabricado; custo foi zero por ausência de chamadas de modelo e efeitos externos permaneceram bloqueados.
 
-## [3.2.17] - 2026-08-28
+## 3.2.17 — 2026-08-28
 
 ### Added
 - Onda 2 do canary sintético do GG Performance, com cinco casos POBJ determinísticos e relatório de revisão humana.
@@ -736,7 +736,7 @@
 ### Security
 - A Onda 2 manteve zero mutações de estado e zero efeitos externos; dados reais continuam desconectados.
 
-## [3.2.16] - 2026-08-28
+## 3.2.16 — 2026-08-28
 
 ### Changed
 - Rafael formalizado como autoridade exclusiva para aprovar cada fonte, definir campos permitidos/proibidos e autorizar qualquer ampliação de retenção.
@@ -744,7 +744,7 @@
 ### Security
 - Fontes, campos ou prazos não podem ser ampliados por inferência; cada autorização deve ser registrada antes do uso.
 
-## [3.2.15] - 2026-08-28
+## 3.2.15 — 2026-08-28
 
 ### Changed
 - Formalizada a propriedade privada do Diretor 360 por Rafael e sua responsabilidade técnica permanente.
@@ -753,7 +753,7 @@
 ### Security
 - Regras institucionais permanecem aplicáveis apenas a fontes de dados institucionais eventualmente autorizadas, sem alterar a propriedade do projeto.
 
-## [3.2.14] - 2026-08-28
+## 3.2.14 — 2026-08-28
 
 ### Changed
 - C1 concluído documentalmente com Rafael como responsável técnico interino e autoridade de concessão/revogação de acessos.
@@ -763,7 +763,7 @@
 ### Security
 - A autorização documental não ativa fonte real; cadastro, validação e gate técnico continuam obrigatórios antes da primeira conexão.
 
-## [3.2.13] - 2026-08-28
+## 3.2.13 — 2026-08-28
 
 ### Changed
 - C1 passou a autorizar a planilha POBJ, limitada aos campos meta, realizado e período.
@@ -771,7 +771,7 @@
 ### Security
 - CPF e demais dados pessoais não necessários foram explicitamente proibidos para esta finalidade.
 
-## [3.2.12] - 2026-08-28
+## 3.2.12 — 2026-08-28
 
 ### Changed
 - Registro C1 recebeu a finalidade de acompanhar/analisar POBJ pelo GG Performance, público autenticado por e-mail/convite, responsável de negócio e declaração institucional de Rafael.
@@ -779,7 +779,7 @@
 ### Security
 - Fonte/campos mínimos, responsável técnico e política de retenção compatível com minimização permanecem requisitos obrigatórios antes de qualquer conexão com dados reais.
 
-## [3.2.11] - 2026-08-28
+## 3.2.11 — 2026-08-28
 
 ### Added
 - Executor e teste da Onda 1 do canary sintético do GG Performance, com três casos POBJ determinísticos e revisão humana pendente.
@@ -791,7 +791,7 @@
 ### Security
 - O executor bloqueia mutações e efeitos externos; decisões humanas permanecem nulas até revisão explícita.
 
-## [3.2.10] - 2026-08-28
+## 3.2.10 — 2026-08-28
 
 ### Changed
 - Gate Shadow aprovado explicitamente por Rafael após a consolidação da janela sintética íntegra.
@@ -800,7 +800,7 @@
 ### Security
 - A aprovação não conectou fontes reais, não promoveu agentes para `ACTIVE` e não liberou efeitos externos.
 
-## [3.2.9] - 2026-08-28
+## 3.2.9 — 2026-08-28
 
 ### Added
 - Parecer técnico consolidado do Gate Shadow em `docs/audits/S2_GATE_SHADOW_2026-08-28.md`.
@@ -811,7 +811,7 @@
 ### Security
 - Confirmados 480/480 casos concluídos, zero divergências, zero mutações de estado e zero efeitos externos; o runtime permanece sem dados reais, agentes `ACTIVE` ou efeitos externos.
 
-## [3.2.0] - 2026-08-28
+## 3.2.0 — 2026-08-28
 
 ### Changed
 - Roadmap operacional reorganizado em Trilha S isolada, preparação independente P0–P8 e ativação gradual A1–A5.
@@ -821,7 +821,7 @@
 ### Security
 - Mantidos bloqueios para dados reais, promoção de agentes e efeitos externos até os gates e aprovações específicos.
 
-## [3.2.1] - 2026-08-28
+## 3.2.1 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/RECONCILIACAO_P0_2026-08-28.md` com confronto entre checklist, roadmap, código, testes e estado do Git.
@@ -831,7 +831,7 @@
 - RTO/RPO passaram a ser tratados como medições dependentes do ambiente-alvo.
 - Fase 8 distinguida entre provisionamento pronto (M8.1) e VPS 24h ainda planejado (M8.2).
 
-## [3.2.2] - 2026-08-28
+## 3.2.2 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/REGRESSAO_P1_2026-08-28.md` com a bateria geral, lint, build e validações da base técnica.
@@ -842,7 +842,7 @@
 ### Security
 - A regressão permaneceu sintética; nenhum agente foi promovido e nenhum efeito externo foi liberado.
 
-## [3.2.3] - 2026-08-28
+## 3.2.3 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/P2_MOTORES_DETERMINISTICOS_2026-08-28.md` com auditoria e testes dos motores POBJ, freshness, GDAD, compromissos e domínio.
@@ -853,7 +853,7 @@
 ### Security
 - Nenhuma regra foi inventada para preencher lacunas normativas; casos sem evidência permanecem `UNDETERMINED` ou aguardam revisão.
 
-## [3.2.4] - 2026-08-28
+## 3.2.4 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/P3_CONTRATOS_GERENTES_2026-08-28.md`.
@@ -862,7 +862,7 @@
 ### Changed
 - P3 concluído: contratos, lifecycle, roteamento, limites e runtime `INACTIVE` dos quatro Gerentes Gerais validados.
 
-## [3.2.5] - 2026-08-28
+## 3.2.5 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/P4_ORQUESTRACAO_2026-08-28.md` com validação da jornada integrada e operação assistida sintética.
@@ -873,7 +873,7 @@
 ### Security
 - Operação assistida permaneceu sintética, sem promoção de agentes e sem efeitos externos.
 
-## [3.2.6] - 2026-08-28
+## 3.2.6 — 2026-08-28
 
 ### Added
 - Relatório `docs/audits/P5_SEGURANCA_LGPD_2026-08-28.md`.
@@ -884,7 +884,7 @@
 ### Security
 - Nenhuma fonte real foi conectada e nenhum dado real foi processado.
 
-## [3.2.7] - 2026-08-28
+## 3.2.7 — 2026-08-28
 
 ### Added
 - Relatórios `docs/audits/P6_PRONTIDAO_OPERACIONAL_2026-08-28.md` e `docs/audits/P7_CANARY_PREPARACAO_2026-08-28.md`.
@@ -895,7 +895,7 @@
 ### Security
 - Execução do canary, promoção de agentes, dados reais e efeitos externos permanecem bloqueados até o Gate Shadow e aprovação explícita.
 
-## [3.2.8] - 2026-08-28
+## 3.2.8 — 2026-08-28
 
 ### Added
 - Pré-verificação `docs/audits/P8_PRE_GATE_READINESS_2026-08-28.md`, com dependências e critérios para o Gate geral.
@@ -903,7 +903,7 @@
 ### Changed
 - P8 marcado como pré-verificado, permanecendo `NOT_READY` até 24/24 Shadow e decisões humanas obrigatórias.
 
-## [3.1.6] - 2026-08-28
+## 3.1.6 — 2026-08-28
 
 ### Fixed
 - Consolidado o teste local do Evidence Graph com cálculo canônico de hash, proteção contra acesso anônimo e verificação append-only.
@@ -1470,7 +1470,7 @@
 - Substituída a transição interna pela navegação completa nas rotas protegidas.
 - Corrigido o retorno silencioso à página inicial ao abrir `/shadow`.
 
-## [3.1.0] - 2026-08-28
+## 3.1.0 — 2026-08-28
 
 ### Added
 - `PROJECT_STATE.md` como ponto único de retomada operacional.
@@ -1482,7 +1482,7 @@
 ### Security
 - Mantida a exigência de não versionar segredos e de interromper apenas para bloqueios que exigem intervenção humana.
 
-## [3.1.1] - 2026-08-28
+## 3.1.1 — 2026-08-28
 
 ### Changed
 - `AGENTS.md` avançado para v2.1 com a especificação integral de execução autônoma, sincronização, retomada e continuidade.
@@ -1491,7 +1491,7 @@
 ### Security
 - Notificação de interrupção limitada a HARD BLOCKERS reais e realizada apenas por mecanismo seguro, sem credenciais no repositório.
 
-## [3.1.2] - 2026-08-28
+## 3.1.2 — 2026-08-28
 
 ### Added
 - Matriz auditável de fontes, regras, limites e rollback dos quatro Gerentes Gerais.
@@ -1503,7 +1503,7 @@
 ### Security
 - Dados reais, agentes `ACTIVE` e efeitos externos continuam bloqueados.
 
-## [3.1.3] - 2026-08-28
+## 3.1.3 — 2026-08-28
 
 ### Added
 - Pacote de evidências e decisão para o Gate Shadow.
@@ -1512,7 +1512,7 @@
 ### Security
 - Gate Shadow não libera dados reais ou efeitos externos; canary permanece supervisionado e bloqueado até aprovação explícita.
 
-## [3.1.4] - 2026-08-28
+## 3.1.4 — 2026-08-28
 
 ### Fixed
 - Removidos avisos de lint no Dashboard e na suíte Shadow sem alterar comportamento funcional.
@@ -1520,14 +1520,14 @@
 ### Changed
 - Build de produção revalidado com sucesso.
 
-## [3.1.5] - 2026-08-28
+## 3.1.5 — 2026-08-28
 
 ### Added
 - Teste de restauração PostgreSQL em contêiner efêmero, sem gravar dump em disco.
 
 ### Security
 - Exercício isolado não escreve no banco de origem e remove automaticamente o contêiner temporário.
-## [3.9.0] - 2026-09-01
+## 3.9.0 — 2026-09-01
 
 ### Added
 - Marco prioritário P0 para blindagem conversacional, estabilidade do Telegram/n8n e aprendizado supervisionado.
@@ -1538,7 +1538,7 @@
 
 ### Security
 - Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
-## [3.9.0] - 2026-09-02
+## 3.9.0 — 2026-09-02
 
 ### Fixed
 - Exclusão Telegram agora revoga toda a cadeia de registros do mesmo arquivo pelo hash, permitindo reenvio limpo.

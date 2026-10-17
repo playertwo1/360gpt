@@ -1,4 +1,7 @@
 # TERMO DE AUDITORIA E HANDOFF — DIRETOR 360
+
+> **Padrão ideias_standard (2026-10-17):** o estado atual e a próxima ação ficam em [`STATE.md`](STATE.md). Este arquivo é mantido como histórico detalhado (lido por scripts de handoff/auditoria).
+
 > **STATUS DA QUARTA REMEDIAÇÃO:** Blocos Q0 a Q8 CONCLUÍDOS e submetidos para nova reauditoria independente do ChatGPT Codex. Dossiê formal disponível em `docs/audits/RESPOSTA_QUARTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`. WF-101 publicado e ativo; WF-104 e AUTO_PROMOTION_ENABLED estritamente desligados; Gate N7 BLOCKED.
 
 **Data da Última Atualização:** 03 de setembro de 2026  

@@ -1,5 +1,8 @@
 # Status do Projeto Diretor 360 & Guia Mestre de Continuidade
 
+> **Padrão ideias_standard (2026-10-17):** o estado atual e a próxima ação ficam em [`STATE.md`](STATE.md). Este arquivo é mantido como histórico detalhado (lido por scripts de handoff/auditoria).
+
+
 ## Atualização 03/09/2026 — Quarta Remediação dos Gates A0 e N2.3 Concluída
 
 - **Status da Quarta Remediação:** Blocos Q0 a Q8 executados integralmente e validados no runtime real.
