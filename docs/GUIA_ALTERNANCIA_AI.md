@@ -54,7 +54,7 @@ Valide contra Git e me informe o marco atual e o próximo passo exato.
 #### 📝 Prompt para colar no Antigravity:
 ```text
 Olá, Antigravity! Trabalhei pelo Codex e estou voltando por aqui.
-Por favor, leia AGENTS.md, PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente.
+Por favor, leia AGENTS.md (e, para regras do Diretor, docs/arquitetura-agentes-360/CONTRATO_DIRETOR_360.md), PROJECT_STATE.md, ROADMAP.md e CHANGELOG.md recente.
 Valide o estado contra Git e avance para o próximo item elegível do roadmap.
 ```
 

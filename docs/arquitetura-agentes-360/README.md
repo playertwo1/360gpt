@@ -6,7 +6,7 @@ O n8n self-hosted em Docker é a camada de orquestração: recebe eventos, mant�
 
 ## Hierarquia
 
-- `AGENTS.md`: Diretor 360 e regras globais.
+- `CONTRATO_DIRETOR_360.md`: contrato completo do Diretor 360 e regras globais (o `AGENTS.md` da raiz é o resumo para agentes de código; o `AGENTS.md` desta pasta é legado v1.0).
 - `CONTRATOS_COMPARTILHADOS.md`: envelope de entrada, handoff e caso final.
 - `diretor/`: triagem, conflito, consolidação e auditoria.
 - `conta/`: situação integral da empresa e da conta.

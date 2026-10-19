@@ -12,7 +12,7 @@
 ## ⚡ 1. Inicialização Rápida & Invariantes de Máquina (Machine Context)
 
 Se você é uma Inteligência Artificial assumindo este repositório, execute esta ordem canônica de leitura:
-1. **`AGENTS.md`** $\rightarrow$ Contrato mestre e regras de execução.
+1. **`AGENTS.md`** $\rightarrow$ resumo para agentes; contrato mestre completo em `docs/arquitetura-agentes-360/CONTRATO_DIRETOR_360.md`.
 2. **`PROJECT_STATE.md`** $\rightarrow$ Estado operacional e ponto exato de retomada.
 3. **`ROADMAP.md`** $\rightarrow$ Único planejamento e checklist, com caminho N0–N9.
 4. **`CHANGELOG.md`** $\rightarrow$ Histórico permanente de mudanças.

@@ -1,6 +1,6 @@
 # AGENTS.md — Diretor 360
 
-> **DOCUMENTO LEGADO — NÃO CANÔNICO.** Preservado apenas como histórico da arquitetura inicial. O contrato vigente é `/AGENTS.md`; em qualquer divergência, o arquivo da raiz prevalece.
+> **DOCUMENTO LEGADO — NÃO CANÔNICO.** Preservado apenas como histórico da arquitetura inicial. O contrato vigente é `docs/arquitetura-agentes-360/CONTRATO_DIRETOR_360.md` (resumo em `/AGENTS.md`); em qualquer divergência, o contrato vigente prevalece.
 
 **Versão:** 1.0  
 **Papel:** mestre de orquestração e único responsável pela visão consolidada  
