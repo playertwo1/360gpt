@@ -1,5 +1,9 @@
 # Changelog
 
+## 12.0.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 12.0.0-conversational-telegram-core` (commit `3398e92`).
+
 ### Eleventh Milestone Complete — Camada Conversacional Contextual do Diretor 360 e 10 Casos Obrigatórios (04/09/2026)
 
 - **Evolução Conversacional Natural no Telegram (Gemini 3.6 Flash)**:
@@ -33,6 +37,10 @@
     - Teste J: Sequência multi-turno longa (10 turnos) mantendo coerência com 0 quedas no menu.
   - Adicionado ao `npm test`: 100% verde (`PASS`, exit code 0).
 
+## 11.0.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 11.0.0-ativacao-wf104-flywheel-governance` (commit `5f43ba2`).
+
 ### Tenth Milestone Complete — Ativação Canônica do WF-104 e Homologação do Flywheel com Governança Soberana (04/09/2026)
 
 - **Ativação e Publicação do WF-104 no n8n**:
@@ -57,6 +65,10 @@
   - 16/16 testes unitários em `tests/adversarial-gate-n7a.test.mjs` aprovados.
   - Atualizado `scripts/test-n8n-canonical-architecture.mjs` para verificar a ativação e publicação operacional do WF-104 (`wf104ActiveInOperationalTenant: true`).
 
+## 10.0.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 10.0.0-humanizacao-diretor360-extrator-gemini` (commit `386ca3a`).
+
 ### Ninth Milestone Complete — Humanização Conversacional do Diretor 360 e Homologação do Extrator Gemini Docling (04/09/2026)
 
 - **Humanização Conversacional do Diretor 360 (AGENTS.md)**:
@@ -74,6 +86,10 @@
   - `npm test`: 56/56 suítes aprovadas com exit code 0 (`PASS`), incluindo 16/16 testes ofensivos adversariais.
   - `npm run lint`: 0 erros, 0 warnings.
   - Paridade e integridade sincronizadas entre os repositórios `Codex` e `Downloads\A`.
+
+## 9.0.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 9.0.0-custom-keyboard-pobj-dynamic` (commit `f90fc19`).
 
 ### Eighth Milestone Complete — Custom Reply Keyboard Persistente e Projeção Dinâmica POBJ no WF-101 (04/09/2026)
 
@@ -99,6 +115,10 @@
   - Teste de ponta a ponta executado para os 4 botões de atalho no cluster Docker real: todos processados pelo WF-100 (200), executados pelo WF-101, marcados como `COMPLETED` em `channel_inbound_events` e entregues com status `SENT` em `channel_deliveries`.
   - Suíte completa `npm test` aprovada com 56/56 suítes e 16/16 testes adversariais (exit code 0).
 
+## 8.0.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 8.0.0-migration-20-hardened` (commit `c3699ae`).
+
 ### Seventh Remediation Complete — Migration 20 Hardening, WF-101 RPCs e Testes Ofensivos P0001-P0003 (04/09/2026)
 
 - **Migration 20 (Governança Estrita, Integridade de Ingestão e Validação Soberana)**: Aplicada `infra/postgres/init/20-governance-and-integrity-hardening.sql` eliminando as 9 não conformidades apontadas na reauditoria dos Gates A0, N2.3 e N7:
@@ -118,6 +138,10 @@
   - 16/16 testes aprovados com cobertura das 9 vulnerabilidades: Fail-Open Check (`P0001`), Target Mandatório (`P0002`), Fake Evidence (`P0003`), Hash Mismatch e n8n DML Isolation (`42501 permission denied`).
 - **Suíte Completa Aprovada**: `npm test` aprovado com exit code 0 em todas as suítes (Telegram hardening, P0, Local Core, Flywheel real e bateria adversarial).
 
+## 7.1.0 — 2026-09-04
+
+> `PROJECT_STATE.md` → `Version: 7.1.0-gate-n7a-sexta-remediacao` (commit `822ce9e`).
+
 ### Sixth Remediation Complete — Inbound RPCs, Soberania Canônica e Desbloqueio WF-100/WF-101 (04/09/2026)
 
 - **Eliminação de DoS Autoimposto via Inbound RPCs (Migration 18)**: Aplicada `infra/postgres/init/18-rpc-inbound-lifecycle.sql` criando funções controladas com `SECURITY DEFINER` e `search_path = pg_catalog, public` para gerenciar todo o ciclo de vida de ingestão sem expor DML direto sobre `channel_updates` e `channel_inbound_events`:
@@ -135,6 +159,10 @@
   - `npm test`: 100% aprovado com exit code 0 (56/56 suítes cobrindo Gates N7/N7A, P0, Local Core, Flywheel real e bateria adversarial).
   - Testes adversariais comprovam isolamento da role `visao360_app` (DML direto negado em `golden_exemplars`, `decision_outcomes`, `negative_memory`, `flywheel_audit_events`), rejeição de hash divergente, bloqueio por flag desabilitada e paridade no banco n8n.
 
+## 7.0.0 — 2026-09-03
+
+> `PROJECT_STATE.md` → `Version: 7.0.0-gate-n7a-quinta-remediacao` (commit `f479254`).
+
 ### Fifth Remediation Complete — Gates N7/N7A Remediados e Blindados no Runtime Real (04/09/2026)
 
 - **Lockdown e Segregação de Privilégios (Migration 17)**: Aplicada `infra/postgres/init/17-gate-n7-cleanup-and-lockdown.sql`. Transferida propriedade de `channel_updates`, `channel_inbound_events` e `flywheel_audit_events` para `postgres`. Revogado DML direto (`INSERT, UPDATE, DELETE, TRUNCATE`) da role de aplicação `visao360_app`. Expurgo de dados inconsistentes/órfãos e `VACUUM (ANALYZE)`.
@@ -146,6 +174,10 @@
 - **Bateria Adversarial Estrita**: 7/7 ataques bloqueados no banco em `scripts/audit-adversarial-test.mjs` e 12/12 asserções aprovadas em `tests/adversarial-gate-n7a.test.mjs`.
 - **Suíte Completa Aprovada**: `npm test` aprovado com exit code 0 em 56/56 suítes (N7 security, P0, Local Core, Flywheel 10/10 no PostgreSQL real, Adversarial).
 - **Backups Físicos Q0 Atualizados**: Dumps binários customizados do PostgreSQL gerados e catalogados: `backup_visao360_q0.dump` (SHA-256 `31c92f1798b7787111d96c95a0db1302fc8f7ece2bb49f691cdf7d2ca24e5abf`) e `backup_n8n_q0.dump` (SHA-256 `02cbc964fb6bf13b69abfe31108d549103cc23b1ccb850c5f841e43cb9d960b8`).
+
+## 6.3.0 — 2026-09-03
+
+> `PROJECT_STATE.md` → `Version: 6.3.0-gates-a0-n2.3-remediation-v3 e 6.3.0-gates-a0-n2.3-quarta-remediacao` (commit `d437a0c, ccc742f`).
 
 ### Fourth Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
 
@@ -189,6 +221,10 @@
 - **Bloco T6 (Learning Engine, Reflexion e Idempotência)**: `learning-engine.mjs` atualizado com allowlist positiva estrita (`STYLE_FORMATTING`, `COMMUNICATION_CADENCE`, `CONVERSATIONAL_PREFERENCE`, `PRESENTATION_ORDER`, `EXECUTIVE_SUMMARY_STYLE`), fail-closed em termos sensíveis (retenção, crédito, limites, taxas, compliance, fórmulas, efeitos externos, credenciais) e regras globais para `MANUAL_REVIEW`; `reflexion-engine.mjs` atualizado com isolamento estrito por `tenant_id`, escopo `INDICATOR` e eliminação de `NaN%`/`undefined`; `decision-utility-engine.mjs` padronizado com SHA-256; `semantic-memory-engine.mjs` com tolerância de clock-skew; `WF-104` atualizado com UUIDv5 determinístico derivado de SHA-256 para `candidateId` e `idempotency_key`; bateria E2E real `tests/flywheel-learning-postgres-integration.test.mjs` executada inteiramente com a role `visao360_app`: 10/10 PASS.
 - **Bloco T7 (Alinhamento de Testes e Governança)**: Suíte completa de testes do repositório (35/35 suítes) aprovada com zero falhas; alinhados testes legados com contratos modernos; sincronizados `AGENTS.md` (v2.3), `PROJECT_STATE.md` (v6.3.0), `ROADMAP.md`, `CHANGELOG.md`, `SESSION_STATE.json` e `CODEX_HANDOFF.md`; criado o dossiê formal de resposta `docs/audits/RESPOSTA_TERCEIRA_REMEDIACAO_CODEX_GATES_A0_N2_3.md`.
 
+## 6.2.0 — 2026-09-03
+
+> `PROJECT_STATE.md` → `Version: 6.2.0-gates-a0-n2.3-remediated-v2` (commit `2e34b9a`).
+
 ### Second Remediation Complete — Gates A0 e N2.3 Remediados no Runtime Real (03/09/2026)
 
 - Concluídos integralmente os Blocos R0 a R6 especificados em `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md`.
@@ -200,6 +236,10 @@
 - **Bloco R5 (Bateria E2E em PostgreSQL Real)**: 10/10 testes passaram com sucesso contra o PostgreSQL real (`tests/flywheel-learning-postgres-integration.test.mjs`), comprovando constraints, DUR, reflexion, autopromoção, bloqueio de alto risco, context packet, sanitização, dynamic few-shot, negative memory e teardown seguro.
 - **Bloco R6 (Dossiê de Resposta & Sincronização)**: Criado `docs/audits/RESPOSTA_SEGUNDA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` respondendo aos 28 achados e às 25 perguntas obrigatórias; `npm test`, lint e build aprovados; pronto para submissão à nova reauditoria independente do ChatGPT Codex.
 
+## 6.1.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 6.1.0-gates-a0-n2.3-remediated` (commit `2f9e876`).
+
 ### Independent Reaudit — Gates A0 e N2.3 Reprovados no commit 2f9e876 (02/09/2026)
 
 - Criado `docs/audits/REAUDITORIA_CODEX_GATES_A0_N2_3_COMMIT_2F9E876.md` após confronto da primeira remediação com código, PostgreSQL e runtime n8n real.
@@ -209,7 +249,6 @@
 - Decisão de Rafael incorporada à auditoria: aprendizado de baixo risco pode ser promovido automaticamente por score/evidência/política; revisão manual fica restrita a exceções materiais, ambíguas e de alto risco; AGENTS/System Prompts/políticas não podem ser autoalterados.
 - Resultados positivos preservados: `npm test`, lint e build aprovados; rotas bridge ausentes do build; WF-104 inativo; tabelas presentes; melhorias do DUR confirmadas.
 - Atualizados ROADMAP, PROJECT_STATE, status, SESSION_STATE e CODEX_HANDOFF para iniciar a segunda remediação pelos Blocos R0–R6.
-
 
 ### Remediation & Verification — Gates A0 e N2.3 Remediados para Reauditoria Codex (02/09/2026)
 
@@ -237,6 +276,9 @@
     - Criado `docs/audits/RESPOSTA_REMEDIACAO_CODEX_GATES_A0_N2_3.md` com respostas completas às 20 perguntas obrigatórias e aos 27 achados da auditoria.
     - Suíte `npm test` (`test:p0`, `test:local-core`, `test:flywheel`) passando com 100% de sucesso.
 
+## 6.0.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 6.0.0-gate-n2.3-flywheel-approved` (commit `940c38b`).
 
 ### Complete & Homologated — Marco N2.3: Arquitetura de Aprendizado Contínuo em Contexto e Flywheel Multiagente (02/09/2026)
 - **Marco N2.3 Concluído e Homologado (Gate N2.3 PASS):**
@@ -247,6 +289,16 @@
   * **N2.3.5 (Memória Negativa & Anti-Padrões)**: Criada tabela `negative_memory` no PostgreSQL e motor `engines/security/negative-memory-engine.mjs`. Intercepta propostas preventivamente com normalização NFD de acentos para barrar produtos e abordagens já vetados por Rafael ou recusados pelos clientes.
   * **Gate N2.3 Homologado**: Suíte `tests/flywheel-learning-gate-n2-3.test.mjs` valida 3 ciclos completos de aprendizado, com bloqueio seguro de reincidência, enriquecimento via exemplar dourado e **Decision Utility Rate de 90.0%** (meta: $\ge 85\%$).
 
+## 5.3.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 5.3.0-planning-milestone-n2.3-flywheel` (commit `5716717`).
+
+- Sem entrada própria no changelog original: planejamento do Marco N2.3 no `ROADMAP.md` e `PROJECT_STATE.md` em v5.3.0.
+
+## 5.2.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 5.2.0-gate-a0-canonical-cutover` (commit `f5c47e9`).
+
 ### Complete & Homologated — Marco A0: Cutover Canônico e Desativação de Exceções Legadas (02/09/2026)
 - **Cutover Definitivo de Arquitetura (Gate A0 Desbloqueado):**
   * **Aposentadoria de `core/telegram_bot_worker.py`**: O script legado em Python foi formalmente arquivado em `legacy/core-prototype/` e substituído por aviso de depreciação, eliminando o risco de execução paralela fora do n8n.
@@ -254,12 +306,20 @@
   * **Atualização da Política de Governança (`policies/n8n-canonical-architecture.yaml`)**: Todas as 4 exceções legadas foram resolvidas (`legacy_exceptions_count: 0`), promovendo o status operacional para `gate_a0_status: CANONICAL_LOCAL_ACTIVE`.
   * **Verificação Automatizada**: Suíte `npm run test:local-core` atesta `legacyExceptions: 0` e `runtimeGate: "CANONICAL_LOCAL_ACTIVE"` com 100% de conformidade técnica.
 
+## 5.1.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 5.1.0-pilot-active-with-briefing-and-outreach` (commit `362dc59`).
+
 ### Complete & Active — Início do Piloto em Campo: Briefing Matinal Proativo & Motor de Abordagem Comercial (02/09/2026)
 - **Ativação da Dupla Comercial de Alto Impacto:**
   * **Workflow `WF-102 — Briefing Matinal Proativo 360`** (`9eb8e86a-84b8-4aa9-97e4-360000000102`): Agendado no n8n Docker para disparo automático às 08h30 de segunda a sexta-feira, enviando no Telegram de Rafael (`chat_id: 5281600644`) a situação consolidada do POBJ e as 2 principais ações prioritárias do dia.
   * **Motor de Abordagem Comercial (`outreach-draft-engine.mjs`)**: Gera mensagens consultivas personalizadas prontas para copiar e colar no WhatsApp ou E-mail para os decisores da carteira (Dr. Arnaldo no Hospital São Lucas para folha de 280 vidas e Sr. Cláudio na Forja Sul para cobrança de R$ 420 mil e blindagem de vencidos).
   * **Governança Preservada**: Toda abordagem gerada impõe `requires_owner_approval: true` e `decision_authority: "RAFAEL"`, garantindo que nenhuma mensagem seja enviada diretamente a clientes sem autorização explícita.
   * **Disparo Real de Teste**: Entregues com sucesso (HTTP 200) no Telegram de Rafael a demonstração do Briefing Matinal e o rascunho de WhatsApp para o Dr. Arnaldo Silveira.
+
+## 5.0.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 5.0.0-gate-n2.2-and-pilot-ready` (commit `dc85922`).
 
 ### Complete & Homologated — Fases 6 a 10 Concluídas & Gate N2.2 Homologado (Status: PILOT_READY) (02/09/2026)
 - **6. Marco N2.2.7: Reconciliação Cirúrgica, Correção e Reprocessamento:**
@@ -284,6 +344,10 @@
   * Execução aprovada com 10/10 cenários e status `PILOT_READY` gravado em `test-data/evals/golden_dataset_replay_latest.json`.
   * Validado por `tests/golden-dataset-replay.test.mjs` (100% PASS).
   * **Gate N2.2 Homologado:** O MVP utilizável pelo celular está 100% testado, auditado e pronto para a operação piloto assistida.
+
+## 4.1.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 4.1.0-n2.2-phases-completed` (commit `e6f145e`).
 
 ### Complete & Homologated — Saneamento de Logs + 5 Fases Evolutivas (N2.2.2 a N2.2.6) (02/09/2026)
 - **0. Saneamento e Otimização Prévia:**
@@ -311,6 +375,10 @@
   * Habilitados comandos ricos: `/indicador <nome>` (com drill-down de Folha, Cobrança, Crédito e Vencidos), `/fontes` e `/evidencias`.
   * Validado por `tests/advanced-commands.test.mjs` (100% PASS).
 
+## 4.0.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 4.0.0-gate-n8-and-n9-completed` (commit `350bd6e`).
+
 ### Complete & Homologated — Conclusão Integral dos 6 Passos do Roadmap (Marcos N8.3, N8.4, N9.1, N9.2, N9.3 e N2.2.1) (02/09/2026)
 - **1. Marco N8.3: Ativação do GG Financeiro (`WF-40`)**:
   * Implementado e ativo o workflow **`WF-40 — GG Financeiro — Viabilidade e Receita`** (`9eb8e86a-84b8-4aa9-97e4-360000000040`) no n8n Docker.
@@ -327,6 +395,10 @@
 - **6. Marco N2.2.1: Memória Operacional em 4 Camadas**:
   * Criado o motor [`engines/orchestration/layered-memory-engine.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/engines/orchestration/layered-memory-engine.mjs) segregando Sessão (efêmera), Fatos Confirmados (entidade), Preferências do Dono (diretrizes) e Governança Normativa, com suporte à consulta estruturada de evidências.
 
+## 3.16.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.16.0-n8.2-gg-relacionamento-active` (commit `e9489a4`).
+
 ### Complete & Active — Marco N8.2: Ativação do GG Relacionamento (02/09/2026)
 - **Ativação do 3º Gerente Geral de Negócio:**
   * Implementado o workflow **`WF-30 — GG Relacionamento — Inteligência de Contato e Abordagem`** (`9eb8e86a-84b8-4aa9-97e4-360000000030`), ativo no n8n Docker.
@@ -336,6 +408,10 @@
   * O parecer executivo do Diretor 360 e o despachante local (`WF-101`) agora cruzam **Metas (Performance) + Empresa (Conta) + Abordagem Comercial (Relacionamento)**.
   * Testes automatizados [`tests/relationship-engine.test.mjs`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/tests/relationship-engine.test.mjs) validando conformidade estrita com `contracts/relationship-specialist-response.schema.json`.
   * 100% de aprovação em toda a suite de regressão operacional.
+
+## 3.15.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.15.0-n2.1-telegram-conversation-approved` (commit `4c1d7d2`).
 
 ### Complete & Homologated — Marco N2.1: Entrada Textual Conversacional pelo Telegram (02/09/2026)
 - **Implementação dos 5 Comportamentos Prioritários:**
@@ -353,6 +429,10 @@
   * Atualizado [`scripts/test-telegram-conversational.ps1`](file:///C:/Users/fael/Documents/Codex/2026-08-24/vamos-criar-um-progama-360-de/scripts/test-telegram-conversational.ps1).
   * 100% de aprovação nas baterias `npm run test:p0`, `npm run test:local-core`, testes de contratos e `npm run build`.
 
+## 3.14.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.14.0-gate-n2-approved` (commit `0ac884f`).
+
 ### Planning — N2.1 entrada textual conversacional (02/09/2026)
 - Entrada de texto pelo Telegram promovida a prioridade anterior ao E2E documental e ao GG Relacionamento.
 - Definido envelope unificado para texto, PDF, imagem e planilha; texto pula Docling e segue diretamente ao Diretor.
@@ -367,6 +447,10 @@
 - Extração de 100% de precisão nos indicadores materiais: Crédito PJ (180,77%), Encanta BRA (104,17%), Open Finance PJ (125,00%), Vencidos Até 59 dias (64,86%), Capital de Giro e Desconto.
 - Leitor subordinado local (`document-worker:8787` e `docling:5001`) homologado em produção local para tabelas de metas complexas sem compactação de células.
 
+## 3.13.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.13.0-n2-benchmark-complete` (commit `6ac408f`).
+
 ### Benchmark & Validation — Marco N2 (Docling CPU TableFormer POBJ2608) (02/09/2026)
 - Executado o benchmark do modelo Docling TableFormer CPU (`document-worker:8787` e `docling:5001`) sobre o arquivo oficial `POBJ2608.pdf` (1.97 MB), processado em 122.4s com estabilidade total de memória e CPU.
 - Extraídas com precisão 3 tabelas e 111 linhas estruturadas, comprovando a leitura exata de campos críticos:
@@ -377,12 +461,20 @@
 - Validados os filtros de segurança geométrica (`docling_merged_cells` e `docling_possible_column_shift`), garantindo que o leitor nunca invente valores diante de células mescladas.
 - Resultado persistido em `test-data/performance/benchmark_docling_pobj2608.json` e submetido para conferência e decisão de Rafael no **Gate N2**.
 
+## 3.12.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.12.0-gg-conta-active` (commit `b30bebe`).
+
 ### Feature & Activation — Fase N8.1 GG Conta (Carteira PJ & Oportunidades 360) (02/09/2026)
 - Ativado o **Gerente Geral de Conta** (`WF-20 — GG Conta`) e integrado ao orquestrador do Diretor (`WF-12`).
 - Criado o schema relacional `drizzle/0012_pj_conta_carteira.sql` (`pj_accounts` e `pj_account_opportunities`) e aplicado ao PostgreSQL `visao360`.
 - Ingeridas e persistidas 20 contas corporativas auditadas da carteira PJ (ex: *Hospital & Maternidade São Lucas S/A*, *Metalúrgica Forja Sul Ltda*).
 - Implementado o motor determinístico `engines/conta/conta-engine.mjs` com regras de reciprocidade e elegibilidade, aprovado nos testes unitários e de integração (`tests/conta-engine.test.mjs`, `tests/test-performance-conta-integration.mjs`).
 - O parecer executivo do Diretor 360 agora cruza os gaps de Agosto/2026 (Folha de Pagamento 12,50%, Boleto/PIX 3,11% e Vencidos 78,27%) diretamente com empresas e oportunidades nominais da agência 6895, preservando a autoridade final exclusiva de Rafael.
+
+## 3.11.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.11.0-n8n-exclusive-runtime` (commit `ce7d89b`).
 
 ### Complete — Gate MVP A0.2 Homologado por Rafael (02/09/2026)
 - Gate MVP da Rota Crítica (M0 a M10) concluído e formalmente homologado por Rafael no Telegram ("agora esta funcionando foi tudo certo").
@@ -426,6 +518,10 @@
 - Adicionado teste PostgreSQL transacional do WF-101; claim, lease e mensagem inbound foram comprovados e revertidos sem resíduo sintético.
 - `test:p0`, lint e build aprovados; o gate de runtime permaneceu deliberadamente bloqueado até a migração das quatro exceções legadas.
 
+## 3.10.0 — 2026-09-02
+
+> `PROJECT_STATE.md` → `Version: 3.10.0-n8n-local-core` (commit `d1f8d3c`).
+
 ### Changed — webhook Telegram preservado
 - Por decisão de Rafael, o Telegram permanece em webhook; o gateway hospedado será reduzido a fila de transporte e o Docker consumirá os eventos pelo WF-97.
 - Quick Tunnel gratuito foi testado e ficou acessível, mas o Telegram recusou o subdomínio temporário por resolução DNS; o experimento foi interrompido sem deixar o bot indisponível.
@@ -448,6 +544,23 @@
 - `telegram-poller` construído e iniciado saudável com `TELEGRAM_POLLING_ENABLED=false`.
 - WF-100 aprovado com entrada sintética e repetição idempotente: uma única persistência; workflow despublicado após o teste.
 - `npm run test:local-core`, `npm run test:p0`, lint e build aprovados após a mudança arquitetural.
+
+## 3.9.1 — 2026-09-02
+
+> Segunda seção `3.9.0` (2026-09-02) do changelog original, renumerada para 3.9.1; `PROJECT_STATE.md` seguia em `3.9.0-telegram-hardening` até `aebd7ec`.
+
+### Fixed
+- Exclusão Telegram agora revoga toda a cadeia de registros do mesmo arquivo pelo hash, permitindo reenvio limpo.
+- Protocolo curto sequencial passou a ser exibido e aceito nas consultas e ações operacionais.
+- Migração já aplicada do contador/protocolo curto foi reconciliada no histórico Drizzle sem repetir alterações no banco.
+
+### Changed
+- Sincronizado `PROJECT_STATE.md` com o estado real do Git, Docker e Sites.
+- Próxima tarefa ajustada para a homologação documental N2.
+
+## 3.9.0 — 2026-09-01
+
+> `PROJECT_STATE.md` → `Version: 3.9.0-telegram-hardening` (commit `ced0aba`).
 
 ### Changed
 - Validação local do P0 repetida com `npm run test:telegram-hardening`; fila assíncrona e debounce permanecem atrás de flag até canário.
@@ -481,6 +594,20 @@
 - Removidos nove roadmaps, planos e checklists concorrentes após absorção do conteúdo ainda válido.
 - `SESSION_STATE.json`, handoffs, README, status, manual multi-IA e scripts de sincronização atualizados para apontar somente ao roadmap unificado.
 
+### Added
+- Marco prioritário P0 para blindagem conversacional, estabilidade do Telegram/n8n e aprendizado supervisionado.
+- Checkpoint Git e patch das alterações preexistentes antes da implementação.
+
+### Changed
+- Homologação documental N2 temporariamente sucedida pelo gate P0, sem alterar seus critérios.
+
+### Security
+- Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
+
+## 3.8.0 — 2026-09-01
+
+> `PROJECT_STATE.md` → `Version: 3.8.0-docling-only` (commit `0346de0`).
+
 ### Changed
 - Webhook Telegram valida UTF-8 estrito, ignora mensagens originadas por bots, envia JSON com `charset=utf-8` e nunca produz cabeçalho de pendências vazio; n8n passa a declarar `LANG`/`LC_ALL=C.UTF-8`.
 - WSL mantido ativo em segundo plano durante a operação para evitar reinicialização contínua dos containers n8n/PostgreSQL/Docling/worker.
@@ -502,6 +629,7 @@
 ### Validation
 - Compose e guardas Docling aprovados; smoke do worker, lint e build aprovados.
 - POBJ2608 processado em 142,6 s e pico Docling de 1,87 GiB; gate funcional permanece bloqueado pelas células unidas produzidas na origem Docling.
+
 
 ## 3.5.0 — 2026-09-01
 
@@ -1527,24 +1655,3 @@
 
 ### Security
 - Exercício isolado não escreve no banco de origem e remove automaticamente o contêiner temporário.
-## 3.9.0 — 2026-09-01
-
-### Added
-- Marco prioritário P0 para blindagem conversacional, estabilidade do Telegram/n8n e aprendizado supervisionado.
-- Checkpoint Git e patch das alterações preexistentes antes da implementação.
-
-### Changed
-- Homologação documental N2 temporariamente sucedida pelo gate P0, sem alterar seus critérios.
-
-### Security
-- Diretrizes aprendidas exigirão aprovação explícita de Rafael e terão precedência inferior a segurança, autorização, fontes e contratos.
-## 3.9.0 — 2026-09-02
-
-### Fixed
-- Exclusão Telegram agora revoga toda a cadeia de registros do mesmo arquivo pelo hash, permitindo reenvio limpo.
-- Protocolo curto sequencial passou a ser exibido e aceito nas consultas e ações operacionais.
-- Migração já aplicada do contador/protocolo curto foi reconciliada no histórico Drizzle sem repetir alterações no banco.
-
-### Changed
-- Sincronizado `PROJECT_STATE.md` com o estado real do Git, Docker e Sites.
-- Próxima tarefa ajustada para a homologação documental N2.

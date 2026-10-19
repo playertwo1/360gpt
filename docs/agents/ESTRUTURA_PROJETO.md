@@ -1,0 +1,128 @@
+# Estrutura do projeto — §18 do contrato
+
+> Movido verbatim do `AGENTS.md` da raiz em 2026-10-19 (reestruturação documental; ver `AGENTS.md` → Índice). Conteúdo não alterado.
+
+## 18. Estrutura recomendada do projeto
+
+```text
+AGENTS.md
+contracts/
+  schema-registry.yaml
+  handoff.schema.json
+  state-360.schema.json
+  state-change-set.schema.json
+  assessor-response.schema.json
+  dashboard-read-model.schema.json
+  dashboard-query.schema.json
+  approval.schema.json
+  routing-decision.schema.json
+  manual-review.schema.json
+  review-resolution.schema.json
+  source-registry.schema.json
+  evidence-graph.schema.json
+  lineage-event.schema.json
+  audit-event.schema.json
+  usage-event.schema.json
+  recovery-checkpoint.schema.json
+  release-manifest.schema.json
+  common/
+    envelope.schema.json
+    evidence.schema.json
+    identifiers.schema.json
+core/
+  MOTOR_CONSOLIDACAO_360.md
+  AUTHORIZATION_GATE.md
+agents/
+  ASSESSOR_EXECUTIVO_360.md
+dashboard/
+  DASHBOARD_READ_MODEL.md
+  ACCESSIBLE_PRESENTATION.md
+state/
+  ESTADO_360.md
+  STATE_STORE_CONTRACT.md
+audit/
+  AUDIT_LOG_CONTRACT.md
+review/
+  CENTRAL_REVISAO_360.md
+  REVIEW_QUEUE_CONTRACT.md
+evidence/
+  EVIDENCE_GRAPH_360.md
+  SOURCE_GOVERNANCE.md
+security/
+  SECURITY_MODEL.md
+  THREAT_MODEL.md
+  DATA_CLASSIFICATION.md
+  TOOL_GATEWAY.md
+policies/
+  routing.yaml
+  capability-registry.yaml
+  freshness.yaml
+  reason-codes.yaml
+  confidence-calibration.yaml
+  source-precedence.yaml
+  data-quality.yaml
+  state-retention.yaml
+  dashboard-access.yaml
+  dashboard-cache.yaml
+  resource-budget.yaml
+  model-routing.yaml
+  capacity.yaml
+  continuity.yaml
+  slo.yaml
+  deployment.yaml
+  data-access.yaml
+  dlp.yaml
+  egress.yaml
+  manual-review.yaml
+  review-sla.yaml
+  timeouts.yaml
+  autonomy-budget.yaml
+governance/
+  AGENT_LIFECYCLE.md
+  RELEASE_GATES.md
+  RACI.md
+  CHANGE_MANAGEMENT.md
+  PRODUCTION_READINESS.md
+  adrs/
+finops/
+  RESOURCE_GOVERNANCE.md
+  COST_ALLOCATION.md
+registries/
+  agents.yaml
+  sources.yaml
+domains/
+  conta/
+    GERENTE_GERAL_CONTA.md
+    specialists/
+  performance/
+    GERENTE_GERAL_PERFORMANCE.md
+    specialists/
+  financeiro/
+    GERENTE_GERAL_FINANCEIRO.md
+    specialists/
+  relacionamento/
+    GERENTE_GERAL_RELACIONAMENTO.md
+    specialists/
+workflows/
+runbooks/
+  INCIDENT_RESPONSE.md
+  SECURITY_INCIDENT_RESPONSE.md
+  MANUAL_REVIEW_OPERATIONS.md
+  SOURCE_REVOCATION.md
+  ROLLBACK.md
+  DISASTER_RECOVERY.md
+  BACKUP_RESTORE.md
+  DEPENDENCY_OUTAGE.md
+  DECOMMISSIONING.md
+tests/
+evals/
+  golden-datasets/
+  release-gates/
+  confidence-calibration/
+  lineage-coverage/
+```
+
+O `AGENTS.md` governa comportamento e precedência. O Motor mantém a consolidação determinística. O Assessor transforma o Estado 360 em explicações e respostas. Schemas validam contratos. Policies guardam parâmetros mutáveis. Gerentes Gerais coordenam seus arquivos de especialistas. Workflows executam o DAG. Runbooks orientam resposta operacional. Testes provam o comportamento esperado.
+
+---
+
