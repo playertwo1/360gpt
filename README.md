@@ -4,6 +4,29 @@ Assistente executivo para gestão de carteira empresarial. O Telegram recebe men
 
 Todo o planejamento, checklist, histórico reconciliado e caminho até o Telegram está no [ROADMAP.md](ROADMAP.md), única fonte oficial de próximas tarefas.
 
+## Como rodar
+```powershell
+# Windows + WSL2 com Docker Engine nativo (sem Docker Desktop); copie .env.n8n.example para .env.n8n e preencha fora do Git
+./iniciar-diretor-360.ps1                                           # sobe n8n, PostgreSQL e serviços via WSL e abre o painel
+npm install; npm run dev                                            # dashboard em http://localhost:3000
+```
+
+## Como verificar
+```bash
+npm run lint && npm test && npm run build    # npm test exige o PostgreSQL local do compose.n8n.yaml no ar
+```
+
+## Documentação
+| Pergunta | Arquivo |
+|---|---|
+| Por que existe, MVP, fora de escopo | [PROJECT.md](PROJECT.md) |
+| Onde paramos, próxima ação | [STATE.md](STATE.md) |
+| Marcos e fila | [ROADMAP.md](ROADMAP.md) |
+| Regras para agentes | [AGENTS.md](AGENTS.md) (`CLAUDE.md` só importa este) |
+| Histórico detalhado de estado e handoff | [PROJECT_STATE.md](PROJECT_STATE.md), [status.md](status.md), [CODEX_HANDOFF.md](CODEX_HANDOFF.md), `SESSION_STATE.json` |
+| Guia rápido e demonstração | [QUICKSTART.md](QUICKSTART.md) |
+| Histórico de mudanças | [CHANGELOG.md](CHANGELOG.md) |
+
 ## Fluxo do produto
 
 1. **Entrada segura:** texto, PDF ou Excel chega ao webhook do Telegram, restrito por segredo e lista de chats permitidos.
@@ -37,7 +60,7 @@ O endpoint aceita texto e documentos de até 20 MB, responde ao usuário e coloc
 
 O primeiro corte executável opera somente em `OFFLINE_EVAL`, com dados sintéticos e sem efeitos externos.
 
-1. Abra o Docker Desktop.
+1. Garanta o Docker em execução (desde 2026-09-01 o ambiente usa Docker Engine nativo no WSL2, sem Docker Desktop; ver `CHANGELOG.md` 3.5.0).
 2. No PowerShell, execute `./scripts/start-360.ps1`.
 3. Acesse `http://localhost:5678` e crie a conta proprietária local.
 4. Aplique as migrações: `./scripts/apply-database-migrations.ps1`.

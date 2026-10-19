@@ -1,5 +1,8 @@
 # PROJECT STATE
 
+> **Padrão ideias_standard (2026-10-17):** o estado atual e a próxima ação ficam em [`STATE.md`](STATE.md). Este arquivo é mantido como histórico detalhado (lido por scripts de handoff/auditoria).
+
+
 > TOPOLOGIA CANÔNICA HOMOLOGADA: WF-100, WF-101, WF-103 e WF-104 ativos, publicados e sincronizados no n8n 2.x com activeVersionId = versionId. Flag AUTO_PROMOTION_ENABLED=true habilitada no PostgreSQL e no container n8n, com filtros estritos de segurança e governança soberana de Rafael ativa.
 
 Version: 12.0.0-conversational-telegram-core
