@@ -20,7 +20,7 @@
 
 ### 3. AUDITORIA INDEPENDENTE OBRIGATÓRIA PELO CHATGPT CODEX
 - A cada etapa de engenharia multiagente implementada pelo Antigravity, a IA deve **obrigatoriamente**:
-  1. Registrar uma seção no topo do `ROADMAP.md` e no `CODEX_HANDOFF.md` com instruções detalhadas para o Codex auditar.
+  1. Registrar uma seção no `STATE.md` (não no `ROADMAP.md`) e no `CODEX_HANDOFF.md` com instruções detalhadas para o Codex auditar.
   2. Documentar os arquivos alterados e fornecer o comando exato de teste (`powershell -File scripts/...`).
   3. Deixar claro para o Codex os pontos que exigem recompilação e deploy na nuvem.
 
